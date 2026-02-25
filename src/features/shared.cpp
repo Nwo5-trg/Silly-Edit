@@ -17,7 +17,7 @@ class $modify(SharedLevelEditorLayer, LevelEditorLayer) {
 
         std::vector<CCNodeRGBA*> chromaNodes;
 
-        std::vector<std::move_only_function<void()>> drawFuncs;
+        std::vector<geode::Function<void()>> drawFuncs;
     };
 
     CCLayer* createLayer(std::string_view pID, int pZ) {
@@ -163,7 +163,7 @@ namespace Shared {
         return {};
     }
 
-    void addUpdateFunc(std::move_only_function<void()> pFunc) {
+    void addUpdateFunc(geode::Function<void()> pFunc) {
         if (auto layer = reinterpret_cast<SharedLevelEditorLayer*>(Editor::layer())) {
             layer->m_fields->drawFuncs.push_back(std::move(pFunc));
         }

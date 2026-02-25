@@ -8,9 +8,12 @@
 	},
 	"id": "nwo5.sillyedit",
 	"name": "sillyedit",
-	"version": "v0.1.0-alpha.6",
+	"version": "v0.1.0-alpha.8",
 	"developer": "Nwo5",
 	"description": "so silly",
+	"links": {
+		"source": "https://github.com/Nwo5-trg/Silly-Edit"
+	},
 	"tags": ["editor", "bugfix", "customization", "enhancement", "interface", "utility", "offline"],
 	"resources": {
 		"sprites": [

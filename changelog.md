@@ -1,3 +1,15 @@
+## v0.1.0-alpha.7
+**Added**
+
+- better select all
+- github
+
+**Fixed**
+
+- some ui in replace obj
+- selection
+- realise im stupid and i should use the geode::Function typedef \<\/3
+
 ## v0.1.0-alpha.6
 didnt rly have to rewrite freesnap its pretty much the same :3
 

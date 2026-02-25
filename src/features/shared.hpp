@@ -31,5 +31,5 @@ namespace Shared {
 
     // idk how cocos does their c style bullshit and quite frankly i dont care to find out rn
     #define SE_UPDATE_FUNC(pFunc) [this]{ pFunc (); }
-    void addUpdateFunc(std::move_only_function<void()> pFunc);
+    void addUpdateFunc(geode::Function<void()> pFunc);
 }

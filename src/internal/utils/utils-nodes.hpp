@@ -57,7 +57,7 @@ namespace Utils {
     }
 
     constexpr float DEFAULT_TEXT_INPUT_HEIGHT = 30.0f;
-    using TextInputCallback = std::move_only_function<void(const std::string&)>;
+    using TextInputCallback = geode::Function<void(const std::string&)>;
 
     geode::TextInput* createTextInput(float pWidth, float pHeight, const std::string& pPlaceholder, const std::string& pFont, TextInputCallback pCallback = [] (const std::string&) {});
     geode::TextInput* createTextInput(float pWidth, float pHeight, const std::string& pPlaceholder = "", TextInputCallback pCallback = [] (const std::string&) {});
