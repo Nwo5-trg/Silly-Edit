@@ -1,0 +1,99 @@
+{
+	"geode": "5.0.1",
+	"gd": {
+		"win": "2.2081",
+		"android": "2.2081",
+		"mac": "2.2081",
+		"ios": "2.2081"
+	},
+	"id": "nwo5.sillyedit",
+	"name": "sillyedit",
+	"version": "v0.1.0-alpha.6",
+	"developer": "Nwo5",
+	"description": "so silly",
+	"tags": ["editor", "bugfix", "customization", "enhancement", "interface", "utility", "offline"],
+	"resources": {
+		"sprites": [
+			"resources/*.png",
+			"resources/object-tab-icons/*.png"
+		],
+		"spritesheets": {
+            "Sheet": [
+				"resources/sheet/*.png"
+			]
+		}
+	},
+	"settings": {
+		"general-title": {
+			"type": "title",
+			"name": "General"
+		},
+		"general-open-settings": {
+			"type": "keybind",
+			"name": "Open Settings",
+			"category": "editor",
+			"default": "Ctrl+Shift+P"
+		},
+		"ruler-title": {
+			"type": "title",
+			"name": "Ruler"
+		},
+		"ruler-create-measurement-key": {
+			"type": "keybind",
+			"name": "Create Measurement",
+			"category": "editor",
+			"default": "Ctrl+M"
+		},
+		"ruler-delete-last-measurement-key": {
+			"type": "keybind",
+			"name": "Delete Last Measurement",
+			"description": "hold to delete all",
+			"category": "editor",
+			"default": "Ctrl+Shift+M"
+		},
+		"free-snap-title": {
+			"type": "title",
+			"name": "Free Snap"
+		},
+		"free-snap-snap-selection": {
+			"type": "keybind",
+			"name": "Snap Selection",
+			"category": "editor",
+			"default": "N"
+		},
+		"better-select-all-title": {
+			"type": "title",
+			"name": "Better Select All"
+		},
+		"better-select-all-select-all-key": {
+			"type": "keybind",
+			"name": "Select All",
+			"category": "editor",
+			"default": "Ctrl+Enter"
+		},
+		"better-select-all-select-all-left-key": {
+			"type": "keybind",
+			"name": "Select All Left",
+			"category": "editor",
+			"default": "Ctrl+Left"
+		},
+		"better-select-all-select-all-down-key": {
+			"type": "keybind",
+			"name": "Select All Down",
+			"category": "editor",
+			"default": "Ctrl+Down"
+		},
+		"better-select-all-select-all-up-key": {
+			"type": "keybind",
+			"name": "Select All Up",
+			"category": "editor",
+			"default": "Ctrl+Up"
+		},
+		"better-select-all-select-all-right-key": {
+			"type": "keybind",
+			"name": "Select All Right",
+			"category": "editor",
+			"default": "Ctrl+Right"
+		}
+	}
+}

@@ -1,0 +1,19 @@
+// btw comments arent available in normal json this is a jsonc file that supports c style comments so id advise u remove these if ur copying to game :3
+// (or maybe matjson parses fine with comments idk)
+{
+    // literally anything other than a number gets treated as options for all objs lol
+    "default": {
+        "dont_fade": true,
+        "no_glow": true
+    },
+    "1": {
+        // i cant be asked to add some custom syntax for this just read gdinfoexplorer youll figure it out
+        "color_1_hsv_enabed": true,
+        "color_1_hsv": "155a0.5a1a0a0"
+    },
+    "901": {
+        "scale": 0.5,
+        // inject stuff into the object string :3
+        "custom_string": "62,1"
+    }
+}
