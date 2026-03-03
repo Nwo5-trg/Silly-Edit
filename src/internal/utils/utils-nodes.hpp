@@ -61,6 +61,8 @@ namespace Utils {
 
     geode::TextInput* createTextInput(float pWidth, float pHeight, const std::string& pPlaceholder, const std::string& pFont, TextInputCallback pCallback = [] (const std::string&) {});
     geode::TextInput* createTextInput(float pWidth, float pHeight, const std::string& pPlaceholder = "", TextInputCallback pCallback = [] (const std::string&) {});
+    geode::TextInput* createTextInput(float pWidth, const std::string& pPlaceholder, const std::string& pFont, TextInputCallback pCallback = [] (const std::string&) {});
+    geode::TextInput* createTextInput(float pWidth, const std::string& pPlaceholder = "", TextInputCallback pCallback = [] (const std::string&) {});
 
     CCMenuItemSpriteExtra* createCircleButton(const std::string& pTexture, geode::CircleBaseColor pColor, geode::CircleBaseSize pSize, cocos2d::CCObject* pTarget, cocos2d::SEL_MenuHandler pCallback, float pScale = 1.0f);
     CCMenuItemSpriteExtra* createCircleButton(const std::string& pTexture, geode::CircleBaseColor pColor, cocos2d::CCObject* pTarget, cocos2d::SEL_MenuHandler pCallback, float pScale = 1.0f);

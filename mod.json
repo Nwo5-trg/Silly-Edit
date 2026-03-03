@@ -1,5 +1,5 @@
 {
-	"geode": "5.0.1",
+	"geode": "5.2.0",
 	"gd": {
 		"win": "2.2081",
 		"android": "2.2081",
@@ -8,7 +8,7 @@
 	},
 	"id": "nwo5.sillyedit",
 	"name": "sillyedit",
-	"version": "v0.1.0-alpha.8",
+	"version": "v0.1.0-alpha.9",
 	"developer": "Nwo5",
 	"description": "so silly",
 	"links": {
@@ -53,6 +53,22 @@
 			"description": "hold to delete all",
 			"category": "editor",
 			"default": "Ctrl+Shift+M"
+		},
+		"better-scale-title": {
+			"type": "title",
+			"name": "Better Scale"
+		},
+		"better-scale-activate-scale-control": {
+			"type": "keybind",
+			"name": "Activate Scale Control",
+			"category": "editor",
+			"default": "Z"
+		},
+		"better-scale-activate-scale-xy-control": {
+			"type": "keybind",
+			"name": "Activate Scale XY Control",
+			"category": "editor",
+			"default": "X"
 		},
 		"free-snap-title": {
 			"type": "title",

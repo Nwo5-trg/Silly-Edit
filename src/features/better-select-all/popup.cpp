@@ -50,7 +50,7 @@ namespace BetterSelectAll {
             SetNodePosition{(WIDTH - BACKGROUND_BUFFER) - BUTTON_SIZE / 2, BACKGROUND_BUFFER + BUTTON_SIZE / 2},
             SetNodeParent{m_buttonMenu}
         );
-        m_selectedObjectMode = Settings::BetterSelectAll::saveState ? Mod::get()->getSavedValue<bool>("better-select-all-selected-object-mode") : false;
+        m_selectedObjectMode = Settings::BetterSelectAll::saveState.get() ? Mod::get()->getSavedValue<bool>("better-select-all-selected-object-mode") : false;
         selectedObjectModeToggle->toggle(m_selectedObjectMode);
 
         auto bypassAllToggle = Utils::setupNode(
@@ -66,7 +66,7 @@ namespace BetterSelectAll {
             SetNodeParent{m_buttonMenu}
         );
 
-        m_bypassAll = Settings::BetterSelectAll::saveState ? Mod::get()->getSavedValue<bool>("better-select-all-bypass-all") : false;
+        m_bypassAll = Settings::BetterSelectAll::saveState.get() ? Mod::get()->getSavedValue<bool>("better-select-all-bypass-all") : false;
         bypassAllToggle->toggle(m_bypassAll);
 
         menu->setLayout(AxisLayout::create()
@@ -82,7 +82,12 @@ namespace BetterSelectAll {
     }
 
     void BetterSelectAllPopup::onSelectButton(cocos2d::CCObject* pSender) {
-        Editor::Selection::add(getObjectsWithDirection(static_cast<SelectDirection>(pSender->getTag()), m_selectedObjectMode), true, !m_bypassAll);
+        Editor::Selection::add(
+            getObjectsWithDirection(static_cast<SelectDirection>(pSender->getTag()), m_selectedObjectMode), 
+            true, !m_bypassAll
+        );
+
+        Editor::update(false, true);
 
         onClose(nullptr);
     }

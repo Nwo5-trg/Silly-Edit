@@ -15,6 +15,12 @@ namespace Utils {
     TextInput* createTextInput(float pWidth, float pHeight, const std::string& pPlaceholder, TextInputCallback pCallback) {
         return createTextInput(pWidth, pHeight, pPlaceholder, "bigFont.fnt", std::move(pCallback));
     }
+    TextInput* createTextInput(float pWidth, const std::string& pPlaceholder, const std::string& pFont, TextInputCallback pCallback) {
+        return createTextInput(pWidth, DEFAULT_TEXT_INPUT_HEIGHT, pPlaceholder, pFont, std::move(pCallback));
+    }
+    TextInput* createTextInput(float pWidth, const std::string& pPlaceholder, TextInputCallback pCallback) {
+        return createTextInput(pWidth, DEFAULT_TEXT_INPUT_HEIGHT, pPlaceholder, std::move(pCallback));
+    }
 
     CCMenuItemSpriteExtra* createCircleButton(const std::string& pTexture, CircleBaseColor pColor, CircleBaseSize pSize, CCObject* pTarget, SEL_MenuHandler pCallback, float pScale) {
         return CCMenuItemSpriteExtra::create(

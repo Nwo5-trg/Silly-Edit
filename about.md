@@ -16,6 +16,13 @@ for more advanced users u can edit any obj prop or inject an obj string per id (
 ### Ruler
 its kinda in the name - *now with a new impl that actually draws stuff instead of using scaled sprites :3 !*
 
+### Better Scale
+- scale hack
+- scale input
+- scale shortcut buttons
+- scale control tweaks
+- maybe compatible with better edit (by that i mean completely overrides better edit ;3)
+
 ### Replace Object (More Select Filters / Trigger ID Search alternative)
 adds a *very* overcomplicated tab that has some cool features to the delete menu :3
 

@@ -1,3 +1,31 @@
+## v0.1.0-alpha.9
+**Added**
+
+- scale input and hack
+- tweaked text obj utils ui
+
+**Fixed**
+
+- replace object filter i hope
+- multiple replace object find button bugs
+- replace object toggle position
+- better select all keybinds
+- all features with selections ignoring layers
+
+**Internal**
+
+- i did my promised studying and still didnt rly clean up anything but wtv
+- use my settings api properly \<\/3
+
+## v0.1.0-alpha.8
+**Added**
+
+- text object utils
+
+**Fixed**
+
+- android build
+
 ## v0.1.0-alpha.7
 **Added**
 
@@ -36,7 +64,7 @@ ruler rewrite done !
 - settings fr
 - better object tab icons (i think)
 
-**Internal Shenanigans**
+**Internal**
 
 - a bunch of tweaks to util stuffs
 
@@ -47,7 +75,7 @@ basically one shot the entire settings popup :fire:
 
 - settings popup
 
-**Internal Shenanigans**
+**Internal**
 
 - tweaked settings a bit
 
@@ -62,7 +90,7 @@ omg this took almost 2 weeks how did i go from *silly find/replace menu* to *ive
 
 - default object options generating the wrong obj string
 
-**Internal Shenanigans**
+**Internal**
 
 - replace utils-object with a whole overcomplicated suite of editor utils (which i *might* make an api in the future)
 - polish setupnode a bit
@@ -76,7 +104,7 @@ dont think hjfod/andy will mind (tbf im also ~~stealing~~ other be features for 
 
 - copy/paste clipboard
 
-**Internal Shenanigans**
+**Internal**
 
 - rewrote my settings impl cuz it was bad (and now its still bad js slightly less bad)
 

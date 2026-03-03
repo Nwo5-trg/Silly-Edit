@@ -13,6 +13,12 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
         CCMenu* textObjectUtilsMenu = nullptr;
     };
 
+    static constexpr float VERTICAL_OFFSET = -20.0f;
+
+    static constexpr float SIDE_BUTTON_DISTANCE = 120.0f;
+    static constexpr float SIDE_BUTTON_SIZE = 25.0f;
+    static constexpr float SIDE_BUTTON_GAP = 5.0f;
+
     void openTextMenu(float dt = {}) {
         if (auto button = m_textButton) {
             button->activate();
@@ -23,8 +29,6 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
         if (!CustomizeObjectLayer::init(object, objects)) {
             return false;
         }
-        
-        log::error("{}", m_showTextInput, m_textButton);
     
         if (!m_textInput) {
             return true;
@@ -36,17 +40,16 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
 
         m_fields->textObjects = std::move(Editor::Selection::getType<TextGameObject*>());
 
-        Utils::setupNode(m_textInput, ChangeNodePositionY{-20.0f});
+        Utils::setupNode(m_textInput, ChangeNodePositionY{VERTICAL_OFFSET});
 
         auto inputBG = Utils::setupNode(
             m_mainLayer->getChildByID("text-input-bg"),
 
-            ChangeNodePositionY{-20.0f},
+            ChangeNodePositionY{VERTICAL_OFFSET},
             ChangeNodeWidth{-40.0f}
         );
 
-        Utils::setupNode(m_kerningSlider, ChangeNodePositionY{-20.0f});
-        Utils::setupNode(m_kerningLabel, ChangeNodePosition{-25.0f, -20.0f});
+        Utils::setupNode(m_kerningSlider, ChangeNodePositionY{VERTICAL_OFFSET});
 
         auto clearTextButton = static_cast<CCMenuItemSpriteExtra*>(getChildByIDRecursive("clear-text-button"));
         clearTextButton->setEnabled(false);
@@ -75,8 +78,8 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
             Utils::createButtonFrame("GJ_copyBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onCopyText)),
 
             SetNodeID{"copy-text-button"_spr},
-            SetNodePosition{inputBG->getPositionX() + (Settings::TextObjectUtils::swapCopyPaste.get() ? -120 : 120), inputBG->getPositionY()},
-            SetNodeScale{0.5f},
+            SetNodePosition{inputBG->getPositionX() + (Settings::TextObjectUtils::swapCopyPaste.get() ? -SIDE_BUTTON_DISTANCE : SIDE_BUTTON_DISTANCE), inputBG->getPositionY()},
+            SetNodeScaleWithSize{SIDE_BUTTON_SIZE},
             SetNodeParent{m_fields->textObjectUtilsMenu}
         );
 
@@ -84,8 +87,8 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
             Utils::createButtonFrame("GJ_pasteBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onPasteText)),
 
             SetNodeID{"paste-text-button"_spr},
-            SetNodePosition{inputBG->getPositionX() + (Settings::TextObjectUtils::swapCopyPaste.get() ? 120 : -120), inputBG->getPositionY()},
-            SetNodeScale{0.5f},
+            SetNodePosition{inputBG->getPositionX() + (Settings::TextObjectUtils::swapCopyPaste.get() ? SIDE_BUTTON_DISTANCE : -SIDE_BUTTON_DISTANCE), inputBG->getPositionY()},
+            SetNodeScale{SIDE_BUTTON_SIZE},
             SetNodeParent{m_fields->textObjectUtilsMenu}
         );
 
@@ -93,8 +96,8 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
             Utils::createButtonFrame("GJ_trashBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onClearText)),
 
             SetNodeID{"clear-text-button"_spr},
-            SetNodePosition{inputBG->getPositionX() + 150, inputBG->getPositionY()},
-            SetNodeScale{0.55f},
+            SetNodePosition{inputBG->getPositionX() + SIDE_BUTTON_DISTANCE + SIDE_BUTTON_SIZE + SIDE_BUTTON_GAP, inputBG->getPositionY()},
+            SetNodeScale{SIDE_BUTTON_SIZE},
             SetNodeParent{m_fields->textObjectUtilsMenu}
         );
 
@@ -102,13 +105,13 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
             Utils::createButtonFrame("GJ_redoBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onNewline)),
 
             SetNodeID{"newline-text-button"_spr},
-            SetNodePosition{inputBG->getPositionX() - 150, inputBG->getPositionY()},
-            SetNodeScale{0.6f},
+            SetNodePosition{inputBG->getPositionX() - SIDE_BUTTON_DISTANCE - SIDE_BUTTON_SIZE - SIDE_BUTTON_GAP, inputBG->getPositionY()},
+            SetNodeScale{SIDE_BUTTON_SIZE},
             SetNodeParent{m_fields->textObjectUtilsMenu}
         );
 
         m_fields->kerningInput = Utils::setupNode(
-            Utils::createTextInput(45.0f, 22.5f, "0", [this]  (const std::string& pStr) {
+            Utils::createTextInput(45.0f, "0", [this]  (const std::string& pStr) {
                 if (pStr.empty()) {
                     return;
                 }
@@ -130,6 +133,8 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
         );
         m_fields->kerningInput->setCommonFilter(CommonFilter::Int);
         m_textTabNodes->addObject(m_fields->kerningInput);
+
+        Utils::setupNode(m_kerningLabel, ChangeNodePosition{-m_fields->kerningInput->getScaledContentWidth(), VERTICAL_OFFSET});
 
         updateKerningLabel();
          
@@ -160,12 +165,7 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
             return;
         }
 
-        std::string str = m_kerningLabel->getString();
-
-        if (const auto end = str.find(' '); end < str.size() - 1) {
-            str.erase(end + 1);
-            m_kerningLabel->setString(str.c_str());
-        }
+        m_kerningLabel->setString("Kerning: ");
 
         input->setPosition(
             m_kerningLabel->getPositionX() + m_kerningLabel->getScaledContentWidth() / 2 + input->getScaledContentWidth() / 2,
@@ -179,6 +179,7 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
         if (m_fields->kerningInput) {
             m_fields->kerningInput->getInputNode()->onClickTrackNode(false);
         }
+        
         CustomizeObjectLayer::onClose(sender);
     }
 

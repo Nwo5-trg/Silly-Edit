@@ -4,8 +4,8 @@
 using namespace geode::prelude;
 
 namespace Editor::Selection {
-    void add(GameObject* pObj, bool pUndo, bool pUseFilter) {
-        if (pUseFilter && !layer()->validGroup(pObj, true)) {
+    void add(GameObject* pObj, bool pUndo, bool pUseFilter, bool pAlsoCheckLayers) {
+        if (pUseFilter && pAlsoCheckLayers && !Object::canSelectLayer(pObj)) {
             return;
         }
 
@@ -15,16 +15,18 @@ namespace Editor::Selection {
         
         ui()->selectObject(pObj, !pUseFilter);
     }
-    void add(std::span<GameObject*> pObjs, bool pUndo, bool pUseFilter) {
-        add(CCArrayExt(pObjs).inner(), pUndo, pUseFilter);
+    void add(std::span<GameObject*> pObjs, bool pUndo, bool pUseFilter, bool pAlsoCheckLayers) {
+        add(CCArrayExt(pObjs).inner(), pUndo, pUseFilter, pAlsoCheckLayers);
     }
-    void add(cocos2d::CCArray* pObjs, bool pUndo, bool pUseFilter) {
-        auto objsToSelect = pUseFilter ? CCArray::create() : CCArray::createWithArray(pObjs);
+    void add(cocos2d::CCArray* pObjs, bool pUndo, bool pUseFilter, bool pAlsoCheckLayers) {
+        const auto checkLayers = pUseFilter && pAlsoCheckLayers;
 
-        if (pUseFilter) {
+        auto objs = checkLayers ? CCArray::create() : pObjs;
+
+        if (checkLayers) {
             for (auto obj : CCArrayExt<GameObject*>(pObjs)) {
-                if (layer()->validGroup(obj, true)) {
-                    objsToSelect->addObject(obj);
+                if (Object::canSelectLayer(obj)) {
+                    objs->addObject(obj);
                 }
             }
         }
@@ -33,10 +35,10 @@ namespace Editor::Selection {
             ui()->createUndoSelectObject(false);
         }
         
-        ui()->selectObjects(pObjs, objsToSelect);
+        ui()->selectObjects(objs, !pUseFilter);
     }
-    void set(GameObject* pObj, bool pUndo, bool pUseFilter) {
-        if (pUseFilter && !layer()->validGroup(pObj, true)) {
+    void set(GameObject* pObj, bool pUndo, bool pUseFilter, bool pAlsoCheckLayers) {
+        if (pUseFilter && pAlsoCheckLayers && !Object::canSelectLayer(pObj)) {
             return;
         }
 
@@ -48,27 +50,29 @@ namespace Editor::Selection {
         
         ui()->selectObject(pObj, !pUseFilter);
     }
-    void set(std::span<GameObject*> pObjs, bool pUndo, bool pUseFilter) {
-        set(CCArrayExt(pObjs).inner(), pUndo, pUseFilter);
+    void set(std::span<GameObject*> pObjs, bool pUndo, bool pUseFilter, bool pAlsoCheckLayers) {
+        set(CCArrayExt(pObjs).inner(), pUndo, pUseFilter, pAlsoCheckLayers);
     }
-    void set(cocos2d::CCArray* pObjs, bool pUndo, bool pUseFilter) {
-        auto objsToSelect = pUseFilter ? CCArray::create() : CCArray::createWithArray(pObjs);
+    void set(cocos2d::CCArray* pObjs, bool pUndo, bool pUseFilter, bool pAlsoCheckLayers) {
+        const auto checkLayers = pUseFilter && pAlsoCheckLayers;
 
-        if (pUseFilter) {
+        auto objs = checkLayers ? CCArray::create() : pObjs;
+
+        if (checkLayers) {
             for (auto obj : CCArrayExt<GameObject*>(pObjs)) {
-                if (layer()->validGroup(obj, true)) {
-                    objsToSelect->addObject(obj);
+                if (Object::canSelectLayer(obj)) {
+                    objs->addObject(obj);
                 }
             }
         }
-
+        
         if (pUndo) {
             ui()->createUndoSelectObject(false);
         }
 
         clear();
         
-        ui()->selectObjects(pObjs, objsToSelect);
+        ui()->selectObjects(pObjs, !pUseFilter);
     }
 
     bool empty() {

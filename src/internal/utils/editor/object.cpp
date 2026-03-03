@@ -1,5 +1,6 @@
 #include "object.hpp"
 #include "selection.hpp"
+#include "editor.hpp"
 
 using namespace geode::prelude;
 
@@ -164,6 +165,10 @@ namespace Editor::Object {
         return out;
     }
 
+    bool canSelectLayer(GameObject* pObj) {
+        return Editor::layerSelectable(pObj->m_editorLayer) || Editor::layerSelectable(pObj->m_editorLayer2);
+    }
+
     cocos2d::CCRect bounds(std::span<GameObject*> pObjs, bool pAddSize) {
         if (pObjs.empty()) {
             return CCRectZero;
@@ -325,7 +330,7 @@ namespace Editor::Object {
     }
     void moveBy(GameObject* pObj, cocos2d::CCPoint pOff, bool pUndo) {
         if (pUndo) {
-            Impl::createUndoObject(UndoCommand::Transform, true);
+            Impl::createUndoObject(UndoCommand::Transform);
         }
 
         ui()->moveObject(pObj, pOff);
@@ -336,7 +341,7 @@ namespace Editor::Object {
         }
 
         if (pUndo) {
-            Impl::createUndoObject(UndoCommand::Transform, true);
+            Impl::createUndoObject(UndoCommand::Transform);
         }
 
         for (auto obj : pObjs) {
@@ -349,7 +354,7 @@ namespace Editor::Object {
         }
 
         if (pUndo) {
-            Impl::createUndoObject(UndoCommand::Transform, true);
+            Impl::createUndoObject(UndoCommand::Transform);
         }
 
         for (auto obj : CCArrayExt<GameObject*>(pObjs)) {
@@ -365,7 +370,7 @@ namespace Editor::Object {
             maxScale.y = std::max(maxScale.y, obj->m_scaleY);
         }
 
-        scaleBy(pObjs, (maxScale.x * pX) / maxScale.x, (maxScale.y * pY) / maxScale.y, pUndo, pCenter, pMove);
+        scaleBy(pObjs, pX / (maxScale.x ? maxScale.x : 1.0f), pY / (maxScale.y ? maxScale.y : 1.0f), pUndo, pCenter, pMove);
     }
     void scale(std::span<GameObject*> pObjs, float pTo, bool pUndo, cocos2d::CCPoint pCenter, bool pMove) {
         float maxScale = std::numeric_limits<float>::lowest();
@@ -374,7 +379,39 @@ namespace Editor::Object {
             maxScale = std::max(maxScale, std::max(obj->m_scaleX, obj->m_scaleY));
         }
 
-        scaleBy(pObjs, maxScale, maxScale, pUndo, pCenter, pMove);
+        if (!maxScale) {
+            return;
+        }
+
+        const auto mod = pTo / maxScale;
+
+        scaleBy(pObjs, mod, mod, pUndo, pCenter, pMove);
+    }
+    void scaleX(std::span<GameObject*> pObjs, float pTo, bool pUndo, cocos2d::CCPoint pCenter, bool pMove) {
+        float maxScale = std::numeric_limits<float>::lowest();
+
+        for (auto obj : pObjs) {
+            maxScale = std::max(maxScale, obj->m_scaleX);
+        }
+
+        if (!maxScale) {
+            return;
+        }
+
+        scaleXBy(pObjs, pTo / maxScale, pUndo, pCenter, pMove);
+    }
+    void scaleY(std::span<GameObject*> pObjs, float pTo, bool pUndo, cocos2d::CCPoint pCenter, bool pMove) {
+        float maxScale = std::numeric_limits<float>::lowest();
+
+        for (auto obj : pObjs) {
+            maxScale = std::max(maxScale, obj->m_scaleY);
+        }
+
+        if (!maxScale) {
+            return;
+        }
+
+        scaleYBy(pObjs, pTo / maxScale, pUndo, pCenter, pMove);
     }
     void scale(cocos2d::CCArray* pObjs, float pX, float pY, bool pUndo, cocos2d::CCPoint pCenter, bool pMove) {
         CCPoint maxScale = {std::numeric_limits<float>::lowest(), std::numeric_limits<float>::lowest()};
@@ -384,7 +421,7 @@ namespace Editor::Object {
             maxScale.y = std::max(maxScale.y, obj->m_scaleY);
         }
 
-        scaleBy(pObjs, (maxScale.x * pX) / maxScale.x, (maxScale.y * pY) / maxScale.y, pUndo, pCenter, pMove);
+        scaleBy(pObjs, pX / (maxScale.x ? maxScale.x : 1.0f), pY / (maxScale.y ? maxScale.y : 1.0f), pUndo, pCenter, pMove);
     }
     void scale(cocos2d::CCArray* pObjs, float pTo, bool pUndo, cocos2d::CCPoint pCenter, bool pMove) {
         float maxScale = std::numeric_limits<float>::lowest();
@@ -393,7 +430,39 @@ namespace Editor::Object {
             maxScale = std::max(maxScale, std::max(obj->m_scaleX, obj->m_scaleY));
         }
 
-        scaleBy(pObjs, maxScale, maxScale, pUndo, pCenter, pMove);
+        if (!maxScale) {
+            return;
+        }
+
+        const auto mod = pTo / maxScale;
+
+        scaleBy(pObjs, mod, mod, pUndo, pCenter, pMove);
+    }
+    void scaleX(cocos2d::CCArray* pObjs, float pTo, bool pUndo, cocos2d::CCPoint pCenter, bool pMove) {
+        float maxScale = std::numeric_limits<float>::lowest();
+
+        for (auto obj : CCArrayExt<GameObject*>(pObjs)) {
+            maxScale = std::max(maxScale, obj->m_scaleX);
+        }
+
+        if (!maxScale) {
+            return;
+        }
+
+        scaleXBy(pObjs, pTo / maxScale, pUndo, pCenter, pMove);
+    }
+    void scaleY(cocos2d::CCArray* pObjs, float pTo, bool pUndo, cocos2d::CCPoint pCenter, bool pMove) {
+        float maxScale = std::numeric_limits<float>::lowest();
+
+        for (auto obj : CCArrayExt<GameObject*>(pObjs)) {
+            maxScale = std::max(maxScale, obj->m_scaleY);
+        }
+
+        if (!maxScale) {
+            return;
+        }
+
+        scaleYBy(pObjs, pTo / maxScale, pUndo, pCenter, pMove);
     }
     void scaleBy(std::span<GameObject*> pObjs, float pX, float pY, bool pUndo, cocos2d::CCPoint pCenter, bool pMove) {
         if (pObjs.empty()) {
@@ -405,13 +474,10 @@ namespace Editor::Object {
         }
 
         if (pUndo) {
-            Impl::createUndoObject(UndoCommand::Transform, true);
+            Impl::createUndoObject(UndoCommand::Transform);
         }
 
         for (auto obj : pObjs) {
-            float newX = obj->m_scaleX * pX;
-            float newY = obj->m_scaleY * pY;
-            
             if (pMove) {
                 move(obj, pCenter + (obj->getRealPosition() - pCenter) * CCSize{pX, pY});
             }
@@ -420,12 +486,54 @@ namespace Editor::Object {
                 obj->updateCustomScaleX(obj->m_scaleX * pX);
             }
             if (pY != 1.0f) {
-                obj->updateCustomScaleY(obj->m_scaleX * pX);
+                obj->updateCustomScaleY(obj->m_scaleY * pY);
             }
         }
     }
     void scaleBy(std::span<GameObject*> pObjs, float pMod, bool pUndo, cocos2d::CCPoint pCenter, bool pMove) {
         scaleBy(pObjs, pMod, pMod, pUndo, pCenter, pMove);
+    }
+    void scaleXBy(std::span<GameObject*> pObjs, float pMod, bool pUndo, cocos2d::CCPoint pCenter, bool pMove) {
+        if (pObjs.empty() || !pMod || pMod == 1.0f) {
+            return;
+        }
+
+        if (pCenter == AUTO_CENTER) {
+            pCenter = center(pObjs);
+        }
+
+        if (pUndo) {
+            Impl::createUndoObject(UndoCommand::Transform);
+        }
+
+        for (auto obj : pObjs) {
+            if (pMove) {
+                move(obj, pCenter + (obj->getRealPosition() - pCenter) * CCSize{pMod, 1.0f});
+            }
+
+            obj->updateCustomScaleX(obj->m_scaleX * pMod);
+        }
+    }
+    void scaleYBy(std::span<GameObject*> pObjs, float pMod, bool pUndo, cocos2d::CCPoint pCenter, bool pMove) {
+        if (pObjs.empty() || !pMod || pMod == 1.0f) {
+            return;
+        }
+
+        if (pCenter == AUTO_CENTER) {
+            pCenter = center(pObjs);
+        }
+
+        if (pUndo) {
+            Impl::createUndoObject(UndoCommand::Transform);
+        }
+
+        for (auto obj : pObjs) {
+            if (pMove) {
+                move(obj, pCenter + (obj->getRealPosition() - pCenter) * CCSize{1.0f, pMod});
+            }
+
+            obj->updateCustomScaleY(obj->m_scaleY * pMod);
+        }
     }
     void scaleBy(cocos2d::CCArray* pObjs, float pX, float pY, bool pUndo, cocos2d::CCPoint pCenter, bool pMove) {
         if (!pObjs->count()) {
@@ -437,26 +545,65 @@ namespace Editor::Object {
         }
 
         if (pUndo) {
-            Impl::createUndoObject(UndoCommand::Transform, true);
+            Impl::createUndoObject(UndoCommand::Transform);
         }
 
         for (auto obj : CCArrayExt<GameObject*>(pObjs)) {
-            float newX = obj->m_scaleX * pX;
-            float newY = obj->m_scaleY * pY;
-            
             if (pMove) {
                 move(obj, pCenter + (obj->getRealPosition() - pCenter) * CCSize{pX, pY});
             }
 
-            if (pX != 1.0f) {
+            if (pX && pX != 1.0f) {
                 obj->updateCustomScaleX(obj->m_scaleX * pX);
             }
-            if (pY != 1.0f) {
-                obj->updateCustomScaleY(obj->m_scaleX * pX);
+            if (pY && pY != 1.0f) {
+                obj->updateCustomScaleY(obj->m_scaleY * pY);
             }
         }
     }
     void scaleBy(cocos2d::CCArray* pObjs, float pMod, bool pUndo, cocos2d::CCPoint pCenter, bool pMove) {
         scaleBy(pObjs, pMod, pMod, pUndo, pCenter, pMove);
+    }
+    void scaleXBy(cocos2d::CCArray* pObjs, float pMod, bool pUndo, cocos2d::CCPoint pCenter, bool pMove) {
+        if (!pObjs->count() || !pMod || pMod == 1.0f) {
+            return;
+        }
+        
+        if (pCenter == AUTO_CENTER) {
+            pCenter = center(pObjs);
+        }
+
+        if (pUndo) {
+            Impl::createUndoObject(UndoCommand::Transform);
+        }
+
+        for (auto obj : CCArrayExt<GameObject*>(pObjs)) {        
+            if (pMove) {
+                move(obj, pCenter + (obj->getRealPosition() - pCenter) * CCSize{pMod, 1.0f});
+            }
+
+            obj->updateCustomScaleX(obj->m_scaleX * pMod);
+        }
+    }
+    void scaleYBy(cocos2d::CCArray* pObjs, float pMod, bool pUndo, cocos2d::CCPoint pCenter, bool pMove) {
+        if (!pObjs->count() || !pMod || pMod == 1.0f) {
+            return;
+        }
+        
+        if (pCenter == AUTO_CENTER) {
+            pCenter = center(pObjs);
+        }
+
+        if (pUndo) {
+            Impl::createUndoObject(UndoCommand::Transform);
+        }
+
+        for (auto obj : CCArrayExt<GameObject*>(pObjs)) {        
+            if (pMove) {
+                move(obj, pCenter + (obj->getRealPosition() - pCenter) * CCSize{1.0f, pMod});
+            }
+
+            obj->updateCustomScaleY(obj->m_scaleY * pMod);
+        }
     }
 }

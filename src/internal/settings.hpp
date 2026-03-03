@@ -5,6 +5,7 @@ enum class SettingCategory {
     Keybinds,
     DefaultObjectOptions,
     Ruler,
+    BetterScale,
     ReplaceObjects,
     FreeSnap,
     TextObjectUtils,

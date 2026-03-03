@@ -81,12 +81,12 @@ namespace Editor::Selection {
     cocos2d::CCRect bounds();
     cocos2d::CCPoint center(bool pIgnoreParent = false);
 
-    void add(GameObject* pObj, bool pUndo = false, bool pUseFilter = false);
-    void add(std::span<GameObject*> pObjs, bool pUndo = false, bool pUseFilter = false);
-    void add(cocos2d::CCArray* pObjs, bool pUndo = false, bool pUseFilter = false);
-    void set(GameObject* pObj, bool pUndo = false, bool pUseFilter = false);
-    void set(std::span<GameObject*> pObjs, bool pUndo = false, bool pUseFilter = false);
-    void set(cocos2d::CCArray* pObjs, bool pUndo = false, bool pUseFilter = false);
+    void add(GameObject* pObj, bool pUndo = false, bool pUseFilter = false, bool pAlsoCheckLayers = true);
+    void add(std::span<GameObject*> pObjs, bool pUndo = false, bool pUseFilter = false, bool pAlsoCheckLayers = true);
+    void add(cocos2d::CCArray* pObjs, bool pUndo = false, bool pUseFilter = false, bool pAlsoCheckLayers = true);
+    void set(GameObject* pObj, bool pUndo = false, bool pUseFilter = false, bool pAlsoCheckLayers = true);
+    void set(std::span<GameObject*> pObjs, bool pUndo = false, bool pUseFilter = false, bool pAlsoCheckLayers = true);
+    void set(cocos2d::CCArray* pObjs, bool pUndo = false, bool pUseFilter = false, bool pAlsoCheckLayers = true);
 
     void clear(bool pUndo = false);
     void remove(GameObject* pObj, bool pUndo = false);

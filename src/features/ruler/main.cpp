@@ -75,9 +75,9 @@ class $modify(RulerEditorUI, EditorUI) {
     }
 
     std::string getMeasurementString(float pMeasure) {
-        if (Settings::Ruler::useGDUnits) {
+        if (Settings::Ruler::useGDUnits.get()) {
             // i think the correct way to do the math is slightly different but this works so
-            const auto measure = pMeasure / (Settings::Ruler::useGDUnits ? Editor::GRID_SIZE : 1);
+            const auto measure = pMeasure / (Settings::Ruler::useGDUnits.get() ? Editor::GRID_SIZE : 1);
             const auto units = std::floor(measure);
 
             const auto str =  Utils::numToString(units);
@@ -146,16 +146,17 @@ class $modify(RulerEditorUI, EditorUI) {
 
     void updateMeasurements() {
         // border alignment no workie :fire:
-        const auto padding = CCPoint{Settings::Ruler::padding, Settings::Ruler::padding} / 2 + CCPoint{Settings::Ruler::thickness, Settings::Ruler::thickness} / 2;
+        const auto padding = CCPoint{Settings::Ruler::padding.get(), Settings::Ruler::padding.get()} / 2 
+            + CCPoint{Settings::Ruler::thickness.get(), Settings::Ruler::thickness.get()} / 2;
 
         for (const auto& measurement : m_fields->measurements) {
             const auto start = measurement.start - padding;
             const auto end = measurement.end + padding;
 
-            const auto col = Settings::Ruler::chroma ? Shared::getChroma(measurement.color.chroma) : s_colors[measurement.color.main];
+            const auto col = Settings::Ruler::chroma.get() ? Shared::getChroma(measurement.color.chroma) : s_colors[measurement.color.main];
 
             Shared::getOverlayDraw()->drawRect(
-                start, end, {col.r, col.g, col.b, Settings::Ruler::fillOpacity}, Settings::Ruler::thickness, col
+                start, end, {col.r, col.g, col.b, Settings::Ruler::fillOpacity.get()}, Settings::Ruler::thickness.get(), col
             );
 
             for (auto label : {measurement.xLabel, measurement.yLabel}) {
@@ -166,43 +167,43 @@ class $modify(RulerEditorUI, EditorUI) {
 
                     SetNodePosition{ // not even worth trying to turn into a ternary :pray:
                         y
-                            ? (Settings::Ruler::labelOnRight
-                                ? ccp(measurement.end.x + Settings::Ruler::thickness + Settings::Ruler::labelDistance,
+                            ? (Settings::Ruler::labelOnRight.get()
+                                ? ccp(measurement.end.x + Settings::Ruler::thickness.get() + Settings::Ruler::labelDistance.get(),
                                     (measurement.start.y + measurement.end.y) / 2)
-                                : ccp(measurement.start.x - Settings::Ruler::thickness - Settings::Ruler::labelDistance,
+                                : ccp(measurement.start.x - Settings::Ruler::thickness.get() - Settings::Ruler::labelDistance.get(),
                                     (measurement.start.y + measurement.end.y) / 2)
                             )
-                            : (Settings::Ruler::labelOnBottom
+                            : (Settings::Ruler::labelOnBottom.get()
                                 ? ccp((measurement.start.x + measurement.end.x) / 2,
-                                    measurement.start.y - Settings::Ruler::thickness - Settings::Ruler::labelDistance)
+                                    measurement.start.y - Settings::Ruler::thickness.get() - Settings::Ruler::labelDistance.get())
                                 : ccp((measurement.start.x + measurement.end.x) / 2,
-                                    measurement.end.y + Settings::Ruler::thickness + Settings::Ruler::labelDistance)
+                                    measurement.end.y + Settings::Ruler::thickness.get() + Settings::Ruler::labelDistance.get())
                             )
                     },
-                    SetNodeScale{Settings::Ruler::labelSize},
+                    SetNodeScale{Settings::Ruler::labelSize.get()},
                     SetNodeAnchor{ // this is prolly a war crime icl but atleast its better than my old ruler impl
                         y 
-                            ? (Settings::Ruler::dontRotateLabel 
-                                ? (Settings::Ruler::labelOnRight 
+                            ? (Settings::Ruler::dontRotateLabel.get() 
+                                ? (Settings::Ruler::labelOnRight.get() 
                                     ? LEFT_CENTER_ANCHOR 
                                     : RIGHT_CENTER_ANCHOR
                                     ) 
                                 : BOTTOM_CENTER_ANCHOR
                               )
-                            : (Settings::Ruler::labelOnBottom 
+                            : (Settings::Ruler::labelOnBottom.get() 
                                 ? TOP_CENTER_ANCHOR 
                                 : BOTTOM_CENTER_ANCHOR
                               )
                     },
                     SetNodeRotation{
-                        Settings::Ruler::dontRotateLabel 
+                        Settings::Ruler::dontRotateLabel.get() 
                             ? 0.0f 
                             : (y 
-                                ? (Settings::Ruler::labelOnRight 
+                                ? (Settings::Ruler::labelOnRight.get() 
                                     ? 90.0f 
                                     : 270.0f
                                   ) 
-                                : (Settings::Ruler::labelOnBottom 
+                                : (Settings::Ruler::labelOnBottom.get() 
                                     ? 180.0f 
                                     : 0.0f
                                   )
@@ -225,12 +226,12 @@ class $modify(RulerEditorUI, EditorUI) {
         Shared::addUpdateFunc(SE_UPDATE_FUNC(updateMeasurements));
 
         Utils::setupKeybind(this, "ruler-create-measurement-key", [this] (const Keybind&, bool pDown, bool, double) {
-            if (Settings::Ruler::enabled && pDown) {
+            if (Settings::Ruler::enabled.get() && pDown) {
                 createMeasurement();
             }
         });
         Utils::setupKeybind(this, "ruler-delete-last-measurement-key", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
-            if (Settings::Ruler::enabled && pDown) {
+            if (Settings::Ruler::enabled.get() && pDown) {
                 deleteMeasurement(pRepeat);
             }
         });
@@ -241,7 +242,7 @@ class $modify(RulerEditorUI, EditorUI) {
     void createMoveMenu() {
 		EditorUI::createMoveMenu();
 
-        if (!Settings::Ruler::enabled || !Settings::Ruler::editorTabButton) {
+        if (!Settings::Ruler::enabled.get() || !Settings::Ruler::editorTabButton.get()) {
             return;
         }
 

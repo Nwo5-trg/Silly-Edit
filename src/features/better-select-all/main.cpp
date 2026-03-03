@@ -38,7 +38,7 @@ namespace BetterSelectAll {
 
 class $modify(EditorPauseLayer) {
     void onSelectAll(CCObject* sender) {
-        if (Settings::BetterSelectAll::openPopup) {
+        if (Settings::BetterSelectAll::openPopup.get()) {
             BetterSelectAll::BetterSelectAllPopup::create()->show();
         }
         else {
@@ -54,28 +54,53 @@ class $modify(EditorUI) {
         }
 
         Utils::setupKeybind(this, "better-select-all-select-all-key", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
-            if (Settings::BetterSelectAll::enabled && pDown && !pRepeat) {
-                BetterSelectAll::getObjectsWithDirection(BetterSelectAll::SelectDirection::All, false);
+            if (Settings::BetterSelectAll::enabled.get() && pDown && !pRepeat) {
+                Editor::Selection::add(
+                    BetterSelectAll::getObjectsWithDirection(BetterSelectAll::SelectDirection::All, false),
+                    true, true
+                );
+
+                Editor::update(false, true);
             }
         });
         Utils::setupKeybind(this, "better-select-all-select-all-left-key", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
-            if (Settings::BetterSelectAll::enabled && pDown && !pRepeat) {
-                BetterSelectAll::getObjectsWithDirection(BetterSelectAll::SelectDirection::West, false);
+            if (Settings::BetterSelectAll::enabled.get() && pDown && !pRepeat) {
+                Editor::Selection::add(
+                    BetterSelectAll::getObjectsWithDirection(BetterSelectAll::SelectDirection::West, false),
+                    true, true
+                );
+
+                Editor::update(false, true);
             }
         });
         Utils::setupKeybind(this, "better-select-all-select-all-down-key", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
-            if (Settings::BetterSelectAll::enabled && pDown && !pRepeat) {
-                BetterSelectAll::getObjectsWithDirection(BetterSelectAll::SelectDirection::South, false);
+            if (Settings::BetterSelectAll::enabled.get() && pDown && !pRepeat) {
+                Editor::Selection::add(
+                    BetterSelectAll::getObjectsWithDirection(BetterSelectAll::SelectDirection::South, false),
+                    true, true
+                );
+
+                Editor::update(false, true);
             }
         });
         Utils::setupKeybind(this, "better-select-all-select-all-up-key", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
-            if (Settings::BetterSelectAll::enabled && pDown && !pRepeat) {
-                BetterSelectAll::getObjectsWithDirection(BetterSelectAll::SelectDirection::North, false);
+            if (Settings::BetterSelectAll::enabled.get() && pDown && !pRepeat) {
+                Editor::Selection::add(
+                    BetterSelectAll::getObjectsWithDirection(BetterSelectAll::SelectDirection::North, false),
+                    true, true
+                );
+
+                Editor::update(false, true);
             }
         });
         Utils::setupKeybind(this, "better-select-all-select-all-right-key", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
-            if (Settings::BetterSelectAll::enabled && pDown && !pRepeat) {
-                BetterSelectAll::getObjectsWithDirection(BetterSelectAll::SelectDirection::East, false);
+            if (Settings::BetterSelectAll::enabled.get() && pDown && !pRepeat) {
+                Editor::Selection::add(
+                    BetterSelectAll::getObjectsWithDirection(BetterSelectAll::SelectDirection::East, false),
+                    true, true
+                );
+
+                Editor::update(false, true);
             }
         });
         

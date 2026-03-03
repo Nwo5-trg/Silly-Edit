@@ -261,14 +261,16 @@ namespace ReplaceObjects {
     }
 
     void FindAndReplaceMenu::onFind(CCObject* pSender) {
-        const auto ret = m_useQueryAsSelectFilter;
-        m_useQueryAsSelectFilter = true;
+        auto objs = CCArray::create();
 
-        Editor::Selection::set(Editor::Selection::empty() ? Editor::ui()->m_editorLayer->m_objects : Editor::Selection::get(), true, true);
+        for (auto obj : CCArrayExt<GameObject*>(Editor::Selection::empty() ? Editor::ui()->m_editorLayer->m_objects : Editor::Selection::get())) {
+            if (evaluateObject(obj)) {
+                objs->addObject(obj);
+            }
+        }
+        Editor::Selection::set(objs, true, true);
 
-        m_useQueryAsSelectFilter = ret;
-
-        Editor::update();
+        Editor::update(false, true);
     }
     void FindAndReplaceMenu::onReplace(CCObject* pSender) {
         if (m_replaceExpressions.empty()) {
@@ -304,7 +306,10 @@ namespace ReplaceObjects {
         auto bar = pSender->getTag() ? m_replaceBar : m_queryBar;
 
         if (ids.size() == 1 || bar == m_replaceBar) {
-            bar->setString(bar->getString().append(fmt::format("{}{}", numToString(ids.front()), bar == m_queryBar ? "o" : "")), true);
+            bar->setString(
+                std::string{bar->getString()}.append(fmt::format("{}{}", numToString(ids.front()), bar == m_queryBar ? "o" : "")),
+                true
+            );
         }
         else {
             std::string str;
@@ -315,7 +320,10 @@ namespace ReplaceObjects {
 
             str.erase(str.size() - 2);
 
-            bar->setString(bar->getString().append(fmt::format("({})", bar->getString(), str)), true);
+            bar->setString(
+                std::string{bar->getString()}.append(fmt::format("({})", bar->getString(), str)), 
+                true
+            );
         }
     }
     void FindAndReplaceMenu::onShowSyntaxWarnings(CCObject* pSender) {

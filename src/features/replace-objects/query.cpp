@@ -146,37 +146,41 @@ namespace ReplaceObjects {
 
         std::vector<std::unique_ptr<QueryExpression>> queries;
         std::vector<QueryToken> queuedTokens;
+        
 
-        #define I_STILL_CANT_REALLY_WRAP_MY_HEAD_AROUND_SHUNTING_YARD_SO_ILL_MAKE_THIS_NOT_USE_A_FUCKING_MACRO_LATER() \
-            const auto queuedToken = queuedTokens.back(); \
-            queuedTokens.pop_back(); \
-        \
-            if (queuedToken.type == QueryTokenType::NotOperator) { \
-                if (queries.empty()) { \
-                    return Err("parse error at {} : operator missing operands", queuedToken.location); \
-                } \
-        \
-                auto expression = std::move(queries.back()); \
-                queries.pop_back(); \
-        \
-                queries.push_back(QueryConditionNot::create(std::move(expression))); \
-            } else { \
-                if (queries.size() < 2) { \
-                    return Err("parse error at {} : operator missing operands", queuedToken.location); \
-                } \
-        \
-                auto rhs = std::move(queries.back()); \
-                queries.pop_back(); \
-                auto lhs = std::move(queries.back()); \
-                queries.pop_back(); \
-        \
-                if (queuedToken.type == QueryTokenType::AndOperator) { \
-                    queries.push_back(QueryConditionAnd::create(std::move(rhs), std::move(lhs))); \
-                } \
-                else if (queuedToken.type == QueryTokenType::OrOperator) { \
-                    queries.push_back(QueryConditionOr::create(std::move(rhs), std::move(lhs))); \
-                }  \
+        const auto popQueue = [&] -> Result<void> {
+            const auto queuedToken = queuedTokens.back();
+            queuedTokens.pop_back();
+       
+            if (queuedToken.type == QueryTokenType::NotOperator) {
+                if (queries.empty()) {
+                    return Err("parse error at {} : operator missing operands", queuedToken.location);
+                }
+       
+                auto expression = std::move(queries.back());
+                queries.pop_back();
+       
+                queries.push_back(QueryConditionNot::create(std::move(expression)));
+            } else {
+                if (queries.size() < 2) {
+                    return Err("parse error at {} : operator missing operands", queuedToken.location);
+                }
+       
+                auto rhs = std::move(queries.back());
+                queries.pop_back();
+                auto lhs = std::move(queries.back());
+                queries.pop_back();
+       
+                if (queuedToken.type == QueryTokenType::AndOperator) {
+                    queries.push_back(QueryConditionAnd::create(std::move(rhs), std::move(lhs)));
+                }
+                else if (queuedToken.type == QueryTokenType::OrOperator) {
+                    queries.push_back(QueryConditionOr::create(std::move(rhs), std::move(lhs)));
+                }
             }
+
+            return Ok();
+        };
 
         for (size_t i = 0; i < tokens.size(); i++) {
             const auto& token = tokens[i];
@@ -187,7 +191,9 @@ namespace ReplaceObjects {
                 break; }
                 case QueryTokenType::ClosingParentheses: {
                     while (!queuedTokens.empty() && queuedTokens.back().type != QueryTokenType::OpenParentheses) {
-                        I_STILL_CANT_REALLY_WRAP_MY_HEAD_AROUND_SHUNTING_YARD_SO_ILL_MAKE_THIS_NOT_USE_A_FUCKING_MACRO_LATER()
+                        if (const auto res = popQueue(); res.isErr()) {
+                            return Err(res.unwrapErr());
+                        }
                     }
 
                     if (queuedTokens.empty()) {
@@ -200,7 +206,9 @@ namespace ReplaceObjects {
                 case QueryTokenType::OrOperator: [[__fallthrough__]];
                 case QueryTokenType::NotOperator: {
                     while (!queuedTokens.empty() && getQueryTokenPrecedence(queuedTokens.back().type) >= getQueryTokenPrecedence(token.type)) {
-                        I_STILL_CANT_REALLY_WRAP_MY_HEAD_AROUND_SHUNTING_YARD_SO_ILL_MAKE_THIS_NOT_USE_A_FUCKING_MACRO_LATER()
+                        if (const auto res = popQueue(); res.isErr()) {
+                            return Err(res.unwrapErr());
+                        }
                     }
 
                     queuedTokens.push_back(token);
@@ -235,7 +243,9 @@ namespace ReplaceObjects {
                 return Err("parse error at {} : extra open parentheses", token.location);
             }
 
-            I_STILL_CANT_REALLY_WRAP_MY_HEAD_AROUND_SHUNTING_YARD_SO_ILL_MAKE_THIS_NOT_USE_A_FUCKING_MACRO_LATER()
+            if (const auto res = popQueue(); res.isErr()) {
+                return Err(res.unwrapErr());
+            }
         }
 
         return Ok(std::move(queries.back()));

@@ -16,6 +16,7 @@ namespace Settings {
         int m_currentPage = 0;
 
         static constexpr size_t SETTINGS_PER_PAGE = 12;
+        
         static constexpr float SETTING_BUTTON_GAP = 5.0f;
         static constexpr float DOT_MENU_HEIGHT = 15.0f;
         static constexpr float DOT_MENU_GAP = 5.0f;

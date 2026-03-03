@@ -16,7 +16,7 @@ class $modify(EditorUI) {
     }
 
     void snapSelection(GameObject* pSnapObj) {
-        Editor::Object::move(Editor::Selection::get(), Editor::Object::snappedPos(pSnapObj, Settings::FreeSnap::gridSize), false, pSnapObj->getRealPosition());
+        Editor::Object::move(Editor::Selection::get(), Editor::Object::snappedPos(pSnapObj, Settings::FreeSnap::gridSize.get()), false, pSnapObj->getRealPosition());
         Editor::update();
     }
 
@@ -26,7 +26,7 @@ class $modify(EditorUI) {
         }
 
         // disable snap and do our own thing :3 (idk if snap obj would b valid rn and i dont feel like testing so i wont check for it)
-        if (Settings::FreeSnap::enabled && GameManager::sharedState()->getGameVariable("0008") && !Editor::Selection::empty()) {
+        if (Settings::FreeSnap::enabled.get() && GameManager::sharedState()->getGameVariable("0008") && !Editor::Selection::empty()) {
             GameManager::sharedState()->setGameVariable("0008", false);
             m_fields->prollySnapping = true;
 
@@ -77,12 +77,12 @@ class $modify(EditorUI) {
 
         const bool shouldntColorObjects = m_colorOverlay || m_hsvOverlay;
 
-        const auto selectionCol = Settings::FreeSnap::chroma 
+        const auto selectionCol = Settings::FreeSnap::chroma.get() 
             ? Shared::getChroma<ccColor3B>(Shared::ChromaNode::FreeSnap) 
             : Settings::FreeSnap::selectedObjectColor;
-        const auto snapCol = Settings::FreeSnap::chroma 
+        const auto snapCol = Settings::FreeSnap::chroma.get() 
             ? Shared::getChroma<ccColor3B>(Shared::ChromaNode::FreeSnapInvert) 
-            : Settings::FreeSnap::snapObjectColor;
+            : Settings::FreeSnap::snapObjectColor.get();
 
         // touches happen before schedulers so this works :3c
         for (auto obj : Editor::Selection::getExt()) {
@@ -106,7 +106,7 @@ class $modify(EditorUI) {
                 return;
             }
 
-            const auto pos = Editor::Object::snappedPos(obj, Settings::FreeSnap::gridSize);
+            const auto pos = Editor::Object::snappedPos(obj, Settings::FreeSnap::gridSize.get());
             const auto scale = obj->getScaledContentSize() / 2.0f;
             const auto theta = kmDegreesToRadians(-obj->getRotation());
 
@@ -120,8 +120,8 @@ class $modify(EditorUI) {
             const auto col = ccc4FFromccc3B(snapCol);
 
             Shared::getGridDraw()->drawPolygon(
-                v, 4, {col.r, col.g, col.b, Settings::FreeSnap::snapIndicatorFill},
-                Settings::FreeSnap::snapIndicatorThickness, col
+                v, 4, {col.r, col.g, col.b, Settings::FreeSnap::snapIndicatorFill.get()},
+                Settings::FreeSnap::snapIndicatorThickness.get(), col
             );
         }
     }
@@ -134,7 +134,7 @@ class $modify(EditorUI) {
         Shared::addUpdateFunc(SE_UPDATE_FUNC(updateSelect));
 
         Utils::setupKeybind(this, "free-snap-snap-selection", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
-            if (Settings::FreeSnap::enabled && pDown && !pRepeat && !Editor::Selection::empty()) {
+            if (Settings::FreeSnap::enabled.get() && pDown && !pRepeat && !Editor::Selection::empty()) {
                 snapSelection(Editor::Selection::getFirst());
             }
         });

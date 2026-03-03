@@ -22,6 +22,8 @@ namespace Editor::Object {
     std::vector<int> ids(std::span<GameObject*> pObjs, bool pSort = false);
     std::vector<int> ids(cocos2d::CCArray* pObjs, bool pSort = false);
 
+    bool canSelectLayer(GameObject* pObj);
+
     cocos2d::CCRect bounds(std::span<GameObject*> pObjs, bool pAddSize = false);
     cocos2d::CCRect bounds(cocos2d::CCArray* pObjs, bool pAddSize = false);
     cocos2d::CCPoint center(std::span<GameObject*> pObjs, bool pIgnoreParent = false);
@@ -45,10 +47,18 @@ namespace Editor::Object {
 
     void scale(std::span<GameObject*> pObjs, float pX, float pY, bool pUndo = false, cocos2d::CCPoint pCenter = AUTO_CENTER, bool pMove = true);
     void scale(std::span<GameObject*> pObjs, float pTo, bool pUndo = false, cocos2d::CCPoint pCenter = AUTO_CENTER, bool pMove = true);
+    void scaleX(std::span<GameObject*> pObjs, float pTo, bool pUndo = false, cocos2d::CCPoint pCenter = AUTO_CENTER, bool pMove = true);
+    void scaleY(std::span<GameObject*> pObjs, float pTo, bool pUndo = false, cocos2d::CCPoint pCenter = AUTO_CENTER, bool pMove = true);
     void scale(cocos2d::CCArray* pObjs, float pX, float pY, bool pUndo = false, cocos2d::CCPoint pCenter = AUTO_CENTER, bool pMove = true);
     void scale(cocos2d::CCArray*  pObjs, float pTo, bool pUndo = false, cocos2d::CCPoint pCenter = AUTO_CENTER, bool pMove = true);
+    void scaleX(cocos2d::CCArray*  pObjs, float pTo, bool pUndo = false, cocos2d::CCPoint pCenter = AUTO_CENTER, bool pMove = true);
+    void scaleY(cocos2d::CCArray*  pObjs, float pTo, bool pUndo = false, cocos2d::CCPoint pCenter = AUTO_CENTER, bool pMove = true);
     void scaleBy(std::span<GameObject*> pObjs, float pX, float pY, bool pUndo = false, cocos2d::CCPoint pCenter = AUTO_CENTER, bool pMove = true);
     void scaleBy(std::span<GameObject*> pObjs, float pMod, bool pUndo = false, cocos2d::CCPoint pCenter = AUTO_CENTER, bool pMove = true);
+    void scaleXBy(std::span<GameObject*> pObjs, float pMod, bool pUndo = false, cocos2d::CCPoint pCenter = AUTO_CENTER, bool pMove = true);
+    void scaleYBy(std::span<GameObject*> pObjs, float pMod, bool pUndo = false, cocos2d::CCPoint pCenter = AUTO_CENTER, bool pMove = true);
     void scaleBy(cocos2d::CCArray* pObjs, float pX, float pY, bool pUndo = false, cocos2d::CCPoint pCenter = AUTO_CENTER, bool pMove = true);
     void scaleBy(cocos2d::CCArray* pObjs, float pMod, bool pUndo = false, cocos2d::CCPoint pCenter = AUTO_CENTER, bool pMove = true);
+    void scaleXBy(cocos2d::CCArray* pObjs, float pMod, bool pUndo = false, cocos2d::CCPoint pCenter = AUTO_CENTER, bool pMove = true);
+    void scaleYBy(cocos2d::CCArray* pObjs, float pMod, bool pUndo = false, cocos2d::CCPoint pCenter = AUTO_CENTER, bool pMove = true);
 }

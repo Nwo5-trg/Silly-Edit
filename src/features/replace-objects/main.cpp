@@ -48,14 +48,14 @@ class $modify(ReplaceObjectsEditorUI, EditorUI) {
             ),
 
             SetNodeID{"toggle_find_and_replace_button"_spr},
-            SetNodePosition{helpButton->getPositionX() + helpButton->getScaledContentWidth() + MENU_GAP / 2, helpButton->getPositionY()},
+            SetNodePosition{helpButton->getPositionX(), helpButton->getPositionY() - helpButton->getScaledContentHeight() - MENU_GAP / 2},
             SetNodeScaleWithSize{helpButton->getScaledContentWidth()},
             SetNodeParent{m_deleteMenu}
         );
 
         const auto show = Settings::ReplaceObjects::saveSettings 
-                ? Mod::get()->getSavedValue<bool>("replace-object-show-find-and-replace-menu-toggle") 
-                : false;
+            ? Mod::get()->getSavedValue<bool>("replace-object-show-find-and-replace-menu-toggle") 
+            : false;
 
         toggle->toggle(show);
         menu->setVisible(show);
@@ -83,7 +83,7 @@ class $modify(ReplaceObjectsEditorUI, EditorUI) {
     
         // printing ignorefilter outputed false and checking if(ignoreFilter) evaluated to true so i have no idea man this seems to work tho </3
         // im not kidding when i say i debugged this for a week i dont fucking get it :sob:
-        if (ignoreFilter == false && !ignoreFilter) {
+        if (ignoreFilter == true) {
             return EditorUI::selectObject(object, ignoreFilter);
         }
 
