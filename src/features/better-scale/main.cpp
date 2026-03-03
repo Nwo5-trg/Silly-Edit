@@ -367,7 +367,7 @@ class $modify(EditorUI) {
             return false;
         }
 
-        Utils::setupKeybind(this, "better-scale-activate-scale-control", [this] (const Keybind&, bool pDown, double) {
+        Utils::setupKeybind(this, "better-scale-activate-scale-control", [this] (const Keybind&, bool pDown, bool, double) {
             if (Settings::BetterScale::enabled.get() && pDown && !Editor::Selection::empty()) {
                 if (m_scaleControl->isVisible() && m_scaleControl->m_scaleLabel->isVisible()) {
                     deactivateScaleControl();
