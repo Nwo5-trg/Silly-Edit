@@ -8,13 +8,18 @@
 	},
 	"id": "nwo5.sillyedit",
 	"name": "sillyedit",
-	"version": "v0.1.0-alpha.9",
+	"version": "v0.1.0-alpha.10",
 	"developer": "Nwo5",
 	"description": "so silly",
 	"links": {
 		"source": "https://github.com/Nwo5-trg/Silly-Edit"
 	},
 	"tags": ["editor", "bugfix", "customization", "enhancement", "interface", "utility", "offline"],
+	"dependencies": {
+        "geode.node-ids": "1.23.1",
+		"geode.custom-keybinds": "2.1.0",
+		"alphalaneous.good_grid": "1.1.4"
+	},
 	"resources": {
 		"sprites": [
 			"resources/*.png",
@@ -79,6 +84,24 @@
 			"name": "Snap Selection",
 			"category": "editor",
 			"default": "N"
+		},
+		"zoom-input-title": {
+			"type": "title",
+			"name": "Zoom Input"
+		},
+		"zoom-input-zoom-in": {
+			"type": "keybind",
+			"name": "Zoom In",
+			"category": "editor",
+			"description": "doesnt require zoom input to be enabled ;3",
+			"default": "Ctrl+="
+		},
+		"zoom-input-zoom-out": {
+			"type": "keybind",
+			"name": "Zoom Out",
+			"category": "editor",
+			"description": "doesnt require zoom input to be enabled ;3",
+			"default": "Ctrl+-"
 		},
 		"better-select-all-title": {
 			"type": "title",

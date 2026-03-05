@@ -19,6 +19,10 @@ class $modify(ReplaceObjectsEditorUI, EditorUI) {
             return false;
         }
 
+        if (!Settings::ReplaceObjects::enabled.get()) {
+            return true;
+        }
+
         auto menu = Utils::setupNode(
             ReplaceObjects::FindAndReplaceMenu::create(),
 
@@ -53,7 +57,7 @@ class $modify(ReplaceObjectsEditorUI, EditorUI) {
             SetNodeParent{m_deleteMenu}
         );
 
-        const auto show = Settings::ReplaceObjects::saveSettings 
+        const auto show = Settings::ReplaceObjects::saveSettings.get() 
             ? Mod::get()->getSavedValue<bool>("replace-object-show-find-and-replace-menu-toggle") 
             : false;
 

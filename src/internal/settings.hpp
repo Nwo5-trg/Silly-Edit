@@ -9,6 +9,7 @@ enum class SettingCategory {
     ReplaceObjects,
     FreeSnap,
     TextObjectUtils,
+    ZoomInput,
     CopyPasteObjectStrings,
     BetterSelectAll,
     ObjectTabIcons

@@ -16,7 +16,12 @@ class $modify(EditorUI) {
     }
 
     void snapSelection(GameObject* pSnapObj) {
-        Editor::Object::move(Editor::Selection::get(), Editor::Object::snappedPos(pSnapObj, Settings::FreeSnap::gridSize.get()), false, pSnapObj->getRealPosition());
+        Editor::Object::move(
+            Editor::Selection::get(), 
+            Editor::Object::snappedPos(pSnapObj, Settings::FreeSnap::gridSize.get()), 
+            false, pSnapObj->getRealPosition()
+        );
+        
         Editor::update();
     }
 
@@ -79,7 +84,7 @@ class $modify(EditorUI) {
 
         const auto selectionCol = Settings::FreeSnap::chroma.get() 
             ? Shared::getChroma<ccColor3B>(Shared::ChromaNode::FreeSnap) 
-            : Settings::FreeSnap::selectedObjectColor;
+            : Settings::FreeSnap::selectedObjectColor.get();
         const auto snapCol = Settings::FreeSnap::chroma.get() 
             ? Shared::getChroma<ccColor3B>(Shared::ChromaNode::FreeSnapInvert) 
             : Settings::FreeSnap::snapObjectColor.get();
@@ -102,7 +107,7 @@ class $modify(EditorUI) {
                 obj->selectObject(snapCol);
             }
 
-            if (!Settings::FreeSnap::snapIndicator) {
+            if (!Settings::FreeSnap::snapIndicator.get()) {
                 return;
             }
 

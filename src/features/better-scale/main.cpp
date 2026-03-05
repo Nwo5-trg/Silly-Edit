@@ -8,22 +8,24 @@ using namespace Utils::Aliases;
 
 class $modify(BetterScaleGJScaleControl, GJScaleControl) {
     struct Fields {
-        std::vector<CCNode*> m_scaleNodes;
-        std::vector<CCNode*> m_scaleXYNodes;
+        std::vector<CCNode*> scaleNodes;
+        std::vector<CCNode*> scaleXYNodes;
 
-        CCLabelBMFont* m_newScaleLabel = nullptr;
-        TextInput* m_scaleInput = nullptr;
-        CCLabelBMFont* m_newScaleXLabel = nullptr;
-        TextInput* m_scaleXInput = nullptr;
-        CCLabelBMFont* m_newScaleYLabel = nullptr;
-        TextInput* m_scaleYInput = nullptr;
+        CCLabelBMFont* newScaleLabel = nullptr;
+        TextInput* scaleInput = nullptr;
+        CCLabelBMFont* newScaleXLabel = nullptr;
+        TextInput* scaleXInput = nullptr;
+        CCLabelBMFont* newScaleYLabel = nullptr;
+        TextInput* scaleYInput = nullptr;
 
-        std::vector<float> m_shortcuts;
-        CCMenu* m_shortcutsMenu = nullptr;
-        CCMenu* m_shortcutsXMenu = nullptr;
-        CCMenu* m_shortcutsYMenu = nullptr;
+        std::vector<float> shortcuts;
+        CCMenu* shortcutsMenu = nullptr;
+        CCMenu* shortcutsXMenu = nullptr;
+        CCMenu* shortcutsYMenu = nullptr;
 
-        CCMenu* m_extrasMenu = nullptr;
+        CCMenu* extrasMenu = nullptr;
+
+        bool betterScaleLoaded = false;
     };
 
     static constexpr CCSize INPUT_SIZE = {45.0f, 20.0f};
@@ -71,11 +73,15 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
             return false;
         }
 
+        if (!Settings::BetterScale::enabled.get()) {
+            return true;
+        }
+
         auto fields = m_fields.self();
 
         m_scaleLabel->setOpacity(0);
 
-        fields->m_newScaleLabel = Utils::setupNode(
+        fields->newScaleLabel = Utils::setupNode(
             CCLabelBMFont::create("Scale: ", "bigFont.fnt"),
 
             SetNodeID{"new_scale-label"_spr},
@@ -83,9 +89,9 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
             SetNodePosition{-INPUT_SIZE.width / 2, m_scaleLabel->getPositionY()},
             SetNodeParent{this}
         );
-        fields->m_scaleNodes.push_back(fields->m_newScaleLabel);
+        fields->scaleNodes.push_back(fields->newScaleLabel);
 
-        fields->m_scaleInput = Utils::setupNode(
+        fields->scaleInput = Utils::setupNode(
             Utils::createTextInput(INPUT_SIZE.width, INPUT_SIZE.height, "1", [this] (const std::string& pStr) {
                 if (!pStr.empty()) {
                     const auto num = utils::numFromString<float>(pStr).unwrapOrDefault();
@@ -97,30 +103,30 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
             }),
 
             SetNodeID{"scale-input"_spr},
-            SetNodePosition{fields->m_newScaleLabel->getScaledContentWidth() / 2, m_scaleLabel->getPositionY()},
+            SetNodePosition{fields->newScaleLabel->getScaledContentWidth() / 2, m_scaleLabel->getPositionY()},
             SetNodeParent{this}
         );
-        fields->m_scaleNodes.push_back(fields->m_scaleInput);
+        fields->scaleNodes.push_back(fields->scaleInput);
 
-        fields->m_shortcutsMenu = Utils::setupNode(
+        fields->shortcutsMenu = Utils::setupNode(
             CCMenu::create(),
 
             SetNodeID{"shortcuts-menu"_spr},
             SetNodeTag{static_cast<int>(ObjectScaleType::XY)},
             SetNodeHeight{SHORTCUT_SIZE},
-            SetNodePosition{0.0f, fields->m_newScaleLabel->getPositionY() + SHORTCUT_SPACE},
+            SetNodePosition{0.0f, fields->newScaleLabel->getPositionY() + SHORTCUT_SPACE},
             SetNodeParent{this}
         );
-        fields->m_shortcutsMenu->setLayout(AxisLayout::create()
+        fields->shortcutsMenu->setLayout(AxisLayout::create()
             ->setGrowCrossAxis(false)
             ->setAutoScale(false)
             ->setGap(SHORTCUT_GAP)
         );
-        fields->m_scaleNodes.push_back(fields->m_shortcutsMenu);
+        fields->scaleNodes.push_back(fields->shortcutsMenu);
 
         m_scaleXLabel->setOpacity(0);
 
-        fields->m_newScaleXLabel = Utils::setupNode(
+        fields->newScaleXLabel = Utils::setupNode(
             CCLabelBMFont::create("ScaleX: ", "bigFont.fnt"),
 
             SetNodeID{"new-scale-x-label"_spr},
@@ -128,9 +134,9 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
             SetNodePosition{-INPUT_SIZE.width / 2, m_scaleXLabel->getPositionY()},
             SetNodeParent{this}
         );
-        fields->m_scaleXYNodes.push_back(fields->m_newScaleXLabel);
+        fields->scaleXYNodes.push_back(fields->newScaleXLabel);
 
-        fields->m_scaleXInput = Utils::setupNode(
+        fields->scaleXInput = Utils::setupNode(
             Utils::createTextInput(INPUT_SIZE.width, INPUT_SIZE.height, "1", [this] (const std::string& pStr) {
                 if (!pStr.empty()) {
                     const auto num = utils::numFromString<float>(pStr).unwrapOrDefault();
@@ -142,30 +148,30 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
             }),
 
             SetNodeID{"scale-x-input"_spr},
-            SetNodePosition{fields->m_newScaleXLabel->getScaledContentWidth() / 2, m_scaleXLabel->getPositionY()},
+            SetNodePosition{fields->newScaleXLabel->getScaledContentWidth() / 2, m_scaleXLabel->getPositionY()},
             SetNodeParent{this}
         );
-        fields->m_scaleXYNodes.push_back(fields->m_scaleXInput);
+        fields->scaleXYNodes.push_back(fields->scaleXInput);
 
-        fields->m_shortcutsXMenu = Utils::setupNode(
+        fields->shortcutsXMenu = Utils::setupNode(
             CCMenu::create(),
 
             SetNodeID{"shortcuts-x-menu"_spr},
             SetNodeTag{static_cast<int>(ObjectScaleType::X)},
             SetNodeHeight{SHORTCUT_SIZE},
-            SetNodePosition{0.0f, fields->m_newScaleXLabel->getPositionY() + SHORTCUT_SPACE},
+            SetNodePosition{0.0f, fields->newScaleXLabel->getPositionY() + SHORTCUT_SPACE},
             SetNodeParent{this}
         );
-        fields->m_shortcutsXMenu->setLayout(AxisLayout::create()
+        fields->shortcutsXMenu->setLayout(AxisLayout::create()
             ->setGrowCrossAxis(false)
             ->setAutoScale(false)
             ->setGap(SHORTCUT_GAP)
         );
-        fields->m_scaleXYNodes.push_back(fields->m_shortcutsXMenu);
+        fields->scaleXYNodes.push_back(fields->shortcutsXMenu);
 
         m_scaleYLabel->setOpacity(0);
 
-        fields->m_newScaleYLabel = Utils::setupNode(
+        fields->newScaleYLabel = Utils::setupNode(
             CCLabelBMFont::create("ScaleY: ", "bigFont.fnt"),
 
             SetNodeID{"new-scale-y-label"_spr},
@@ -173,9 +179,9 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
             SetNodePosition{-INPUT_SIZE.width / 2, m_scaleYLabel->getPositionY()},
             SetNodeParent{this}
         );
-        fields->m_scaleXYNodes.push_back(fields->m_newScaleYLabel);
+        fields->scaleXYNodes.push_back(fields->newScaleYLabel);
 
-        fields->m_scaleYInput = Utils::setupNode(
+        fields->scaleYInput = Utils::setupNode(
             Utils::createTextInput(INPUT_SIZE.width, INPUT_SIZE.height, "1", [this] (const std::string& pStr) {
                 if (!pStr.empty()) {
                     const auto num = utils::numFromString<float>(pStr).unwrapOrDefault();
@@ -187,12 +193,12 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
             }),
 
             SetNodeID{"scale-y-input"_spr},
-            SetNodePosition{fields->m_newScaleYLabel->getScaledContentWidth() / 2, m_scaleYLabel->getPositionY()},
+            SetNodePosition{fields->newScaleYLabel->getScaledContentWidth() / 2, m_scaleYLabel->getPositionY()},
             SetNodeParent{this}
         );
-        fields->m_scaleXYNodes.push_back(fields->m_scaleYInput);
+        fields->scaleXYNodes.push_back(fields->scaleYInput);
 
-        fields->m_shortcutsYMenu = Utils::setupNode(
+        fields->shortcutsYMenu = Utils::setupNode(
             CCMenu::create(),
 
             SetNodeID{"shortcuts-y-menu"_spr},
@@ -201,16 +207,16 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
             SetNodePosition{0.0f, DEFAULT_LABEL_Y_HEIGHT + SHORTCUT_SPACE * 2},
             SetNodeParent{this}
         );
-        fields->m_shortcutsYMenu->setLayout(AxisLayout::create()
+        fields->shortcutsYMenu->setLayout(AxisLayout::create()
             ->setGrowCrossAxis(false)
             ->setAutoScale(false)
             ->setGap(SHORTCUT_GAP)
         );
-        fields->m_scaleXYNodes.push_back(fields->m_shortcutsYMenu);
+        fields->scaleXYNodes.push_back(fields->shortcutsYMenu);
 
         m_scaleLockButton->getParent()->setVisible(false);
 
-        fields->m_extrasMenu = Utils::setupNode(
+        fields->extrasMenu = Utils::setupNode(
             CCMenu::create(),
 
             SetNodeID{"extras-menu"_spr},
@@ -218,7 +224,7 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
             SetNodePositionX{0.0f},
             SetNodeParent{this}
         );
-        fields->m_extrasMenu->setLayout(AxisLayout::create()
+        fields->extrasMenu->setLayout(AxisLayout::create()
             ->setGrowCrossAxis(false)
             ->setAutoScale(false)
             ->setGap(EXTRAS_GAP)
@@ -237,7 +243,7 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
 
             SetNodeID{"lock-button"_spr},
             SetNodeScaleWithSize{EXTRAS_BUTTON_SIZE},
-            SetNodeParent{fields->m_extrasMenu}
+            SetNodeParent{fields->extrasMenu}
         );
 
         if (Settings::BetterScale::switchModeButton) {
@@ -249,24 +255,26 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
 
                 SetNodeID{"switch-mode-button"_spr},
                 SetNodeScaleWithSize{EXTRAS_BUTTON_SIZE},
-                SetNodeParent{fields->m_extrasMenu}
+                SetNodeParent{fields->extrasMenu}
             );
         }
 
-        fields->m_extrasMenu->updateLayout();
+        fields->extrasMenu->updateLayout();
 
         updateShortcuts();
+
+        fields->betterScaleLoaded = true;
 
         return true;
     }
 
     void updateShortcuts() {
         auto fields = m_fields.self();
-        fields->m_shortcuts.clear();
+        fields->shortcuts.clear();
 
-        fields->m_shortcutsMenu->removeAllChildren();
-        fields->m_shortcutsXMenu->removeAllChildren();
-        fields->m_shortcutsYMenu->removeAllChildren();
+        fields->shortcutsMenu->removeAllChildren();
+        fields->shortcutsXMenu->removeAllChildren();
+        fields->shortcutsYMenu->removeAllChildren();
 
         if (Settings::BetterScale::shortcutsString.get().empty()) {
             return;
@@ -274,7 +282,7 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
 
         const auto split = string::split(Settings::BetterScale::shortcutsString.get(), ",");
 
-        for (auto menu : {fields->m_shortcutsMenu, fields->m_shortcutsXMenu, fields->m_shortcutsYMenu}) {
+        for (auto menu : {fields->shortcutsMenu, fields->shortcutsXMenu, fields->shortcutsYMenu}) {
             for (int i = 0; i < split.size(); i++) {
                 Utils::setupNode(
                     CCMenuItemSpriteExtra::create(
@@ -292,14 +300,16 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
         }
 
         for (const auto& str : split) {
-            fields->m_shortcuts.push_back(utils::numFromString<float>(str).unwrapOr(1.0f));
+            fields->shortcuts.push_back(utils::numFromString<float>(str).unwrapOr(1.0f));
         }
     }
 
     void ccTouchMoved(CCTouch* touch, CCEvent* event) {
         GJScaleControl::ccTouchMoved(touch, event);
 
-        updateInputValues();
+        if (m_fields->betterScaleLoaded) {
+            updateInputValues();
+        }
     }
 
     void updateInputValues() {
@@ -312,9 +322,9 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
             max.height = std::max(max.height, obj->m_scaleY);
         }
 
-        fields->m_scaleInput->setString(Utils::numToString(std::max(max.width, max.height)));
-        fields->m_scaleXInput->setString(Utils::numToString(max.width));
-        fields->m_scaleYInput->setString(Utils::numToString(max.height));
+        fields->scaleInput->setString(Utils::numToString(std::max(max.width, max.height)));
+        fields->scaleXInput->setString(Utils::numToString(max.width));
+        fields->scaleYInput->setString(Utils::numToString(max.height));
     }
 
     void updateCustomNodes() {
@@ -322,34 +332,34 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
 
         const auto scaleVisible = m_scaleLabel->isVisible();
 
-        for (auto node : fields->m_scaleNodes) {
+        for (auto node : fields->scaleNodes) {
             node->setVisible(scaleVisible);
         }
-        for (auto node : fields->m_scaleXYNodes) {
+        for (auto node : fields->scaleXYNodes) {
             node->setVisible(!scaleVisible);
         }
         
         if (Settings::BetterScale::shortcutsString.get().empty()) {
-            fields->m_extrasMenu->setPositionY(scaleVisible ? DEFAULT_LOCK_HEIGHT : DEFAULT_LOCK_XY_HEIGHT);
+            fields->extrasMenu->setPositionY(scaleVisible ? DEFAULT_LOCK_HEIGHT : DEFAULT_LOCK_XY_HEIGHT);
 
-            fields->m_scaleYInput->setPositionY(DEFAULT_LABEL_Y_HEIGHT);
-            fields->m_newScaleYLabel->setPositionY(DEFAULT_LABEL_Y_HEIGHT);
+            fields->scaleYInput->setPositionY(DEFAULT_LABEL_Y_HEIGHT);
+            fields->newScaleYLabel->setPositionY(DEFAULT_LABEL_Y_HEIGHT);
             m_sliderY->setPositionY(DEFAULT_SLIDER_Y_HEIGHT);
         }
         else {
-            fields->m_extrasMenu->setPositionY(
+            fields->extrasMenu->setPositionY(
                 scaleVisible ? (DEFAULT_LOCK_HEIGHT + SHORTCUT_SPACE) : (DEFAULT_LOCK_XY_HEIGHT + SHORTCUT_SPACE * 2)
             );
 
-            fields->m_scaleYInput->setPositionY(DEFAULT_LABEL_Y_HEIGHT + SHORTCUT_SPACE);
-            fields->m_newScaleYLabel->setPositionY(DEFAULT_LABEL_Y_HEIGHT + SHORTCUT_SPACE);
+            fields->scaleYInput->setPositionY(DEFAULT_LABEL_Y_HEIGHT + SHORTCUT_SPACE);
+            fields->newScaleYLabel->setPositionY(DEFAULT_LABEL_Y_HEIGHT + SHORTCUT_SPACE);
             m_sliderY->setPositionY(DEFAULT_SLIDER_Y_HEIGHT + SHORTCUT_SPACE);
         }
     }
 
     void onScaleShortcut(CCObject* pSender) {
         customScale(
-            m_fields->m_shortcuts[pSender->getTag()], 
+            m_fields->shortcuts[pSender->getTag()], 
             static_cast<ObjectScaleType>(static_cast<CCNode*>(pSender)->getParent()->getTag())
         );
 
@@ -369,7 +379,7 @@ class $modify(EditorUI) {
 
         Utils::setupKeybind(this, "better-scale-activate-scale-control", [this] (const Keybind&, bool pDown, bool, double) {
             if (Settings::BetterScale::enabled.get() && pDown && !Editor::Selection::empty()) {
-                if (m_scaleControl->isVisible() && m_scaleControl->m_scaleLabel->isVisible()) {
+                if (m_scaleControl && m_scaleControl->isVisible() && m_scaleControl->m_scaleLabel->isVisible()) {
                     deactivateScaleControl();
                 }
                 else {
@@ -379,7 +389,7 @@ class $modify(EditorUI) {
         });
         Utils::setupKeybind(this, "better-scale-activate-scale-xy-control", [this] (const Keybind&, bool pDown, bool, double) {
             if (Settings::BetterScale::enabled.get() && pDown && !Editor::Selection::empty()) {
-                if (m_scaleControl->isVisible() && !m_scaleControl->m_scaleLabel->isVisible()) {
+                if (m_scaleControl && m_scaleControl->isVisible() && !m_scaleControl->m_scaleLabel->isVisible()) {
                     deactivateScaleControl();
                 }
                 else {
@@ -398,7 +408,7 @@ class $modify(EditorUI) {
 
         EditorUI::activateScaleControl(sender);
 
-        if (auto control = reinterpret_cast<BetterScaleGJScaleControl*>(m_scaleControl)) {
+        if (auto control = reinterpret_cast<BetterScaleGJScaleControl*>(m_scaleControl); control && control->m_fields->betterScaleLoaded) {
             control->setScale(
                 Settings::BetterScale::lockControlSize.get() 
                     ? ((1 / Editor::zoom()) * Settings::BetterScale::controlSize.get()) 
@@ -417,7 +427,7 @@ class $modify(EditorUI) {
 
         EditorUI::updateScaleControl();
 
-        if (auto control = reinterpret_cast<BetterScaleGJScaleControl*>(m_scaleControl)) {
+        if (auto control = reinterpret_cast<BetterScaleGJScaleControl*>(m_scaleControl); control && control->m_fields->betterScaleLoaded) {
             control->updateCustomNodes();
             control->updateInputValues();
         }

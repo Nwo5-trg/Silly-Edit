@@ -38,7 +38,7 @@ namespace BetterSelectAll {
 
 class $modify(EditorPauseLayer) {
     void onSelectAll(CCObject* sender) {
-        if (Settings::BetterSelectAll::openPopup.get()) {
+        if (Settings::BetterSelectAll::enabled.get() && Settings::BetterSelectAll::openPopup.get()) {
             BetterSelectAll::BetterSelectAllPopup::create()->show();
         }
         else {

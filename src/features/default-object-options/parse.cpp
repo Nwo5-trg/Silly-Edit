@@ -31,15 +31,9 @@ namespace DefaultObjectOptions {
     void parseOptions(ObjectOptions& pObjectOptions) {
         pObjectOptions.reset();
 
-        if (!Settings::DefaultObjectOptions::useJSON.get()) {
-            return pObjectOptions.updateSimpleOptionsString(
-                Settings::DefaultObjectOptions::dontFade.get(),
-                Settings::DefaultObjectOptions::dontEnter.get(),
-                Settings::DefaultObjectOptions::noGlow.get()
-            );
-        }
-
-        const auto path = string::pathToString(Mod::get()->getConfigDir() / Settings::DefaultObjectOptions::path.get()); 
+        const auto path = string::pathToString(
+            Mod::get()->getConfigDir() / Settings::DefaultObjectOptions::path.get()
+        ); 
 
         if (!std::filesystem::exists(path)) {
             return;

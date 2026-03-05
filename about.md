@@ -4,7 +4,7 @@ a very (un)serious editor mod collection with a lot of over complicated possibly
 ***literally no promises as to when this mod gets updated or what gets added/removed***
 
 ## Features
-pretty much everything can be configured in the settings menu (some options might require open/closing the editor)
+pretty much everything can be configured in the settings menu (a lot of options require opening/closing the editor ill make a system to signal that ***later***)
 
 (clearing the input on a setting with an input will set the setting to its default value, to input an empty string into a string setting, write "\\0")
 
@@ -14,14 +14,15 @@ basically auto dont fade/dont enter/no golow
 for more advanced users u can edit any obj prop or inject an obj string per id ([example/further info here](https://github.com/Nwo5-trg/silly-edit/tree/main/src/features/default-object-options/example.jsonc))
 
 ### Ruler
-its kinda in the name - *now with a new impl that actually draws stuff instead of using scaled sprites :3 !*
+its kinda in the name - *now with a new impl that actually draws stuff instead of using scaled sprites (what the actual hell was i doing a year ago) :3 !*
 
 ### Better Scale
+scale input+ but "+"-er but also not really
 - scale hack
 - scale input
 - scale shortcut buttons
 - scale control tweaks
-- maybe compatible with better edit (by that i mean completely overrides better edit ;3)
+- scale control keybinds
 
 ### Replace Object (More Select Filters / Trigger ID Search alternative)
 adds a *very* overcomplicated tab that has some cool features to the delete menu :3
@@ -47,6 +48,13 @@ scuffed text utils
 - copy/paste
 - kerning input
 
+### Zoom Input
+fw all things zoom
+- zoom bypass
+- multiplicative zoom
+- zoom input
+- zoom keybinds
+
 ### Copy Paste Object String
 iykyk, iydk then dw abt it ***disabled by default***
 
@@ -54,4 +62,4 @@ iykyk, iydk then dw abt it ***disabled by default***
 select all popup and keybinds !
 
 ### Better Object Tab Icons
-makes object tab icons prettier and changable with resource packs s
+makes object tab icons prettier and changable with resource packss

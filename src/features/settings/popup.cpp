@@ -71,7 +71,7 @@ namespace Settings {
 
         m_closeBtn->setPosition(WIDTH, HEIGHT);
 
-        goToPage(Settings::General::saveSettingPage ? Mod::get()->getSavedValue<int>("general-settings-page") : 0);
+        goToPage(Settings::General::saveSettingPage.get() ? Mod::get()->getSavedValue<int>("general-settings-page") : 0);
 
         return true;
     }
@@ -91,7 +91,7 @@ namespace Settings {
         
         Utils::setupNode(
             Utils::createButton(
-                Settings::General::useLogosForDots ? pCategory.getLogoPath() : "smallDot.png", 
+                Settings::General::useLogosForDots.get() ? pCategory.getLogoPath() : "smallDot.png", 
                 this, menu_selector(SettingsPopup::onPageDot)
             ),
 

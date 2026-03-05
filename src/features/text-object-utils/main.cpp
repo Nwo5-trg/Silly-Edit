@@ -11,6 +11,8 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
 
         TextInput* kerningInput = nullptr;
         CCMenu* textObjectUtilsMenu = nullptr;
+
+        bool textObjectMenuLoaded = false;
     };
 
     static constexpr float VERTICAL_OFFSET = -20.0f;
@@ -30,7 +32,7 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
             return false;
         }
     
-        if (!m_textInput) {
+        if (!m_textInput || !Settings::TextObjectUtils::enabled.get()) {
             return true;
         }
 
@@ -137,12 +139,14 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
         Utils::setupNode(m_kerningLabel, ChangeNodePosition{-m_fields->kerningInput->getScaledContentWidth(), VERTICAL_OFFSET});
 
         updateKerningLabel();
+
+        m_fields->textObjectMenuLoaded = true;
          
         return true;
     }
 
     void textChanged(CCTextInputNode* node) {
-        if (node != m_textInput) {
+        if (node != m_textInput || !m_fields->textObjectMenuLoaded) {
             return;
         }
 
@@ -161,7 +165,7 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
 
         auto& input = m_fields->kerningInput;
 
-        if (!input) {
+        if (!input || !m_fields->textObjectMenuLoaded) {
             return;
         }
 

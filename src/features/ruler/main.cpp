@@ -165,20 +165,28 @@ class $modify(RulerEditorUI, EditorUI) {
                 Utils::setupNode(
                     label,
 
-                    SetNodePosition{ // not even worth trying to turn into a ternary :pray:
+                    SetNodePosition{
                         y
                             ? (Settings::Ruler::labelOnRight.get()
-                                ? ccp(measurement.end.x + Settings::Ruler::thickness.get() + Settings::Ruler::labelDistance.get(),
-                                    (measurement.start.y + measurement.end.y) / 2)
-                                : ccp(measurement.start.x - Settings::Ruler::thickness.get() - Settings::Ruler::labelDistance.get(),
-                                    (measurement.start.y + measurement.end.y) / 2)
-                            )
+                                ? ccp(
+                                    measurement.end.x + Settings::Ruler::thickness.get() + Settings::Ruler::labelDistance.get(),
+                                    (measurement.start.y + measurement.end.y) / 2
+                                  )
+                                : ccp(
+                                    measurement.start.x - Settings::Ruler::thickness.get() - Settings::Ruler::labelDistance.get(),
+                                    (measurement.start.y + measurement.end.y) / 2
+                                  )
+                              )
                             : (Settings::Ruler::labelOnBottom.get()
-                                ? ccp((measurement.start.x + measurement.end.x) / 2,
-                                    measurement.start.y - Settings::Ruler::thickness.get() - Settings::Ruler::labelDistance.get())
-                                : ccp((measurement.start.x + measurement.end.x) / 2,
-                                    measurement.end.y + Settings::Ruler::thickness.get() + Settings::Ruler::labelDistance.get())
-                            )
+                                ? ccp(
+                                    (measurement.start.x + measurement.end.x) / 2,
+                                    measurement.start.y - Settings::Ruler::thickness.get() - Settings::Ruler::labelDistance.get()
+                                  )
+                                : ccp(
+                                    (measurement.start.x + measurement.end.x) / 2,
+                                    measurement.end.y + Settings::Ruler::thickness.get() + Settings::Ruler::labelDistance.get()
+                                  )
+                              )
                     },
                     SetNodeScale{Settings::Ruler::labelSize.get()},
                     SetNodeAnchor{ // this is prolly a war crime icl but atleast its better than my old ruler impl
@@ -187,7 +195,7 @@ class $modify(RulerEditorUI, EditorUI) {
                                 ? (Settings::Ruler::labelOnRight.get() 
                                     ? LEFT_CENTER_ANCHOR 
                                     : RIGHT_CENTER_ANCHOR
-                                    ) 
+                                  ) 
                                 : BOTTOM_CENTER_ANCHOR
                               )
                             : (Settings::Ruler::labelOnBottom.get() 

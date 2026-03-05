@@ -1,3 +1,21 @@
+## v0.1.0-alpha.10
+**Added**
+
+- zoom input
+- new temp logo pt2
+- some new drawn icons i may or may not adopt for the rest of the features
+- a bit of settings reorganization
+- dependencies
+
+**Fixed**
+
+- a couple features not disabling properly
+- be a bit more honest in about :3
+
+**Internal**
+
+- some formatting tweaks
+
 ## v0.1.0-alpha.9
 **Added**
 
