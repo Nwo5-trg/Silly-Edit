@@ -6,6 +6,10 @@
 using namespace geode::prelude;
 using namespace Utils::Aliases;
 
+// ill prolly add a seperate modifier for keybind zoom
+// so remind me to replace button zooming for some enum
+// when i do do that
+
 class $modify(ZoomInputEditorUI, EditorUI) {
     struct Fields {
         bool buttonZooming = false;
@@ -133,6 +137,8 @@ class $modify(ZoomInputEditorUI, EditorUI) {
                 ? newZoom
                 : std::clamp(newZoom, Settings::ZoomInput::zoomScrollMin.get(), Settings::ZoomInput::zoomScrollMax.get())
         );
+
+        updateZoomInput();
     };
 
     void zoomIn(CCObject* sender) {
@@ -144,8 +150,6 @@ class $modify(ZoomInputEditorUI, EditorUI) {
 
         m_fields->buttonZooming = false;
         m_fields->zoomingGameLayer = false;
-
-        updateZoomInput();
     }
     void zoomOut(CCObject* sender) {
         m_fields->buttonZooming = true;
@@ -156,8 +160,6 @@ class $modify(ZoomInputEditorUI, EditorUI) {
 
         m_fields->buttonZooming = false;
         m_fields->zoomingGameLayer = false;
-
-        updateZoomInput();
     }
     void scrollWheel(float y, float x) {
         m_fields->zoomingGameLayer = true;
@@ -165,9 +167,7 @@ class $modify(ZoomInputEditorUI, EditorUI) {
 
         EditorUI::scrollWheel(y, x);
 
-        m_fields->zoomingGameLayer = false;
-
-        updateZoomInput();
+        m_fields->zoomingGameLayer = false;;
     }
 
     void constrainGameLayerPosition(float x, float y) {

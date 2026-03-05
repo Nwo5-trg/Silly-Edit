@@ -101,7 +101,7 @@
 			"name": "Zoom Out",
 			"category": "editor",
 			"description": "doesnt require zoom input to be enabled ;3",
-			"default": "Ctrl+-"
+			"default": "Ctrl+Subtract"
 		},
 		"better-select-all-title": {
 			"type": "title",
