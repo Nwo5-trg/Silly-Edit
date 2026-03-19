@@ -116,8 +116,8 @@ namespace ReplaceObjects {
                     const auto substr = pStr.substr(start, length);
                     if ( // overly complicated but fun so uwu :3
                         substr.find_first_of("0123456789") == std::string::npos 
-                        || Utils::stringCount(substr, '-') > 1 
-                        || Utils::stringCount(substr, '.') > 1
+                        || nwo5::utils::stringCount(substr, '-') > 1 
+                        || nwo5::utils::stringCount(substr, '.') > 1
                         || (substr.find('-') != std::string::npos && !substr.starts_with('-'))
                     ) {
                         return Err("lexing error at {} : invalid data", start);
@@ -262,9 +262,9 @@ namespace ReplaceObjects {
     }
     bool QueryObjectGroup::evaluate(GameObject* pObj) const {
         switch (m_group) {
-            case -1: return !Editor::Object::hasGroups(pObj);
-            case 0: return Editor::Object::hasGroups(pObj);
-            default: return Editor::Object::hasGroup(pObj, m_group);
+            case -1: return !editor::object::hasGroups(pObj);
+            case 0: return editor::object::hasGroups(pObj);
+            default: return editor::object::hasGroup(pObj, m_group);
         }
     }
     bool QueryObjectID::evaluate(GameObject* pObj) const {
@@ -280,9 +280,9 @@ namespace ReplaceObjects {
         return pObj->m_isTrigger && static_cast<EffectGameObject*>(pObj)->m_itemID == m_item;
     }
     bool QueryObjectBaseColor::evaluate(GameObject* pObj) const {
-        return Editor::Object::hasColor(pObj, m_color, true);
+        return editor::object::hasColor(pObj, m_color, true);
     }
     bool QueryObjectDetailColor::evaluate(GameObject* pObj) const {
-        return Editor::Object::hasColor(pObj, m_color, false);
+        return editor::object::hasColor(pObj, m_color, false);
     }
 }

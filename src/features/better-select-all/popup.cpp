@@ -4,7 +4,7 @@
 #include "settings.hpp"
 
 using namespace geode::prelude;
-using namespace Utils::Aliases;
+using namespace nwo5::syntax;
 
 namespace BetterSelectAll {
     bool BetterSelectAllPopup::init() {
@@ -14,7 +14,7 @@ namespace BetterSelectAll {
 
         setTitle("Select All");
 
-        auto menu = Utils::setupNode(
+        auto menu = nwo5::utils::setupNode(
             CCMenu::create(),
 
             SetNodeID{"button-menu"_spr},
@@ -24,7 +24,7 @@ namespace BetterSelectAll {
         );
 
         for (int i = 0; i < 9; i++) {
-            auto button = Utils::setupNode(
+            auto button = nwo5::utils::setupNode(
                 CCMenuItemSpriteExtra::create(
                     EditorButtonSprite::createWithSprite(
                         fmt::format("direction-{}.png"_spr, i).c_str(), 1.0f, EditorBaseColor::Gray
@@ -38,7 +38,7 @@ namespace BetterSelectAll {
             );
         }
 
-        auto selectedObjectModeToggle = Utils::setupNode(
+        auto selectedObjectModeToggle = nwo5::utils::setupNode(
             CCMenuItemToggler::create(
                 CircleButtonSprite::createWithSpriteFrameName("edit_areaModeBtn05_001.png", 0.75f, CircleBaseColor::Blue),
                 CircleButtonSprite::createWithSpriteFrameName("square_01_001.png", 1.0f, CircleBaseColor::Blue),
@@ -53,7 +53,7 @@ namespace BetterSelectAll {
         m_selectedObjectMode = Settings::BetterSelectAll::saveState.get() ? Mod::get()->getSavedValue<bool>("better-select-all-selected-object-mode") : false;
         selectedObjectModeToggle->toggle(m_selectedObjectMode);
 
-        auto bypassAllToggle = Utils::setupNode(
+        auto bypassAllToggle = nwo5::utils::setupNode(
             CCMenuItemToggler::create(
                 CircleButtonSprite::createWithSpriteFrameName("GJ_filterIcon_001.png", 1.0f, CircleBaseColor::Green),
                 CircleButtonSprite::createWithSpriteFrameName("deleteFilter_none_001.png", 1.0f, CircleBaseColor::Gray),
@@ -82,22 +82,22 @@ namespace BetterSelectAll {
     }
 
     void BetterSelectAllPopup::onSelectButton(cocos2d::CCObject* pSender) {
-        Editor::Selection::add(
+        editor::selection::add(
             getObjectsWithDirection(static_cast<SelectDirection>(pSender->getTag()), m_selectedObjectMode), 
             true, !m_bypassAll
         );
 
-        Editor::update(false, true);
+        editor::update(false, true);
 
         onClose(nullptr);
     }
     void BetterSelectAllPopup::onToggleBypassAll(cocos2d::CCObject* pSender) {
-        m_bypassAll = Utils::isToggled(pSender);
+        m_bypassAll = nwo5::utils::isToggled(pSender);
 
         Mod::get()->setSavedValue<bool>("better-select-all-bypass-all", m_bypassAll);
     }
     void BetterSelectAllPopup::onToggleSelectedObjectMode(cocos2d::CCObject* pSender) {
-        m_selectedObjectMode = Utils::isToggled(pSender);
+        m_selectedObjectMode = nwo5::utils::isToggled(pSender);
 
         Mod::get()->setSavedValue<bool>("better-select-all-selected-object-mode", m_selectedObjectMode);
     }

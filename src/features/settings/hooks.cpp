@@ -4,7 +4,7 @@
 #include "popup.hpp"
 
 using namespace geode::prelude;
-using namespace Utils::Aliases;
+using namespace nwo5::syntax;
 
 class $modify(EditorUI) {
     bool init(LevelEditorLayer* editorLayer) {
@@ -12,7 +12,7 @@ class $modify(EditorUI) {
             return false;
         }
 
-        Utils::setupKeybind(this, "general-open-settings", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
+        nwo5::utils::setupKeybind(this, "general-open-settings", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
             if (pDown && !pRepeat && !CCDirector::get()->getRunningScene()->getChildByType<Settings::SettingsPopup>(0)) {
                 Settings::SettingsPopup::create()->show();
             }
@@ -37,7 +37,7 @@ class $modify(SettingsEditorPauseLayer, EditorPauseLayer) {
         auto spr = CCSprite::create("settings-button.png"_spr);
         spr->setScale(0.85f),
 
-        Utils::setupNode(
+        nwo5::utils::setupNode(
             CCMenuItemSpriteExtra::create(
                 spr, this, menu_selector(SettingsEditorPauseLayer::onSESettings)
             ),

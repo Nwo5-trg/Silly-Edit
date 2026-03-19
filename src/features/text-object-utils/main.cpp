@@ -3,7 +3,7 @@
 #include "settings.hpp"
 
 using namespace geode::prelude;
-using namespace Utils::Aliases;
+using namespace nwo5::syntax;
 
 class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
     struct Fields {
@@ -40,18 +40,18 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
             Settings::TextObjectUtils::newlineShortcut.set("\\n");
         }
 
-        m_fields->textObjects = std::move(Editor::Selection::getType<TextGameObject*>());
+        m_fields->textObjects = std::move(editor::selection::getType<TextGameObject*>());
 
-        Utils::setupNode(m_textInput, ChangeNodePositionY{VERTICAL_OFFSET});
+        nwo5::utils::setupNode(m_textInput, ChangeNodePositionY{VERTICAL_OFFSET});
 
-        auto inputBG = Utils::setupNode(
+        auto inputBG = nwo5::utils::setupNode(
             m_mainLayer->getChildByID("text-input-bg"),
 
             ChangeNodePositionY{VERTICAL_OFFSET},
             ChangeNodeWidth{-40.0f}
         );
 
-        Utils::setupNode(m_kerningSlider, ChangeNodePositionY{VERTICAL_OFFSET});
+        nwo5::utils::setupNode(m_kerningSlider, ChangeNodePositionY{VERTICAL_OFFSET});
 
         auto clearTextButton = static_cast<CCMenuItemSpriteExtra*>(getChildByIDRecursive("clear-text-button"));
         clearTextButton->setEnabled(false);
@@ -67,7 +67,7 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
             openTextMenu({});
         }
  
-        m_fields->textObjectUtilsMenu = Utils::setupNode(
+        m_fields->textObjectUtilsMenu = nwo5::utils::setupNode(
             CCMenu::create(),
 
             SetNodeID{"text-object-utils-menu"_spr},
@@ -76,8 +76,8 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
         );
         m_textTabNodes->addObject(m_fields->textObjectUtilsMenu);
 
-        Utils::setupNode(
-            Utils::createButtonFrame("GJ_copyBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onCopyText)),
+        nwo5::utils::setupNode(
+            nwo5::utils::createButtonFrame("GJ_copyBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onCopyText)),
 
             SetNodeID{"copy-text-button"_spr},
             SetNodePosition{inputBG->getPositionX() + (Settings::TextObjectUtils::swapCopyPaste.get() ? -SIDE_BUTTON_DISTANCE : SIDE_BUTTON_DISTANCE), inputBG->getPositionY()},
@@ -85,8 +85,8 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
             SetNodeParent{m_fields->textObjectUtilsMenu}
         );
 
-        Utils::setupNode(
-            Utils::createButtonFrame("GJ_pasteBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onPasteText)),
+        nwo5::utils::setupNode(
+            nwo5::utils::createButtonFrame("GJ_pasteBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onPasteText)),
 
             SetNodeID{"paste-text-button"_spr},
             SetNodePosition{inputBG->getPositionX() + (Settings::TextObjectUtils::swapCopyPaste.get() ? SIDE_BUTTON_DISTANCE : -SIDE_BUTTON_DISTANCE), inputBG->getPositionY()},
@@ -94,8 +94,8 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
             SetNodeParent{m_fields->textObjectUtilsMenu}
         );
 
-        Utils::setupNode(
-            Utils::createButtonFrame("GJ_trashBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onClearText)),
+        nwo5::utils::setupNode(
+            nwo5::utils::createButtonFrame("GJ_trashBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onClearText)),
 
             SetNodeID{"clear-text-button"_spr},
             SetNodePosition{inputBG->getPositionX() + SIDE_BUTTON_DISTANCE + SIDE_BUTTON_SIZE + SIDE_BUTTON_GAP, inputBG->getPositionY()},
@@ -103,8 +103,8 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
             SetNodeParent{m_fields->textObjectUtilsMenu}
         );
 
-        Utils::setupNode(
-            Utils::createButtonFrame("GJ_redoBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onNewline)),
+        nwo5::utils::setupNode(
+            nwo5::utils::createButtonFrame("GJ_redoBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onNewline)),
 
             SetNodeID{"newline-text-button"_spr},
             SetNodePosition{inputBG->getPositionX() - SIDE_BUTTON_DISTANCE - SIDE_BUTTON_SIZE - SIDE_BUTTON_GAP, inputBG->getPositionY()},
@@ -112,8 +112,8 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
             SetNodeParent{m_fields->textObjectUtilsMenu}
         );
 
-        m_fields->kerningInput = Utils::setupNode(
-            Utils::createTextInput(45.0f, "0", [this]  (const std::string& pStr) {
+        m_fields->kerningInput = nwo5::utils::setupNode(
+            nwo5::utils::createTextInput(45.0f, "0", [this]  (const std::string& pStr) {
                 if (pStr.empty()) {
                     return;
                 }
@@ -136,7 +136,7 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
         m_fields->kerningInput->setCommonFilter(CommonFilter::Int);
         m_textTabNodes->addObject(m_fields->kerningInput);
 
-        Utils::setupNode(m_kerningLabel, ChangeNodePosition{-m_fields->kerningInput->getScaledContentWidth(), VERTICAL_OFFSET});
+        nwo5::utils::setupNode(m_kerningLabel, ChangeNodePosition{-m_fields->kerningInput->getScaledContentWidth(), VERTICAL_OFFSET});
 
         updateKerningLabel();
 
@@ -175,7 +175,7 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
             m_kerningLabel->getPositionX() + m_kerningLabel->getScaledContentWidth() / 2 + input->getScaledContentWidth() / 2,
             m_kerningLabel->getPositionY()
         );
-        input->setString(Utils::numToString(m_kerningAmount));
+        input->setString(nwo5::utils::numToString(m_kerningAmount));
     }
 
     void onClose(CCObject* sender) {

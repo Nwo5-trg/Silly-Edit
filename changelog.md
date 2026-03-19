@@ -1,3 +1,12 @@
+## v0.1.0-alpha.11
+**Fixed**
+
+- a couple more features not disabling properly
+
+**Internal**
+
+- use my api now !
+
 ## v0.1.0-alpha.10
 **Added**
 

@@ -10,7 +10,7 @@ namespace BetterSelectAll {
     CCArray* getObjectsWithDirection(SelectDirection pDirection, bool pSelectedObjectsCenter) {
         auto objs = CCArray::create();
 
-        const auto center = pSelectedObjectsCenter ? Editor::Selection::center() : Editor::center();
+        const auto center = pSelectedObjectsCenter ? editor::selection::center() : editor::center();
 
         const auto shouldInclude = [&] (CCPoint pPos) {
             switch (pDirection) {
@@ -26,7 +26,7 @@ namespace BetterSelectAll {
             }
         };
         
-        for (auto obj : CCArrayExt<GameObject*>(Editor::Object::getAll())) {
+        for (auto obj : CCArrayExt<GameObject*>(editor::object::getAll())) {
             if (shouldInclude(obj->getRealPosition())) {
                 objs->addObject(obj);
             }
@@ -53,54 +53,54 @@ class $modify(EditorUI) {
             return false;
         }
 
-        Utils::setupKeybind(this, "better-select-all-select-all-key", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
+        nwo5::utils::setupKeybind(this, "better-select-all-select-all-key", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
             if (Settings::BetterSelectAll::enabled.get() && pDown && !pRepeat) {
-                Editor::Selection::add(
+                editor::selection::add(
                     BetterSelectAll::getObjectsWithDirection(BetterSelectAll::SelectDirection::All, false),
                     true, true
                 );
 
-                Editor::update(false, true);
+                editor::update(false, true);
             }
         });
-        Utils::setupKeybind(this, "better-select-all-select-all-left-key", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
+        nwo5::utils::setupKeybind(this, "better-select-all-select-all-left-key", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
             if (Settings::BetterSelectAll::enabled.get() && pDown && !pRepeat) {
-                Editor::Selection::add(
+                editor::selection::add(
                     BetterSelectAll::getObjectsWithDirection(BetterSelectAll::SelectDirection::West, false),
                     true, true
                 );
 
-                Editor::update(false, true);
+                editor::update(false, true);
             }
         });
-        Utils::setupKeybind(this, "better-select-all-select-all-down-key", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
+        nwo5::utils::setupKeybind(this, "better-select-all-select-all-down-key", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
             if (Settings::BetterSelectAll::enabled.get() && pDown && !pRepeat) {
-                Editor::Selection::add(
+                editor::selection::add(
                     BetterSelectAll::getObjectsWithDirection(BetterSelectAll::SelectDirection::South, false),
                     true, true
                 );
 
-                Editor::update(false, true);
+                editor::update(false, true);
             }
         });
-        Utils::setupKeybind(this, "better-select-all-select-all-up-key", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
+        nwo5::utils::setupKeybind(this, "better-select-all-select-all-up-key", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
             if (Settings::BetterSelectAll::enabled.get() && pDown && !pRepeat) {
-                Editor::Selection::add(
+                editor::selection::add(
                     BetterSelectAll::getObjectsWithDirection(BetterSelectAll::SelectDirection::North, false),
                     true, true
                 );
 
-                Editor::update(false, true);
+                editor::update(false, true);
             }
         });
-        Utils::setupKeybind(this, "better-select-all-select-all-right-key", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
+        nwo5::utils::setupKeybind(this, "better-select-all-select-all-right-key", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
             if (Settings::BetterSelectAll::enabled.get() && pDown && !pRepeat) {
-                Editor::Selection::add(
+                editor::selection::add(
                     BetterSelectAll::getObjectsWithDirection(BetterSelectAll::SelectDirection::East, false),
                     true, true
                 );
 
-                Editor::update(false, true);
+                editor::update(false, true);
             }
         });
         

@@ -16,13 +16,13 @@ class $modify(EditorUI) {
     }
 
     void snapSelection(GameObject* pSnapObj) {
-        Editor::Object::move(
-            Editor::Selection::get(), 
-            Editor::Object::snappedPos(pSnapObj, Settings::FreeSnap::gridSize.get()), 
+        editor::object::move(
+            editor::selection::get(), 
+            editor::object::snappedPos(pSnapObj, Settings::FreeSnap::gridSize.get()), 
             false, pSnapObj->getRealPosition()
         );
         
-        Editor::update();
+        editor::update();
     }
 
     bool ccTouchBegan(CCTouch* touch, CCEvent* event) {
@@ -31,7 +31,7 @@ class $modify(EditorUI) {
         }
 
         // disable snap and do our own thing :3 (idk if snap obj would b valid rn and i dont feel like testing so i wont check for it)
-        if (Settings::FreeSnap::enabled.get() && GameManager::sharedState()->getGameVariable("0008") && !Editor::Selection::empty()) {
+        if (Settings::FreeSnap::enabled.get() && GameManager::sharedState()->getGameVariable("0008") && !editor::selection::empty()) {
             GameManager::sharedState()->setGameVariable("0008", false);
             m_fields->prollySnapping = true;
 
@@ -76,21 +76,21 @@ class $modify(EditorUI) {
     }
 
     void updateSelect() {    
-        if (Editor::Selection::empty()) {
+        if (editor::selection::empty() || !Settings::FreeSnap::enabled) {
             return;
         }
 
         const bool shouldntColorObjects = m_colorOverlay || m_hsvOverlay;
 
         const auto selectionCol = Settings::FreeSnap::chroma.get() 
-            ? Shared::getChroma<ccColor3B>(Shared::ChromaNode::FreeSnap) 
+            ? nwo5::utils::getChroma<ccColor3B>(Shared::ChromaNode::FreeSnap) 
             : Settings::FreeSnap::selectedObjectColor.get();
         const auto snapCol = Settings::FreeSnap::chroma.get() 
-            ? Shared::getChroma<ccColor3B>(Shared::ChromaNode::FreeSnapInvert) 
+            ? nwo5::utils::getChroma<ccColor3B>(Shared::ChromaNode::FreeSnapInvert) 
             : Settings::FreeSnap::snapObjectColor.get();
 
         // touches happen before schedulers so this works :3c
-        for (auto obj : Editor::Selection::getExt()) {
+        for (auto obj : editor::selection::getExt()) {
             if (shouldntColorObjects) {
                 obj->updateObjectEditorColor();
             }
@@ -111,7 +111,7 @@ class $modify(EditorUI) {
                 return;
             }
 
-            const auto pos = Editor::Object::snappedPos(obj, Settings::FreeSnap::gridSize.get());
+            const auto pos = editor::object::snappedPos(obj, Settings::FreeSnap::gridSize.get());
             const auto scale = obj->getScaledContentSize() / 2.0f;
             const auto theta = kmDegreesToRadians(-obj->getRotation());
 
@@ -138,9 +138,9 @@ class $modify(EditorUI) {
 
         Shared::addUpdateFunc(SE_UPDATE_FUNC(updateSelect));
 
-        Utils::setupKeybind(this, "free-snap-snap-selection", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
-            if (Settings::FreeSnap::enabled.get() && pDown && !pRepeat && !Editor::Selection::empty()) {
-                snapSelection(Editor::Selection::getFirst());
+        nwo5::utils::setupKeybind(this, "free-snap-snap-selection", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
+            if (Settings::FreeSnap::enabled.get() && pDown && !pRepeat && !editor::selection::empty()) {
+                snapSelection(editor::selection::getFirst());
             }
         });
 

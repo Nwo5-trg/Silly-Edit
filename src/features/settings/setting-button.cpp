@@ -2,24 +2,24 @@
 #include "setting-button.hpp"
 
 using namespace geode::prelude;
-using namespace Utils::Aliases;
+using namespace nwo5::syntax;
 
 namespace Settings {
-    bool SettingButtonBase::init(SettingBase* pSetting) {
+    bool SettingButtonBase::init(GenericSetting* pSetting) {
         if (!CCNode::init()) {
             return false;
         }
 
         m_setting = pSetting;
 
-        Utils::setupNode(
+        nwo5::utils::setupNode(
             this,
 
-            SetNodeID{"{}-setting"_spr, pSetting->getKey()},
+            SetNodeID{"{}-setting"_spr, pSetting->key()},
             SetNodeSize{SETTING_BUTTON_SIZE},
             SetNodeChildren{
-                (m_label = Utils::setupNode(
-                    CCLabelBMFont::create(m_setting->getName().c_str(), "bigFont.fnt"),
+                (m_label = nwo5::utils::setupNode(
+                    CCLabelBMFont::create(m_setting->name().c_str(), "bigFont.fnt"),
 
                     SetNodeID{"label"_spr},
                     SetNodeAnchor{LEFT_CENTER_ANCHOR},
@@ -30,7 +30,7 @@ namespace Settings {
                         DEFAULT_SETTING_LABEL_SIZE.height / 2
                     }
                 )),
-                (m_inputMenu = Utils::setupNode(
+                (m_inputMenu = nwo5::utils::setupNode(
                     CCMenu::create(),
 
                     SetNodeID{"input-menu"_spr},
@@ -40,14 +40,14 @@ namespace Settings {
             }
         );
 
-        m_helpMenu = Utils::setupNode(
+        m_helpMenu = nwo5::utils::setupNode(
             CCMenu::create(),
             
             SetNodeID{"help-menu"_spr},
             SetNodeSize{HELP_BUTTON_SIZE, HELP_BUTTON_SIZE},
             SetNodePosition{SETTING_BUTTON_SIZE},
             SetNodeChildren{
-                m_helpButton = Utils::setupNode(
+                m_helpButton = nwo5::utils::setupNode(
                     CCMenuItemSpriteExtra::create(
                         CCSprite::createWithSpriteFrameName("GJ_infoIcon_001.png"),
                         this, menu_selector(SettingButtonBase::onHelp)
@@ -66,7 +66,7 @@ namespace Settings {
     void SettingButtonBase::onHelp(CCObject* pSender) {
         FLAlertLayer::create(
             "Help",
-            m_setting->getDescription(),
+            m_setting->description(),
             "OK"
         )->show();
     }
@@ -74,13 +74,13 @@ namespace Settings {
         return m_setting;
     }
 
-    bool NumberSettingButtonBase::init(SettingBase* pSetting) {
+    bool NumberSettingButtonBase::init(GenericSetting* pSetting) {
         if (!SettingButtonBase::init(pSetting)) {
             return false;
         }
 
-        m_input = Utils::setupNode(
-            Utils::createTextInput(DEFAULT_SETTING_INPUT_MENU_SIZE.width * (5.0f/6.0f), DEFAULT_SETTING_INPUT_MENU_SIZE.height / 2),
+        m_input = nwo5::utils::setupNode(
+            nwo5::utils::createTextInput(DEFAULT_SETTING_INPUT_MENU_SIZE.width * (5.0f/6.0f), DEFAULT_SETTING_INPUT_MENU_SIZE.height / 2),
 
             SetNodeID{"input"_spr},
             SetNodePosition{CCPointZero},
@@ -90,12 +90,12 @@ namespace Settings {
         return true;
     }
 
-    bool ColorSettingButtonBase::init(SettingBase* pSetting) {
+    bool ColorSettingButtonBase::init(GenericSetting* pSetting) {
         if (!SettingButtonBase::init(pSetting)) {
             return false;
         }
 
-        Utils::setupNode(
+        nwo5::utils::setupNode(
             CCMenuItemSpriteExtra::create
                 ((m_colorFill = CCSprite::create("color-button-fill.png"_spr)), 
                 this, menu_selector(ColorSettingButtonBase::onColorPick)
@@ -116,11 +116,12 @@ namespace Settings {
     }
 
     #define SE_SETUP_SETTING_BUTTON_CREATE(pName) \
-    pName * pName ::create(SettingBase* pSetting) { \
+    pName * pName ::create(GenericSetting* pSetting) { \
         auto ret = new pName ; \
     \
         if (!ret->init(pSetting)) { \
             delete ret; \
+    \
             return nullptr; \
         } \
     \
@@ -129,12 +130,12 @@ namespace Settings {
         return ret; \
     }
 
-    bool BoolSettingButton::init(SettingBase* pSetting) {
+    bool BoolSettingButton::init(GenericSetting* pSetting) {
         if (!SettingButtonBase::init(pSetting)) {
             return false;
         }
 
-        auto toggler = Utils::setupNode(
+        auto toggler = nwo5::utils::setupNode(
             CCMenuItemToggler::create(
                 CCSprite::createWithSpriteFrameName("GJ_checkOff_001.png"),
                 CCSprite::createWithSpriteFrameName("GJ_checkOn_001.png"),
@@ -152,51 +153,53 @@ namespace Settings {
         return true;
     }
     void BoolSettingButton::onToggle(cocos2d::CCObject* pSender) {
-        setting<T>()->set(Utils::isToggled(pSender));
+        setting<T>()->set(nwo5::utils::isToggled(pSender));
     }
     SE_SETUP_SETTING_BUTTON_CREATE(BoolSettingButton)
 
-    bool IntSettingButton::init(SettingBase* pSetting) {
+    bool IntSettingButton::init(GenericSetting* pSetting) {
         if (!NumberSettingButtonBase::init(pSetting)) {
             return false;
         }
 
-        m_input->setPlaceholder(Utils::numToString(setting<T>()->getDefault()));
+        m_input->setPlaceholder(nwo5::utils::numToString(setting<T>()->getDefault()));
         m_input->setCommonFilter(CommonFilter::Int);
-        m_input->setString(Utils::numToString(setting<T>()->get()));
+        m_input->setString(nwo5::utils::numToString(setting<T>()->get()));
         m_input->setCallback([this] (const std::string& pStr) {
             if (pStr.empty()) {
-                return setting<T>()->reset();
+                setting<T>()->set(setting<T>()->getDefault());
             }
-
-            setting<T>()->set(utils::numFromString<T>(pStr).unwrapOrDefault());
+            else {
+                setting<T>()->set(utils::numFromString<T>(pStr).unwrapOrDefault());
+            }
         });
 
         return true;
     }
     SE_SETUP_SETTING_BUTTON_CREATE(IntSettingButton)
 
-    bool FloatSettingButton::init(SettingBase* pSetting) {
+    bool FloatSettingButton::init(GenericSetting* pSetting) {
         if (!NumberSettingButtonBase::init(pSetting)) {
             return false;
         }
 
-        m_input->setPlaceholder(Utils::numToString(setting<T>()->getDefault()));
+        m_input->setPlaceholder(nwo5::utils::numToString(setting<T>()->getDefault()));
         m_input->setCommonFilter(CommonFilter::Float);
-        m_input->setString(Utils::numToString(setting<T>()->get()));
+        m_input->setString(nwo5::utils::numToString(setting<T>()->get()));
         m_input->setCallback([this] (const std::string& pStr) {
             if (pStr.empty()) {
-                return setting<T>()->reset();
+                setting<T>()->set(setting<T>()->getDefault());
             }
-
-            setting<T>()->set(utils::numFromString<T>(pStr).unwrapOrDefault());
+            else {
+                setting<T>()->set(utils::numFromString<T>(pStr).unwrapOrDefault());
+            }
         });
 
         return true;
     }
     SE_SETUP_SETTING_BUTTON_CREATE(FloatSettingButton)
 
-    bool StringSettingButton::init(SettingBase* pSetting) {
+    bool StringSettingButton::init(GenericSetting* pSetting) {
         if (!SettingButtonBase::init(pSetting)) {
             return false;
         }
@@ -205,13 +208,13 @@ namespace Settings {
 
         m_inputMenu->setPosition(CCPointZero);
 
-        auto input = Utils::setupNode(
-            Utils::createTextInput(
+        auto input = nwo5::utils::setupNode(
+            nwo5::utils::createTextInput(
                 SETTING_BUTTON_SIZE.width - PADDING * 2, SETTING_BUTTON_SIZE.height / 2 - PADDING, 
                 setting<T>()->getDefault(), 
             [this] (const std::string& pStr) {
                 if (pStr.empty()) {
-                    setting<T>()->reset();
+                    setting<T>()->set(setting<T>()->getDefault());
                 }
                 else if (pStr == "\\0") {
                     setting<T>()->set("");
@@ -228,7 +231,7 @@ namespace Settings {
         input->setCommonFilter(CommonFilter::Any);
         input->setString(setting<T>()->get());
 
-        Utils::setupNode(
+        nwo5::utils::setupNode(
             m_label,
 
             SetNodeAnchor{CENTER_ANCHOR},
@@ -241,7 +244,7 @@ namespace Settings {
     }
     SE_SETUP_SETTING_BUTTON_CREATE(StringSettingButton)
 
-    bool RGBSettingButton::init(SettingBase* pSetting) {
+    bool RGBSettingButton::init(GenericSetting* pSetting) {
         if (!ColorSettingButtonBase::init(pSetting)) {
             return false;
         }
@@ -263,7 +266,7 @@ namespace Settings {
     }
     SE_SETUP_SETTING_BUTTON_CREATE(RGBSettingButton)
 
-    bool RGBASettingButton::init(SettingBase* pSetting) {
+    bool RGBASettingButton::init(GenericSetting* pSetting) {
         if (!ColorSettingButtonBase::init(pSetting)) {
             return false;
         }
@@ -285,8 +288,8 @@ namespace Settings {
     }
     SE_SETUP_SETTING_BUTTON_CREATE(RGBASettingButton)
 
-    SettingButtonBase* createSettingButton(SettingBase* pSetting) {
-        switch (pSetting->getType()) {
+    SettingButtonBase* createSettingButton(GenericSetting* pSetting) {
+        switch (pSetting->type()) {
             case SettingType::Bool: return BoolSettingButton::create(pSetting);
             case SettingType::Int: return IntSettingButton::create(pSetting);
             case SettingType::Float: return FloatSettingButton::create(pSetting);

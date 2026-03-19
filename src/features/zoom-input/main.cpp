@@ -4,7 +4,7 @@
 #include "settings.hpp"
 
 using namespace geode::prelude;
-using namespace Utils::Aliases;
+using namespace nwo5::utils;
 
 // ill prolly add a seperate modifier for keybind zoom
 // so remind me to replace button zooming for some enum
@@ -33,7 +33,7 @@ class $modify(ZoomInputEditorUI, EditorUI) {
 
         auto fields = m_fields.self();
 
-        fields->zoomContainer = Utils::setupNode(
+        fields->zoomContainer = nwo5::utils::setupNode(
             CCMenu::create(),
 
             SetNodeID{"zoom-input-container"_spr},
@@ -52,21 +52,21 @@ class $modify(ZoomInputEditorUI, EditorUI) {
             ->setGap(0.0f)
         );
 
-        Utils::setupNode(
+        nwo5::utils::setupNode(
             CCLabelBMFont::create("Zoom: ", "bigFont.fnt"),
 
             SetNodeID{"zoom-label"_spr},
             SetNodeScaleWithHeight{BASE_ZOOM_INPUT_HEIGHT},
             SetNodeParent{fields->zoomContainer}
         );
-        fields->zoomInput = Utils::setupNode(
-            Utils::createTextInput(BASE_ZOOM_INPUT_HEIGHT * 2, BASE_ZOOM_INPUT_HEIGHT, "1"),
+        fields->zoomInput = nwo5::utils::setupNode(
+            nwo5::utils::createTextInput(BASE_ZOOM_INPUT_HEIGHT * 2, BASE_ZOOM_INPUT_HEIGHT, "1"),
 
             SetNodeID{"zoom-input"_spr},
             SetNodeParent{fields->zoomContainer}
         );
-        Utils::setupNode(
-            Utils::createCircleButtonFrame(
+        nwo5::utils::setupNode(
+            nwo5::utils::createCircleButtonFrame(
                 "edit_findBtn_001.png", CircleBaseColor::Green, 
                 this, menu_selector(ZoomInputEditorUI::onZoomInputButton)
             ),
@@ -80,7 +80,7 @@ class $modify(ZoomInputEditorUI, EditorUI) {
 
         fields->zoomContainer->updateLayout();
 
-        Utils::setupKeybind(this, "zoom-input-zoom-in", [this] (const Keybind&, bool pDown, bool, double) {
+        nwo5::utils::setupKeybind(this, "zoom-input-zoom-in", [this] (const Keybind&, bool pDown, bool, double) {
             if (pDown) {
                 m_fields->zoomingGameLayer = true;
 
@@ -90,7 +90,7 @@ class $modify(ZoomInputEditorUI, EditorUI) {
             }
         });
 
-        Utils::setupKeybind(this, "zoom-input-zoom-out", [this] (const Keybind&, bool pDown, bool, double) {
+        nwo5::utils::setupKeybind(this, "zoom-input-zoom-out", [this] (const Keybind&, bool pDown, bool, double) {
             if (pDown) {
                 m_fields->zoomingGameLayer = true;
                 m_fields->zoomingIn = false;
@@ -106,12 +106,12 @@ class $modify(ZoomInputEditorUI, EditorUI) {
 
     void updateZoomInput() {
         if (auto input = m_fields->zoomInput) {
-            input->setString(Utils::numToString(Editor::zoom()));
+            input->setString(nwo5::utils::numToString(editor::zoom()));
         }
     }
 
     void onZoomInputButton(CCObject* pSender) {
-        const auto val = utils::numFromString<float>(m_fields->zoomInput->getString()).unwrapOr(1.0f);
+        const auto val = numFromString<float>(m_fields->zoomInput->getString()).unwrapOr(1.0f);
 
         EditorUI::updateZoom(val > 0.0f ? val : 1.0f);
     }
@@ -124,12 +124,12 @@ class $modify(ZoomInputEditorUI, EditorUI) {
         const auto newZoom = 
             (Settings::ZoomInput::multiplicativeZoom.get() && (!Settings::ZoomInput::onlyButtons.get() || m_fields->buttonZooming))
                 ? (m_fields->zoomingIn
-                    ? Editor::zoom() * Settings::ZoomInput::multiplicativeZoomMod.get()
-                    : Editor::zoom() / Settings::ZoomInput::multiplicativeZoomMod.get()
+                    ? editor::zoom() * Settings::ZoomInput::multiplicativeZoomMod.get()
+                    : editor::zoom() / Settings::ZoomInput::multiplicativeZoomMod.get()
                   )
                 : (m_fields->zoomingIn
-                    ? Editor::zoom() + Settings::ZoomInput::zoomStep.get()
-                    : Editor::zoom() - Settings::ZoomInput::zoomStep.get()
+                    ? editor::zoom() + Settings::ZoomInput::zoomStep.get()
+                    : editor::zoom() - Settings::ZoomInput::zoomStep.get()
                   );
 
         EditorUI::updateZoom(

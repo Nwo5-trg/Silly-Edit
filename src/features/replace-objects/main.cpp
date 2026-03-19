@@ -5,7 +5,7 @@
 #include <Geode/modify/EditorUI.hpp>
 
 using namespace geode::prelude;
-using namespace Utils::Aliases;
+using namespace nwo5::syntax;
 
 class $modify(ReplaceObjectsEditorUI, EditorUI) {
     struct Fields {
@@ -23,7 +23,7 @@ class $modify(ReplaceObjectsEditorUI, EditorUI) {
             return true;
         }
 
-        auto menu = Utils::setupNode(
+        auto menu = nwo5::utils::setupNode(
             ReplaceObjects::FindAndReplaceMenu::create(),
 
             SetNodeID{"find-and-replace-menu"_spr},
@@ -44,7 +44,7 @@ class $modify(ReplaceObjectsEditorUI, EditorUI) {
 
         auto helpButton = m_deleteMenu->getChildByID("delete-help-icon");
 
-        auto toggle = Utils::setupNode(
+        auto toggle = nwo5::utils::setupNode(
             CCMenuItemToggler::create(
                 CircleButtonSprite::createWithSpriteFrameName("edit_findBtn_001.png", 1.0f, CircleBaseColor::Gray),
                 CircleButtonSprite::createWithSpriteFrameName("edit_findBtn_001.png", 1.0f, CircleBaseColor::Blue),
@@ -68,9 +68,9 @@ class $modify(ReplaceObjectsEditorUI, EditorUI) {
     }
 
     void onToggleFindAndReplaceVisibility(CCObject* pSender) {
-        m_fields->findAndReplaceMenu->setVisible(Utils::isToggled(pSender));
+        m_fields->findAndReplaceMenu->setVisible(nwo5::utils::isToggled(pSender));
 
-        Mod::get()->setSavedValue<bool>("replace-object-show-find-and-replace-menu-toggle", Utils::isToggled(pSender));
+        Mod::get()->setSavedValue<bool>("replace-object-show-find-and-replace-menu-toggle", nwo5::utils::isToggled(pSender));
     }
 
     // so when clicking on an unselectable object the undo queue doesnt get filled up

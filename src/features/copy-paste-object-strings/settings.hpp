@@ -3,13 +3,13 @@
 #include <internal/settings.hpp>
 
 namespace Settings::CopyPasteObjectStrings {
-    SE_CATEGORY("Copy Paste Object Strings", "copy-paste-object-strings-logo.png"_spr, SettingCategory::CopyPasteObjectStrings)
-    SE_SETTING("Copy Paste Object Strings", "Enabled", bool, enabled, false)
+    SCAPI_INLINE_CATEGORY("Copy Paste Object Strings", std::nullopt, "copy-paste-object-strings-logo.png"_spr, SettingCategory::CopyPasteObjectStrings)
+    inline SavedSetting<bool> enabled{"Enabled", "Copy Paste Object Strings", false};
     
-    SE_SETTING("Copy Paste Object Strings", "Copy", bool, copy, true)
-    SE_SETTING("Copy Paste Object Strings", "Paste", bool, paste, true)
-    SE_SETTING("Copy Paste Object Strings", "Fallback Editor", bool, fallbackEditor, true, "fallback to editor clipboard if your clipboard doesnt contain a valid object id, if disabled then just nothing gets pasted")
-    SE_SETTING("Copy Paste Object Strings", "Dont Override Editor", bool, dontOverrideEditor, false, "by default when pasting a valid object string, it overrides the default editor clipboard, enabling this setting still pastes the string, but doesnt set the editor clipboard to the string")
-    SE_SETTING("Copy Paste Object Strings", "Copy Notification", bool, copyNotification, false)
-    SE_SETTING("Copy Paste Object Strings", "Paste Notification", bool, pasteNotification, true)
+    inline SavedSetting<bool> copy{"Copy", "Copy Paste Object Strings", true};
+    inline SavedSetting<bool> paste{"Paste", "Copy Paste Object Strings", true};
+    inline SavedSetting<bool> fallbackEditor{"Fallback Editor", "Copy Paste Object Strings", true, "fallback to editor clipboard if your clipboard doesnt contain a valid object id, if disabled then just nothing gets pasted"};
+    inline SavedSetting<bool> dontOverrideEditor{"Dont Override Editor", "Copy Paste Object Strings", false, "by default when pasting a valid object string, it overrides the default editor clipboard, enabling this setting still pastes the string, but doesnt set the editor clipboard to the string"};
+    inline SavedSetting<bool> copyNotification{"Copy Notification", "Copy Paste Object Strings", false};
+    inline SavedSetting<bool> pasteNotification{"Paste Notification", "Copy Paste Object Strings", true};
 }

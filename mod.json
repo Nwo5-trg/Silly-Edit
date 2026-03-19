@@ -1,5 +1,5 @@
 {
-	"geode": "5.2.0",
+	"geode": "5.3.0",
 	"gd": {
 		"win": "2.2081",
 		"android": "2.2081",
@@ -8,7 +8,7 @@
 	},
 	"id": "nwo5.sillyedit",
 	"name": "sillyedit",
-	"version": "v0.1.0-alpha.10",
+	"version": "v0.1.0-alpha.11",
 	"developer": "Nwo5",
 	"description": "so silly",
 	"links": {
@@ -16,9 +16,12 @@
 	},
 	"tags": ["editor", "bugfix", "customization", "enhancement", "interface", "utility", "offline"],
 	"dependencies": {
-        "geode.node-ids": "1.23.1",
-		"geode.custom-keybinds": "2.1.0",
-		"alphalaneous.good_grid": "1.1.4"
+        "geode.node-ids": ">=1.23.1",
+		"nwo5.silly-api": ">=1.0.0",
+		"geode.custom-keybinds": {
+			"version": ">=2.1.0",
+			"required": false
+		}
 	},
 	"resources": {
 		"sprites": [

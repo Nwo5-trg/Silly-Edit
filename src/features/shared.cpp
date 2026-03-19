@@ -4,7 +4,7 @@
 #include "settings/settings.hpp"
 
 using namespace geode::prelude;
-using namespace Utils::Aliases;
+using namespace nwo5::syntax;
 
 class $modify(SharedLevelEditorLayer, LevelEditorLayer) {
     struct Fields {
@@ -15,13 +15,11 @@ class $modify(SharedLevelEditorLayer, LevelEditorLayer) {
 
         CCLayer* hiddenLayer = nullptr;
 
-        std::vector<CCNodeRGBA*> chromaNodes;
-
         std::vector<geode::Function<void()>> drawFuncs;
     };
 
     CCLayer* createLayer(std::string_view pID, int pZ) {
-        return Utils::setupNode(
+        return nwo5::utils::setupNode(
             CCLayer::create(),
 
             SetNodeID{pID},
@@ -31,7 +29,7 @@ class $modify(SharedLevelEditorLayer, LevelEditorLayer) {
         );
     }
     CCDrawNode* createDrawNode(std::string_view pID, CCNode* pParent) {
-        auto drawNode = Utils::setupNode(
+        auto drawNode = nwo5::utils::setupNode(
             CCDrawNode::create(),
 
             SetNodeID{pID},
@@ -55,47 +53,6 @@ class $modify(SharedLevelEditorLayer, LevelEditorLayer) {
         m_fields->overlayLayer = createLayer("overlay-layer"_spr, m_editorUI->m_scaleControl->getZOrder() - 1);
         m_fields->overlayDraw = createDrawNode("overlay-draw"_spr, m_fields->overlayLayer);
         (m_fields->hiddenLayer = createLayer("hidden-layer"_spr, 0))->setVisible(false);
-
-        constexpr std::array<ccColor3B, 6> gayArray{{
-            {255, 128, 128}, {255, 255, 128}, {128, 255, 128},
-            {128, 255, 255}, {128, 128, 255}, {255, 128, 255}
-        }};
-
-        for (int i = 0; i < 6; i++) {
-            auto gayNode = CCNodeRGBA::create();
-            
-            m_fields->hiddenLayer->addChild(gayNode);
-            m_fields->chromaNodes.push_back(gayNode);
-
-            gayNode->runAction(CCRepeatForever::create(
-                CCSequence::create(
-                    CCTintTo::create(
-                        Settings::General::sayoDeviceSensitivity, gayArray[(i + 0) % 6].r,
-                        gayArray[(i + 0) % 6].g, gayArray[(i + 0) % 6].b
-                    ),
-                    CCTintTo::create(
-                        Settings::General::sayoDeviceSensitivity, gayArray[(i + 1) % 6].r,
-                        gayArray[(i + 1) % 6].g, gayArray[(i + 1) % 6].b
-                    ),
-                    CCTintTo::create(
-                        Settings::General::sayoDeviceSensitivity, gayArray[(i + 2) % 6].r,
-                        gayArray[(i + 2) % 6].g, gayArray[(i + 2) % 6].b
-                    ),
-                    CCTintTo::create(
-                        Settings::General::sayoDeviceSensitivity, gayArray[(i + 3) % 6].r,
-                        gayArray[(i + 3) % 6].g, gayArray[(i + 3) % 6].b
-                    ),
-                    CCTintTo::create(
-                        Settings::General::sayoDeviceSensitivity, gayArray[(i + 4) % 6].r,
-                        gayArray[(i + 4) % 6].g, gayArray[(i + 4) % 6].b
-                    ),
-                    CCTintTo::create(
-                        Settings::General::sayoDeviceSensitivity, gayArray[(i + 5) % 6].r,
-                        gayArray[(i + 5) % 6].g, gayArray[(i + 5) % 6].b
-                    ), nullptr
-                )
-            ));
-        }
     
         return true;
     }
@@ -120,51 +77,43 @@ class $modify(SharedLevelEditorLayer, LevelEditorLayer) {
 
 namespace Shared {
     CCDrawNode* getGridDraw() {
-        if (auto layer = reinterpret_cast<SharedLevelEditorLayer*>(Editor::layer())) {
+        if (auto layer = reinterpret_cast<SharedLevelEditorLayer*>(editor::layer())) {
             return layer->m_fields->gridDraw;
         }
 
         return nullptr;
     }
     CCLayer* getGridLayer() {
-        if (auto layer = reinterpret_cast<SharedLevelEditorLayer*>(Editor::layer())) {
+        if (auto layer = reinterpret_cast<SharedLevelEditorLayer*>(editor::layer())) {
             return layer->m_fields->gridLayer;
         }
         
         return nullptr;
     }
     CCDrawNode* getOverlayDraw() {
-        if (auto layer = reinterpret_cast<SharedLevelEditorLayer*>(Editor::layer())) {
+        if (auto layer = reinterpret_cast<SharedLevelEditorLayer*>(editor::layer())) {
             return layer->m_fields->overlayDraw;
         }
 
         return nullptr;
     }
     CCLayer* getOverlayLayer() {
-        if (auto layer = reinterpret_cast<SharedLevelEditorLayer*>(Editor::layer())) {
+        if (auto layer = reinterpret_cast<SharedLevelEditorLayer*>(editor::layer())) {
             return layer->m_fields->overlayLayer;
         }
         
         return nullptr;
     }
     CCLayer* getHiddenLayer() {
-        if (auto layer = reinterpret_cast<SharedLevelEditorLayer*>(Editor::layer())) {
+        if (auto layer = reinterpret_cast<SharedLevelEditorLayer*>(editor::layer())) {
             return layer->m_fields->hiddenLayer;
         }
 
         return nullptr;
     }
 
-    ccColor3B getChroma3B(int pNode) {
-        if (auto layer = reinterpret_cast<SharedLevelEditorLayer*>(Editor::layer())) {
-            return layer->m_fields->chromaNodes[pNode]->getColor();
-        }
-
-        return {};
-    }
-
     void addUpdateFunc(geode::Function<void()> pFunc) {
-        if (auto layer = reinterpret_cast<SharedLevelEditorLayer*>(Editor::layer())) {
+        if (auto layer = reinterpret_cast<SharedLevelEditorLayer*>(editor::layer())) {
             layer->m_fields->drawFuncs.push_back(std::move(pFunc));
         }
     }

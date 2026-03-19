@@ -33,7 +33,7 @@ namespace Settings {
 
         bool init();
 
-        cocos2d::CCMenu* createPage(const Category& pCategory);
+        cocos2d::CCMenu* createPage(Category* pCategory);
         
         void goToPage(int pPage);
 

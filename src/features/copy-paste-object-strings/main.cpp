@@ -14,15 +14,15 @@ static bool isProbablierObjectString(std::string_view pStr) {
         return false;
     }
 
-    if (const auto count = Utils::stringCount(pStr, ','); count < 5 || !(count % 2)) {
+    if (const auto count = nwo5::utils::stringCount(pStr, ','); count < 5 || !(count % 2)) {
         return false;
     }
 
     if ( // this is so extra lol
-        const auto count = Utils::stringCount(pStr, "1,"); 
-        count != Utils::stringCount(pStr, ";") + 1 
-        || count != Utils::stringCount(pStr, "2,") 
-        || count != Utils::stringCount(pStr, "3,")
+        const auto count = nwo5::utils::stringCount(pStr, "1,"); 
+        count != nwo5::utils::stringCount(pStr, ";") + 1 
+        || count != nwo5::utils::stringCount(pStr, "2,") 
+        || count != nwo5::utils::stringCount(pStr, "3,")
     ) {
         return false;
     }

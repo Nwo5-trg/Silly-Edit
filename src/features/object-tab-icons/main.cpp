@@ -4,7 +4,7 @@
 #include <Geode/modify/EditorUI.hpp>
 
 using namespace geode::prelude;
-using namespace Utils::Aliases;
+using namespace nwo5::syntax;
 
 class $modify(EditorUI) {
 	bool init(LevelEditorLayer* editorLayer) {	
@@ -31,7 +31,7 @@ class $modify(EditorUI) {
 
             // we're js gonna trust u ery pr from a year ago
             for (int i = 0; i < 2; i++) {
-                auto tab = Utils::getNestedChildSafe<CCSprite*>(
+                auto tab = nwo5::utils::getNestedChildSafe<CCSprite*>(
                     m_tabsMenu,
 
                     GetChildQuery{name},
@@ -61,7 +61,7 @@ class $modify(EditorUI) {
 
                 originalIcon->setVisible(false);
 
-                Utils::setupNode(
+                nwo5::utils::setupNode(
                     spr,  
                     
                     SetNodeID{"{}"_spr, name},

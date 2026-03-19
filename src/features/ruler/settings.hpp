@@ -3,20 +3,20 @@
 #include <internal/settings.hpp>
 
 namespace Settings::Ruler {
-    SE_CATEGORY("Ruler", "ruler-logo.png"_spr, SettingCategory::Ruler)
-    SE_SETTING("Ruler", "Enabled", bool, enabled, true)
+    SCAPI_INLINE_CATEGORY("Ruler", std::nullopt, "ruler-logo.png"_spr, SettingCategory::Ruler)
+    inline SavedSetting<bool> enabled{"Enabled", "Ruler", true};
 
-    SE_SETTING("Ruler", "Use GD Units", bool, useGDUnits, true, "one block = 10 gd units = 30 units, if enabled will show 45 units as '1, 5'")
-    SE_SETTING("Ruler", "Editor Tab Button", bool, editorTabButton, true)
+    inline SavedSetting<bool> useGDUnits{"Use GD Units", "Ruler", true, "one block = 10 gd units = 30 units, if enabled will show 45 units as '1, 5'"};
+    inline SavedSetting<bool> editorTabButton{"Editor Tab Button", "Ruler", true};
 
-    SE_CATEGORY("Ruler - Visual", "ruler-logo.png"_spr, SettingCategory::Ruler)
-    SE_SETTING("Ruler - Visual", "Thickness", float, thickness, 1.0f)
-    SE_SETTING("Ruler - Visual", "Padding", float, padding, 0.0f)
-    SE_SETTING("Ruler - Visual", "Fill Opacity", float, fillOpacity, 0.0f)
-    SE_SETTING("Ruler - Visual", "Label Size", float, labelSize, 1.25f)
-    SE_SETTING("Ruler - Visual", "Label Distance", float, labelDistance, 2.5f)
-    SE_SETTING("Ruler - Visual", "Dont Rotate Label", bool, dontRotateLabel, false)
-    SE_SETTING("Ruler - Visual", "Label On Right", bool, labelOnRight, false)
-    SE_SETTING("Ruler - Visual", "Label On Bottom", bool, labelOnBottom, false)
-    SE_SETTING("Ruler - Visual", "Chroma", bool, chroma, false)
+    SCAPI_INLINE_CATEGORY("Ruler - Visual", std::nullopt, "ruler-logo.png"_spr, SettingCategory::Ruler)
+    inline SavedSetting<float> thickness{"Thickness", "Ruler - Visual", 1.0f};
+    inline SavedSetting<float> padding{"Padding", "Ruler - Visual", 0.0f};
+    inline SavedSetting<float> fillOpacity{"Fill Opacity", "Ruler - Visual", 0.0f};
+    inline SavedSetting<float> labelSize{"Label Size", "Ruler - Visual", 1.25f};
+    inline SavedSetting<float> labelDistance{"Label Distance", "Ruler - Visual", 2.5f};
+    inline SavedSetting<bool> dontRotateLabel{"Dont Rotate Label", "Ruler - Visual", false};
+    inline SavedSetting<bool> labelOnRight{"Label On Right", "Ruler - Visual", false};
+    inline SavedSetting<bool> labelOnBottom{"Label On Bottom", "Ruler - Visual", false};
+    inline SavedSetting<bool> chroma{"Chroma", "Ruler - Visual", false};
 }

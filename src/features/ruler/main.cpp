@@ -4,7 +4,7 @@
 #include "settings.hpp"
 
 using namespace geode::prelude; 
-using namespace Utils::Aliases;
+using namespace nwo5::syntax;
 
 struct MeasurementColor {
     int main;
@@ -50,7 +50,7 @@ class $modify(RulerEditorUI, EditorUI) {
         int main = measurements.empty() ? -1 : measurements.back().color.main;
 
         while (true) {
-            const auto random = Utils::random(0, static_cast<int>(s_colors.size()) - 1);
+            const auto random = nwo5::utils::random(0, static_cast<int>(s_colors.size()) - 1);
 
             if (random != main) {
                 main = random;
@@ -62,7 +62,7 @@ class $modify(RulerEditorUI, EditorUI) {
         int chroma = measurements.empty() ? -1 : measurements.back().color.chroma;
 
         while (true) {
-            const auto random = Utils::random(0, 5);
+            const auto random = nwo5::utils::random(0, 360);
 
             if (random != chroma) {
                 chroma = random;
@@ -77,20 +77,20 @@ class $modify(RulerEditorUI, EditorUI) {
     std::string getMeasurementString(float pMeasure) {
         if (Settings::Ruler::useGDUnits.get()) {
             // i think the correct way to do the math is slightly different but this works so
-            const auto measure = pMeasure / (Settings::Ruler::useGDUnits.get() ? Editor::GRID_SIZE : 1);
+            const auto measure = pMeasure / (Settings::Ruler::useGDUnits.get() ? editor::constants::GRID_SIZE : 1);
             const auto units = std::floor(measure);
 
-            const auto str =  Utils::numToString(units);
+            const auto str =  nwo5::utils::numToString(units);
 
             // floating point trust issues
             if (std::abs(measure - units) > std::numeric_limits<float>::epsilon()) {
-                return fmt::format("{}, {}", str, Utils::numToString((measure - units) * Editor::GRID_SIZE_OBJECT));
+                return fmt::format("{}, {}", str, nwo5::utils::numToString((measure - units) * editor::constants::GRID_SIZE_OBJECT));
             }
 
             return str;
         }
         else {
-            return Utils::numToString(pMeasure);
+            return nwo5::utils::numToString(pMeasure);
         }
     }
 
@@ -103,8 +103,8 @@ class $modify(RulerEditorUI, EditorUI) {
     }
 
     void createMeasurement() {
-        auto objs = Editor::Selection::get();
-        const auto bounds = Editor::Object::bounds(objs, true);
+        auto objs = editor::selection::get();
+        const auto bounds = editor::object::bounds(objs, true);
 
         Measurement measurement = {
             bounds.origin, bounds.origin + bounds.size, getMeasurementColor(),
@@ -137,7 +137,7 @@ class $modify(RulerEditorUI, EditorUI) {
     }
 
     void onCreateMeasurement(CCObject* pSender) {
-        if (Editor::Selection::empty()) {
+        if (editor::selection::empty()) {
             return deleteMeasurement(false);
         }
         
@@ -153,7 +153,7 @@ class $modify(RulerEditorUI, EditorUI) {
             const auto start = measurement.start - padding;
             const auto end = measurement.end + padding;
 
-            const auto col = Settings::Ruler::chroma.get() ? Shared::getChroma(measurement.color.chroma) : s_colors[measurement.color.main];
+            const auto col = Settings::Ruler::chroma.get() ? nwo5::utils::getChroma(measurement.color.chroma) : s_colors[measurement.color.main];
 
             Shared::getOverlayDraw()->drawRect(
                 start, end, {col.r, col.g, col.b, Settings::Ruler::fillOpacity.get()}, Settings::Ruler::thickness.get(), col
@@ -162,7 +162,7 @@ class $modify(RulerEditorUI, EditorUI) {
             for (auto label : {measurement.xLabel, measurement.yLabel}) {
                 const auto y = (label == measurement.yLabel);
 
-                Utils::setupNode(
+                nwo5::utils::setupNode(
                     label,
 
                     SetNodePosition{
@@ -233,12 +233,12 @@ class $modify(RulerEditorUI, EditorUI) {
         random::_getGenerator().seed(time(nullptr));
         Shared::addUpdateFunc(SE_UPDATE_FUNC(updateMeasurements));
 
-        Utils::setupKeybind(this, "ruler-create-measurement-key", [this] (const Keybind&, bool pDown, bool, double) {
+        nwo5::utils::setupKeybind(this, "ruler-create-measurement-key", [this] (const Keybind&, bool pDown, bool, double) {
             if (Settings::Ruler::enabled.get() && pDown) {
                 createMeasurement();
             }
         });
-        Utils::setupKeybind(this, "ruler-delete-last-measurement-key", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
+        nwo5::utils::setupKeybind(this, "ruler-delete-last-measurement-key", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
             if (Settings::Ruler::enabled.get() && pDown) {
                 deleteMeasurement(pRepeat);
             }

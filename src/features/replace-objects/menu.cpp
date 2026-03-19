@@ -5,7 +5,7 @@
 #include <Geode/modify/EditorUI.hpp>
 
 using namespace geode::prelude;
-using namespace Utils::Aliases;
+using namespace nwo5::syntax;
 
 namespace ReplaceObjects {
     FindAndReplaceMenu* FindAndReplaceMenu::create() {
@@ -29,14 +29,14 @@ namespace ReplaceObjects {
 
         setContentSize({WIDTH + BACKGROUND_BUFFER, HEIGHT + BACKGROUND_BUFFER});
 
-        m_background = Utils::setupNode(CCScale9Sprite::create("GJ_square01.png"),
+        m_background = nwo5::utils::setupNode(CCScale9Sprite::create("GJ_square01.png"),
             SetNodeID{"background"_spr},
             SetNodePosition{WIDTH / 2, HEIGHT / 2},
             SetNodeSize{WIDTH + BACKGROUND_BUFFER, HEIGHT + BACKGROUND_BUFFER},
             SetNodeParent{this}
         );
-        m_queryBar = Utils::setupNode(
-            Utils::createTextInput(WIDTH * SEARCH_BAR_SIZE - HORIZONTAL_PADDING * 2, (HEIGHT - VERTICAL_PADDING * 2 - BAR_SPACING) / 2, "Query...", [this] (const std::string& pStr) {
+        m_queryBar = nwo5::utils::setupNode(
+            nwo5::utils::createTextInput(WIDTH * SEARCH_BAR_SIZE - HORIZONTAL_PADDING * 2, (HEIGHT - VERTICAL_PADDING * 2 - BAR_SPACING) / 2, "Query...", [this] (const std::string& pStr) {
                 this->onQueryBarUpdated(pStr);
             }),
             
@@ -48,8 +48,8 @@ namespace ReplaceObjects {
             SetNodeParent{this}
         );
         m_queryBar->setTextAlign(TextInputAlign::Left);
-        m_replaceBar = Utils::setupNode(
-            Utils::createTextInput(WIDTH * SEARCH_BAR_SIZE - HORIZONTAL_PADDING * 2, (HEIGHT - VERTICAL_PADDING * 2 - BAR_SPACING) / 2, "Replace...", [this] (const std::string& pStr) {
+        m_replaceBar = nwo5::utils::setupNode(
+            nwo5::utils::createTextInput(WIDTH * SEARCH_BAR_SIZE - HORIZONTAL_PADDING * 2, (HEIGHT - VERTICAL_PADDING * 2 - BAR_SPACING) / 2, "Replace...", [this] (const std::string& pStr) {
                 this->onReplaceBarUpdated(pStr);
             }),
             
@@ -62,29 +62,29 @@ namespace ReplaceObjects {
         );
         m_replaceBar->setTextAlign(TextInputAlign::Left);
 
-        m_buttonMenu = Utils::setupNode(CCMenu::create(),
+        m_buttonMenu = nwo5::utils::setupNode(CCMenu::create(),
             SetNodeID{"button-menu"_spr},
             SetNodePosition{CCPointZero},
             SetNodeSize{CCSizeZero},
             SetNodeChildren{
-                Utils::setupNode(
-                    Utils::createCircleButtonFrame("square_01_001.png", CircleBaseColor::Green, CircleBaseSize::Small, this, menu_selector(FindAndReplaceMenu::onFromSelection), 0.75f),
+                nwo5::utils::setupNode(
+                    nwo5::utils::createCircleButtonFrame("square_01_001.png", CircleBaseColor::Green, CircleBaseSize::Small, this, menu_selector(FindAndReplaceMenu::onFromSelection), 0.75f),
 
                     SetNodeID{"from-selection-find-button"_spr},
                     SetNodeTag{0},
                     SetNodePosition{(HORIZONTAL_PADDING + (WIDTH * FROM_SELECTION_BUTTONS_SIZE - HORIZONTAL_PADDING)) / 2, m_queryBar->getPositionY()},
                     SetNodeScaleWithSize{BUTTON_SIZE}
                 ),
-                Utils::setupNode(
-                    Utils::createCircleButtonFrame("square_01_001.png", CircleBaseColor::Green, CircleBaseSize::Small, this, menu_selector(FindAndReplaceMenu::onFromSelection), 0.75f),
+                nwo5::utils::setupNode(
+                    nwo5::utils::createCircleButtonFrame("square_01_001.png", CircleBaseColor::Green, CircleBaseSize::Small, this, menu_selector(FindAndReplaceMenu::onFromSelection), 0.75f),
 
                     SetNodeID{"from-selection-replace-button"_spr},
                     SetNodeTag{1},
                     SetNodePosition{(HORIZONTAL_PADDING + (WIDTH * FROM_SELECTION_BUTTONS_SIZE - HORIZONTAL_PADDING)) / 2, m_replaceBar->getPositionY()},
                     SetNodeScaleWithSize{BUTTON_SIZE}
                 ),
-                Utils::setupNode(
-                    Utils::createCircleButtonFrame("edit_findBtn_001.png", CircleBaseColor::Green, CircleBaseSize::Small, this, menu_selector(FindAndReplaceMenu::onFind)),
+                nwo5::utils::setupNode(
+                    nwo5::utils::createCircleButtonFrame("edit_findBtn_001.png", CircleBaseColor::Green, CircleBaseSize::Small, this, menu_selector(FindAndReplaceMenu::onFind)),
 
                     SetNodeID{"find-button"_spr},
                     SetNodePosition{
@@ -93,8 +93,8 @@ namespace ReplaceObjects {
                     },
                     SetNodeScaleWithSize{BUTTON_SIZE}
                 ),
-                Utils::setupNode(
-                    Utils::createCircleButtonFrame("edit_eGameRotBtn_001.png", CircleBaseColor::Blue, CircleBaseSize::Small, this, menu_selector(FindAndReplaceMenu::onReplace)),
+                nwo5::utils::setupNode(
+                    nwo5::utils::createCircleButtonFrame("edit_eGameRotBtn_001.png", CircleBaseColor::Blue, CircleBaseSize::Small, this, menu_selector(FindAndReplaceMenu::onReplace)),
 
                     SetNodeID{"replace-button"_spr},
                     SetNodePosition{
@@ -103,7 +103,7 @@ namespace ReplaceObjects {
                     },
                     SetNodeScaleWithSize{BUTTON_SIZE}
                 ),
-                Utils::setupNode(
+                nwo5::utils::setupNode(
                     (m_selectFilterToggle = CCMenuItemToggler::create(
                         CircleButtonSprite::createWithSpriteFrameName("edit_flipYBtn_001.png", 1.0f, CircleBaseColor::Gray),
                         CircleButtonSprite::createWithSpriteFrameName("edit_flipYBtn_001.png", 1.0f, CircleBaseColor::Pink),
@@ -117,8 +117,8 @@ namespace ReplaceObjects {
                     },
                     SetNodeScaleWithSize{BUTTON_SIZE}
                 ),
-                Utils::setupNode(
-                    Utils::createButtonFrame("GJ_infoIcon_001.png", this, menu_selector(FindAndReplaceMenu::onHelp)),
+                nwo5::utils::setupNode(
+                    nwo5::utils::createButtonFrame("GJ_infoIcon_001.png", this, menu_selector(FindAndReplaceMenu::onHelp)),
 
                     SetNodeID{"help-button"_spr},
                     SetNodePosition{
@@ -127,7 +127,7 @@ namespace ReplaceObjects {
                     },
                     SetNodeScaleWithSize{BUTTON_SIZE / 1.5f}
                 ),
-                Utils::setupNode(
+                nwo5::utils::setupNode(
                     CCMenuItemSpriteExtra::create(
                         (m_syntaxWarningLabel = CCLabelBMFont::create("qO|rO", "bigFont.fnt")), 
                         this, menu_selector(FindAndReplaceMenu::onShowSyntaxWarnings)
@@ -232,7 +232,7 @@ namespace ReplaceObjects {
             return Notification::create("Tried To Replace With No Objects In Level", NotificationIcon::Warning)->show();
         }
 
-        const auto split = string::split(Editor::ui()->copyObjects(copy, false, false), ";");
+        const auto split = string::split(editor::ui()->copyObjects(copy, false, false), ";");
         
         std::string modifiedString;
 
@@ -251,53 +251,53 @@ namespace ReplaceObjects {
 
         modifiedString.pop_back();
 
-        Editor::Object::remove(copy, true);
+        editor::object::remove(copy, true);
 
-        auto newObjs = Editor::ui()->pasteObjects(modifiedString, false, false);
-        Editor::Selection::set(newObjs, false, true);
-        Editor::Selection::repairColors(newObjs);
+        auto newObjs = editor::ui()->pasteObjects(modifiedString, false, false);
+        editor::selection::set(newObjs, false, true);
+        editor::selection::repairColors(newObjs);
 
-        Editor::update();
+        editor::update();
     }
 
     void FindAndReplaceMenu::onFind(CCObject* pSender) {
         auto objs = CCArray::create();
 
-        for (auto obj : CCArrayExt<GameObject*>(Editor::Selection::empty() ? Editor::ui()->m_editorLayer->m_objects : Editor::Selection::get())) {
+        for (auto obj : CCArrayExt<GameObject*>(editor::selection::empty() ? editor::ui()->m_editorLayer->m_objects : editor::selection::get())) {
             if (evaluateObject(obj)) {
                 objs->addObject(obj);
             }
         }
-        Editor::Selection::set(objs, true, true);
+        editor::selection::set(objs, true, true);
 
-        Editor::update(false, true);
+        editor::update(false, true);
     }
     void FindAndReplaceMenu::onReplace(CCObject* pSender) {
         if (m_replaceExpressions.empty()) {
             return Notification::create("No Replace Actions Written", NotificationIcon::Warning)->show();
         }
 
-        if (Editor::Selection::empty()) {
-            Editor::Selection::set(Editor::layer()->m_objects, false, true);
+        if (editor::selection::empty()) {
+            editor::selection::set(editor::layer()->m_objects, false, true);
         }
         
-        if (const auto size = Editor::Selection::count(); size >= Settings::ReplaceObjects::replaceWarningThreshold.get()) {
+        if (const auto size = editor::selection::count(); size >= Settings::ReplaceObjects::replaceWarningThreshold.get()) {
             geode::createQuickPopup("HEY !!!", fmt::format("{} objects targeted. Running replace action(s) on *every single one* will probably be very slow. Are you *sure* you want to do this", size), "YES", "NVM", [&] (FLAlertLayer*, bool pBtn2) {
                 if (!pBtn2) {
-                    runReplaceExpressions(Editor::Selection::get());
+                    runReplaceExpressions(editor::selection::get());
                 }
             });
         }
         else {
-            runReplaceExpressions(Editor::Selection::get());
+            runReplaceExpressions(editor::selection::get());
         }
     }
     void FindAndReplaceMenu::onToggleSelectFilter(CCObject* pSender) {
-        m_useQueryAsSelectFilter = Utils::isToggled(pSender);
+        m_useQueryAsSelectFilter = nwo5::utils::isToggled(pSender);
         Mod::get()->setSavedValue<bool>("replace-object-use-query-as-select-filter", m_useQueryAsSelectFilter);
     }
     void FindAndReplaceMenu::onFromSelection(CCObject* pSender) {
-        const auto ids = Editor::Object::ids(Editor::Selection::get());
+        const auto ids = editor::object::ids(editor::selection::get());
 
         if (ids.empty()) {
             return Notification::create("No Objects Selected", NotificationIcon::Warning)->show();

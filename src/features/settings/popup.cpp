@@ -6,7 +6,7 @@
 #include "setting-button.hpp"
 
 using namespace geode::prelude;
-using namespace Utils::Aliases;
+using namespace nwo5::syntax;
 
 namespace Settings {
     bool SettingsPopup::init() {
@@ -14,7 +14,7 @@ namespace Settings {
             return false;
         }
 
-        m_pageDotMenu = Utils::setupNode(
+        m_pageDotMenu = nwo5::utils::setupNode(
             CCMenu::create(),
 
             SetNodeID{"dot-menu"_spr},
@@ -24,13 +24,13 @@ namespace Settings {
         );
 
         for (auto& category : SettingsManager::get()->getCategories()) {
-            const auto size = category.getSettings().size();
+            const auto size = category->getSettings().size();
 
             auto menu = createPage(category);
 
             for (int i = 0; i < size; i += SETTINGS_PER_PAGE) {
                 for (int j = 0; j < SETTINGS_PER_PAGE && (i + j) < size; j++) {
-                    auto button = createSettingButton(category.getSettings()[i + j]);
+                    auto button = createSettingButton(category->getSettings()[i + j]);
                     
                     menu->addChild(button);
                     m_settings.push_back(button);
@@ -47,8 +47,8 @@ namespace Settings {
         );
         m_pageDotMenu->updateLayout();
 
-        auto next = Utils::setupNode(
-            Utils::createButtonFrame("GJ_arrow_01_001.png", this, menu_selector(SettingsPopup::onNextPage)),
+        auto next = nwo5::utils::setupNode(
+            nwo5::utils::createButtonFrame("GJ_arrow_01_001.png", this, menu_selector(SettingsPopup::onNextPage)),
 
             SetNodeID{"next-page-button"_spr},
             SetNodeScaleWithSize{ARROW_SIZE},
@@ -59,8 +59,8 @@ namespace Settings {
 
         next->setRotationY(180.0f);
 
-        auto prev = Utils::setupNode(
-            Utils::createButtonFrame("GJ_arrow_01_001.png", this, menu_selector(SettingsPopup::onPreviousPage)),
+        auto prev = nwo5::utils::setupNode(
+            nwo5::utils::createButtonFrame("GJ_arrow_01_001.png", this, menu_selector(SettingsPopup::onPreviousPage)),
 
             SetNodeID{"previous-page-button"_spr},
             SetNodeScaleWithSize{ARROW_SIZE},
@@ -76,10 +76,10 @@ namespace Settings {
         return true;
     }
 
-    CCMenu* SettingsPopup::createPage(const Category& pCategory) {  
+    CCMenu* SettingsPopup::createPage(Category* pCategory) {  
         const auto page = m_pages.size();
 
-        auto pageContainer = Utils::setupNode(
+        auto pageContainer = nwo5::utils::setupNode(
             CCNode::create(),
 
             SetNodeID{"page-container-{}"_spr, page},
@@ -89,9 +89,9 @@ namespace Settings {
 
         m_pages.push_back(pageContainer);
         
-        Utils::setupNode(
-            Utils::createButton(
-                Settings::General::useLogosForDots.get() ? pCategory.getLogoPath() : "smallDot.png", 
+        nwo5::utils::setupNode(
+            nwo5::utils::createButton(
+                Settings::General::useLogosForDots.get() ? pCategory->logo() : "smallDot.png", 
                 this, menu_selector(SettingsPopup::onPageDot)
             ),
 
@@ -101,7 +101,7 @@ namespace Settings {
             SetNodeParent{m_pageDotMenu}
         );
 
-        auto menu = Utils::setupNode(
+        auto menu = nwo5::utils::setupNode(
             CCMenu::create(),
 
             SetNodeID{"settings_menu"_spr},
@@ -121,8 +121,8 @@ namespace Settings {
             ->setCrossAxisOverflow(false)
         );
 
-        auto logo = Utils::setupNode(
-            CCSprite::create(pCategory.getLogoPath().c_str()),
+        auto logo = nwo5::utils::setupNode(
+            CCSprite::create(pCategory->logo().c_str()),
 
             SetNodeID{"logo"_spr},
             SetNodePosition{-WIDTH / 2 + EDGE_PADDING + LOGO_SIZE / 2, HEIGHT / 2 - EDGE_PADDING - LOGO_SIZE / 2},
@@ -130,9 +130,9 @@ namespace Settings {
             SetNodeParent{pageContainer}
         );
 
-        auto label = CCLabelBMFont::create(pCategory.getName().c_str(), "bigFont.fnt");
+        auto label = CCLabelBMFont::create(pCategory->name().c_str(), "bigFont.fnt");
 
-        Utils::setupNode(
+        nwo5::utils::setupNode(
             label,
 
             SetNodeID{"category-label"_spr},
@@ -142,7 +142,7 @@ namespace Settings {
             SetNodeParent{pageContainer}
         );
 
-        if (pCategory.getName() == "Keybinds") {
+        if (pCategory->name() == "Keybinds") {
             setupKeybindsMenu(pageContainer);
         }
 
@@ -168,7 +168,7 @@ namespace Settings {
     }
 
     void SettingsPopup::setupKeybindsMenu(cocos2d::CCNode* pContainer) {
-        Utils::setupNode(
+        nwo5::utils::setupNode(
             Button::createWithNode(ButtonSprite::create("Open Keybinds"), [this] (Button*) {
                 geode::openSettingsPopup(Mod::get(), true);
             }),
@@ -195,6 +195,7 @@ namespace Settings {
 
         if (!ret->init()) {
             delete ret;
+            
             return nullptr;
         }
 

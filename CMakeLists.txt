@@ -28,8 +28,9 @@ add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
 setup_geode_mod(${PROJECT_NAME})
 
 # i dont even fucking care anymore clangd is being stupid and i dont wanna fix it
-if (EXISTS build-win/compile_commands.json)
-    execute_process(
-        COMMAND ln -s ${CMAKE_SOURCE_DIR}/build-win/compile_commands.json ${CMAKE_SOURCE_DIR}/compile_commands.json
-    )
-endif()
+# if (EXISTS build-win/compile_commands.json)
+#     execute_process(
+#         COMMAND ln -s ${CMAKE_SOURCE_DIR}/build-win/compile_commands.json ${CMAKE_SOURCE_DIR}/compile_commands.json
+#     )
+# endif()
+# nvm im on mac now so i dont need this rn

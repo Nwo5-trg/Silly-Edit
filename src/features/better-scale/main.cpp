@@ -4,7 +4,7 @@
 #include "settings.hpp"
 
 using namespace geode::prelude;
-using namespace Utils::Aliases;
+using namespace nwo5::syntax;
 
 class $modify(BetterScaleGJScaleControl, GJScaleControl) {
     struct Fields {
@@ -49,23 +49,23 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
 
         switch (pType) {
             case ObjectScaleType::XY: {
-                Editor::Object::scale(Editor::Selection::get(), num, true, Editor::AUTO_CENTER, !m_scaleLocked);
+                editor::object::scale(editor::selection::get(), num, true, editor::AUTO_CENTER, !m_scaleLocked);
 
                 m_sliderXY->setValue(valueFromScale(num));
             break; }
             case ObjectScaleType::X: {
-                Editor::Object::scaleX(Editor::Selection::get(), num, true, Editor::AUTO_CENTER, !m_scaleLocked);
+                editor::object::scaleX(editor::selection::get(), num, true, editor::AUTO_CENTER, !m_scaleLocked);
 
                 m_sliderX->setValue(valueFromScale(num));
             break; }
             case ObjectScaleType::Y: {
-                Editor::Object::scaleY(Editor::Selection::get(), num, true, Editor::AUTO_CENTER, !m_scaleLocked);
+                editor::object::scaleY(editor::selection::get(), num, true, editor::AUTO_CENTER, !m_scaleLocked);
 
                 m_sliderY->setValue(valueFromScale(num)); 
             break; }
         }
 
-        Editor::update(false);
+        editor::update(false);
     }
 
     bool init() {
@@ -81,7 +81,7 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
 
         m_scaleLabel->setOpacity(0);
 
-        fields->newScaleLabel = Utils::setupNode(
+        fields->newScaleLabel = nwo5::utils::setupNode(
             CCLabelBMFont::create("Scale: ", "bigFont.fnt"),
 
             SetNodeID{"new_scale-label"_spr},
@@ -91,8 +91,8 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
         );
         fields->scaleNodes.push_back(fields->newScaleLabel);
 
-        fields->scaleInput = Utils::setupNode(
-            Utils::createTextInput(INPUT_SIZE.width, INPUT_SIZE.height, "1", [this] (const std::string& pStr) {
+        fields->scaleInput = nwo5::utils::setupNode(
+            nwo5::utils::createTextInput(INPUT_SIZE.width, INPUT_SIZE.height, "1", [this] (const std::string& pStr) {
                 if (!pStr.empty()) {
                     const auto num = utils::numFromString<float>(pStr).unwrapOrDefault();
 
@@ -108,7 +108,7 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
         );
         fields->scaleNodes.push_back(fields->scaleInput);
 
-        fields->shortcutsMenu = Utils::setupNode(
+        fields->shortcutsMenu = nwo5::utils::setupNode(
             CCMenu::create(),
 
             SetNodeID{"shortcuts-menu"_spr},
@@ -126,7 +126,7 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
 
         m_scaleXLabel->setOpacity(0);
 
-        fields->newScaleXLabel = Utils::setupNode(
+        fields->newScaleXLabel = nwo5::utils::setupNode(
             CCLabelBMFont::create("ScaleX: ", "bigFont.fnt"),
 
             SetNodeID{"new-scale-x-label"_spr},
@@ -136,8 +136,8 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
         );
         fields->scaleXYNodes.push_back(fields->newScaleXLabel);
 
-        fields->scaleXInput = Utils::setupNode(
-            Utils::createTextInput(INPUT_SIZE.width, INPUT_SIZE.height, "1", [this] (const std::string& pStr) {
+        fields->scaleXInput = nwo5::utils::setupNode(
+            nwo5::utils::createTextInput(INPUT_SIZE.width, INPUT_SIZE.height, "1", [this] (const std::string& pStr) {
                 if (!pStr.empty()) {
                     const auto num = utils::numFromString<float>(pStr).unwrapOrDefault();
                     
@@ -153,7 +153,7 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
         );
         fields->scaleXYNodes.push_back(fields->scaleXInput);
 
-        fields->shortcutsXMenu = Utils::setupNode(
+        fields->shortcutsXMenu = nwo5::utils::setupNode(
             CCMenu::create(),
 
             SetNodeID{"shortcuts-x-menu"_spr},
@@ -171,7 +171,7 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
 
         m_scaleYLabel->setOpacity(0);
 
-        fields->newScaleYLabel = Utils::setupNode(
+        fields->newScaleYLabel = nwo5::utils::setupNode(
             CCLabelBMFont::create("ScaleY: ", "bigFont.fnt"),
 
             SetNodeID{"new-scale-y-label"_spr},
@@ -181,8 +181,8 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
         );
         fields->scaleXYNodes.push_back(fields->newScaleYLabel);
 
-        fields->scaleYInput = Utils::setupNode(
-            Utils::createTextInput(INPUT_SIZE.width, INPUT_SIZE.height, "1", [this] (const std::string& pStr) {
+        fields->scaleYInput = nwo5::utils::setupNode(
+            nwo5::utils::createTextInput(INPUT_SIZE.width, INPUT_SIZE.height, "1", [this] (const std::string& pStr) {
                 if (!pStr.empty()) {
                     const auto num = utils::numFromString<float>(pStr).unwrapOrDefault();
                     
@@ -198,7 +198,7 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
         );
         fields->scaleXYNodes.push_back(fields->scaleYInput);
 
-        fields->shortcutsYMenu = Utils::setupNode(
+        fields->shortcutsYMenu = nwo5::utils::setupNode(
             CCMenu::create(),
 
             SetNodeID{"shortcuts-y-menu"_spr},
@@ -216,7 +216,7 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
 
         m_scaleLockButton->getParent()->setVisible(false);
 
-        fields->extrasMenu = Utils::setupNode(
+        fields->extrasMenu = nwo5::utils::setupNode(
             CCMenu::create(),
 
             SetNodeID{"extras-menu"_spr},
@@ -230,7 +230,7 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
             ->setGap(EXTRAS_GAP)
         );
 
-        Utils::setupNode(
+        nwo5::utils::setupNode(
             CCMenuItemToggler::create(
                 Settings::BetterScale::newLockTexture 
                     ? CircleButtonSprite::createWithSprite("unlocked-icon.png"_spr, 1.0f, CircleBaseColor::Gray)
@@ -247,8 +247,8 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
         );
 
         if (Settings::BetterScale::switchModeButton) {
-            Utils::setupNode(
-                Utils::createCircleButtonFrame(
+            nwo5::utils::setupNode(
+                nwo5::utils::createCircleButtonFrame(
                     "GJ_sortIcon_001.png", CircleBaseColor::Pink, 
                     this, menu_selector(BetterScaleGJScaleControl::onSwitchMode)
                 ),
@@ -284,7 +284,7 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
 
         for (auto menu : {fields->shortcutsMenu, fields->shortcutsXMenu, fields->shortcutsYMenu}) {
             for (int i = 0; i < split.size(); i++) {
-                Utils::setupNode(
+                nwo5::utils::setupNode(
                     CCMenuItemSpriteExtra::create(
                         CircleButtonSprite::create(CCLabelBMFont::create(split[i].c_str(), "bigFont.fnt")),
                         this, menu_selector(BetterScaleGJScaleControl::onScaleShortcut)
@@ -317,14 +317,14 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
 
         CCSize max{std::numeric_limits<float>::lowest(), std::numeric_limits<float>::lowest()};
 
-        for (auto obj : Editor::Selection::getExt()) {
+        for (auto obj : editor::selection::getExt()) {
             max.width = std::max(max.width, obj->m_scaleX);
             max.height = std::max(max.height, obj->m_scaleY);
         }
 
-        fields->scaleInput->setString(Utils::numToString(std::max(max.width, max.height)));
-        fields->scaleXInput->setString(Utils::numToString(max.width));
-        fields->scaleYInput->setString(Utils::numToString(max.height));
+        fields->scaleInput->setString(nwo5::utils::numToString(std::max(max.width, max.height)));
+        fields->scaleXInput->setString(nwo5::utils::numToString(max.width));
+        fields->scaleYInput->setString(nwo5::utils::numToString(max.height));
     }
 
     void updateCustomNodes() {
@@ -367,7 +367,7 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
     }
 
     void onSwitchMode(CCObject* pSender) {
-        Editor::activateScaleControl(!m_scaleLabel->isVisible());
+        editor::activateScaleControl(!m_scaleLabel->isVisible());
     }
 };
 
@@ -377,23 +377,23 @@ class $modify(EditorUI) {
             return false;
         }
 
-        Utils::setupKeybind(this, "better-scale-activate-scale-control", [this] (const Keybind&, bool pDown, bool, double) {
-            if (Settings::BetterScale::enabled.get() && pDown && !Editor::Selection::empty()) {
+        nwo5::utils::setupKeybind(this, "better-scale-activate-scale-control", [this] (const Keybind&, bool pDown, bool, double) {
+            if (Settings::BetterScale::enabled.get() && pDown && !editor::selection::empty()) {
                 if (m_scaleControl && m_scaleControl->isVisible() && m_scaleControl->m_scaleLabel->isVisible()) {
                     deactivateScaleControl();
                 }
                 else {
-                    Editor::activateScaleControl(false);
+                    editor::activateScaleControl(false);
                 }
             }
         });
-        Utils::setupKeybind(this, "better-scale-activate-scale-xy-control", [this] (const Keybind&, bool pDown, bool, double) {
-            if (Settings::BetterScale::enabled.get() && pDown && !Editor::Selection::empty()) {
+        nwo5::utils::setupKeybind(this, "better-scale-activate-scale-xy-control", [this] (const Keybind&, bool pDown, bool, double) {
+            if (Settings::BetterScale::enabled.get() && pDown && !editor::selection::empty()) {
                 if (m_scaleControl && m_scaleControl->isVisible() && !m_scaleControl->m_scaleLabel->isVisible()) {
                     deactivateScaleControl();
                 }
                 else {
-                    Editor::activateScaleControl(true);
+                    editor::activateScaleControl(true);
                 }
             }
         });
@@ -411,10 +411,10 @@ class $modify(EditorUI) {
         if (auto control = reinterpret_cast<BetterScaleGJScaleControl*>(m_scaleControl); control && control->m_fields->betterScaleLoaded) {
             control->setScale(
                 Settings::BetterScale::lockControlSize.get() 
-                    ? ((1 / Editor::zoom()) * Settings::BetterScale::controlSize.get()) 
+                    ? ((1 / editor::zoom()) * Settings::BetterScale::controlSize.get()) 
                     : Settings::BetterScale::controlSize.get()
             );
-            control->setPosition(Editor::Selection::center() + CCPoint{0.0f, Settings::BetterScale::controlOffset});
+            control->setPosition(editor::selection::center() + CCPoint{0.0f, Settings::BetterScale::controlOffset});
             control->updateCustomNodes();
             control->updateInputValues();
         }

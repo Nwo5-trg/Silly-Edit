@@ -30,7 +30,7 @@ namespace ReplaceObjects {
             return false;
         }
 
-        if (const auto count = Utils::stringCount(pStr, ','); !(count % 2)) {
+        if (const auto count = nwo5::utils::stringCount(pStr, ','); !(count % 2)) {
             return false;
         }
 
@@ -126,8 +126,8 @@ namespace ReplaceObjects {
 
                     const auto substr = pStr.substr(start, length);
                     if (
-                        substr.find_first_of("0123456789") == std::string::npos && !Utils::stringCount(substr, '.')
-                        || Utils::stringCount(substr, '-') > 1 
+                        substr.find_first_of("0123456789") == std::string::npos && !nwo5::utils::stringCount(substr, '.')
+                        || nwo5::utils::stringCount(substr, '-') > 1 
                         || (substr.find('-') != std::string::npos && !substr.starts_with('-'))
                     ) {
                         return Err("lexing error at {} : invalid data", start);

@@ -102,8 +102,8 @@ class $modify(LevelEditorLayer) {
         // 1 == id prop, 2 == x pos prop, 3 == y pos prop
         auto objectString = fmt::format(
             "1,{},2,{},3,{}", key, 
-            position.x + Editor::OBJECT_STRING_POSITION_OFFSET.x, 
-            position.y + Editor::OBJECT_STRING_POSITION_OFFSET.y
+            position.x + editor::constants::OBJECT_STRING_POSITION_OFFSET.x, 
+            position.y + editor::constants::OBJECT_STRING_POSITION_OFFSET.y
         );
 
         const auto& options = m_fields->options;
