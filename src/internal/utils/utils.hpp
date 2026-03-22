@@ -9,6 +9,6 @@ namespace nwo5::utils {
 
     template<typename T = cocos2d::ccColor4F, typename U>
     auto getChroma(U pOffset) {
-        return nwo5::utils::getChroma<T, U>(pOffset, getChromaSpeed());
+        return nwo5::utils::getChroma<T, U>(getChromaSpeed(), pOffset, 0.5f);
     }
 }
