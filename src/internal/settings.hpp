@@ -30,7 +30,7 @@ namespace Settings::General {
         inline SavedSetting<bool> showSettingsButton{"Show Settings Button", "General", true, "show settings button in editor pause menu"};
     #endif
     inline SavedSetting<float> sayoDeviceSensitivity{"Sayo Device Sensitivity", "General", 1.5f, "gay speed"};
-    inline SavedSetting<float> sayoDeviceScreenBrightness{"Sayo Device Screen Brightness", "General", 1.0f, "gay saturation"};
+    inline SavedSetting<float> sayoDeviceScreenBrightness{"Sayo Device Screen Brightness", "General", 0.5f, "gay saturation"};
 
     SCAPI_INLINE_CATEGORY("Keybinds", std::nullopt, "keybinds-logo.png"_spr, SettingCategory::Keybinds)
 }
