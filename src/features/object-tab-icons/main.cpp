@@ -53,7 +53,7 @@ class $modify(EditorUI) {
                     continue;
                 }
                 
-                auto originalIcon = tab->getChildByType<CCSprite>(0);
+                auto originalIcon = tab->getChildByType<CCNodeRGBA>(0);
 
                 if (!originalIcon) {
                     continue;

@@ -8,6 +8,8 @@ might index release whenever silly api gets accepted js cuz
 **Fixed**
 
 - a couple more features not disabling properly
+- better obj tab icons custom tab
+- i think settings description was broken soooo fixed that too ig
 
 **Internal**
 

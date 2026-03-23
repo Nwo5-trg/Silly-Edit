@@ -16,38 +16,41 @@ namespace Settings {
             this,
 
             SetNodeID{"{}-setting"_spr, pSetting->key()},
-            SetNodeSize{SETTING_BUTTON_SIZE},
-            SetNodeChildren{
-                (m_label = nwo5::utils::setupNode(
-                    CCLabelBMFont::create(m_setting->name().c_str(), "bigFont.fnt"),
+            SetNodeSize{SETTING_BUTTON_SIZE}
+        );
 
-                    SetNodeID{"label"_spr},
-                    SetNodeAnchor{LEFT_CENTER_ANCHOR},
-                    SetNodeScaleWithWidth{DEFAULT_SETTING_LABEL_SIZE.width * (5.0f/6.0f)},
-                    LimitNodeScaleWithHeight{DEFAULT_SETTING_LABEL_SIZE.height *  (2.0f/3.0f)},
-                    SetNodePosition{
-                        DEFAULT_SETTING_INPUT_MENU_SIZE.width + (DEFAULT_SETTING_LABEL_SIZE.width - (DEFAULT_SETTING_LABEL_SIZE.width * (5.0f/6.0f))) / 2,
-                        DEFAULT_SETTING_LABEL_SIZE.height / 2
-                    }
-                )),
-                (m_inputMenu = nwo5::utils::setupNode(
-                    CCMenu::create(),
+        m_label = nwo5::utils::setupNode(
+            CCLabelBMFont::create(m_setting->name().c_str(), "bigFont.fnt"),
 
-                    SetNodeID{"input-menu"_spr},
-                    SetNodeSize{DEFAULT_SETTING_INPUT_MENU_SIZE},
-                    SetNodePosition{DEFAULT_SETTING_INPUT_MENU_SIZE / 2}
-                ))
-            }
+            SetNodeID{"label"_spr},
+            SetNodeAnchor{LEFT_CENTER_ANCHOR},
+            SetNodeScaleWithWidth{DEFAULT_SETTING_LABEL_SIZE.width * (5.0f/6.0f)},
+            LimitNodeScaleWithHeight{DEFAULT_SETTING_LABEL_SIZE.height *  (2.0f/3.0f)},
+            SetNodePosition{
+                DEFAULT_SETTING_INPUT_MENU_SIZE.width + (DEFAULT_SETTING_LABEL_SIZE.width - (DEFAULT_SETTING_LABEL_SIZE.width * (5.0f/6.0f))) / 2,
+                DEFAULT_SETTING_LABEL_SIZE.height / 2
+            },
+            SetNodeParent{this}
+        );
+
+        m_inputMenu = nwo5::utils::setupNode(
+            CCMenu::create(),
+
+            SetNodeID{"input-menu"_spr},
+            SetNodeSize{DEFAULT_SETTING_INPUT_MENU_SIZE},
+            SetNodePosition{DEFAULT_SETTING_INPUT_MENU_SIZE / 2},
+            SetNodeParent{this}
         );
 
         m_helpMenu = nwo5::utils::setupNode(
             CCMenu::create(),
             
             SetNodeID{"help-menu"_spr},
-            SetNodeSize{HELP_BUTTON_SIZE, HELP_BUTTON_SIZE},
+            SetNodeSize{CCSizeZero},
             SetNodePosition{SETTING_BUTTON_SIZE},
+            SetNodeParent{this},
             SetNodeChildren{
-                m_helpButton = nwo5::utils::setupNode(
+                (m_helpButton = nwo5::utils::setupNode(
                     CCMenuItemSpriteExtra::create(
                         CCSprite::createWithSpriteFrameName("GJ_infoIcon_001.png"),
                         this, menu_selector(SettingButtonBase::onHelp)
@@ -55,11 +58,14 @@ namespace Settings {
 
                     SetNodeID{"help-button"_spr},
                     SetNodeScaleWithSize{HELP_BUTTON_SIZE},
-                    SetNodePosition{CCPointZero},
-                    SetNodeVisibility{pSetting->hasDescription()}
-                )
+                    SetNodePosition{CCPointZero}
+                ))
             }
         );
+
+        // idek it wasnt working now it is and im not sure this is a reason - it shoudlnt be the reason - but im scared
+        const auto shouldShowHelp = pSetting->hasDescription();
+        m_helpMenu->setVisible(shouldShowHelp);
 
         return true;
     }
