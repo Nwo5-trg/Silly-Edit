@@ -1,8 +1,8 @@
 #include "utils.hpp"
-#include <features/settings/settings.hpp>
+#include <internal/settings.hpp>
 
 namespace nwo5::utils {
-    float getChromaSpeed() {
-        return Settings::General::sayoDeviceSensitivity;
+    std::pair<float, float> getChromaSettings() {
+        return {Settings::General::sayoDeviceSensitivity.get(), Settings::General::sayoDeviceScreenBrightness.get()};
     }
 }

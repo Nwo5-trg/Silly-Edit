@@ -2,7 +2,6 @@
 #include<Geode/ui/GeodeUI.hpp>
 #include <Geode/ui/Button.hpp>
 #include "popup.hpp"
-#include "settings.hpp"
 #include "setting-button.hpp"
 
 using namespace geode::prelude;

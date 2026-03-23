@@ -9,7 +9,7 @@ namespace Shared {
     
     enum class ChromaNode {
         FreeSnap = 0,
-        FreeSnapInvert = (360 / 6) * 3,
+        FreeSnapInvert = 180,
     };
 
     // idk how cocos does their c style bullshit and quite frankly i dont care to find out rn

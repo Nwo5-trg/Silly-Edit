@@ -1,4 +1,10 @@
 ## v0.1.0-alpha.11
+might index release whenever silly api gets accepted js cuz
+
+**Added**
+
+- some general options
+
 **Fixed**
 
 - a couple more features not disabling properly

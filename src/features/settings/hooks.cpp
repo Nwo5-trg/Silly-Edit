@@ -28,6 +28,12 @@ class $modify(SettingsEditorPauseLayer, EditorPauseLayer) {
             return false;
         }
 
+        #ifdef GEODE_IS_DESKTOP
+            if (!Settings::General::showPageArrows) {
+                return true;
+            }
+        #endif
+
         auto menu = getChildByID("guidelines-menu");
 
         if (!menu) {

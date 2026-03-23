@@ -1,7 +1,6 @@
 #include <Geode/modify/LevelEditorLayer.hpp>
 #include <internal/utils/utils.hpp>
 #include "features/shared.hpp"
-#include "settings/settings.hpp"
 
 using namespace geode::prelude;
 using namespace nwo5::syntax;
