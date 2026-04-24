@@ -136,14 +136,6 @@ class $modify(RulerEditorUI, EditorUI) {
         }
     }
 
-    void onCreateMeasurement(CCObject* pSender) {
-        if (editor::selection::empty()) {
-            return deleteMeasurement(false);
-        }
-        
-        createMeasurement();
-    }
-
     void updateMeasurements() {
         // border alignment no workie :fire:
         const auto padding = CCPoint{Settings::Ruler::padding.get(), Settings::Ruler::padding.get()} / 2 
@@ -224,6 +216,24 @@ class $modify(RulerEditorUI, EditorUI) {
     }
 
     bool init(LevelEditorLayer* editorLayer) {
+        if (!Settings::Ruler::enabled.get() || !Settings::Ruler::editorTabButton.get()) {
+            editor::unregisterEditTabButton("ruler-button"_spr);
+        }
+        else {
+            editor::registerEditTabButtonFrame("ruler.png"_spr, "create-measurement-button"_spr, 1, [this] (auto) {
+                if (!Settings::Ruler::enabled.get()) {
+                    return;
+                }
+
+                if (editor::selection::empty()) {
+                    deleteMeasurement(false);
+                }
+                else {
+                    createMeasurement();
+                }
+            });
+        }
+        
         if (!EditorUI::init(editorLayer)) {
             return false;
         }
@@ -246,20 +256,4 @@ class $modify(RulerEditorUI, EditorUI) {
 
         return true;
     }
-
-    void createMoveMenu() {
-		EditorUI::createMoveMenu();
-
-        if (!Settings::Ruler::enabled.get() || !Settings::Ruler::editorTabButton.get()) {
-            return;
-        }
-
-        // @geode-ignore(unknown-resource)
-        auto button = this->getSpriteButton("ruler.png"_spr, menu_selector(RulerEditorUI::onCreateMeasurement), nullptr, 1.0f);
-
-        m_editButtonBar->m_buttonArray->addObject(button);
-        const auto rows = GameManager::sharedState()->getIntGameVariable("0049");
-        const auto cols = GameManager::sharedState()->getIntGameVariable("0050");
-        m_editButtonBar->reloadItems(rows, cols);
-	}
 };

@@ -7,6 +7,7 @@ using namespace geode::prelude;
 using namespace nwo5::syntax;
 
 class $modify(EditorUI) {
+
 	bool init(LevelEditorLayer* editorLayer) {	
 		if (!EditorUI::init(editorLayer)) {
             return false;
@@ -16,7 +17,7 @@ class $modify(EditorUI) {
             return true;
         }
 
-        const std::pair<const char*, int> tabs[] {
+        const std::pair<const char*, std::string> tabs[] {
             {"block-tab", Settings::ObjectTabIcons::blockTabMode.get()},  {"outline-tab", Settings::ObjectTabIcons::outlineTabMode.get()}, {"slope-tab", Settings::ObjectTabIcons::slopeTabMode.get()},
             {"hazard-tab", Settings::ObjectTabIcons::hazardTabMode.get()}, {"3d-tab", Settings::ObjectTabIcons::threedTabMode.get()}, {"portal-tab", Settings::ObjectTabIcons::portalTabMode.get()},
             {"monster-tab", Settings::ObjectTabIcons::monsterTabMode.get()}, {"pixel-tab", Settings::ObjectTabIcons::pixelTabMode.get()}, {"collectible-tab", Settings::ObjectTabIcons::collectibleTabMode.get()},
@@ -24,8 +25,8 @@ class $modify(EditorUI) {
             {"trigger-tab", Settings::ObjectTabIcons::triggerTabMode.get()}, {"custom-tab", Settings::ObjectTabIcons::customTabMode.get()}
         };
 
-        for (const auto [name, mode] : tabs) {
-            if (!mode) {
+        for (const auto& [name, mode] : tabs) {
+            if (mode == "Default") {
                 continue;
             }
 
@@ -43,9 +44,7 @@ class $modify(EditorUI) {
                     continue;
                 }
 
-                constexpr int ALT_TEXTURE_MODE = 2;
-
-                const auto texture = fmt::format("{}{}.png"_spr, name, mode == ALT_TEXTURE_MODE ? "-alt" : "");
+                const auto texture = fmt::format("{}{}.png"_spr, name, mode == "Alt" ? "-alt" : "");
                 
                 auto spr = CCSprite::create(texture.c_str());
 

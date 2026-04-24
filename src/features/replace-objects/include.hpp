@@ -242,6 +242,27 @@ namespace ReplaceObjects {
         return std::isdigit(pChar) || pChar == '-' || pChar == '.';
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // struct QueryExpression {
+    //     virtual ~QueryExpression() = default;
+        
+    //     virtual cocos2d::CCArray* run(cocos2d::CCArray* pObjs) = 0;
+    // };
+
+    // geode::Result<std::vector<std::unique_ptr<QueryExpression>>> parseQuery(std::string_view pStr);
+
+    // struct ActionExpression {
+    //     virtual ~ActionExpression() = default;
+        
+    //     virtual cocos2d::CCArray* run(cocos2d::CCArray* pObjs) = 0;
+    // };
+
+    // geode::Result<std::vector<std::unique_ptr<ActionExpression>>> parseActions(std::string_view pStr);
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class ReplaceExpression;
     class FindAndReplaceMenu final : public cocos2d::CCLayer {
     private:
         cocos2d::CCMenu* m_buttonMenu;
@@ -257,12 +278,9 @@ namespace ReplaceObjects {
         std::string m_replaceError;
 
         std::unique_ptr<QueryExpression> m_queryExpression;
-        std::vector<std::unique_ptr<ReplaceExpression> > m_replaceExpressions;
+        std::vector<std::unique_ptr<ReplaceExpression>> m_replaceExpressions;
 
-        static constexpr float FROM_SELECTION_BUTTONS_SIZE = 0.1f;
-        static constexpr float SEARCH_BAR_SIZE = 0.65f;
-        static constexpr float BUTTON_MENU_SIZE = 0.25f;
-        static constexpr float FIND_RESULTS_LABEL_SIZE = 0.15f;
+        static constexpr float FROM_SELECTION_BUTTONS_SIZE = 22.5f;
 
         static constexpr float HORIZONTAL_PADDING = 1.0f;
         static constexpr float VERTICAL_PADDING = 2.5f;

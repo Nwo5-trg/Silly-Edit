@@ -76,35 +76,35 @@ class $modify(SharedLevelEditorLayer, LevelEditorLayer) {
 
 namespace Shared {
     CCDrawNode* getGridDraw() {
-        if (auto layer = reinterpret_cast<SharedLevelEditorLayer*>(editor::layer())) {
+        if (auto layer = editor::layer<SharedLevelEditorLayer*>()) {
             return layer->m_fields->gridDraw;
         }
 
         return nullptr;
     }
     CCLayer* getGridLayer() {
-        if (auto layer = reinterpret_cast<SharedLevelEditorLayer*>(editor::layer())) {
+        if (auto layer = editor::layer<SharedLevelEditorLayer*>()) {
             return layer->m_fields->gridLayer;
         }
         
         return nullptr;
     }
     CCDrawNode* getOverlayDraw() {
-        if (auto layer = reinterpret_cast<SharedLevelEditorLayer*>(editor::layer())) {
+        if (auto layer = editor::layer<SharedLevelEditorLayer*>()) {
             return layer->m_fields->overlayDraw;
         }
 
         return nullptr;
     }
     CCLayer* getOverlayLayer() {
-        if (auto layer = reinterpret_cast<SharedLevelEditorLayer*>(editor::layer())) {
+        if (auto layer = editor::layer<SharedLevelEditorLayer*>()) {
             return layer->m_fields->overlayLayer;
         }
         
         return nullptr;
     }
     CCLayer* getHiddenLayer() {
-        if (auto layer = reinterpret_cast<SharedLevelEditorLayer*>(editor::layer())) {
+        if (auto layer = editor::layer<SharedLevelEditorLayer*>()) {
             return layer->m_fields->hiddenLayer;
         }
 
@@ -112,7 +112,7 @@ namespace Shared {
     }
 
     void addUpdateFunc(geode::Function<void()> pFunc) {
-        if (auto layer = reinterpret_cast<SharedLevelEditorLayer*>(editor::layer())) {
+        if (auto layer = editor::layer<SharedLevelEditorLayer*>()) {
             layer->m_fields->drawFuncs.push_back(std::move(pFunc));
         }
     }

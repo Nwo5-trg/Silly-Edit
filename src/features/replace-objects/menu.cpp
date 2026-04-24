@@ -36,26 +36,26 @@ namespace ReplaceObjects {
             SetNodeParent{this}
         );
         m_queryBar = nwo5::utils::setupNode(
-            nwo5::utils::createTextInput(WIDTH * SEARCH_BAR_SIZE - HORIZONTAL_PADDING * 2, (HEIGHT - VERTICAL_PADDING * 2 - BAR_SPACING) / 2, "Query...", [this] (const std::string& pStr) {
+            nwo5::utils::createTextInput(Settings::ReplaceObjects::width.get() - HORIZONTAL_PADDING * 2, (HEIGHT - VERTICAL_PADDING * 2 - BAR_SPACING) / 2, "Query...", [this] (const std::string& pStr) {
                 this->onQueryBarUpdated(pStr);
             }),
             
             SetNodeID{"find-bar"_spr},
             SetNodePosition{
-                WIDTH * FROM_SELECTION_BUTTONS_SIZE + HORIZONTAL_PADDING + (WIDTH * SEARCH_BAR_SIZE - HORIZONTAL_PADDING * 2) / 2, 
+                FROM_SELECTION_BUTTONS_SIZE + HORIZONTAL_PADDING + (Settings::ReplaceObjects::width.get() - HORIZONTAL_PADDING * 2) / 2, 
                 HEIGHT - VERTICAL_PADDING - (HEIGHT - VERTICAL_PADDING * 2 - BAR_SPACING) / 4
             },
             SetNodeParent{this}
         );
         m_queryBar->setTextAlign(TextInputAlign::Left);
         m_replaceBar = nwo5::utils::setupNode(
-            nwo5::utils::createTextInput(WIDTH * SEARCH_BAR_SIZE - HORIZONTAL_PADDING * 2, (HEIGHT - VERTICAL_PADDING * 2 - BAR_SPACING) / 2, "Replace...", [this] (const std::string& pStr) {
+            nwo5::utils::createTextInput(Settings::ReplaceObjects::width.get() - HORIZONTAL_PADDING * 2, (HEIGHT - VERTICAL_PADDING * 2 - BAR_SPACING) / 2, "Action...", [this] (const std::string& pStr) {
                 this->onReplaceBarUpdated(pStr);
             }),
             
             SetNodeID{"replace-bar"_spr},
             SetNodePosition{
-                WIDTH * FROM_SELECTION_BUTTONS_SIZE + HORIZONTAL_PADDING + (WIDTH * SEARCH_BAR_SIZE - HORIZONTAL_PADDING * 2) / 2, 
+                FROM_SELECTION_BUTTONS_SIZE + HORIZONTAL_PADDING + (Settings::ReplaceObjects::width.get() - HORIZONTAL_PADDING * 2) / 2, 
                 VERTICAL_PADDING + (HEIGHT - VERTICAL_PADDING * 2 - BAR_SPACING) / 4
             },
             SetNodeParent{this}
@@ -72,7 +72,7 @@ namespace ReplaceObjects {
 
                     SetNodeID{"from-selection-find-button"_spr},
                     SetNodeTag{0},
-                    SetNodePosition{(HORIZONTAL_PADDING + (WIDTH * FROM_SELECTION_BUTTONS_SIZE - HORIZONTAL_PADDING)) / 2, m_queryBar->getPositionY()},
+                    SetNodePosition{(HORIZONTAL_PADDING + (FROM_SELECTION_BUTTONS_SIZE - HORIZONTAL_PADDING)) / 2, m_queryBar->getPositionY()},
                     SetNodeScaleWithSize{BUTTON_SIZE}
                 ),
                 nwo5::utils::setupNode(
@@ -80,7 +80,7 @@ namespace ReplaceObjects {
 
                     SetNodeID{"from-selection-replace-button"_spr},
                     SetNodeTag{1},
-                    SetNodePosition{(HORIZONTAL_PADDING + (WIDTH * FROM_SELECTION_BUTTONS_SIZE - HORIZONTAL_PADDING)) / 2, m_replaceBar->getPositionY()},
+                    SetNodePosition{(HORIZONTAL_PADDING + (FROM_SELECTION_BUTTONS_SIZE - HORIZONTAL_PADDING)) / 2, m_replaceBar->getPositionY()},
                     SetNodeScaleWithSize{BUTTON_SIZE}
                 ),
                 nwo5::utils::setupNode(
@@ -88,7 +88,7 @@ namespace ReplaceObjects {
 
                     SetNodeID{"find-button"_spr},
                     SetNodePosition{
-                        WIDTH * (FROM_SELECTION_BUTTONS_SIZE + SEARCH_BAR_SIZE) + HORIZONTAL_PADDING + BUTTON_SIZE / 2,
+                        FROM_SELECTION_BUTTONS_SIZE + Settings::ReplaceObjects::width.get() + HORIZONTAL_PADDING + BUTTON_SIZE / 2,
                         m_queryBar->getPositionY()
                     },
                     SetNodeScaleWithSize{BUTTON_SIZE}
@@ -98,7 +98,7 @@ namespace ReplaceObjects {
 
                     SetNodeID{"replace-button"_spr},
                     SetNodePosition{
-                        WIDTH * (FROM_SELECTION_BUTTONS_SIZE + SEARCH_BAR_SIZE) + HORIZONTAL_PADDING + BUTTON_SIZE / 2,
+                        FROM_SELECTION_BUTTONS_SIZE + Settings::ReplaceObjects::width.get() + HORIZONTAL_PADDING + BUTTON_SIZE / 2,
                         m_replaceBar->getPositionY()
                     },
                     SetNodeScaleWithSize{BUTTON_SIZE}
@@ -112,7 +112,7 @@ namespace ReplaceObjects {
 
                     SetNodeID{"select-filter-toggler"_spr},
                     SetNodePosition{
-                        ((WIDTH * (FROM_SELECTION_BUTTONS_SIZE + SEARCH_BAR_SIZE) + HORIZONTAL_PADDING + BUTTON_SIZE / 2) + WIDTH - HORIZONTAL_PADDING - BUTTON_SIZE / 2) / 2,
+                        ((FROM_SELECTION_BUTTONS_SIZE + Settings::ReplaceObjects::width.get() + HORIZONTAL_PADDING + BUTTON_SIZE / 2) + WIDTH - HORIZONTAL_PADDING - BUTTON_SIZE / 2) / 2,
                         m_queryBar->getPositionY()
                     },
                     SetNodeScaleWithSize{BUTTON_SIZE}

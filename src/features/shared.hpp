@@ -13,6 +13,7 @@ namespace Shared {
     };
 
     // idk how cocos does their c style bullshit and quite frankly i dont care to find out rn
+    // note from the future wtf was i doing here but also im too lazy to change it so :3c
     #define SE_UPDATE_FUNC(pFunc) [this]{ pFunc (); }
     void addUpdateFunc(geode::Function<void()> pFunc);
 }

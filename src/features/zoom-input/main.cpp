@@ -4,11 +4,10 @@
 #include "settings.hpp"
 
 using namespace geode::prelude;
-using namespace nwo5::utils;
+using namespace nwo5::syntax;
 
 // ill prolly add a seperate modifier for keybind zoom
-// so remind me to replace button zooming for some enum
-// when i do do that
+// so remind me to replace ternary hell with a proper enum system
 
 class $modify(ZoomInputEditorUI, EditorUI) {
     struct Fields {
@@ -27,7 +26,7 @@ class $modify(ZoomInputEditorUI, EditorUI) {
             return false;
         }
 
-        if (!Settings::ZoomInput::enabled.get() || !Settings::ZoomInput::zoomInput.get()) {
+        if (!Settings::ZoomInput::zoomInput.get()) {
             return true;
         }
 
@@ -59,12 +58,15 @@ class $modify(ZoomInputEditorUI, EditorUI) {
             SetNodeScaleWithHeight{BASE_ZOOM_INPUT_HEIGHT},
             SetNodeParent{fields->zoomContainer}
         );
+
         fields->zoomInput = nwo5::utils::setupNode(
             nwo5::utils::createTextInput(BASE_ZOOM_INPUT_HEIGHT * 2, BASE_ZOOM_INPUT_HEIGHT, "1"),
 
             SetNodeID{"zoom-input"_spr},
             SetNodeParent{fields->zoomContainer}
         );
+        fields->zoomInput->setFilter("1234567890.");
+
         nwo5::utils::setupNode(
             nwo5::utils::createCircleButtonFrame(
                 "edit_findBtn_001.png", CircleBaseColor::Green, 
@@ -79,6 +81,8 @@ class $modify(ZoomInputEditorUI, EditorUI) {
         );
 
         fields->zoomContainer->updateLayout();
+
+        m_uiItems->addObject(fields->zoomContainer);
 
         nwo5::utils::setupKeybind(this, "zoom-input-zoom-in", [this] (const Keybind&, bool pDown, bool, double) {
             if (pDown) {
@@ -117,7 +121,7 @@ class $modify(ZoomInputEditorUI, EditorUI) {
     }
 
     void updateZoom(float zoom) {
-        if (!Settings::ZoomInput::zoomBypass.get() || !m_fields->zoomingGameLayer) {
+        if (!Settings::ZoomInput::zoomBypass.get() || nwo5::utils::isTinkerLoaded() || !m_fields->zoomingGameLayer) {
             return EditorUI::updateZoom(zoom);
         }
 
@@ -167,7 +171,11 @@ class $modify(ZoomInputEditorUI, EditorUI) {
 
         EditorUI::scrollWheel(y, x);
 
-        m_fields->zoomingGameLayer = false;;
+        if (nwo5::utils::isTinkerLoaded()) {
+            updateZoomInput();
+        }
+
+        m_fields->zoomingGameLayer = false;
     }
 
     void constrainGameLayerPosition(float x, float y) {

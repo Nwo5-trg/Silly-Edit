@@ -44,6 +44,10 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
     static constexpr float DEFAULT_LOCK_HEIGHT = 60.0f;
     static constexpr float DEFAULT_LOCK_XY_HEIGHT = 120.0f;
 
+    static void onModify(auto& pSelf) {
+        (void)pSelf.setHookPriority("GJScaleControl::init", Priority::LatePost);
+    }
+
     void customScale(float pScale, ObjectScaleType pType) {
         const auto num = Settings::BetterScale::allowNegative.get() ? pScale : std::abs(pScale);
 
@@ -232,10 +236,10 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
 
         nwo5::utils::setupNode(
             CCMenuItemToggler::create(
-                Settings::BetterScale::newLockTexture 
+                Settings::BetterScale::newLockTexture.get() 
                     ? CircleButtonSprite::createWithSprite("unlocked-icon.png"_spr, 1.0f, CircleBaseColor::Gray)
                     : CCSprite::createWithSpriteFrameName("warpLockOffBtn_001.png"),
-                Settings::BetterScale::newLockTexture 
+                Settings::BetterScale::newLockTexture.get() 
                     ? CircleButtonSprite::createWithSprite("locked-icon.png"_spr, 1.0f, CircleBaseColor::Blue)
                     : CCSprite::createWithSpriteFrameName("warpLockOnBtn_001.png"),
                 this, menu_selector(GJScaleControl::onToggleLockScale)
@@ -246,7 +250,7 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
             SetNodeParent{fields->extrasMenu}
         );
 
-        if (Settings::BetterScale::switchModeButton) {
+        if (Settings::BetterScale::switchModeButton.get()) {
             nwo5::utils::setupNode(
                 nwo5::utils::createCircleButtonFrame(
                     "GJ_sortIcon_001.png", CircleBaseColor::Pink, 
@@ -264,6 +268,15 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
         updateShortcuts();
 
         fields->betterScaleLoaded = true;
+
+        if (nwo5::utils::isBetterEditLoaded()) {
+            for (auto child : getChildrenExt()) {
+                if (child->getID().view().contains(nwo5::utils::BETTER_EDIT_ID)) {
+                    // not making invisible cuz that would just be reset so close enough
+                    child->setScale(0.0f);
+                }
+            }
+        }
 
         return true;
     }
@@ -411,10 +424,10 @@ class $modify(EditorUI) {
         if (auto control = reinterpret_cast<BetterScaleGJScaleControl*>(m_scaleControl); control && control->m_fields->betterScaleLoaded) {
             control->setScale(
                 Settings::BetterScale::lockControlSize.get() 
-                    ? ((1 / editor::zoom()) * Settings::BetterScale::controlSize.get()) 
-                    : Settings::BetterScale::controlSize.get()
+                    ? Settings::BetterScale::controlSize.get() 
+                    : ((1 / editor::zoom()) * Settings::BetterScale::controlSize.get()) 
             );
-            control->setPosition(editor::selection::center() + CCPoint{0.0f, Settings::BetterScale::controlOffset});
+            control->setPosition(editor::selection::center() + CCPoint{0.0f, Settings::BetterScale::controlOffset.get()});
             control->updateCustomNodes();
             control->updateInputValues();
         }

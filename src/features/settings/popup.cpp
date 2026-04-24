@@ -29,7 +29,7 @@ namespace Settings {
 
             for (int i = 0; i < size; i += SETTINGS_PER_PAGE) {
                 for (int j = 0; j < SETTINGS_PER_PAGE && (i + j) < size; j++) {
-                    auto button = createSettingButton(category->getSettings()[i + j]);
+                    auto button = createSettingButton(category->getSettings()[i + j], this);
                     
                     menu->addChild(button);
                     m_settings.push_back(button);
@@ -149,7 +149,7 @@ namespace Settings {
     }
 
     void SettingsPopup::goToPage(int pPage) {
-        m_currentPage = pPage % m_pages.size();
+        m_currentPage = pPage < 0 ? m_pages.size() - 1 : pPage % m_pages.size();
 
         for (auto page : m_pages) {
             page->setVisible(false);
@@ -189,6 +189,44 @@ namespace Settings {
         goToPage(m_currentPage - 1);
     }
 
+    void SettingsPopup::onClose(CCObject* pSender) {
+        if (!Settings::General::showReloadWarnings.get() || m_reloadSettingsActivated.empty()) {
+            return Popup::onClose(pSender);
+        }
+
+        std::string str;
+
+        if (const auto count = std::ranges::count(m_reloadSettingsActivated, SettingReload::Editor)) {
+            str.append(fmt::format("{} settings that require editor reload, ", count));
+        }
+        if (const auto count = std::ranges::count(m_reloadSettingsActivated, SettingReload::Game)) {
+            str.append(fmt::format("{} settings that require game reload, ", count));
+        }
+        if (const auto count = std::ranges::count(m_reloadSettingsActivated, SettingReload::Pause)) {
+            str.append(fmt::format("{} settings that require editor pause menu reload, ", count));
+        }
+        if (const auto count = std::ranges::count(m_reloadSettingsActivated, SettingReload::Popup)) {
+            str.append(fmt::format("{} settings that require settings popup reload, ", count));
+        }
+
+        str.pop_back();
+        str.pop_back();
+
+        if (const auto i = str.find_last_of(','); i != std::string::npos) {
+            str.replace(str.find_last_of(','), 1, ", and");
+        }
+        
+        str.append(" have been changed");
+        
+        Popup::onClose(pSender);
+        
+        FLAlertLayer::create(
+            "BTW",
+            str,
+            "OK"
+        )->show();
+    }
+
     SettingsPopup* SettingsPopup::create() {
         auto ret = new SettingsPopup;
 
@@ -201,5 +239,12 @@ namespace Settings {
         ret->autorelease();
 
         return ret;
+    }
+    void SettingsPopup::settingChanged(GenericSetting* pSetting, SettingReload pReload) {
+        if (pReload != SettingReload::None && !m_settingsChanged.contains(pSetting)) {
+            m_reloadSettingsActivated.push_back(pReload);
+        }
+
+        m_settingsChanged.insert(pSetting);
     }
 }

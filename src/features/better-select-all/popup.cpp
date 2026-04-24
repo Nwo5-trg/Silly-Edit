@@ -41,7 +41,7 @@ namespace BetterSelectAll {
         auto selectedObjectModeToggle = nwo5::utils::setupNode(
             CCMenuItemToggler::create(
                 CircleButtonSprite::createWithSpriteFrameName("edit_areaModeBtn05_001.png", 0.75f, CircleBaseColor::Blue),
-                CircleButtonSprite::createWithSpriteFrameName("square_01_001.png", 1.0f, CircleBaseColor::Blue),
+                CircleButtonSprite::createWithSpriteFrameName("square_01_001.png", 0.75f, CircleBaseColor::Blue),
                 this, menu_selector(BetterSelectAllPopup::onToggleSelectedObjectMode)
             ),
 

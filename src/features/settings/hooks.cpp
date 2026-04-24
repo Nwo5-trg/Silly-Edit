@@ -1,6 +1,7 @@
 #include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/EditorPauseLayer.hpp>
 #include <internal/utils/utils.hpp>
+#include <features/compat.hpp>
 #include "popup.hpp"
 
 using namespace geode::prelude;
@@ -28,11 +29,9 @@ class $modify(SettingsEditorPauseLayer, EditorPauseLayer) {
             return false;
         }
 
-        #ifdef GEODE_IS_DESKTOP
-            if (!Settings::General::showPageArrows) {
-                return true;
-            }
-        #endif
+        if (!Settings::General::showSettingsButton.get()) {
+            return true;
+        }
 
         auto menu = getChildByID("guidelines-menu");
 
@@ -40,7 +39,12 @@ class $modify(SettingsEditorPauseLayer, EditorPauseLayer) {
             return true;
         }
 
-        auto spr = CCSprite::create("settings-button.png"_spr);
+        auto spr = CCSprite::create(
+            fmt::format(
+                "settings-button-{}.png"_spr, 
+                string::toLower(Settings::General::settingsButtonTexture.get())
+            ).c_str()
+        );
         spr->setScale(0.85f),
 
         nwo5::utils::setupNode(

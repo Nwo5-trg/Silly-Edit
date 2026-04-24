@@ -3,21 +3,21 @@
 #include <internal/settings.hpp>
 
 namespace Settings::ObjectTabIcons {
-    SCAPI_INLINE_CATEGORY("Object Tab Icons", std::nullopt, "object-tab-icons-logo.png"_spr, SettingCategory::ObjectTabIcons)
-    inline SavedSetting<bool> enabled{"Enabled", "Object Tab Icons", true};
+    SILLY_API_INLINE_CATEGORY("Object Tab Icons", std::nullopt, "object-tab-icons-logo.png"_spr, SettingCategory::ObjectTabIcons)
+    inline SillySetting<bool> enabled{"Enabled", "Object Tab Icons", true, SettingReload::Editor};
     
-    inline SavedSetting<int> blockTabMode{"Block Tab Mode", "Object Tab Icons", 1, "set to 0 for normal gd icons, 1 for custom textures, and 2 for alternate textures"};
-    inline SavedSetting<int> outlineTabMode{"Outline Tab Mode", "Object Tab Icons", 1, "set to 0 for normal gd icons, 1 for custom textures, and 2 for alternate textures"};
-    inline SavedSetting<int> slopeTabMode{"Slope Tab Mode", "Object Tab Icons", 1, "set to 0 for normal gd icons, 1 for custom textures, and 2 for alternate textures"};
-    inline SavedSetting<int> hazardTabMode{"Hazard Tab Mode", "Object Tab Icons", 1, "set to 0 for normal gd icons, 1 for custom textures, and 2 for alternate textures"};
-    inline SavedSetting<int> threedTabMode{"3D Tab Mode", "Object Tab Icons", 1, "has inbuilt alternate texture | set to 0 for normal gd icons, 1 for custom textures, and 2 for alternate textures"};
-    inline SavedSetting<int> portalTabMode{"Portal Tab Mode", "Object Tab Icons", 1, "set to 0 for normal gd icons, 1 for custom textures, and 2 for alternate textures"};
-    inline SavedSetting<int> monsterTabMode{"Monster Tab Mode", "Object Tab Icons", 1, "set to 0 for normal gd icons, 1 for custom textures, and 2 for alternate textures"};
-    inline SavedSetting<int> pixelTabMode{"Pixel Tab Mode", "Object Tab Icons", 1, "has inbuilt alternate texture | set to 0 for normal gd icons, 1 for custom textures, and 2 for alternate textures"};
-    inline SavedSetting<int> collectibleTabMode{"Collectible Tab Mode", "Object Tab Icons", 1, "set to 0 for normal gd icons, 1 for custom textures, and 2 for alternate textures"};
-    inline SavedSetting<int> iconTabMode{"Icon Tab Mode", "Object Tab Icons", 1, "set to 0 for normal gd icons, 1 for custom textures, and 2 for alternate textures"};
-    inline SavedSetting<int> decoTabMode{"Deco Tab Mode", "Object Tab Icons", 1, "set to 0 for normal gd icons, 1 for custom textures, and 2 for alternate textures"};
-    inline SavedSetting<int> sawbladeTabMode{"Sawblade Tab Mode", "Object Tab Icons", 1, "set to 0 for normal gd icons, 1 for custom textures, and 2 for alternate textures"};
-    inline SavedSetting<int> triggerTabMode{"Trigger Tab Mode", "Object Tab Icons", 1, "set to 0 for normal gd icons, 1 for custom textures, and 2 for alternate textures"};
-    inline SavedSetting<int> customTabMode{"Custom Tab Mode", "Object Tab Icons", 1, "has inbuilt alternate texture | set to 0 for normal gd icons, 1 for custom textures, and 2 for alternate textures"};
+    inline SillySetting<std::string> blockTabMode{"Block Tab Mode", "Object Tab Icons", "Custom", {"Default", "Custom", "Alt"}, SettingReload::Editor};
+    inline SillySetting<std::string> outlineTabMode{"Outline Tab Mode", "Object Tab Icons", "Custom", {"Default", "Custom", "Alt"}, SettingReload::Editor};
+    inline SillySetting<std::string> slopeTabMode{"Slope Tab Mode", "Object Tab Icons", "Custom", {"Default", "Custom", "Alt"}, SettingReload::Editor};
+    inline SillySetting<std::string> hazardTabMode{"Hazard Tab Mode", "Object Tab Icons", "Custom", {"Default", "Custom", "Alt"}, SettingReload::Editor};
+    inline SillySetting<std::string> threedTabMode{"3D Tab Mode", "Object Tab Icons", "Custom", {"Default", "Custom", "Alt"}, SettingReload::Editor, "has inbuilt alternate texture"};
+    inline SillySetting<std::string> portalTabMode{"Portal Tab Mode", "Object Tab Icons", "Custom", {"Default", "Custom", "Alt"}, SettingReload::Editor};
+    inline SillySetting<std::string> monsterTabMode{"Monster Tab Mode", "Object Tab Icons", "Custom", {"Default", "Custom", "Alt"}, SettingReload::Editor};
+    inline SillySetting<std::string> pixelTabMode{"Pixel Tab Mode", "Object Tab Icons", "Custom", {"Default", "Custom", "Alt"}, SettingReload::Editor, "has inbuilt alternate texture"};
+    inline SillySetting<std::string> collectibleTabMode{"Collectible Tab Mode", "Object Tab Icons", "Custom", {"Default", "Custom", "Alt"}, SettingReload::Editor};
+    inline SillySetting<std::string> iconTabMode{"Icon Tab Mode", "Object Tab Icons", "Custom", {"Default", "Custom", "Alt"}, SettingReload::Editor};
+    inline SillySetting<std::string> decoTabMode{"Deco Tab Mode", "Object Tab Icons", "Custom", {"Default", "Custom", "Alt"}, SettingReload::Editor};
+    inline SillySetting<std::string> sawbladeTabMode{"Sawblade Tab Mode", "Object Tab Icons", "Custom", {"Default", "Custom", "Alt"}, SettingReload::Editor};
+    inline SillySetting<std::string> triggerTabMode{"Trigger Tab Mode", "Object Tab Icons", "Custom", {"Default", "Custom", "Alt"}, SettingReload::Editor};
+    inline SillySetting<std::string> customTabMode{"Custom Tab Mode", "Object Tab Icons", "Custom", {"Default", "Custom", "Alt"}, SettingReload::Editor, "has inbuilt alternate texture"};
 }

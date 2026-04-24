@@ -30,10 +30,10 @@ parentheses r supported
 
 to input obj ids js click the button to the left of either input and it adds the selected obj id(s) to the end
 
-whitespace gets ignored almost everywhere
+whitespace gets ignored
 
 ## replace
-i dont wanna write better replace docs rn but uhh
+***rn replace kinda has a glaring issue with not being able to rly filter objs so next time i update the system u will be able to use seperate identifiers for lhs and rhs but no promises thats any time soon***
 
 replace syntax is basically `[lhs][action operator][rhs],...`
 
@@ -71,7 +71,7 @@ any objs with group 2 or objs of obj id 1 with no groups
 increase all groups (other than parent groups) by 5 and replace all objs of obj id 11 with objs of obj id 12
 i *might* do parent groups l8r but it feels like those would be annoying so not now
 
-`.s >> {134,1}`
+`.s >> {134,1}` 
 
 add `134,1` to the end of the obj string of all objs
 

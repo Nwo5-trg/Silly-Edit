@@ -1,7 +1,6 @@
 #include "settings.hpp"
 #include "include.hpp"
 #include <internal/utils/utils.hpp>
-
 #include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/LevelEditorLayer.hpp>
 
@@ -80,16 +79,13 @@ class $modify(LevelEditorLayer) {
     bool init(GJGameLevel* level, bool noUI) {
         if (!LevelEditorLayer::init(level, noUI)) return false;
         
-        if (Settings::DefaultObjectOptions::useJSON.get()) {
-            DefaultObjectOptions::parseOptions(m_fields->options);
-        }
-        else {
-            m_fields->options.updateSimpleOptionsString(
-                Settings::DefaultObjectOptions::dontFade.get(),
-                Settings::DefaultObjectOptions::dontEnter.get(),
-                Settings::DefaultObjectOptions::noGlow.get()
-            );
-        }
+        DefaultObjectOptions::parseOptions(m_fields->options);
+
+        m_fields->options.updateSimpleOptionsString(
+            Settings::DefaultObjectOptions::dontFade.get(),
+            Settings::DefaultObjectOptions::dontEnter.get(),
+            Settings::DefaultObjectOptions::noGlow.get()
+        );
 
         return true;
     }
@@ -124,6 +120,8 @@ class $modify(LevelEditorLayer) {
             objectString = objectString.substr(0, i);
         }
         
-        return static_cast<GameObject*>(createObjectsFromString(objectString, noUndo, true)->firstObject());
+        return static_cast<GameObject*>(
+            createObjectsFromString(objectString, noUndo, true)->firstObject()
+        );
     }
 };

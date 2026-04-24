@@ -60,7 +60,7 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
         m_textInput->setMaxLabelLength(std::numeric_limits<int>::max());
         
         // ill find a better solution to this l8r
-        if (Loader::get()->isModLoaded("hjfod.betteredit")) {
+        if (nwo5::utils::isBetterEditLoaded()) {
             this->scheduleOnce(schedule_selector(TextObjectUtilsCustomizeObjectLayer::openTextMenu), 0.0f);
         }
         else {

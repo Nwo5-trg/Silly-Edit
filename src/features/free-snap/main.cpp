@@ -76,7 +76,7 @@ class $modify(EditorUI) {
     }
 
     void updateSelect() {    
-        if (editor::selection::empty() || !Settings::FreeSnap::enabled) {
+        if (editor::selection::empty() || !Settings::FreeSnap::enabled.get()) {
             return;
         }
 

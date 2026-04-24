@@ -13,6 +13,10 @@ namespace Settings {
         CCMenuItemSpriteExtra* m_nextPageButton = nullptr;
         CCMenuItemSpriteExtra* m_previousPageButton = nullptr;
 
+        // idc i dont wanna learn geode new listener system when i alrdy barely understood the last one
+        std::vector<SettingReload> m_reloadSettingsActivated;
+        std::unordered_set<GenericSetting*> m_settingsChanged;
+
         int m_currentPage = 0;
 
         static constexpr size_t SETTINGS_PER_PAGE = 12;
@@ -43,7 +47,11 @@ namespace Settings {
         void onNextPage(cocos2d::CCObject* pSender);
         void onPreviousPage(cocos2d::CCObject* pSender);
 
+        void onClose(cocos2d::CCObject* pSender);
+
     public:
         static SettingsPopup* create();
+
+        void settingChanged(GenericSetting* pSetting, SettingReload pReload);
     };
 }

@@ -1,19 +1,34 @@
-## v0.1.0-alpha.11
-might index release whenever silly api gets accepted js cuz
+## v0.1.0-beta.1
+geode release (i think) !!!
 
 **Added**
 
+- floodfill
+- setup startpos
+- templates
+- better layers
+- compat options (and betteredit/tinker support)
 - some general options
+- reworked replace object
+- strenum settings
+- editor reload warnings for settings
+- button customization
 
 **Fixed**
 
 - a couple more features not disabling properly
 - better obj tab icons custom tab
 - i think settings description was broken soooo fixed that too ig
+- some scale control stuffs (including be support)
+- some ruler stuffs
+- zoom input setting names so theyre a bit less confusing
+- arrow navigation in setting menu
+- not being able to type floats in zoom input
 
 **Internal**
 
-- use my api now !
+- use my api now
+- reorganize resources
 
 ## v0.1.0-alpha.10
 **Added**
