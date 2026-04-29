@@ -1,6 +1,6 @@
 #pragma once
 
-namespace FloodFill {
+namespace FloodFillFuckWindows {
     struct Rect {
         cocos2d::CCPoint start;
         cocos2d::CCPoint end;
@@ -80,9 +80,6 @@ namespace FloodFill {
             return end.x - start.x;
         }
     };
-
-    // std::vector<Rect> floodFill(std::vector<Rect> pShape, cocos2d::CCPoint pCenter, bool pIncludeShape);
-    // std::vector<Rect> optimize(std::vector<Rect> pRects);
     
     // doesnt include center
     std::vector<Rect> gridFloodFill(std::vector<Rect> pShape, const Rect& pCenter, bool p8Direction);

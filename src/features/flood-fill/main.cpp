@@ -5,15 +5,17 @@
 
 using namespace geode::prelude;
 
+using FloodFillFuckWindows::Rect;
+
 class $modify(FloodFillEditorUI, EditorUI) {
-    FloodFill::Rect rectFromObject(GameObject* pObj, std::optional<CCPoint> pCenter = std::nullopt) {
+    Rect rectFromObject(GameObject* pObj, std::optional<CCPoint> pCenter = std::nullopt) {
         return {
             pCenter.has_value() ? pCenter.value() : pObj->getRealPosition(), 
             CCSize(pObj->m_scaleX, pObj->m_scaleY) * editor::object::size(pObj)
         };
     }
-    std::vector<FloodFill::Rect> rectsFromObjects(CCArray* pObjs) {
-        std::vector<FloodFill::Rect> out;
+    std::vector<Rect> rectsFromObjects(CCArray* pObjs) {
+        std::vector<Rect> out;
 
         for (auto obj : CCArrayExt<GameObject*>(pObjs)) {
             out.emplace_back(obj->getRealPosition(), CCSize(obj->m_scaleX, obj->m_scaleY) * editor::object::size(obj));
@@ -72,7 +74,7 @@ class $modify(FloodFillEditorUI, EditorUI) {
 
         showNotification("successfully rect filled !", NotificationIcon::Info);
     }
-    void createFromRects(const std::vector<FloodFill::Rect>& pRects, CCArray* pBoundry, GameObject* pBase) {
+    void createFromRects(const std::vector<Rect>& pRects, CCArray* pBoundry, GameObject* pBase) {
         auto placed = CCArray::create();
 
         const std::string str{pBase->getSaveString(m_editorLayer)};
@@ -146,7 +148,7 @@ class $modify(FloodFillEditorUI, EditorUI) {
         }
 
         createFromRects(
-            FloodFill::gridFloodFill(
+            FloodFillFuckWindows::gridFloodFill(
                 std::move(rectsFromObjects(objs)), 
                 center 
                     ? rectFromObject(center) 
