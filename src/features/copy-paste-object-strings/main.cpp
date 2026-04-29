@@ -30,7 +30,7 @@ class $modify(EditorUI) {
         }
 
         if (Settings::CopyPasteObjectStrings::enabled.get() && Settings::CopyPasteObjectStrings::copy.get()) {
-            auto str = GameManager::get()->m_editorClipboard;
+            std::string str{GameManager::get()->m_editorClipboard};
 
             if (str.ends_with(';')) {
                 str.pop_back();
@@ -72,7 +72,7 @@ class $modify(EditorUI) {
         }
 
         if (!Settings::CopyPasteObjectStrings::dontOverrideEditor.get()) {
-            const auto ret = GameManager::get()->m_editorClipboard;
+            const std::string ret{GameManager::get()->m_editorClipboard};
             GameManager::get()->m_editorClipboard = clipboard::read();
 
             EditorUI::doPasteObjects(withColor);
