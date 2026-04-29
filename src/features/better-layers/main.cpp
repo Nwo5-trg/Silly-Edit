@@ -7,7 +7,6 @@
 
 using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
-using namespace nwo5::utils::setup;
 
 class $modify(BetterLayersEditorUI, EditorUI) {
     struct Fields {

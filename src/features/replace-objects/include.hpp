@@ -242,26 +242,6 @@ namespace ReplaceObjects {
         return std::isdigit(pChar) || pChar == '-' || pChar == '.';
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // struct QueryExpression {
-    //     virtual ~QueryExpression() = default;
-        
-    //     virtual cocos2d::CCArray* run(cocos2d::CCArray* pObjs) = 0;
-    // };
-
-    // geode::Result<std::vector<std::unique_ptr<QueryExpression>>> parseQuery(std::string_view pStr);
-
-    // struct ActionExpression {
-    //     virtual ~ActionExpression() = default;
-        
-    //     virtual cocos2d::CCArray* run(cocos2d::CCArray* pObjs) = 0;
-    // };
-
-    // geode::Result<std::vector<std::unique_ptr<ActionExpression>>> parseActions(std::string_view pStr);
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
     class ReplaceExpression;
     class FindAndReplaceMenu final : public cocos2d::CCLayer {
     private:

@@ -94,6 +94,7 @@ namespace Settings::General {
     inline SillySetting<std::string> settingsButtonTexture{"Settings Button Texture", "General", "Rainbow", {"Bi", "Enby", "Femboy", "Gay", "Genderqueer", "Intersex", "Pan", "Rainbow", "Trans"}, SettingReload::Pause};
     inline SillySetting<float> sayoDeviceSensitivity{"Sayo Device Sensitivity", "General", 1.5f, "gay speed"};
     inline SillySetting<float> sayoDeviceScreenBrightness{"Sayo Device Screen Brightness", "General", 0.5f, "gay saturation"};
+    inline SillySetting<bool> disableModWarningPopup{"Disable Mod Warning Popup", "General", false, " stops showing a warning every time you start the game about the mod being in beta or wtv"};
 
     SILLY_API_INLINE_CATEGORY("Keybinds", std::nullopt, "keybinds-logo.png"_spr, SettingCategory::Keybinds)
 }

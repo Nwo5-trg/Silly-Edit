@@ -64,5 +64,8 @@ build-*/
 .idea/
 /cmake-build-*/
 
+# dw abt it might add to repo l8r
+unfinished/
+
 # i like my dirs pretty :3
 **/.directory

@@ -5,7 +5,6 @@
 
 using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
-using namespace nwo5::utils::setup;
 
 // ill prolly add a seperate modifier for keybind zoom
 // so remind me to replace ternary hell with a proper enum system
@@ -20,7 +19,7 @@ class $modify(ZoomInputEditorUI, EditorUI) {
         TextInput* zoomInput = nullptr;
     };
 
-    static constexpr CCSize BASE_ZOOM_INPUT_SIZE{20.0f, 10.0f};
+    static constexpr CCSize BASE_ZOOM_INPUT_SIZE = {20.0f, 10.0f};
 
     bool init(LevelEditorLayer* editorLayer) {
         if (!EditorUI::init(editorLayer)) {
@@ -67,7 +66,9 @@ class $modify(ZoomInputEditorUI, EditorUI) {
                     m_positionSlider->getPositionY() + (Settings::ZoomInput::zoomInputOffset.get() * m_positionSlider->getScale())
                 )
                 .children(
-
+                    zoomLabel,
+                    fields->zoomInput,
+                    zoomButton
                 )
                 .parent(this)
         );

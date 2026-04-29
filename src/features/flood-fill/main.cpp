@@ -36,9 +36,9 @@ class $modify(FloodFillEditorUI, EditorUI) {
             return showNotification("objects overlapped", NotificationIcon::Warning);
         }
 
-        auto base =static_cast<GameObject*>(pObjs->firstObject());
+        auto base = static_cast<GameObject*>(pObjs->firstObject());
 
-        const auto str = copyObjects(CCArray::createWithObject(base), false, false);
+        const std::string str{base->getSaveString(m_editorLayer)};
 
         CCSize gridSize = CCSize(base->m_scaleX, base->m_scaleY) * editor::object::size(base);
         const auto min = ccp(
@@ -52,7 +52,7 @@ class $modify(FloodFillEditorUI, EditorUI) {
 
         for (auto x = min.x; x <= max.x; x += gridSize.width) {
             for (auto y = min.y; y <= max.y; y += gridSize.height) {
-                auto obj = static_cast<GameObject*>(m_editorLayer->createObjectsFromString(str, true, true)->firstObject());
+                auto obj = static_cast<GameObject*>(pasteObjects(str, false, true)->firstObject());
 
                 editor::object::move(obj, {x, y});
 
@@ -75,7 +75,7 @@ class $modify(FloodFillEditorUI, EditorUI) {
     void createFromRects(const std::vector<FloodFill::Rect>& pRects, CCArray* pBoundry, GameObject* pBase) {
         auto placed = CCArray::create();
 
-        const auto str = copyObjects(CCArray::createWithObject(pBase), false, false);
+        const std::string str{pBase->getSaveString(m_editorLayer)};
         const auto size = editor::object::size(pBase);
 
         for (auto rect : pRects) {
@@ -83,7 +83,7 @@ class $modify(FloodFillEditorUI, EditorUI) {
         }
 
         for (const auto& rect : pRects) {
-            auto obj = static_cast<GameObject*>(m_editorLayer->createObjectsFromString(str, true, true)->firstObject());
+            auto obj = static_cast<GameObject*>(pasteObjects(str, false, true)->firstObject());
             
             editor::object::move(obj, rect.center());
             editor::object::scale(obj, rect.width() / size, rect.height() / size);

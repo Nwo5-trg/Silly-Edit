@@ -6,7 +6,6 @@
 
 using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
-using namespace nwo5::utils::setup;
 
 namespace BetterLayers {
     bool EditLayerPopup::init(LayerSettings* pSettings) {

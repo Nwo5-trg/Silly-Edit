@@ -7,6 +7,18 @@
 using namespace geode::prelude;
 using namespace nwo5::utils::setup;
 
+static void tryShowWarningPopup() {
+    static bool shown = false;
+
+    if (shown || Settings::General::disableModWarningPopup.get()) {
+        return;
+    }
+
+    FLAlertLayer::create("SillyEdit", "sillyedit is in <cr>TESTING</c> ! there prolly will be <cd>bugs and or </c><cs>crahes</c>", "Ok !")->show();
+
+    shown = true;
+}
+
 class $modify(EditorUI) {
     bool init(LevelEditorLayer* editorLayer) {
         if (!EditorUI::init(editorLayer)) {
@@ -18,6 +30,8 @@ class $modify(EditorUI) {
                 Settings::SettingsPopup::create()->show();
             }
         });
+
+        tryShowWarningPopup();
         
         return true;
     }

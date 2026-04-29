@@ -127,11 +127,7 @@ namespace FloodFill {
     // }
 
     std::vector<Rect> gridFloodFill(std::vector<Rect> pShape, const Rect& pCenter, bool p8Direction) {
-        for (auto vec : {pShape, std::vector<Rect>{pCenter}}) {
-            for (auto rect : vec) {
-                log::error("[{}], [{}]", rect.start, rect.end);
-            }
-        }
+        const auto bounds = Rect::bounds(pShape);
 
         std::vector<Rect> out;
 
@@ -140,6 +136,10 @@ namespace FloodFill {
         while (!stack.empty()) {
             const auto rect = stack.back();
             stack.pop_back();
+
+            if (!bounds.contains(rect.center())) {
+                continue;
+            }
 
             // i love std::ranges algs, gotta be one of my favorite genders
             if (std::ranges::any_of(pShape, [&] (const auto& pBoundry) {

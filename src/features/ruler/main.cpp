@@ -4,7 +4,7 @@
 #include "settings.hpp"
 
 using namespace geode::prelude; 
-using namespace nwo5::utils::setup;
+using namespace nwo5::ui::prelude;
 
 struct MeasurementColor {
     int main;
@@ -154,10 +154,23 @@ class $modify(RulerEditorUI, EditorUI) {
             for (auto label : {measurement.xLabel, measurement.yLabel}) {
                 const auto y = (label == measurement.yLabel);
 
-                nwo5::utils::setupNode(
-                    label,
-
-                    SetNodePosition{
+                Setup(label)
+                    .scale(Settings::Ruler::labelSize.get())
+                    .anchor( // this is prolly a war crime icl but atleast its better than my old ruler impl
+                        y 
+                            ? (Settings::Ruler::dontRotateLabel.get() 
+                                ? (Settings::Ruler::labelOnRight.get() 
+                                    ? LEFT_CENTER_ANCHOR 
+                                    : RIGHT_CENTER_ANCHOR
+                                  ) 
+                                : BOTTOM_CENTER_ANCHOR
+                              )
+                            : (Settings::Ruler::labelOnBottom.get() 
+                                ? TOP_CENTER_ANCHOR 
+                                : BOTTOM_CENTER_ANCHOR
+                              )
+                    )
+                    .pos(
                         y
                             ? (Settings::Ruler::labelOnRight.get()
                                 ? ccp(
@@ -179,23 +192,8 @@ class $modify(RulerEditorUI, EditorUI) {
                                     measurement.end.y + Settings::Ruler::thickness.get() + Settings::Ruler::labelDistance.get()
                                   )
                               )
-                    },
-                    SetNodeScale{Settings::Ruler::labelSize.get()},
-                    SetNodeAnchor{ // this is prolly a war crime icl but atleast its better than my old ruler impl
-                        y 
-                            ? (Settings::Ruler::dontRotateLabel.get() 
-                                ? (Settings::Ruler::labelOnRight.get() 
-                                    ? LEFT_CENTER_ANCHOR 
-                                    : RIGHT_CENTER_ANCHOR
-                                  ) 
-                                : BOTTOM_CENTER_ANCHOR
-                              )
-                            : (Settings::Ruler::labelOnBottom.get() 
-                                ? TOP_CENTER_ANCHOR 
-                                : BOTTOM_CENTER_ANCHOR
-                              )
-                    },
-                    SetNodeRotation{
+                    )
+                    .rotation(
                         Settings::Ruler::dontRotateLabel.get() 
                             ? 0.0f 
                             : (y 
@@ -208,9 +206,8 @@ class $modify(RulerEditorUI, EditorUI) {
                                     : 0.0f
                                   )
                               )
-                    },
-                    SetNodeColor{ccc3(col.r * 255, col.g * 255, col.b * 255)}
-                );
+                    )
+                    .color(ccc3(col.r * 255, col.g * 255, col.b * 255));
             }
         } 
     }
