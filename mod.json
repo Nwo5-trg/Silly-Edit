@@ -17,7 +17,7 @@
 	"tags": ["editor", "bugfix", "customization", "enhancement", "interface", "utility", "offline"],
 	"dependencies": {
         "geode.node-ids": ">=1.23.3",
-		"nwo5.silly-api": ">=1.0.1",
+		"nwo5.silly-api": ">=1.2.0",
 		"hjfod.gmd-api": ">=1.5.0",
 		"cvolton.level-id-api": ">=2.0.0",
 		"blueblock6.cleanstartpos": {

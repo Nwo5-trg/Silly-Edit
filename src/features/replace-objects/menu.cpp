@@ -5,7 +5,8 @@
 #include <Geode/modify/EditorUI.hpp>
 
 using namespace geode::prelude;
-using namespace nwo5::syntax;
+using namespace nwo5::ui::prelude;
+using namespace nwo5::utils::setup;
 
 namespace ReplaceObjects {
     FindAndReplaceMenu* FindAndReplaceMenu::create() {

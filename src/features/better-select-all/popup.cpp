@@ -4,7 +4,7 @@
 #include "settings.hpp"
 
 using namespace geode::prelude;
-using namespace nwo5::syntax;
+using namespace nwo5::utils::setup;
 
 namespace BetterSelectAll {
     bool BetterSelectAllPopup::init() {

@@ -4,7 +4,7 @@
 #include "settings.hpp"
 
 using namespace geode::prelude; 
-using namespace nwo5::syntax;
+using namespace nwo5::utils::setup;
 
 struct MeasurementColor {
     int main;

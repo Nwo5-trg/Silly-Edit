@@ -5,7 +5,7 @@
 #include <Geode/modify/EditorUI.hpp>
 
 using namespace geode::prelude;
-using namespace nwo5::syntax;
+using namespace nwo5::utils::setup;
 
 class $modify(ReplaceObjectsEditorUI, EditorUI) {
     struct Fields {

@@ -85,5 +85,5 @@ namespace FloodFill {
     // std::vector<Rect> optimize(std::vector<Rect> pRects);
     
     // doesnt include center
-    std::vector<Rect> gridFloodFill(std::vector<Rect> pShape, const Rect& pCenter, bool p8Direction, bool pUseCenterEdgeResolving);
+    std::vector<Rect> gridFloodFill(std::vector<Rect> pShape, const Rect& pCenter, bool p8Direction);
 }

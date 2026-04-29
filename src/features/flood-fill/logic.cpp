@@ -126,7 +126,13 @@ namespace FloodFill {
     //     return out;
     // }
 
-    std::vector<Rect> gridFloodFill(std::vector<Rect> pShape, const Rect& pCenter, bool p8Direction, bool pUseCenterEdgeResolving) {
+    std::vector<Rect> gridFloodFill(std::vector<Rect> pShape, const Rect& pCenter, bool p8Direction) {
+        for (auto vec : {pShape, std::vector<Rect>{pCenter}}) {
+            for (auto rect : vec) {
+                log::error("[{}], [{}]", rect.start, rect.end);
+            }
+        }
+
         std::vector<Rect> out;
 
         std::vector<Rect> stack = {pCenter};
@@ -137,7 +143,7 @@ namespace FloodFill {
 
             // i love std::ranges algs, gotta be one of my favorite genders
             if (std::ranges::any_of(pShape, [&] (const auto& pBoundry) {
-                return pUseCenterEdgeResolving ? pBoundry.contains(rect.center()) : pBoundry.touches(rect);
+                return pBoundry.contains(rect.center());
             })) {
                 continue;
             }

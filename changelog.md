@@ -24,6 +24,7 @@ geode release (i think) !!!
 - zoom input setting names so theyre a bit less confusing
 - arrow navigation in setting menu
 - not being able to type floats in zoom input
+- copy paste obj string
 
 **Internal**
 

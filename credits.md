@@ -1,5 +1,5 @@
 ## Credits
-tyyyy <cr>\<3</cr> !
+tyyyy <cr>\<3</c> !
 
 ### gdjayy
 - replace object suggestion

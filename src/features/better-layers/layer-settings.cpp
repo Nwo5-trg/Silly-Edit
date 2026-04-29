@@ -9,7 +9,7 @@ using namespace geode::prelude;
 
 namespace BetterLayers {
     static std::filesystem::path getLayerSettingsPath() {
-        return dirs::getSaveDir() / "layer-settings.json";
+        return Mod::get()->getSaveDir() / "layer-settings.json";
     }
 
     void LayerSettings::importSettings() {

@@ -5,7 +5,7 @@
 #include "popup.hpp"
 
 using namespace geode::prelude;
-using namespace nwo5::syntax;
+using namespace nwo5::utils::setup;
 
 class $modify(EditorUI) {
     bool init(LevelEditorLayer* editorLayer) {

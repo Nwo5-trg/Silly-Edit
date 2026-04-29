@@ -3,6 +3,7 @@
 #include <nwo5.silly-api/include/include.hpp>
 
 using namespace nwo5::editor::prelude;
+using namespace nwo5::utils::prelude;
 
 namespace nwo5::utils {
     std::pair<float, float> getChromaSettings();

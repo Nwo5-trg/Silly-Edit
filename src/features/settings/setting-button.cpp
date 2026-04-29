@@ -3,7 +3,8 @@
 #include "popup.hpp"
 
 using namespace geode::prelude;
-using namespace nwo5::syntax;
+using namespace nwo5::ui::prelude;
+using namespace nwo5::utils::setup;
 
 namespace Settings {
     bool SettingButtonBase::init(GenericSetting* pSetting, SettingsPopup* pPopup) {

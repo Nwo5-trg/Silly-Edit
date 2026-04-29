@@ -3,7 +3,7 @@
 #include "settings.hpp"
 
 using namespace geode::prelude;
-using namespace nwo5::syntax;
+using namespace nwo5::utils::setup;
 
 class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
     struct Fields {
@@ -90,7 +90,7 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
 
             SetNodeID{"paste-text-button"_spr},
             SetNodePosition{inputBG->getPositionX() + (Settings::TextObjectUtils::swapCopyPaste.get() ? SIDE_BUTTON_DISTANCE : -SIDE_BUTTON_DISTANCE), inputBG->getPositionY()},
-            SetNodeScale{SIDE_BUTTON_SIZE},
+            SetNodeScaleWithSize{SIDE_BUTTON_SIZE},
             SetNodeParent{m_fields->textObjectUtilsMenu}
         );
 
@@ -99,7 +99,7 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
 
             SetNodeID{"clear-text-button"_spr},
             SetNodePosition{inputBG->getPositionX() + SIDE_BUTTON_DISTANCE + SIDE_BUTTON_SIZE + SIDE_BUTTON_GAP, inputBG->getPositionY()},
-            SetNodeScale{SIDE_BUTTON_SIZE},
+            SetNodeScaleWithSize{SIDE_BUTTON_SIZE},
             SetNodeParent{m_fields->textObjectUtilsMenu}
         );
 
@@ -108,7 +108,7 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
 
             SetNodeID{"newline-text-button"_spr},
             SetNodePosition{inputBG->getPositionX() - SIDE_BUTTON_DISTANCE - SIDE_BUTTON_SIZE - SIDE_BUTTON_GAP, inputBG->getPositionY()},
-            SetNodeScale{SIDE_BUTTON_SIZE},
+            SetNodeScaleWithSize{SIDE_BUTTON_SIZE},
             SetNodeParent{m_fields->textObjectUtilsMenu}
         );
 

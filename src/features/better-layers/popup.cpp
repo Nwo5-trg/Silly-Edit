@@ -5,7 +5,8 @@
 #include <Geode/modify/LevelEditorLayer.hpp>
 
 using namespace geode::prelude;
-using namespace nwo5::syntax;
+using namespace nwo5::ui::prelude;
+using namespace nwo5::utils::setup;
 
 namespace BetterLayers {
     bool EditLayerPopup::init(LayerSettings* pSettings) {
@@ -17,73 +18,76 @@ namespace BetterLayers {
 
         m_layer = editor::currentLayer();
 
-        auto opacityLabel = nwo5::utils::setupNode(
-            CCLabelBMFont::create("Opacity:", "bigFont.fnt"),
-
-            SetNodeID{"opacity-label"_spr},
-            SetNodeScaleWithHeight{LABEL_HEIGHT},
-            SetNodePositionY{HEIGHT / 2},
-            SetNodeParent{m_mainLayer}
+        auto opacityLabel = ui::node(
+            Setup(ui::label("Opacity:", Font::Default))
+                .id("opacity-label"_spr)
+                .scaleHeightToFit(LABEL_HEIGHT)
         );
-        m_opacityInput = nwo5::utils::setupNode(
-            nwo5::utils::createTextInput(INPUT_SIZE, "255", [this] (const std::string& pStr) {
-                if (pStr.empty()) {
-                    this->m_settings->unsetLayerOpacity(m_layer);
-                }
-                else {
-                    const auto num = std::clamp(utils::numFromString<int>(pStr).unwrapOrDefault(), 0, 255);
-
-                    this->m_settings->setLayerOpacity(m_layer, num);
-
-                    if (num == 255) {
-                        this->m_opacityInput->setString("255");
+        m_opacityInput = ui::node(
+            Setup(ui::input(INPUT_SIZE, "255"))
+                .id("opacity-input"_spr)
+                .filter(CommonFilter::Uint)
+                .maxCharCount(3)
+                .callback([this] (const std::string& pStr) {
+                    if (pStr.empty()) {
+                        this->m_settings->unsetLayerOpacity(m_layer);
                     }
-                }
-            }),
+                    else {
+                        const auto num = std::clamp(utils::numFromString<int>(pStr).unwrapOrDefault(), 0, 255);
 
-            SetNodeID{"opacity-input"_spr},
-            SetNodePositionY{HEIGHT / 2},
-            SetNodeParent{m_mainLayer}
+                        this->m_settings->setLayerOpacity(m_layer, num);
+
+                        if (num == 255) {
+                            this->m_opacityInput->setString("255");
+                        }
+                    }
+                })
         );
-
         if (m_settings->getLayerOpacity(m_layer).has_value()) {
             m_opacityInput->setString(nwo5::utils::numToString(m_settings->getLayerOpacity(m_layer).value()));
         }
-        m_opacityInput->setCommonFilter(CommonFilter::Uint);
-        m_opacityInput->setMaxCharCount(3);
 
-        opacityLabel->setPositionX(WIDTH / 2 - m_opacityInput->getScaledContentWidth() / 2 - PADDING / 2);
-        m_opacityInput->setPositionX(WIDTH / 2 + opacityLabel->getScaledContentWidth() / 2 + PADDING / 2);
-
-        auto hideLayerToggle = nwo5::utils::setupNode(
-            CCMenuItemToggler::createWithStandardSprites(this, menu_selector(EditLayerPopup::onToggleHidden), 1.0f),
-
-            SetNodeID{"hide-layer-toggle"_spr},
-            SetNodeScaleWithSize{BUTTON_SIZE},
-            SetNodePosition{WIDTH - PADDING - BUTTON_SIZE / 2, HEIGHT / 2},
-            SetNodeParent{m_buttonMenu}
+        auto clearOpacityButton = ui::node(
+            Setup(ui::buttonFrame("GJ_trashBtn_001.png", this, menu_selector(EditLayerPopup::onClearOpacity)))
+                .id("clear-opacity-button"_spr)
         );
 
+        auto opacityMenu = ui::node(
+            Setup(ui::menu(ui::horizontalDistrbLayout(GAP)))
+                .id("opacity-menu"_spr)
+                .pos(WIDTH / 2, HEIGHT / 2)
+                .children(
+                    opacityLabel,
+                    m_opacityInput,
+                    clearOpacityButton
+                )
+                .parent(m_mainLayer)
+        );
+
+        auto hideLayerToggle = ui::node(
+            Setup(ui::togglerBase(this, menu_selector(EditLayerPopup::onToggleHidden)))
+                .id("hide-layer-toggle"_spr)
+                .scaleToFit(BUTTON_SIZE)
+                .pos(WIDTH - PADDING - BUTTON_SIZE / 2, HEIGHT / 2)
+                .parent(m_buttonMenu)
+        );
         hideLayerToggle->toggle(m_settings->isLayerHidden(m_layer));
 
-        auto focusLayerToggle = nwo5::utils::setupNode(
-            CCMenuItemToggler::create(
-                CCSprite::createWithSpriteFrameName("GJ_starsIcon_gray_001.png"),
-                CCSprite::createWithSpriteFrameName("GJ_starsIcon_001.png"),
-                this, menu_selector(EditLayerPopup::onToggleFocused)
-            ),
-
-            SetNodeID{"focus-layer-toggle"_spr},
-            SetNodeScaleWithSize{BUTTON_SIZE},
-            SetNodePosition{PADDING + BUTTON_SIZE / 2, HEIGHT / 2},
-            SetNodeParent{m_buttonMenu}
+        auto focusLayerToggle = ui::node(
+            Setup(ui::togglerFrame("GJ_starsIcon_gray_001.png", "GJ_starsIcon_001.png", this, menu_selector(EditLayerPopup::onToggleFocused)))
+                .id("focus-layer-toggle"_spr)
+                .scaleToFit(BUTTON_SIZE)
+                .pos(PADDING + BUTTON_SIZE / 2, HEIGHT / 2)
+                .parent(m_buttonMenu)
         );
-
         focusLayerToggle->toggle(m_settings->getFocusedLayer().has_value() && m_settings->getFocusedLayer().value() == m_layer);
 
         return true;
     }
 
+    void EditLayerPopup::onClearOpacity(cocos2d::CCObject*) {
+        m_opacityInput->setString("", true);
+    }
     void EditLayerPopup::onToggleHidden(cocos2d::CCObject*) {
         m_settings->setLayerHidden(m_layer, !m_settings->isLayerHidden(m_layer));
     }
@@ -119,110 +123,112 @@ namespace BetterLayers {
 
         m_settings = pSettings;
 
-        auto defaultOpacityLabel = nwo5::utils::setupNode(
-            CCLabelBMFont::create("Default Opacity:", "bigFont.fnt"),
-
-            SetNodeID{"default-opacity-label"_spr},
-            SetNodeScaleWithHeight{LABEL_HEIGHT}
+        auto defaultOpacityLabel = ui::node(
+            Setup(ui::label("Default Opacity:", Font::Default))
+                .id("defualt-opacity-label"_spr)
+                .scaleHeightToFit(LABEL_HEIGHT)
         );
-        m_defaultOpacityInput = nwo5::utils::setupNode(
-            nwo5::utils::createTextInput(INPUT_SIZE, nwo5::utils::numToString(Settings::BetterLayers::layerOpacity.getDefault()), [this] (const std::string& pStr) {
-                if (pStr.empty()) {
-                    this->m_settings->unsetDefaultOpacity();
-                }
-                else {
-                    const auto num = std::clamp(utils::numFromString<int>(pStr).unwrapOrDefault(), 0, 255);
-
-                    this->m_settings->setDefaultOpacity(num);
-
-                    if (num == 255) {
-                        this->m_defaultOpacityInput->setString("255");
+        
+        m_defaultOpacityInput = ui::node(
+            Setup(ui::input(INPUT_SIZE, nwo5::utils::numToString(Settings::BetterLayers::layerOpacity.getDefault())))
+                .filter(CommonFilter::Uint)
+                .maxCharCount(3)
+                .id("default-opacity-input"_spr)
+                .callback([this] (const std::string& pStr) {
+                    if (pStr.empty()) {
+                        this->m_settings->unsetDefaultOpacity();
                     }
-                }
-            }),
+                    else {
+                        const auto num = std::clamp(utils::numFromString<int>(pStr).unwrapOrDefault(), 0, 255);
 
-            SetNodeID{"default-opacity-input"_spr}
+                        this->m_settings->setDefaultOpacity(num);
+
+                        if (num == 255) {
+                            this->m_defaultOpacityInput->setString("255");
+                        }
+                    }
+                })
         );
-
         if (m_settings->getDefaultOpacity().has_value()) {
             m_defaultOpacityInput->setString(nwo5::utils::numToString(m_settings->getDefaultOpacity().value()));
         }
-        m_defaultOpacityInput->setCommonFilter(CommonFilter::Uint);
-        m_defaultOpacityInput->setMaxCharCount(3);
 
-        auto focusedLayerLabel = nwo5::utils::setupNode(
-            CCLabelBMFont::create("Focused Layer:", "bigFont.fnt"),
-
-            SetNodeID{"focused-layer-label"_spr},
-            SetNodeScaleWithHeight{LABEL_HEIGHT}
+        auto clearDefaultOpacityButton = ui::node(
+            Setup(ui::buttonFrame("GJ_trashBtn_001.png", this, menu_selector(EditAllLayersPopup::onClearDefaultOpacity)))
+                .id("clear-default-opacity-button"_spr)
         );
-        m_focusedLayerInput = nwo5::utils::setupNode(
-            nwo5::utils::createTextInput(INPUT_SIZE, nwo5::utils::numToString(Settings::BetterLayers::layerOpacity.getDefault()), [this] (const std::string& pStr) {
-                if (pStr.empty()) {
-                    this->m_settings->unsetFocusedLayer();
-                }
-                else {
-                    const auto num = std::clamp(utils::numFromString<int>(pStr).unwrapOrDefault(), 0, editor::constants::MAX_LAYERS);
 
-                    this->m_settings->setFocusedLayer(num);
+        auto focusedLayerLabel = ui::node(
+            Setup(ui::label("Focused Layer:", Font::Default))
+                .id("focused-layer-label"_spr)
+                .scaleHeightToFit(LABEL_HEIGHT)
+        );
 
-                    if (num == editor::constants::MAX_LAYERS) {
-                        this->m_focusedLayerInput->setString("9999");
+        m_focusedLayerInput = ui::node(
+            Setup(ui::input(INPUT_SIZE, nwo5::utils::numToString(Settings::BetterLayers::layerOpacity.getDefault())))
+                .id("focused-layer-input"_spr)
+                .filter(CommonFilter::Uint)
+                .maxCharCount(4)
+                .callback([this] (const std::string& pStr) {
+                    if (pStr.empty()) {
+                        this->m_settings->unsetFocusedLayer();
                     }
-                }
-            }),
+                    else {
+                        const auto num = std::clamp(utils::numFromString<int>(pStr).unwrapOrDefault(), 0, editor::constants::MAX_LAYERS);
 
-            SetNodeID{"focused-layer-input"_spr}
+                        this->m_settings->setFocusedLayer(num);
+
+                        if (num == editor::constants::MAX_LAYERS) {
+                            this->m_focusedLayerInput->setString("9999");
+                        }
+                    }
+                })
         );
-
         if (m_settings->getFocusedLayer().has_value()) {
             m_focusedLayerInput->setString(nwo5::utils::numToString(m_settings->getFocusedLayer().value()));
         }
-        m_focusedLayerInput->setCommonFilter(CommonFilter::Uint);
-        m_focusedLayerInput->setMaxCharCount(4);
 
-        auto unfocusLayerButton = nwo5::utils::setupNode(
-            nwo5::utils::createButtonFrame("GJ_trashBtn_001.png", this, menu_selector(EditAllLayersPopup::onUnfocusLayer))
+        auto unfocusLayerButton = ui::node(
+            Setup(ui::buttonFrame("GJ_trashBtn_001.png", this, menu_selector(EditAllLayersPopup::onUnfocusLayer)))
+                .id("unfocus-layer-button"_spr)
         );
 
-        auto menu = nwo5::utils::setupNode(
-            CCMenu::create(),
-
-            SetNodeID{"menu"_spr},
-            SetNodePosition{WIDTH / 2, HEIGHT / 2},
-            SetNodeWidth{
-                std::max(defaultOpacityLabel->getScaledContentWidth(), focusedLayerLabel->getScaledContentWidth()) + GAP + INPUT_SIZE + GAP + BUTTON_SIZE
-            },
-            SetNodeChildren{
-                defaultOpacityLabel,
-                m_defaultOpacityInput,
-                focusedLayerLabel,
-                m_focusedLayerInput,
-                unfocusLayerButton
-            },
-            SetNodeParent{m_mainLayer}
+        auto menu = ui::node(
+            Setup(ui::menu(RowLayout::create()
+                ->setGap(GAP)
+                ->setGrowCrossAxis(true)
+                ->setAxisAlignment(AxisAlignment::Start)
+                ->setCrossAxisAlignment(AxisAlignment::End)
+                ->setAutoScale(false)
+            ))
+                .id("menu"_spr)
+                .pos(WIDTH / 2, HEIGHT / 2)
+                .width(WIDTH)
+                .children(
+                    defaultOpacityLabel,
+                    m_defaultOpacityInput,
+                    clearDefaultOpacityButton,
+                    focusedLayerLabel,
+                    m_focusedLayerInput,
+                    unfocusLayerButton
+                )
+                .parent(m_mainLayer)
         );
 
-        menu->setLayout(RowLayout::create()
-            ->setGap(GAP)
-            ->setGrowCrossAxis(true)
-            ->setAxisAlignment(AxisAlignment::Start)
-            ->setCrossAxisAlignment(AxisAlignment::End)
-            ->setAutoScale(false)
-        );
-
-        nwo5::utils::setupNode(
-            CCLabelBMFont::create("layer opacity is from 0-255, 0.75 = 191, 0.5 = 127, 0.25 = 63", "chatFont.fnt"),
-
-            SetNodeID{"label-for-the-children-because-i-dont-wanna-make-the-inputs-convert-from-float-cuz-im-lazy-this-also-pads-out-space-in-the-popup-tho-uwu"_spr},
-            SetNodeScaleWithHeight{10.0f},
-            SetNodePosition{WIDTH / 2, GAP},
-            SetNodeParent{m_mainLayer}
+        auto dumbLabel = ui::node(
+            Setup(ui::label("layer opacity is from 0-255, 0.75 = 191, 0.5 = 127, 0.25 = 63", Font::Chat))
+                .id("label-for-the-children-because-i-dont-wanna-make-the-inputs-convert-from-float-cuz-im-lazy-this-also-pads-out-space-in-the-popup-tho-uwu"_spr)
+                .scaleHeightToFit(10.0f)
+                .pos(WIDTH / 2, GAP)
+                .parent(m_mainLayer)
         );
 
         return true;
     }
 
+    void EditAllLayersPopup::onClearDefaultOpacity(cocos2d::CCObject*) {
+        m_defaultOpacityInput->setString("", true);
+    }
     void EditAllLayersPopup::onUnfocusLayer(cocos2d::CCObject*) {
         m_focusedLayerInput->setString("", true);
     }

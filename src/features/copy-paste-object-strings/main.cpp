@@ -10,20 +10,7 @@ static bool isProbablierObjectString(std::string_view pStr) {
         return false;
     }
 
-    if (pStr.ends_with(',') || pStr.ends_with('.')) {
-        return false;
-    }
-
-    if (const auto count = nwo5::utils::stringCount(pStr, ','); count < 5 || !(count % 2)) {
-        return false;
-    }
-
-    if ( // this is so extra lol
-        const auto count = nwo5::utils::stringCount(pStr, "1,"); 
-        count != nwo5::utils::stringCount(pStr, ";") + 1 
-        || count != nwo5::utils::stringCount(pStr, "2,") 
-        || count != nwo5::utils::stringCount(pStr, "3,")
-    ) {
+    if (pStr.ends_with(',') || pStr.ends_with('.') || nwo5::utils::stringCount(pStr, ',') < 5) {
         return false;
     }
 
@@ -43,10 +30,16 @@ class $modify(EditorUI) {
         }
 
         if (Settings::CopyPasteObjectStrings::enabled.get() && Settings::CopyPasteObjectStrings::copy.get()) {
-            clipboard::write(GameManager::get()->m_editorClipboard);
+            auto str = GameManager::get()->m_editorClipboard;
+
+            if (str.ends_with(';')) {
+                str.pop_back();
+            }
+
+            clipboard::write(str);
 
             if (Settings::CopyPasteObjectStrings::copyNotification.get()) {
-                geode::Notification::create("Object String Copied To Clipboard", NotificationIcon::Info);
+                geode::Notification::create("Object String Copied To Clipboard", NotificationIcon::Info)->show();
             }
         }
 
@@ -68,11 +61,11 @@ class $modify(EditorUI) {
                 EditorUI::doPasteObjects(withColor);
 
                 if (Settings::CopyPasteObjectStrings::pasteNotification.get()) {
-                    geode::Notification::create("Invalid Object String, Pasted Fallback", NotificationIcon::Warning);
+                    geode::Notification::create("Invalid Object String, Pasted Fallback", NotificationIcon::Warning)->show();
                 }
             }
             else if (Settings::CopyPasteObjectStrings::pasteNotification.get()) {
-                geode::Notification::create("Invalid Object String", NotificationIcon::Warning);
+                geode::Notification::create("Invalid Object String", NotificationIcon::Warning)->show();
             }
 
             return;
@@ -93,7 +86,7 @@ class $modify(EditorUI) {
         }
 
         if (Settings::CopyPasteObjectStrings::pasteNotification.get()) {
-            geode::Notification::create("Object String Pasted", NotificationIcon::Info);
+            geode::Notification::create("Object String Pasted", NotificationIcon::Info)->show();
         }
     }
 };

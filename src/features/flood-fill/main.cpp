@@ -91,7 +91,9 @@ class $modify(FloodFillEditorUI, EditorUI) {
             placed->addObject(obj);
         }
 
-        m_editorLayer->addToUndoList(UndoObject::createWithArray(placed, UndoCommand::Paste), true);
+        if (placed->count()) {
+            m_editorLayer->addToUndoList(UndoObject::createWithArray(placed, UndoCommand::Paste), true);
+        }
 
         if (Settings::FloodFill::selectFill.get()) {
             editor::selection::add(pBase, true, true);
@@ -149,7 +151,7 @@ class $modify(FloodFillEditorUI, EditorUI) {
                 center 
                     ? rectFromObject(center) 
                     : rectFromObject(static_cast<GameObject*>(objs->firstObject()), editor::object::center(objs, true)), 
-                false, false
+                false
             ),
             objs, center ? center : static_cast<GameObject*>(objs->firstObject())
         );

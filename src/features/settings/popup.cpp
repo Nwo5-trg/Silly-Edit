@@ -5,7 +5,8 @@
 #include "setting-button.hpp"
 
 using namespace geode::prelude;
-using namespace nwo5::syntax;
+using namespace nwo5::ui::prelude;
+using namespace nwo5::utils::setup;
 
 namespace Settings {
     bool SettingsPopup::init() {

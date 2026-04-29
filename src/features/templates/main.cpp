@@ -3,11 +3,10 @@
 #include <Geode/modify/LevelOptionsLayer.hpp>
 #include <Geode/modify/GameLevelManager.hpp>
 #include "settings.hpp"
-
-#include <Geode/binding/GameObject.hpp>
+#include <Geode/ui/Button.hpp>
 
 using namespace geode::prelude;
-using namespace nwo5::syntax;
+using namespace nwo5::utils::setup;
 
 static std::filesystem::path getTemplatePath() {
     return Mod::get()->getSaveDir() / "template.gmd";
@@ -28,10 +27,17 @@ class $modify(TemplatesLevelOptionsLayer, LevelOptionsLayer) {
         }
 
         auto button = nwo5::utils::setupNode(
-            CCMenuItemSpriteExtra::create(
-                ButtonSprite::create("Save\nTemplate"),
-                this, menu_selector(TemplatesLevelOptionsLayer::onSaveTemplate)
-            ),
+            Button::createWithNode(ButtonSprite::create("Save\nTemplate"), [] (Button*) {
+                editor::save();
+
+                auto res = gmd::exportLevelAsGmd(editor::layer()->m_level, getTemplatePath());
+
+                if (res.isErr()) {
+                    return Notification::create("everything is crashing and burning and were all gonna die !", NotificationIcon::Error)->show();
+                }
+
+                Notification::create("template updated !", NotificationIcon::Info)->show();
+            }),
 
             SetNodeID{"save-template-button"_spr},
             SetNodeScale{0.65f},
@@ -41,18 +47,6 @@ class $modify(TemplatesLevelOptionsLayer, LevelOptionsLayer) {
             bg->getPositionX() - bg->getScaledContentWidth() / 2 + button->getScaledContentWidth() / 2 + 10.0f,
             bg->getPositionY() - bg->getScaledContentHeight() / 2 + button->getScaledContentHeight() / 2 + 10.0f
         );
-    }
-
-    void onSaveTemplate(CCObject*) {
-        editor::save();
-
-        auto res = gmd::exportLevelAsGmd(editor::layer()->m_level, getTemplatePath());
-
-        if (res.isErr()) {
-            return Notification::create("everything is crashing and burning and were all gonna die !", NotificationIcon::Error)->show();
-        }
-
-        Notification::create("template updated !", NotificationIcon::Info)->show();
     }
 };
 

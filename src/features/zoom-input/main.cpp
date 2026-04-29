@@ -4,7 +4,8 @@
 #include "settings.hpp"
 
 using namespace geode::prelude;
-using namespace nwo5::syntax;
+using namespace nwo5::ui::prelude;
+using namespace nwo5::utils::setup;
 
 // ill prolly add a seperate modifier for keybind zoom
 // so remind me to replace ternary hell with a proper enum system
@@ -19,7 +20,7 @@ class $modify(ZoomInputEditorUI, EditorUI) {
         TextInput* zoomInput = nullptr;
     };
 
-    static constexpr float BASE_ZOOM_INPUT_HEIGHT = 10.0f;
+    static constexpr CCSize BASE_ZOOM_INPUT_SIZE{20.0f, 10.0f};
 
     bool init(LevelEditorLayer* editorLayer) {
         if (!EditorUI::init(editorLayer)) {
@@ -32,56 +33,44 @@ class $modify(ZoomInputEditorUI, EditorUI) {
 
         auto fields = m_fields.self();
 
-        fields->zoomContainer = nwo5::utils::setupNode(
-            CCMenu::create(),
-
-            SetNodeID{"zoom-input-container"_spr},
-            SetNodeHeight{BASE_ZOOM_INPUT_HEIGHT},
-            SetNodeAnchor{TOP_CENTER_ANCHOR},
-            SetNodeScale{m_positionSlider->getScale() * Settings::ZoomInput::zoomInputScale.get()},
-            SetNodePosition{
-                Settings::ZoomInput::centered.get() ? CCDirector::get()->getWinSize().width / 2 : m_positionSlider->getPositionX(),
-                m_positionSlider->getPositionY() + (Settings::ZoomInput::zoomInputOffset.get() * m_positionSlider->getScale())
-            },
-            SetNodeParent{this}
-        );
-        fields->zoomContainer->setLayout(AxisLayout::create()
-            ->setGrowCrossAxis(false)
-            ->setAutoScale(false)
-            ->setGap(0.0f)
+        auto zoomLabel = ui::node(
+            Setup(ui::label("Zoom: ", Font::Default))
+                .id("zoom-label"_spr)
+                .scaleHeightToFit(BASE_ZOOM_INPUT_SIZE.height)
         );
 
-        nwo5::utils::setupNode(
-            CCLabelBMFont::create("Zoom: ", "bigFont.fnt"),
-
-            SetNodeID{"zoom-label"_spr},
-            SetNodeScaleWithHeight{BASE_ZOOM_INPUT_HEIGHT},
-            SetNodeParent{fields->zoomContainer}
+        fields->zoomInput = ui::node(
+            Setup(ui::input(BASE_ZOOM_INPUT_SIZE, "1"))
+                .filter("1234567890.")
+                .id("zoom-input"_spr)
         );
 
-        fields->zoomInput = nwo5::utils::setupNode(
-            nwo5::utils::createTextInput(BASE_ZOOM_INPUT_HEIGHT * 2, BASE_ZOOM_INPUT_HEIGHT, "1"),
-
-            SetNodeID{"zoom-input"_spr},
-            SetNodeParent{fields->zoomContainer}
+        auto zoomButton = ui::node(
+            Setup(ui::circleButtonFrame(
+                "edit_findBtn_001.png", CircleBaseColor::Green, this, menu_selector(ZoomInputEditorUI::onZoomInputButton)
+            ))
+                .id("zoom-button"_spr)
+                .scaleHeightToFit(BASE_ZOOM_INPUT_SIZE.height)
         );
-        fields->zoomInput->setFilter("1234567890.");
-
-        nwo5::utils::setupNode(
-            nwo5::utils::createCircleButtonFrame(
-                "edit_findBtn_001.png", CircleBaseColor::Green, 
-                this, menu_selector(ZoomInputEditorUI::onZoomInputButton)
-            ),
-            SetNodeScaleWithHeight{BASE_ZOOM_INPUT_HEIGHT},
-            SetNodeID{"zoom-button"_spr},
-
-            SetNodeParent{fields->zoomContainer}
-        )->setLayoutOptions(AxisLayoutOptions::create()
+        zoomButton->setLayoutOptions(AxisLayoutOptions::create()
             ->setPrevGap(5.0f)
         );
 
-        fields->zoomContainer->updateLayout();
+        fields->zoomContainer = ui::node(
+            Setup(ui::menu(nwo5::ui::horizontalDistrbLayout(0.0f)))
+                .id("zoom-input-container"_spr)
+                .height(BASE_ZOOM_INPUT_SIZE.height)
+                .anchor(TOP_CENTER_ANCHOR)
+                .scale(m_positionSlider->getScale() * Settings::ZoomInput::zoomInputScale.get())
+                .pos(
+                    Settings::ZoomInput::centered.get() ? CCDirector::get()->getWinSize().width / 2 : m_positionSlider->getPositionX(),
+                    m_positionSlider->getPositionY() + (Settings::ZoomInput::zoomInputOffset.get() * m_positionSlider->getScale())
+                )
+                .children(
 
+                )
+                .parent(this)
+        );
         m_uiItems->addObject(fields->zoomContainer);
 
         nwo5::utils::setupKeybind(this, "zoom-input-zoom-in", [this] (const Keybind&, bool pDown, bool, double) {
@@ -121,7 +110,13 @@ class $modify(ZoomInputEditorUI, EditorUI) {
     }
 
     void updateZoom(float zoom) {
-        if (!Settings::ZoomInput::zoomBypass.get() || nwo5::utils::isTinkerLoaded() || !m_fields->zoomingGameLayer) {
+        if (nwo5::utils::isTinkerLoaded() && Settings::ZoomInput::zoomInput.get()) {
+            EditorUI::updateZoom(zoom);
+
+            return updateZoomInput();
+        }
+
+        if (!Settings::ZoomInput::zoomBypass.get() || !m_fields->zoomingGameLayer) {
             return EditorUI::updateZoom(zoom);
         }
 
@@ -165,15 +160,12 @@ class $modify(ZoomInputEditorUI, EditorUI) {
         m_fields->buttonZooming = false;
         m_fields->zoomingGameLayer = false;
     }
+
     void scrollWheel(float y, float x) {
         m_fields->zoomingGameLayer = true;
         m_fields->zoomingIn = y <= 0.0f && x <= 0.0f;
 
         EditorUI::scrollWheel(y, x);
-
-        if (nwo5::utils::isTinkerLoaded()) {
-            updateZoomInput();
-        }
 
         m_fields->zoomingGameLayer = false;
     }

@@ -58,13 +58,15 @@ namespace BetterLayers {
         static constexpr float LABEL_HEIGHT = 25.0f;
         static constexpr float BUTTON_SIZE = 30.0f;
 
+        static constexpr float GAP = 15.0f;
         static constexpr float PADDING = 15.0f;
 
-        static constexpr float WIDTH = 325.0f;
+        static constexpr float WIDTH = 375.0f;
         static constexpr float HEIGHT = 60.0f;
 
         bool init(LayerSettings* pSettings);
 
+        void onClearOpacity(cocos2d::CCObject*);
         void onToggleHidden(cocos2d::CCObject*);
         void onToggleFocused(cocos2d::CCObject*);
 
@@ -84,11 +86,12 @@ namespace BetterLayers {
 
         static constexpr float GAP = 15.0f;
 
-        static constexpr float WIDTH = 350.0f;
+        static constexpr float WIDTH = 375.0f;
         static constexpr float HEIGHT = 200.0f;
 
         bool init(LayerSettings* pSettings);
 
+        void onClearDefaultOpacity(cocos2d::CCObject*);
         void onUnfocusLayer(cocos2d::CCObject*);
 
     public:

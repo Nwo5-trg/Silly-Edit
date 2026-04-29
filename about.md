@@ -91,7 +91,7 @@ save a level as a "template" which all new levels now copy (save template button
 (in the future mayb a feature to save multiple templates ????)
 
 ## Credits
-tyyyy <cr>\<3</cr> !
+tyyyy <cr>\<3</c> !
 
 ### gdjayy
 - replace object suggestion
