@@ -15,7 +15,7 @@ namespace nwo5::utils {
         return nwo5::utils::getChroma<T, U>(speed, pOffset, saturation);
     }
 
-    static constexpr std::string BETTER_EDIT_ID{"hjfod.betteredit"};
+    inline const std::string BETTER_EDIT_ID{"hjfod.betteredit"};
     bool isBetterEditLoaded();
     geode::Mod* getBetterEdit();
     template<typename T>
@@ -41,7 +41,7 @@ namespace nwo5::utils {
         return true;
     }
     
-    static constexpr std::string TINKER_EDIT_ID{"alphalaneous.tinker"};
+    inline const std::string TINKER_EDIT_ID{"alphalaneous.tinker"};
     bool isTinkerLoaded();
     geode::Mod* getTinker();
     template<typename T>
