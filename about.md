@@ -41,7 +41,7 @@ adds a very overcomplicated tab that has some cool features to the delete menu :
 the tab mainly consists of a query bar, and a replace/action bar
 
 - you can use the query bar to find objects that match your written criteria, or use it as select filter via the gray/pink toggle
-- the action bar can be used to edit some object properties (uses query bar as filter)
+- the action bar is very unfinished but still here js so u can manipulate obj strings and replace obj ids since those r requested features
 
 [syntax and more details here](https://github.com/Nwo5-trg/silly-edit/tree/main/src/features/replace-objects/syntax.md), this is still kinda expiremental so suggestions would b nice but no promises
 

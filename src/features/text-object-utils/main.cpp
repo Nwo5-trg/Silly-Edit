@@ -3,7 +3,7 @@
 #include "settings.hpp"
 
 using namespace geode::prelude;
-using namespace nwo5::utils::setup;
+using namespace nwo5::ui::prelude;
 
 class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
     struct Fields {
@@ -21,7 +21,7 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
     static constexpr float SIDE_BUTTON_SIZE = 25.0f;
     static constexpr float SIDE_BUTTON_GAP = 5.0f;
 
-    void openTextMenu(float dt = {}) {
+    void openTextMenu(float = {}) {
         if (auto button = m_textButton) {
             button->activate();
         }
@@ -42,16 +42,13 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
 
         m_fields->textObjects = std::move(editor::selection::getType<TextGameObject*>());
 
-        nwo5::utils::setupNode(m_textInput, ChangeNodePositionY{VERTICAL_OFFSET});
+        m_textInput->setPositionY(m_textInput->getPositionY() + VERTICAL_OFFSET);
 
-        auto inputBG = nwo5::utils::setupNode(
-            m_mainLayer->getChildByID("text-input-bg"),
+        auto inputBG = m_mainLayer->getChildByID("text-input-bg");
+        inputBG->setPositionY(inputBG->getPositionY() + VERTICAL_OFFSET);
+        inputBG->setContentSize({inputBG->getContentSize().width - 40.0f, inputBG->getContentSize().height});
 
-            ChangeNodePositionY{VERTICAL_OFFSET},
-            ChangeNodeWidth{-40.0f}
-        );
-
-        nwo5::utils::setupNode(m_kerningSlider, ChangeNodePositionY{VERTICAL_OFFSET});
+        m_kerningSlider->setPositionY(m_kerningSlider->getPositionY() + VERTICAL_OFFSET);
 
         auto clearTextButton = static_cast<CCMenuItemSpriteExtra*>(getChildByIDRecursive("clear-text-button"));
         clearTextButton->setEnabled(false);
@@ -67,76 +64,72 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
             openTextMenu({});
         }
  
-        m_fields->textObjectUtilsMenu = nwo5::utils::setupNode(
-            CCMenu::create(),
+        auto copyTextButton = ui::node(
+            Setup(ui::buttonFrame("GJ_copyBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onCopyText)))
+                .id("copy-text-button"_spr)
+                .pos(inputBG->getPositionX() + (Settings::TextObjectUtils::swapCopyPaste.get() ? -SIDE_BUTTON_DISTANCE : SIDE_BUTTON_DISTANCE), inputBG->getPositionY())
+                .scaleToFit(SIDE_BUTTON_SIZE)
+        );
+        auto pasteTextButton = ui::node(
+            Setup(ui::buttonFrame("GJ_pasteBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onPasteText)))
+                .id("paste-text-button"_spr)
+                .pos(inputBG->getPositionX() + (Settings::TextObjectUtils::swapCopyPaste.get() ? SIDE_BUTTON_DISTANCE : -SIDE_BUTTON_DISTANCE), inputBG->getPositionY())
+                .scaleToFit(SIDE_BUTTON_SIZE)
+        );
+        auto customClearTextButton = ui::node(
+            Setup(ui::buttonFrame("GJ_trashBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onClearText)))
+                .id("clear-text-button"_spr)
+                .pos(inputBG->getPositionX() + SIDE_BUTTON_DISTANCE + SIDE_BUTTON_SIZE + SIDE_BUTTON_GAP, inputBG->getPositionY())
+                .scaleToFit(SIDE_BUTTON_SIZE)
+        );
+        auto newlineTextButton = ui::node(
+            Setup(ui::buttonFrame("GJ_redoBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onNewline)))
+                .id("newline-text-button"_spr)
+                .pos(inputBG->getPositionX() - SIDE_BUTTON_DISTANCE - SIDE_BUTTON_SIZE - SIDE_BUTTON_GAP, inputBG->getPositionY())
+                .scaleToFit(SIDE_BUTTON_SIZE)
+        );
 
-            SetNodeID{"text-object-utils-menu"_spr},
-            SetNodePosition{CCPointZero},
-            SetNodeParent{m_mainLayer}
+        m_fields->textObjectUtilsMenu = ui::node(
+            Setup(ui::menu())
+                .id("text-object-utils-menu"_spr)
+                .pos(CCPointZero)
+                .children(
+                    copyTextButton,
+                    pasteTextButton,
+                    customClearTextButton,
+                    newlineTextButton
+                )
+                .parent(m_mainLayer)
         );
         m_textTabNodes->addObject(m_fields->textObjectUtilsMenu);
 
-        nwo5::utils::setupNode(
-            nwo5::utils::createButtonFrame("GJ_copyBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onCopyText)),
+        m_fields->kerningInput = ui::node(
+            Setup(ui::input(45.0f, "0"))
+                .id("kerning-input"_spr)
+                .filter(CommonFilter::Int)
+                .callback([this] (const std::string& pStr) {
+                    if (pStr.empty()) {
+                        return;
+                    }
 
-            SetNodeID{"copy-text-button"_spr},
-            SetNodePosition{inputBG->getPositionX() + (Settings::TextObjectUtils::swapCopyPaste.get() ? -SIDE_BUTTON_DISTANCE : SIDE_BUTTON_DISTANCE), inputBG->getPositionY()},
-            SetNodeScaleWithSize{SIDE_BUTTON_SIZE},
-            SetNodeParent{m_fields->textObjectUtilsMenu}
+                    const auto kerning = numFromString<int>(pStr).unwrapOrDefault();
+                    m_kerningAmount = kerning;
+                    m_kerningSlider->setValue(std::clamp(kerning + 10.0f, 0.0f, 30.0f) / 30);
+
+                    for (auto obj : m_fields->textObjects) {
+                        obj->updateTextKerning(kerning);
+                    }
+
+                    updateKerningLabel();
+                })
+                .parent(m_mainLayer)
         );
-
-        nwo5::utils::setupNode(
-            nwo5::utils::createButtonFrame("GJ_pasteBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onPasteText)),
-
-            SetNodeID{"paste-text-button"_spr},
-            SetNodePosition{inputBG->getPositionX() + (Settings::TextObjectUtils::swapCopyPaste.get() ? SIDE_BUTTON_DISTANCE : -SIDE_BUTTON_DISTANCE), inputBG->getPositionY()},
-            SetNodeScaleWithSize{SIDE_BUTTON_SIZE},
-            SetNodeParent{m_fields->textObjectUtilsMenu}
-        );
-
-        nwo5::utils::setupNode(
-            nwo5::utils::createButtonFrame("GJ_trashBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onClearText)),
-
-            SetNodeID{"clear-text-button"_spr},
-            SetNodePosition{inputBG->getPositionX() + SIDE_BUTTON_DISTANCE + SIDE_BUTTON_SIZE + SIDE_BUTTON_GAP, inputBG->getPositionY()},
-            SetNodeScaleWithSize{SIDE_BUTTON_SIZE},
-            SetNodeParent{m_fields->textObjectUtilsMenu}
-        );
-
-        nwo5::utils::setupNode(
-            nwo5::utils::createButtonFrame("GJ_redoBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onNewline)),
-
-            SetNodeID{"newline-text-button"_spr},
-            SetNodePosition{inputBG->getPositionX() - SIDE_BUTTON_DISTANCE - SIDE_BUTTON_SIZE - SIDE_BUTTON_GAP, inputBG->getPositionY()},
-            SetNodeScaleWithSize{SIDE_BUTTON_SIZE},
-            SetNodeParent{m_fields->textObjectUtilsMenu}
-        );
-
-        m_fields->kerningInput = nwo5::utils::setupNode(
-            nwo5::utils::createTextInput(45.0f, "0", [this]  (const std::string& pStr) {
-                if (pStr.empty()) {
-                    return;
-                }
-
-                const auto kerning = numFromString<int>(pStr).unwrapOrDefault();
-                m_kerningAmount = kerning;
-                m_kerningSlider->setValue(std::clamp(kerning + 10.0f, 0.0f, 30.0f) / 30);
-
-                for (auto obj : m_fields->textObjects) {
-                    obj->updateTextKerning(kerning);
-                }
-
-                updateKerningLabel();
-            }),
-
-            SetNodeID{"kerning-input"_spr},
-            
-            SetNodeParent{m_mainLayer}
-        );
-        m_fields->kerningInput->setCommonFilter(CommonFilter::Int);
         m_textTabNodes->addObject(m_fields->kerningInput);
 
-        nwo5::utils::setupNode(m_kerningLabel, ChangeNodePosition{-m_fields->kerningInput->getScaledContentWidth(), VERTICAL_OFFSET});
+        m_kerningLabel->setPosition(
+            m_kerningLabel->getPositionX() - m_fields->kerningInput->getScaledContentWidth(),
+            m_kerningLabel->getPositionY() + VERTICAL_OFFSET
+        );
 
         updateKerningLabel();
 
@@ -163,7 +156,7 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
     void updateKerningLabel() {
         CustomizeObjectLayer::updateKerningLabel();
 
-        auto& input = m_fields->kerningInput;
+        auto input = m_fields->kerningInput;
 
         if (!input || !m_fields->textObjectMenuLoaded) {
             return;
