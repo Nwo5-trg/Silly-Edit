@@ -21,12 +21,6 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
     static constexpr float SIDE_BUTTON_SIZE = 25.0f;
     static constexpr float SIDE_BUTTON_GAP = 5.0f;
 
-    void openTextMenu(float = {}) {
-        if (auto button = m_textButton) {
-            button->activate();
-        }
-    }
-
     bool init(GameObject* object, CCArray* objects) {
         if (!CustomizeObjectLayer::init(object, objects)) {
             return false;
@@ -58,10 +52,12 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
         
         // ill find a better solution to this l8r
         if (nwo5::utils::isBetterEditLoaded()) {
-            this->scheduleOnce(schedule_selector(TextObjectUtilsCustomizeObjectLayer::openTextMenu), 0.0f);
+            Loader::get()->queueInMainThread([this] {
+                this->openTextMenu();
+            });
         }
         else {
-            openTextMenu({});
+            openTextMenu();
         }
  
         auto copyTextButton = ui::node(
@@ -191,5 +187,11 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
     }
     void onNewline(CCObject* pSender) {
         m_textInput->setString(fmt::format("{}\n", m_textInput->getString()));
+    }
+
+    void openTextMenu() {
+        if (auto button = m_textButton) {
+            button->activate();
+        }
     }
 };

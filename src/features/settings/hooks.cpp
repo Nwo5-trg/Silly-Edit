@@ -1,5 +1,6 @@
 #include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/EditorPauseLayer.hpp>
+#include <Geode/modify/LevelEditorLayer.hpp>
 #include <internal/utils/utils.hpp>
 #include <features/compat.hpp>
 #include "popup.hpp"
@@ -7,14 +8,16 @@
 using namespace geode::prelude;
 using namespace nwo5::utils::setup;
 
-static void tryShowWarningPopup() {
+static void tryShowWarningPopup(LevelEditorLayer* pLayer) {
     static bool shown = false;
 
     if (shown || Settings::General::disableModWarningPopup.get()) {
         return;
     }
 
-    FLAlertLayer::create("SillyEdit", "sillyedit is in <cr>TESTING</c> ! there prolly will be <cd>bugs and or </c><cs>crahes</c>", "Ok !")->show();
+    auto popup = FLAlertLayer::create("SillyEdit", "sillyedit is in <cr>TESTING</c> ! there prolly will be <cd>bugs</c> and or <cs>crahes</c>", "Ok !");
+    popup->m_scene = pLayer;
+    popup->show();
 
     shown = true;
 }
@@ -31,8 +34,25 @@ class $modify(EditorUI) {
             }
         });
 
-        tryShowWarningPopup();
-        
+        return true;
+    }
+};
+
+class $modify(LevelEditorLayer) {
+    bool init(GJGameLevel* level, bool noUI) {
+        if (!LevelEditorLayer::init(level, noUI)) {
+            return false;
+        }
+
+        // if better edit does 2 i should prolly do 3
+        Loader::get()->queueInMainThread([this] {
+            Loader::get()->queueInMainThread([this] {
+                Loader::get()->queueInMainThread([this] {
+                    tryShowWarningPopup(this);
+                });
+            });
+        });
+
         return true;
     }
 };
