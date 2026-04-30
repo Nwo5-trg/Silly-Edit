@@ -19,6 +19,14 @@ namespace DefaultObjectOptions {
                 m_defaultOption = true;
             }
         }
+        template<>
+        void addOption<bool>(int pID, int pKey, bool pVal) {
+            m_options[pID].append(fmt::format(",{},{}", pKey, static_cast<int>(pVal)));
+
+            if (!pID) {
+                m_defaultOption = true;
+            }
+        }
         void addOption(int pID, std::string_view pCustomString);
 
         bool idHasOptions(int pID) const;
