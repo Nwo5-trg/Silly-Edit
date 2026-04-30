@@ -36,6 +36,7 @@ namespace DefaultObjectOptions {
         ); 
 
         if (!std::filesystem::exists(path)) {
+            log::error("not real {}", path);
             return;
         }
 
@@ -43,13 +44,15 @@ namespace DefaultObjectOptions {
         
         const auto parseJsonRes = matjson::parse(file);
 
-        if (!parseJsonRes.isOk()) {
+        if (parseJsonRes.isErr()) {
+            log::error("bad");
             return;
         }
 
         const auto json = parseJsonRes.unwrap();
 
         if (!json.isObject()) {
+            log::error("not obj");
             return;
         }
 

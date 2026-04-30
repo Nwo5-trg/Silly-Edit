@@ -1,8 +1,8 @@
 #pragma once
 
 namespace DefaultObjectOptions {
-    class ObjectOptions {
-    protected:
+    class ObjectOptions final {
+    private:
         std::unordered_map<int, std::string> m_options;
         bool m_defaultOption = false;
 
