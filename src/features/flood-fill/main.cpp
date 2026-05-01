@@ -54,11 +54,13 @@ class $modify(FloodFillEditorUI, EditorUI) {
 
         for (auto x = min.x; x <= max.x; x += gridSize.width) {
             for (auto y = min.y; y <= max.y; y += gridSize.height) {
-                auto obj = static_cast<GameObject*>(pasteObjects(str, false, true)->firstObject());
+                if (auto res = m_editorLayer->createObjectsFromString(str, true, true); res && res->count()) {
+                    auto obj = static_cast<GameObject*>(res->firstObject());
 
-                editor::object::move(obj, {x, y});
+                    editor::object::move(obj, {x, y});
 
-                placedObjs->addObject(obj);
+                    placedObjs->addObject(obj);
+                }
             }
         }
 
@@ -80,17 +82,15 @@ class $modify(FloodFillEditorUI, EditorUI) {
         const std::string str{pBase->getSaveString(m_editorLayer)};
         const auto size = editor::object::size(pBase);
 
-        for (auto rect : pRects) {
-            log::error("[{}], [{}]", rect.start, rect.end);
-        }
-
         for (const auto& rect : pRects) {
-            auto obj = static_cast<GameObject*>(pasteObjects(str, false, true)->firstObject());
-            
-            editor::object::move(obj, rect.center());
-            editor::object::scale(obj, rect.width() / size, rect.height() / size);
+            if (auto res = m_editorLayer->createObjectsFromString(str, true, true); res && res->count()) {
+                auto obj = static_cast<GameObject*>(res->firstObject());
+                
+                editor::object::move(obj, rect.center());
+                editor::object::scale(obj, rect.width() / size, rect.height() / size);
 
-            placed->addObject(obj);
+                placed->addObject(obj);
+            }
         }
 
         if (placed->count()) {

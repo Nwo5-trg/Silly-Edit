@@ -1,6 +1,15 @@
-## v0.1.0-beta.1
-geode release (i think) !!!
+## v0.1.0-beta.2
+**Fixed**
+- default object options working in general :pray:
+- default object options bool settings
+- default object options initializing trigger values wrong
+- use json and simple default obj options not working together
+- copy paste obj string not copying to clipboard unless u click the button twice
+- better edit better scale compat
+- floodfill crash i think
+- ugly layer lock color
 
+## v0.1.0-beta.1
 **Added**
 
 - floodfill

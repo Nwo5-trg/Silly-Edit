@@ -170,7 +170,7 @@ namespace ReplaceObjects {
             m_queryError = res.unwrapErr();
         }
         else {
-            m_queryExpression = std::move(res.unwrap());
+            m_queryExpression.reset(res.unwrap().release());
             m_queryError.clear();
             
             Mod::get()->setSavedValue<std::string>("replace-object-query-bar", m_queryBar->getString());

@@ -29,6 +29,8 @@ class $modify(EditorUI) {
             nwo5::utils::setBetterEditSetting<bool>("copy-paste-from-clipboard", false);
         }
 
+        EditorUI::doCopyObjects(withColor);
+
         if (Settings::CopyPasteObjectStrings::enabled.get() && Settings::CopyPasteObjectStrings::copy.get()) {
             std::string str{GameManager::get()->m_editorClipboard};
 
@@ -42,8 +44,6 @@ class $modify(EditorUI) {
                 geode::Notification::create("Object String Copied To Clipboard", NotificationIcon::Info)->show();
             }
         }
-
-        EditorUI::doCopyObjects(withColor);
     }
     void doPasteObjects(bool withColor) {
         if (nwo5::utils::isBetterEditLoaded() && Settings::CopyPasteObjectStrings::enabled.get()) {

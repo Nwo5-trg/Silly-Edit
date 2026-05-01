@@ -43,20 +43,17 @@ class $modify(LevelEditorLayer) {
 
         return true;
     }
-
     GameObject* createObject(int key, CCPoint position, bool noUndo) {
-        if (!Settings::DefaultObjectOptions::enabled.get() || noUndo || !reinterpret_cast<DefaultObjectOptionsEditorUI*>(m_editorUI)->m_fields->creatingObject) {
-            return LevelEditorLayer::createObject(key, position, noUndo);
+        auto ret = LevelEditorLayer::createObject(key, position, noUndo);
+
+        if (!ret || !Settings::DefaultObjectOptions::enabled.get() || noUndo || !reinterpret_cast<DefaultObjectOptionsEditorUI*>(m_editorUI)->m_fields->creatingObject) {
+            return ret;
         }
 
         const auto& options = m_fields->options;
 
-        // 1 == id prop, 2 == x pos prop, 3 == y pos prop
         auto objectString = fmt::format(
-            "1,{},2,{},3,{}{}", key, 
-            position.x + editor::constants::OBJECT_STRING_POSITION_OFFSET.x, 
-            position.y + editor::constants::OBJECT_STRING_POSITION_OFFSET.y,
-            options.getSimpleOptionsString()
+            "{}{}", ret->getSaveString(this), options.getSimpleOptionsString()
         );
         
         if (Settings::DefaultObjectOptions::useJSON.get()) {
@@ -72,6 +69,8 @@ class $modify(LevelEditorLayer) {
             objectString = objectString.substr(0, i);
         }
         
+        editor::object::remove(ret);
+
         return static_cast<GameObject*>(
             createObjectsFromString(objectString, noUndo, true)->firstObject()
         );

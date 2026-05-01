@@ -123,14 +123,14 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
         m_textTabNodes->addObject(m_fields->kerningInput);
 
         m_kerningLabel->setPosition(
-            m_kerningLabel->getPositionX() - m_fields->kerningInput->getScaledContentWidth(),
+            m_kerningLabel->getPositionX() - m_fields->kerningInput->getScaledContentWidth() / 2,
             m_kerningLabel->getPositionY() + VERTICAL_OFFSET
         );
 
-        updateKerningLabel();
-
         m_fields->textObjectMenuLoaded = true;
          
+        updateKerningLabel();
+        
         return true;
     }
 

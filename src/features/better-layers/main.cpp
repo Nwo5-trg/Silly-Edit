@@ -158,7 +158,7 @@ class $modify(BetterLayersEditorUI, EditorUI) {
         }
         
         if (editor::layerLocked(layer)) {
-            fields->layerInput->getInputNode()->getTextLabel()->setColor(ccYELLOW);
+            fields->layerInput->getInputNode()->getTextLabel()->setColor({255, 200, 2});
         }
         else {
             fields->layerInput->getInputNode()->getTextLabel()->setColor(ccWHITE);

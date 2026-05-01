@@ -245,19 +245,19 @@ namespace ReplaceObjects {
     class ReplaceExpression;
     class FindAndReplaceMenu final : public cocos2d::CCLayer {
     private:
-        cocos2d::CCMenu* m_buttonMenu;
-        geode::TextInput* m_queryBar;
-        geode::TextInput* m_replaceBar;
-        cocos2d::CCLabelBMFont* m_syntaxWarningLabel;
-        CCMenuItemToggler* m_selectFilterToggle;
-        cocos2d::extension::CCScale9Sprite* m_background;
+        cocos2d::CCMenu* m_buttonMenu = nullptr;
+        geode::TextInput* m_queryBar = nullptr;
+        geode::TextInput* m_replaceBar = nullptr;
+        cocos2d::CCLabelBMFont* m_syntaxWarningLabel = nullptr;
+        CCMenuItemToggler* m_selectFilterToggle = nullptr;
+        cocos2d::extension::CCScale9Sprite* m_background = nullptr;
 
         bool m_useQueryAsSelectFilter;
 
         std::string m_queryError;
         std::string m_replaceError;
 
-        std::unique_ptr<QueryExpression> m_queryExpression;
+        std::unique_ptr<QueryExpression> m_queryExpression = nullptr;
         std::vector<std::unique_ptr<ReplaceExpression>> m_replaceExpressions;
 
         static constexpr float FROM_SELECTION_BUTTONS_SIZE = 22.5f;

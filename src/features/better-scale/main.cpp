@@ -274,6 +274,10 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
                 if (child->getID().view().contains(nwo5::utils::BETTER_EDIT_ID)) {
                     // not making invisible cuz that would just be reset so close enough
                     child->setScale(0.0f);
+
+                    if (auto input = typeinfo_cast<TextInput*>(child)) {
+                        input->setEnabled(false);
+                    }
                 }
             }
         }
