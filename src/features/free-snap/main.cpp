@@ -80,8 +80,6 @@ class $modify(EditorUI) {
             return;
         }
 
-        const bool shouldntColorObjects = m_colorOverlay || m_hsvOverlay;
-
         const auto selectionCol = Settings::FreeSnap::chroma.get() 
             ? nwo5::utils::getChroma<ccColor3B>(Shared::ChromaNode::FreeSnap) 
             : Settings::FreeSnap::selectedObjectColor.get();
@@ -90,22 +88,14 @@ class $modify(EditorUI) {
             : Settings::FreeSnap::snapObjectColor.get();
 
         // touches happen before schedulers so this works :3c
-        for (auto obj : editor::selection::getExt()) {
-            if (shouldntColorObjects) {
-                obj->updateObjectEditorColor();
-            }
-            else {
+        if (!m_colorOverlay && !m_hsvOverlay) {
+            for (auto obj : editor::selection::getExt()) {
                 obj->selectObject(selectionCol);
             }
         }
 
         if (const auto obj = getSnapObject(); obj && m_continueSwipe && m_fields->prollySnapping) {
-            if (shouldntColorObjects) {
-                obj->updateObjectEditorColor();
-            }
-            else {
-                obj->selectObject(snapCol);
-            }
+            obj->selectObject(snapCol);
 
             if (!Settings::FreeSnap::snapIndicator.get()) {
                 return;

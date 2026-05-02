@@ -9,6 +9,7 @@
 - better edit better scale compat
 - floodfill crash i think
 - ugly layer lock color
+- free snap colors still showing if hsv overlay/color overlay was enabled
 
 ## v0.1.0-beta.1
 **Added**
