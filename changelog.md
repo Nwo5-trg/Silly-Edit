@@ -1,5 +1,6 @@
 ## v0.1.0-beta.2
 **Fixed**
+
 - default object options working in general :pray:
 - default object options bool settings
 - default object options initializing trigger values wrong

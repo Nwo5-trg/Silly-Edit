@@ -8,4 +8,5 @@ namespace Settings::Compat {
     inline SillySetting<bool> disableTinkerButton{"Disable Tinker Button", "Compat", false, SettingReload::Pause};
     inline SillySetting<bool> disableBetterEditButton{"Disable Better Edit Button", "Compat", false, SettingReload::Pause};
     inline SillySetting<bool> removeBEMoveButtons{"Remove BE Move Buttons", "Compat", false, SettingReload::Editor};
+    inline SillySetting<bool> tinkerV1Button{"Tinker V1 Button", "Compat", false, SettingReload::Pause, "gl alpha"};
 };

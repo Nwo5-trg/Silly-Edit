@@ -203,15 +203,6 @@ namespace ReplaceObjects {
             pBar->setString("", true);
             return false;
         } 
-        else if (pStr.contains("/co")) {
-            std::string str{pStr};
-            string::replaceIP(str, "/co", "");
-            clipboard::write(str);
-        }
-        else if (pStr.contains("/pa")) {
-            pBar->setString(clipboard::read(), true);
-            return false;
-        }
 
         return true;
     }

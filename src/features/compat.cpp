@@ -42,10 +42,16 @@ class $modify(EditorPauseLayer) {
             return true;
         }
 
-        if (auto button = menu->getChildByID(nwo5::utils::TINKER_EDIT_ID + "/tinker-settings"); button && Settings::Compat::disableTinkerButton.get()) {
-            button->setVisible(false);
+        if (auto button = static_cast<CCMenuItemSpriteExtra*>(menu->getChildByID(nwo5::utils::TINKER_EDIT_ID + "/tinker-settings"))) {
+            if (Settings::Compat::tinkerV1Button.get()) {
+                button->setNormalImage(CCSprite::create("tinker-v1-button.png"_spr));
+            }
 
-            menu->updateLayout();
+            if (Settings::Compat::disableTinkerButton.get()) {
+                button->setVisible(false);
+
+                menu->updateLayout();
+            }
         }
         if (auto button = menu->getChildByID(nwo5::utils::BETTER_EDIT_ID + "/about"); button && Settings::Compat::disableBetterEditButton.get()) {
             button->setVisible(false);
