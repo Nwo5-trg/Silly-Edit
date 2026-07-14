@@ -22,7 +22,7 @@ will b expanded but for now features a quick fill button and keybind, which work
 1. if less than 2 objects are selected to nothing
 2. if exactly 2 objects (of the same id) are selected, fills the area like a rect
 3. if all selected objects but 1 are of the same id, that different id object will be the center and area will be flood filled
-4. if all selceted objects are the same id, area will be flood filled with the center of selected objects
+4. if all selected objects are the same id, area will be flood filled with the center of selected objects
 
 ### Setup Startpos
 placed startpos in editor will (try to) guess settings based on objects placed in the level
@@ -34,16 +34,6 @@ scale input+ but "+"-er but also not really
 - scale shortcut buttons
 - scale control tweaks
 - scale control keybinds
-
-### Replace Object (More Select Filters / Trigger ID Search alternative)
-adds a very overcomplicated tab that has some cool features to the delete menu :3
-
-the tab mainly consists of a query bar, and a replace/action bar
-
-- you can use the query bar to find objects that match your written criteria, or use it as select filter via the gray/pink toggle
-- the action bar is very unfinished but still here js so u can manipulate obj strings and replace obj ids since those r requested features
-
-[syntax and more details here](https://github.com/Nwo5-trg/silly-edit/tree/main/src/features/replace-objects/syntax.md), this is still kinda expiremental so suggestions would b nice but no promises
 
 ### Free Snap
 a few snap/selection utils
@@ -58,6 +48,9 @@ my impl of layer input but some other stuff too :3
 - change individual layers opacity
 - change layer fade amount
 - everything on a per level basis !
+
+### Hide With Playtest
+choose what to hide when playtesting (e.g. triggers, special blocks)
 
 ### Text Object Utils
 scuffed text utils
@@ -83,12 +76,15 @@ select all, but better
 - keybinds
 
 ### Better Object Tab Icons
-makes object tab icons prettier and changable with resource packs
+makes object tab icons prettier and changeable with resource packs
 
 ### Templates
 save a level as a "template" which all new levels now copy (save template button in leveloptions)
 
 (in the future mayb a feature to save multiple templates ????)
+
+### Miscellaneous
+some smaller features that make the editor a bit nicer
 
 ## Credits
 tyyyy <cr>\<3</c> !

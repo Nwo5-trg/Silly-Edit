@@ -45,4 +45,10 @@ namespace DefaultObjectOptions {
     };
 
     void parseOptions(ObjectOptions& pObjectOptions);
+
+    // so i can use this in place object preview
+    inline bool& shouldApplyObjectOptions() {
+        static bool val = false;
+        return val;
+    }
 }

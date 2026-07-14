@@ -4,7 +4,6 @@
 
 using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
-using namespace nwo5::utils::setup;
 
 namespace Settings {
     bool SettingButtonBase::init(GenericSetting* pSetting, SettingsPopup* pPopup) {
@@ -16,66 +15,59 @@ namespace Settings {
 
         m_setting = pSetting;
 
-        nwo5::utils::setupNode(
-            this,
+        Setup(this)
+            .id("{}-setting"_spr, pSetting->key())
+            .size(SETTING_BUTTON_SIZE);
 
-            SetNodeID{"{}-setting"_spr, pSetting->key()},
-            SetNodeSize{SETTING_BUTTON_SIZE}
-        );
-
-        m_label = nwo5::utils::setupNode(
-            CCLabelBMFont::create(m_setting->name().c_str(), "bigFont.fnt"),
-
-            SetNodeID{"label"_spr},
-            SetNodeAnchor{LEFT_CENTER_ANCHOR},
-            SetNodeScaleWithWidth{DEFAULT_SETTING_LABEL_SIZE.width * (5.0f/6.0f)},
-            LimitNodeScaleWithHeight{DEFAULT_SETTING_LABEL_SIZE.height *  (2.0f/3.0f)},
-            SetNodePosition{
+        m_label = ui::node(Setup(ui::label(m_setting->name()))
+            .id("label"_spr)
+            .anchor(LEFT_CENTER_ANCHOR)
+            .scaleWidthToFit(DEFAULT_SETTING_LABEL_SIZE.width * (5.0f/6.0f))
+            .limitScaleHeightToFit(DEFAULT_SETTING_LABEL_SIZE.height * (2.0f/3.0f))
+            .pos(
                 DEFAULT_SETTING_INPUT_MENU_SIZE.width + (DEFAULT_SETTING_LABEL_SIZE.width - (DEFAULT_SETTING_LABEL_SIZE.width * (5.0f/6.0f))) / 2,
                 DEFAULT_SETTING_LABEL_SIZE.height / 2
-            },
-            SetNodeParent{this}
+            )
+            .parent(this)
         );
 
-        m_inputMenu = nwo5::utils::setupNode(
-            CCMenu::create(),
-
-            SetNodeID{"input-menu"_spr},
-            SetNodeSize{DEFAULT_SETTING_INPUT_MENU_SIZE},
-            SetNodePosition{DEFAULT_SETTING_INPUT_MENU_SIZE / 2},
-            SetNodeParent{this}
+        m_inputMenu = ui::node(Setup(ui::menu(true))
+            .id("input-menu"_spr)
+            .size(DEFAULT_SETTING_INPUT_MENU_SIZE)
+            .pos(DEFAULT_SETTING_INPUT_MENU_SIZE / 2)
+            .parent(this)
         );
 
-        m_helpMenu = nwo5::utils::setupNode(
-            CCMenu::create(),
-            
-            SetNodeID{"help-menu"_spr},
-            SetNodeSize{HELP_BUTTON_SIZE, HELP_BUTTON_SIZE},
-            SetNodeAnchor{RIGHT_CENTER_ANCHOR},
-            SetNodePosition{SETTING_BUTTON_SIZE.width + HELP_BUTTON_SIZE / 2, SETTING_BUTTON_SIZE.height},
-            SetNodeParent{this},
-            SetNodeChildren{
-                (m_helpButton = nwo5::utils::setupNode(
-                    nwo5::utils::createButtonFrame("GJ_infoIcon_001.png", this, menu_selector(SettingButtonBase::onHelp)),
-
-                    SetNodeID{"help-button"_spr},
-                    SetNodeScaleWithSize{HELP_BUTTON_SIZE}
-                )),
-                (m_reloadIndicator = nwo5::utils::setupNode(
-                    nwo5::utils::createButtonFrame("edit_ccwBtn_001.png", this, nullptr),
-
-                    SetNodeID{"reload-button"_spr},
-                    SetNodeScaleWithSize{HELP_BUTTON_SIZE}
-                ))
-            }
+        m_helpButton = ui::node(Setup(ui::buttonFrame(
+            "GJ_infoIcon_001.png", this, menu_selector(SettingButtonBase::onHelp)
+        ))
+            .id("help-button"_spr)
+            .scaleToFit(HELP_BUTTON_SIZE)
         );
-        m_helpMenu->setLayout(AxisLayout::create()
+        m_reloadIndicator = ui::node(Setup(ui::buttonFrame(
+            "edit_ccwBtn_001.png", this, nullptr
+        ))
+            .id("reload-button"_spr)
+            .scaleToFit(HELP_BUTTON_SIZE)
+        );
+
+        m_helpMenu = ui::node(Setup(ui::menu(AxisLayout::create()
             ->setAutoScale(false)
             ->setAxisReverse(true)
             ->setAxisAlignment(AxisAlignment::Start)
             ->setGrowCrossAxis(false)
             ->setAutoGrowAxis(0.0f)
             ->setGap(HELP_GAP)
+        ))
+            .id("help-menu"_spr)
+            .size(HELP_BUTTON_SIZE, HELP_BUTTON_SIZE)
+            .anchor(RIGHT_CENTER_ANCHOR)
+            .pos(SETTING_BUTTON_SIZE.width + HELP_BUTTON_SIZE / 2, SETTING_BUTTON_SIZE.height)
+            .children(
+                m_helpButton,
+                m_reloadIndicator
+            )
+            .parent(this)
         );
 
         return true;
@@ -131,12 +123,12 @@ namespace Settings {
             return false;
         }
 
-        m_input = nwo5::utils::setupNode(
-            nwo5::utils::createTextInput(DEFAULT_SETTING_INPUT_MENU_SIZE.width * (5.0f/6.0f), DEFAULT_SETTING_INPUT_MENU_SIZE.height / 2),
-
-            SetNodeID{"input"_spr},
-            SetNodePosition{CCPointZero},
-            SetNodeParent{m_inputMenu}
+        m_input = ui::node(Setup(ui::input(
+            DEFAULT_SETTING_INPUT_MENU_SIZE.width * (5.0f/6.0f), DEFAULT_SETTING_INPUT_MENU_SIZE.height / 2, std::nullopt
+        ))
+            .id("input"_spr)
+            .pos(CCPointZero)
+            .parent(m_inputMenu)
         );
 
         return true;
@@ -147,16 +139,15 @@ namespace Settings {
             return false;
         }
 
-        nwo5::utils::setupNode(
-            CCMenuItemSpriteExtra::create
-                ((m_colorFill = CCSprite::create("color-button-fill.png"_spr)), 
-                this, menu_selector(ColorSettingButtonBase::onColorPick)
-            ),
+        m_colorFill = CCSprite::create("color-button-fill.png"_spr);
 
-            SetNodeID{"color_button"_spr},
-            SetNodeScaleWithSize{DEFAULT_SETTING_INPUT_MENU_SIZE.width * (2.0f/3.0f)},
-            SetNodePosition{CCPointZero},
-            SetNodeParent{m_inputMenu}
+        ui::node(Setup(ui::button(
+            m_colorFill, this, menu_selector(ColorSettingButtonBase::onColorPick)
+        ))
+            .id("color_button"_spr)
+            .scaleToFit(DEFAULT_SETTING_INPUT_MENU_SIZE.width * (2.0f/3.0f))
+            .pos(CCPointZero)
+            .parent(m_inputMenu)
         );
 
         m_colorFill->addChildAtPosition(CCSprite::create("color-button-frame.png"_spr), Anchor::Center);
@@ -189,17 +180,13 @@ namespace Settings {
 
         setupReloadIndicator(setting<T>()->reloadType());
 
-        auto toggler = nwo5::utils::setupNode(
-            CCMenuItemToggler::create(
-                CCSprite::createWithSpriteFrameName("GJ_checkOff_001.png"),
-                CCSprite::createWithSpriteFrameName("GJ_checkOn_001.png"),
-                this, menu_selector(BoolSettingButton::onToggle)
-            ),
-
-            SetNodeID{"toggle"_spr},
-            SetNodeScaleWithSize{DEFAULT_SETTING_INPUT_MENU_SIZE.width * (2.0f/3.0f)},
-            SetNodePosition{CCPointZero},
-            SetNodeParent{m_inputMenu}
+        auto toggler = ui::node(Setup(ui::togglerFrame(
+            "GJ_checkOff_001.png", "GJ_checkOn_001.png", this, menu_selector(BoolSettingButton::onToggle)
+        ))
+            .id("toggle"_spr)
+            .scaleToFit(DEFAULT_SETTING_INPUT_MENU_SIZE.width * (2.0f/3.0f))
+            .pos(CCPointZero)
+            .parent(m_inputMenu)
         );
 
         toggler->toggle(setting<T>()->get());
@@ -220,19 +207,20 @@ namespace Settings {
 
         setupReloadIndicator(setting<T>()->reloadType());
 
-        m_input->setPlaceholder(nwo5::utils::numToString(setting<T>()->getDefault()));
-        m_input->setCommonFilter(CommonFilter::Int);
-        m_input->setString(nwo5::utils::numToString(setting<T>()->get()));
-        m_input->setCallback([this] (const std::string& pStr) {
-            if (pStr.empty()) {
-                setting<T>()->set(setting<T>()->getDefault());
-            }
-            else {
-                setting<T>()->set(utils::numFromString<T>(pStr).unwrapOrDefault());
-            }
+        Setup(m_input)
+            .placeholder(nwo5::utils::numToString(setting<T>()->getDefault()))
+            .filter(CommonFilter::Int)
+            .string(nwo5::utils::numToString(setting<T>()->get()))
+            .callback([this] (const std::string& pStr) {
+                if (pStr.empty()) {
+                    setting<T>()->set(setting<T>()->getDefault());
+                }
+                else {
+                    setting<T>()->set(std::clamp(utils::numFromString<T>(pStr).unwrapOrDefault(), setting<T>()->min(), setting<T>()->max()));
+                }
 
-            trySubmitReloadSettingChanged(setting<T>()->reloadType());
-        });
+                trySubmitReloadSettingChanged(setting<T>()->reloadType());
+            });
 
         return true;
     }
@@ -245,19 +233,20 @@ namespace Settings {
 
         setupReloadIndicator(setting<T>()->reloadType());
 
-        m_input->setPlaceholder(nwo5::utils::numToString(setting<T>()->getDefault()));
-        m_input->setCommonFilter(CommonFilter::Float);
-        m_input->setString(nwo5::utils::numToString(setting<T>()->get()));
-        m_input->setCallback([this] (const std::string& pStr) {
-            if (pStr.empty()) {
-                setting<T>()->set(setting<T>()->getDefault());
-            }
-            else {
-                setting<T>()->set(utils::numFromString<T>(pStr).unwrapOrDefault());
-            }
+        Setup(m_input)
+            .placeholder(nwo5::utils::numToString(setting<T>()->getDefault()))
+            .filter(CommonFilter::Float)
+            .string(nwo5::utils::numToString(setting<T>()->get()))
+            .callback([this] (const std::string& pStr) {
+                if (pStr.empty()) {
+                    setting<T>()->set(setting<T>()->getDefault());
+                }
+                else {
+                    setting<T>()->set(std::clamp(utils::numFromString<T>(pStr).unwrapOrDefault(), setting<T>()->min(), setting<T>()->max()));
+                }
 
-            trySubmitReloadSettingChanged(setting<T>()->reloadType());
-        });
+                trySubmitReloadSettingChanged(setting<T>()->reloadType());
+            });
 
         return true;
     }
@@ -272,11 +261,13 @@ namespace Settings {
 
         m_inputMenu->setPosition(CCPointZero);
 
-        auto input = nwo5::utils::setupNode(
-            nwo5::utils::createTextInput(
-                SETTING_BUTTON_SIZE.width - PADDING * 2, SETTING_BUTTON_SIZE.height / 2 - PADDING, 
-                setting<T>()->getDefault(), 
-            [this] (const std::string& pStr) {
+        auto input = ui::node(Setup(ui::input(
+            SETTING_BUTTON_SIZE.width - PADDING * 2, SETTING_BUTTON_SIZE.height / 2 - PADDING, setting<T>()->getDefault()
+        ))
+            .id("input"_spr)
+            .pos(SETTING_BUTTON_SIZE.width / 2, SETTING_BUTTON_SIZE.height * (3.0f/4.0f))
+            .parent(m_inputMenu)
+            .callback([this] (const std::string& pStr) {
                 if (pStr.empty()) {
                     setting<T>()->set(setting<T>()->getDefault());
                 }
@@ -288,23 +279,16 @@ namespace Settings {
                 }
 
                 trySubmitReloadSettingChanged(setting<T>()->reloadType());
-            }),
-
-            SetNodeID{"input"_spr},
-            SetNodePosition{SETTING_BUTTON_SIZE.width / 2, SETTING_BUTTON_SIZE.height * (3.0f/4.0f)},
-            SetNodeParent{m_inputMenu}
+            })
+            .filter(CommonFilter::Any)
+            .string(setting<T>()->get())
         );
-        input->setCommonFilter(CommonFilter::Any);
-        input->setString(setting<T>()->get());
 
-        nwo5::utils::setupNode(
-            m_label,
-
-            SetNodeAnchor{CENTER_ANCHOR},
-            SetNodeScaleWithHeight{SETTING_BUTTON_SIZE.height / 2 - PADDING},
-            LimitNodeScaleWithWidth{SETTING_BUTTON_SIZE.width - PADDING * 2},
-            SetNodePosition{SETTING_BUTTON_SIZE.width / 2, SETTING_BUTTON_SIZE.height * (1.0f/4.0f)}
-        );
+        Setup(m_label)
+            .anchor(CENTER_ANCHOR)
+            .scaleHeightToFit(SETTING_BUTTON_SIZE.height / 2 - PADDING)
+            .limitScaleWidthToFit(SETTING_BUTTON_SIZE.width - PADDING * 2)
+            .pos(SETTING_BUTTON_SIZE.width / 2, SETTING_BUTTON_SIZE.height * (1.0f/4.0f));
 
         return true;
     }
@@ -319,42 +303,36 @@ namespace Settings {
 
         m_inputMenu->setPosition(CCPointZero);
 
-        m_currentLabel = nwo5::utils::setupNode(
-            CCLabelBMFont::create("", "bigFont.fnt"),
-
-            SetNodeID{"current-label"_spr},
-            SetNodePosition{SETTING_BUTTON_SIZE.width / 2, SETTING_BUTTON_SIZE.height * (3.0f/4.0f)},
-            SetNodeParent{m_inputMenu}
+        m_currentLabel = ui::node(Setup(ui::label())
+            .id("current-label"_spr)
+            .pos(SETTING_BUTTON_SIZE.width / 2, SETTING_BUTTON_SIZE.height * (3.0f/4.0f))
+            .parent(m_inputMenu)
         );
 
-        m_nextArrow = nwo5::utils::setupNode(
-            nwo5::utils::createButtonFrame("GJ_arrow_02_001.png", this, menu_selector(StrenumSettingButton::onNext)),
-
-            SetNodeID{"next-button"_spr},
-            SetNodePositionY{SETTING_BUTTON_SIZE.height * (3.0f/4.0f)},
-            SetNodeScaleWithSize{ARROW_SIZE},
-            SetNodeParent{m_inputMenu}
+        m_nextArrow = ui::node(Setup(ui::buttonFrame(
+            "GJ_arrow_02_001.png", this, menu_selector(StrenumSettingButton::onNext)
+        ))
+            .id("next-button"_spr)
+            .posY(SETTING_BUTTON_SIZE.height * (3.0f/4.0f))
+            .scaleToFit(ARROW_SIZE)
+            .parent(m_inputMenu)
+            .flipX()
         );
-        m_nextArrow->setRotationY(180.0f);
-
-        m_prevArrow = nwo5::utils::setupNode(
-            nwo5::utils::createButtonFrame("GJ_arrow_02_001.png", this, menu_selector(StrenumSettingButton::onPrevious)),
-
-            SetNodeID{"previous-button"_spr},
-            SetNodePositionY{SETTING_BUTTON_SIZE.height * (3.0f/4.0f)},
-            SetNodeScaleWithSize{ARROW_SIZE},
-            SetNodeParent{m_inputMenu}
+        
+        m_prevArrow = ui::node(Setup(ui::buttonFrame(
+            "GJ_arrow_02_001.png", this, menu_selector(StrenumSettingButton::onPrevious)
+        ))
+            .id("previous-button"_spr)
+            .posY(SETTING_BUTTON_SIZE.height * (3.0f/4.0f))
+            .scaleToFit(ARROW_SIZE)
+            .parent(m_inputMenu)
         );
 
-        nwo5::utils::setupNode(
-            m_label,
-
-            SetNodeAnchor{CENTER_ANCHOR},
-            SetNodeScaleWithHeight{SETTING_BUTTON_SIZE.height / 2 - PADDING},
-            LimitNodeScaleWithWidth{SETTING_BUTTON_SIZE.width - PADDING * 2},
-          
-            SetNodePosition{SETTING_BUTTON_SIZE.width / 2, SETTING_BUTTON_SIZE.height * (1.0f/4.0f)}
-        );
+        Setup(m_label)
+            .anchor(CENTER_ANCHOR)
+            .scaleHeightToFit(SETTING_BUTTON_SIZE.height / 2 - PADDING)
+            .limitScaleWidthToFit(SETTING_BUTTON_SIZE.width - PADDING * 2)
+            .pos(SETTING_BUTTON_SIZE.width / 2, SETTING_BUTTON_SIZE.height * (1.0f/4.0f));
 
         for (int i = 0; i < setting<T>()->enumOptions().size(); i++) {
             if (setting<T>()->enumOptions()[i] == setting<T>()->get()) {
@@ -364,18 +342,17 @@ namespace Settings {
             }
         }
 
+        setOption(std::ranges::find(setting<T>()->enumOptions(), setting<T>()->get()) - setting<T>()->enumOptions().begin(), false);
+
         return true;
     }
     void StrenumSettingButton::setOption(int pOption, bool pSet) {
         const auto& str = setting<T>()->enumOptions()[pOption];
 
-        m_currentLabel->setString(str.c_str());
-        nwo5::utils::setupNode(
-            m_currentLabel,
-
-            SetNodeScaleWithHeight{SETTING_BUTTON_SIZE.height / 2 - PADDING},
-            LimitNodeScaleWithWidth{SETTING_BUTTON_SIZE.width * (3.0f/4.0f) - PADDING * 2}
-        );
+        Setup(m_currentLabel)
+            .scaleHeightToFit(SETTING_BUTTON_SIZE.height / 2 - PADDING)
+            .limitScaleWidthToFit(SETTING_BUTTON_SIZE.width * (3.0f/4.0f) - PADDING * 2)
+            .string(str);
 
         m_nextArrow->setPositionX(SETTING_BUTTON_SIZE.width / 2 + m_currentLabel->getScaledContentWidth() / 2 + ARROW_GAP);
         m_prevArrow->setPositionX(SETTING_BUTTON_SIZE.width / 2 - m_currentLabel->getScaledContentWidth() / 2 - ARROW_GAP);
@@ -419,6 +396,7 @@ namespace Settings {
 
             trySubmitReloadSettingChanged(setting<T>()->reloadType());
         });
+
         popup->show();
     }
     SE_SETUP_SETTING_BUTTON_CREATE(RGBSettingButton)

@@ -1,8 +1,6 @@
-#include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/EditorPauseLayer.hpp>
 #include <Geode/modify/LevelEditorLayer.hpp>
 #include <internal/utils/utils.hpp>
-#include <features/compat.hpp>
 #include "popup.hpp"
 
 using namespace geode::prelude;
@@ -15,16 +13,16 @@ static void tryShowWarningPopup(LevelEditorLayer* pLayer) {
         return;
     }
 
-    auto popup = FLAlertLayer::create("SillyEdit", "sillyedit is in <cr>TESTING</c> ! there prolly will be <cd>bugs</c> and or <cs>crahes</c>", "Ok !");
+    auto popup = FLAlertLayer::create("SillyEdit", "sillyedit is in <cr>BETA</c> ! there prolly will be <cd>bugs</c> and or <cs>crashes</c>", "Ok !");
     popup->m_scene = pLayer;
     popup->show();
 
     shown = true;
 }
 
-class $modify(EditorUI) {
-    bool init(LevelEditorLayer* editorLayer) {
-        if (!EditorUI::init(editorLayer)) {
+class $modify(LevelEditorLayer) {
+    bool init(GJGameLevel* level, bool noUI) {
+        if (!LevelEditorLayer::init(level, noUI)) {
             return false;
         }
 
@@ -33,16 +31,6 @@ class $modify(EditorUI) {
                 Settings::SettingsPopup::create()->show();
             }
         });
-
-        return true;
-    }
-};
-
-class $modify(LevelEditorLayer) {
-    bool init(GJGameLevel* level, bool noUI) {
-        if (!LevelEditorLayer::init(level, noUI)) {
-            return false;
-        }
 
         // if better edit does 2 i should prolly do 3
         Loader::get()->queueInMainThread([this] {

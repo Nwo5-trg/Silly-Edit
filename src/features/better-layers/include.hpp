@@ -12,7 +12,7 @@ namespace BetterLayers {
 
         std::optional<short> m_focusedLayer;
         std::optional<unsigned char> m_defaultOpacity;
-        std::unordered_map<short, LayerState> m_layerMap;
+        std::array<LayerState, std::numeric_limits<short>::max() + 1> m_layerMap;
 
         void importSettings();
 
@@ -25,9 +25,6 @@ namespace BetterLayers {
         }
 
         void exportSettings();
-
-        static unsigned char globalLayerOpacity();
-        static unsigned char unfocusedLayerOpacity();
 
         bool layerHasState(short pLayer) const;
 
@@ -97,4 +94,9 @@ namespace BetterLayers {
     public:
         static EditAllLayersPopup* create(LayerSettings* pSettings);
     };
+
+    inline auto& getLayerSettingsPtr() {
+        static BetterLayers::LayerSettings* val = nullptr;
+        return val;
+    }
 }

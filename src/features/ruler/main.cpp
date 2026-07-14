@@ -95,7 +95,7 @@ class $modify(RulerEditorUI, EditorUI) {
     }
 
     CCLabelBMFont* createMeasurementLabel(float pMeasure) {
-        auto label = CCLabelBMFont::create(getMeasurementString(pMeasure).c_str(), "chatFont.fnt");
+        auto label = ui::label(getMeasurementString(pMeasure), ui::Font::ChatFont);
 
         Shared::getOverlayLayer()->addChild(label);
 
@@ -162,13 +162,13 @@ class $modify(RulerEditorUI, EditorUI) {
                                 ? (Settings::Ruler::labelOnRight.get() 
                                     ? LEFT_CENTER_ANCHOR 
                                     : RIGHT_CENTER_ANCHOR
-                                  ) 
+                                ) 
                                 : BOTTOM_CENTER_ANCHOR
-                              )
+                            )
                             : (Settings::Ruler::labelOnBottom.get() 
                                 ? TOP_CENTER_ANCHOR 
                                 : BOTTOM_CENTER_ANCHOR
-                              )
+                            )
                     )
                     .pos(
                         y
@@ -194,19 +194,19 @@ class $modify(RulerEditorUI, EditorUI) {
                               )
                     )
                     .rotation(
-                        Settings::Ruler::dontRotateLabel.get() 
-                            ? 0.0f 
-                            : (y 
-                                ? (Settings::Ruler::labelOnRight.get() 
-                                    ? 90.0f 
-                                    : 270.0f
-                                  ) 
-                                : (Settings::Ruler::labelOnBottom.get() 
-                                    ? 180.0f 
-                                    : 0.0f
-                                  )
-                              )
-                    )
+                            Settings::Ruler::dontRotateLabel.get() 
+                                ? 0.0f 
+                                : (y 
+                                    ? (Settings::Ruler::labelOnRight.get() 
+                                        ? 90.0f 
+                                        : 270.0f
+                                    ) 
+                                    : (Settings::Ruler::labelOnBottom.get() 
+                                        ? 180.0f 
+                                        : 0.0f
+                                    )
+                                )
+                        )
                     .color(ccc3(col.r * 255, col.g * 255, col.b * 255));
             }
         } 

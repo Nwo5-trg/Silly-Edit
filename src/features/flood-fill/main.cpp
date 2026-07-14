@@ -160,16 +160,14 @@ class $modify(FloodFillEditorUI, EditorUI) {
     }
 
     bool init(LevelEditorLayer* editorLayer) {
-        if (!Settings::FloodFill::enabled.get() || !Settings::FloodFill::quickFillButton.get()) {
-            editor::unregisterEditTabButton("quick-fill-button"_spr);
-        }
-        else {
-            editor::registerEditTabButtonFrame("quickfill.png"_spr, "quick-fill-button"_spr, 2, [this] (auto) {
+        editor::conditionallyRegisterEditTabButtonFrame(
+            Settings::FloodFill::enabled.get() && Settings::FloodFill::quickFillButton.get(),
+            "quickfill.png"_spr, "quick-fill-button"_spr, 2, [this] (auto) {
                 if (Settings::FloodFill::enabled.get()) {
                     quickFill();
                 }
-            });
-        }
+            }
+        );
         
         if (!EditorUI::init(editorLayer)) {
             return false;

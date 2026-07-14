@@ -11,7 +11,7 @@ namespace Settings::BetterScale {
     inline SillySetting<bool> allowNegative{"Allow Negative", "Better Scale", false, "dont use abs for negative scales"};
     inline SillySetting<bool> newLockTexture{"New Lock Texture", "Better Scale", true, SettingReload::Editor};
     inline SillySetting<bool> switchModeButton{"Switch Mode Button", "Better Scale", true, SettingReload::Editor};
-    inline SillySetting<float> controlSize{"Control Size", "Better Scale", 1.0f, "multiplies scale control size"};
+    inline SillySetting<float> controlSize{"Control Size", "Better Scale", 1.0f, {0.1f, std::nullopt}, "multiplies scale control size"};
     inline SillySetting<bool> lockControlSize{"Lock Control Size", "Better Scale", false, "treats control size as a static scale that doesnt change with zoom"};
     inline SillySetting<float> controlOffset{"Control Offset", "Better Scale", 40.0f, "y offset from default control position"};
 }

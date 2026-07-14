@@ -18,17 +18,25 @@ static bool isProbablierObjectString(std::string_view pStr) {
 }
 
 class $modify(EditorUI) {
-    static void onModify(auto& pSelf) {
-        (void)pSelf.setHookPriority("EditorUI::doCopyObjects", Priority::Early);
-        (void)pSelf.setHookPriority("EditorUI::doPasteObjects", Priority::Early);
+    static void disableTinkerStuffs() {
+        nwo5::utils::conditionallyEnableHook(
+            !Settings::CopyPasteObjectStrings::enabled.get(), nwo5::utils::getTinker(), "EditorUI::doCopyObjects"
+        );
+        nwo5::utils::conditionallyEnableHook(
+            !Settings::CopyPasteObjectStrings::enabled.get(), nwo5::utils::getTinker(), "EditorUI::doPasteObjects"
+        );
+    }
+
+    bool init(LevelEditorLayer* editorLayer) {
+        listenForSavedSettingChanges<SillySetting<bool>>(this, "copy-paste-object-strings-enabled", [] (SillySetting<bool>*) {
+            disableTinkerStuffs();
+        });
+        disableTinkerStuffs();
+        
+        return EditorUI::init(editorLayer);
     }
 
     void doCopyObjects(bool withColor) {
-        // would be too annoying to restore setting value if my cpos is disabled so wtv
-        if (nwo5::utils::isBetterEditLoaded() && Settings::CopyPasteObjectStrings::enabled.get()) {
-            nwo5::utils::setBetterEditSetting<bool>("copy-paste-from-clipboard", false);
-        }
-
         EditorUI::doCopyObjects(withColor);
 
         if (Settings::CopyPasteObjectStrings::enabled.get() && Settings::CopyPasteObjectStrings::copy.get()) {
@@ -46,10 +54,6 @@ class $modify(EditorUI) {
         }
     }
     void doPasteObjects(bool withColor) {
-        if (nwo5::utils::isBetterEditLoaded() && Settings::CopyPasteObjectStrings::enabled.get()) {
-            nwo5::utils::setBetterEditSetting<bool>("copy-paste-from-clipboard", false);
-        }
-
         if (!Settings::CopyPasteObjectStrings::enabled.get() || !Settings::CopyPasteObjectStrings::paste.get()) {
             return EditorUI::doPasteObjects(withColor);
         }

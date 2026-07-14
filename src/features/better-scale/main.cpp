@@ -45,7 +45,7 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
     static constexpr float DEFAULT_LOCK_XY_HEIGHT = 120.0f;
 
     static void onModify(auto& pSelf) {
-        (void)pSelf.setHookPriority("GJScaleControl::init", Priority::LatePost);
+        (void)pSelf.setHookPriorityAfter("GJScaleControl::init", nwo5::utils::TINKER_EDIT_ID);
     }
 
     void customScale(float pScale, ObjectScaleType pType) {
@@ -269,9 +269,10 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
 
         fields->betterScaleLoaded = true;
 
-        if (nwo5::utils::isBetterEditLoaded()) {
+        // laziest solution works so fuck you
+        if (nwo5::utils::isTinkerLoaded()) {
             for (auto child : getChildrenExt()) {
-                if (child->getID().view().contains(nwo5::utils::BETTER_EDIT_ID)) {
+                if (child->getID().view().contains(nwo5::utils::TINKER_EDIT_ID)) {
                     // not making invisible cuz that would just be reset so close enough
                     child->setScale(0.0f);
 

@@ -61,12 +61,14 @@ namespace BetterLayers {
             levelObj["opacity"] = m_defaultOpacity.value();
         } 
 
-        for (const auto [layer, state] : m_layerMap) {
+        for (size_t i = 0; i < m_layerMap.size(); i++) {
+            const auto& state = m_layerMap[i];
+
             if (!state.hidden && !state.opacity.has_value()) {
                 continue;
             }
 
-            auto& layerObj = levelObj[nwo5::utils::numToString(layer)];
+            auto& layerObj = levelObj[nwo5::utils::numToString(i)];
 
             if (state.hidden) {
                 layerObj["hidden"] = state.hidden;
@@ -78,16 +80,9 @@ namespace BetterLayers {
 
         (void)file::writeToJson(getLayerSettingsPath(), json);
     }
-
-    unsigned char LayerSettings::globalLayerOpacity() {
-        return static_cast<unsigned char>(std::clamp(Settings::BetterLayers::layerOpacity.get(), 0, 255));
-    }
-    unsigned char LayerSettings::unfocusedLayerOpacity() {
-        return static_cast<unsigned char>(std::clamp(Settings::BetterLayers::unfocusedLayerOpacity.get(), 0, 255));
-    }
-
+    
     bool LayerSettings::layerHasState(short pLayer) const {
-        return m_layerMap.find(pLayer) != m_layerMap.end();
+        return m_layerMap[pLayer].hidden || m_layerMap[pLayer].opacity.has_value();
     }
 
     void LayerSettings::setFocusedLayer(short pLayer) {
@@ -111,12 +106,10 @@ namespace BetterLayers {
     }
 
     void LayerSettings::setLayerHidden(int pLayer, bool pHidden) {
-        m_layerMap[pLayer].hidden = true;
+        m_layerMap[pLayer].hidden = pHidden;
     }
     bool LayerSettings::isLayerHidden(int pLayer) const {
-        const auto it = m_layerMap.find(pLayer);
-
-        return it == m_layerMap.end() ? false : it->second.hidden;
+        return m_layerMap[pLayer].hidden;
     }
     void LayerSettings::setLayerOpacity(int pLayer, unsigned char pOpacity) {
         m_layerMap[pLayer].opacity = pOpacity;
@@ -125,9 +118,7 @@ namespace BetterLayers {
         m_layerMap[pLayer].opacity = std::nullopt;
     }
     std::optional<unsigned char> LayerSettings::getLayerOpacity(int pLayer) const {
-        const auto it = m_layerMap.find(pLayer);
-
-        return it == m_layerMap.end() ? std::nullopt : it->second.opacity;
+        return m_layerMap[pLayer].opacity;
     }
 
     unsigned char LayerSettings::opacityForObject(unsigned char pUnmodifiedOpacity, GameObject* pObj) {
@@ -163,31 +154,11 @@ namespace BetterLayers {
         }
 
         if (const auto res = getFocusedLayer(); res.has_value() && pObj->m_editorLayer != res.value() && pObj->m_editorLayer2 != res.value()) {
-            if (const auto unfocusedOpacity = unfocusedLayerOpacity()) {
-                return static_cast<unsigned char>(std::clamp(opacity / (255.0f / unfocusedOpacity), 0.0f, 255.0f));
-            }
-            else {
-                return 0;
-            }
+            return nwo5::utils::modifyOpacity(opacity, Settings::BetterLayers::unfocusedLayerOpacity.get());
         }
 
         if (!canSelectLayer) {
-            if (m_defaultOpacity.has_value()) {
-                if (m_defaultOpacity.value()) {
-                    return static_cast<unsigned char>(std::clamp(opacity / (255.0f / m_defaultOpacity.value()), 0.0f, 255.0f));
-                }
-                else {
-                    return 0;
-                }
-            }
-            else {
-                if (const auto globalOpacity = globalLayerOpacity()) {
-                    return static_cast<unsigned char>(std::clamp(opacity / (255.0f / globalOpacity), 0.0f, 255.0f));
-                }
-                else {
-                    return 0;
-                }
-            }
+            return nwo5::utils::modifyOpacity(opacity, m_defaultOpacity.value_or(Settings::BetterLayers::layerOpacity.get()));
         }
 
         return static_cast<unsigned char>(std::clamp(opacity, 0.0f, 255.0f));

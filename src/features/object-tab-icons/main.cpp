@@ -1,13 +1,11 @@
 #include "settings.hpp"
 #include <internal/utils/utils.hpp>
-
 #include <Geode/modify/EditorUI.hpp>
 
 using namespace geode::prelude;
-using namespace nwo5::utils::setup;
+using namespace nwo5::ui;
 
 class $modify(EditorUI) {
-
 	bool init(LevelEditorLayer* editorLayer) {	
 		if (!EditorUI::init(editorLayer)) {
             return false;
@@ -60,15 +58,12 @@ class $modify(EditorUI) {
 
                 originalIcon->setVisible(false);
 
-                nwo5::utils::setupNode(
-                    spr,  
-                    
-                    SetNodeID{"{}"_spr, name},
-                    SetNodeScale{0.5f},
-                    SetNodeOpacity{150},
-                    SetNodePosition{originalIcon},
-                    SetNodeParent{tab}
-                );
+                Setup(spr)
+                    .id("{}"_spr, name)
+                    .scale(0.5f)
+                    .opacity(150)
+                    .pos(originalIcon)
+                    .parent(tab);
             }
         }
         

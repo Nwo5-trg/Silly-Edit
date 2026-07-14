@@ -6,18 +6,14 @@
 
 using namespace geode::prelude;
 
-class $modify(DefaultObjectOptionsEditorUI, EditorUI) {
-    struct Fields {
-        bool creatingObject = false;
-    };
-    
+class $modify(EditorUI) {
     bool onCreate() {
-        auto& creatingObject = m_fields->creatingObject;
-        creatingObject = true;
+        // to not break custom objects
+        DefaultObjectOptions::shouldApplyObjectOptions() = m_selectedObjectIndex >= 1;
 
         auto ret = EditorUI::onCreate();
 
-        creatingObject = false;
+        DefaultObjectOptions::shouldApplyObjectOptions() = false;
 
         return ret;
     }
@@ -28,25 +24,41 @@ class $modify(LevelEditorLayer) {
         DefaultObjectOptions::ObjectOptions options;
     };
 
-    bool init(GJGameLevel* level, bool noUI) {
-        if (!LevelEditorLayer::init(level, noUI)) {
-            return false;
-        }
-        
-        DefaultObjectOptions::parseOptions(m_fields->options);
-
+    void updateSimpleObjectsString() {
         m_fields->options.updateSimpleOptionsString(
             Settings::DefaultObjectOptions::dontFade.get(),
             Settings::DefaultObjectOptions::dontEnter.get(),
             Settings::DefaultObjectOptions::noGlow.get()
         );
+    }
+
+    bool init(GJGameLevel* level, bool noUI) {
+        if (!LevelEditorLayer::init(level, noUI)) {
+            return false;
+        }
+
+        listenForAllSavedSettingChanges(this, [this] (std::string_view pKey, GenericSetting* pSetting) {
+            const auto name = pSetting->name();
+
+            if (name == "Dont Fade" || name == "Dont Enter" || name == "No Glow") {
+                this->updateSimpleObjectsString();
+            }
+            else if (name == "Use JSON") {
+                DefaultObjectOptions::parseOptions(this->m_fields->options);
+            }
+        }, "Default Object Options");
+
+        DefaultObjectOptions::parseOptions(m_fields->options);
+        updateSimpleObjectsString();
 
         return true;
     }
+
+    // please god remind me to actually get off my ass and reverse engineer this cuz this is diabolical
     GameObject* createObject(int key, CCPoint position, bool noUndo) {
         auto ret = LevelEditorLayer::createObject(key, position, noUndo);
 
-        if (!ret || !Settings::DefaultObjectOptions::enabled.get() || noUndo || !reinterpret_cast<DefaultObjectOptionsEditorUI*>(m_editorUI)->m_fields->creatingObject) {
+        if (!ret || !Settings::DefaultObjectOptions::enabled.get() || noUndo || !DefaultObjectOptions::shouldApplyObjectOptions()) {
             return ret;
         }
 

@@ -2,11 +2,11 @@
 #include <hjfod.gmd-api/include/GMD.hpp>
 #include <Geode/modify/LevelOptionsLayer.hpp>
 #include <Geode/modify/GameLevelManager.hpp>
-#include "settings.hpp"
 #include <Geode/ui/Button.hpp>
+#include "settings.hpp"
 
 using namespace geode::prelude;
-using namespace nwo5::utils::setup;
+using namespace nwo5::ui::prelude;
 
 static std::filesystem::path getTemplatePath() {
     return Mod::get()->getSaveDir() / "template.gmd";
@@ -26,8 +26,9 @@ class $modify(TemplatesLevelOptionsLayer, LevelOptionsLayer) {
             return;
         }
 
-        auto button = nwo5::utils::setupNode(
-            Button::createWithNode(ButtonSprite::create("Save\nTemplate"), [] (Button*) {
+        auto button = ui::node(Setup(Button::createWithNode(ButtonSprite::create("Save\nTemplate")))
+            .id("save-template-button"_spr)
+            .callback([] (Button*) {
                 editor::save();
 
                 auto res = gmd::exportLevelAsGmd(editor::layer()->m_level, getTemplatePath());
@@ -37,11 +38,9 @@ class $modify(TemplatesLevelOptionsLayer, LevelOptionsLayer) {
                 }
 
                 Notification::create("template updated !", NotificationIcon::Info)->show();
-            }),
-
-            SetNodeID{"save-template-button"_spr},
-            SetNodeScale{0.65f},
-            SetNodeParent{m_mainLayer}
+            })
+            .scale(0.65f)
+            .parent(m_mainLayer)
         );
         button->setPosition(
             bg->getPositionX() - bg->getScaledContentWidth() / 2 + button->getScaledContentWidth() / 2 + 10.0f,

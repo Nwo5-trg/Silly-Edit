@@ -51,7 +51,7 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
         m_textInput->setMaxLabelLength(std::numeric_limits<int>::max());
         
         // ill find a better solution to this l8r
-        if (nwo5::utils::isBetterEditLoaded()) {
+        if (nwo5::utils::isTinkerLoaded()) {
             Loader::get()->queueInMainThread([this] {
                 this->openTextMenu();
             });
@@ -60,50 +60,52 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
             openTextMenu();
         }
  
-        auto copyTextButton = ui::node(
-            Setup(ui::buttonFrame("GJ_copyBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onCopyText)))
-                .id("copy-text-button"_spr)
-                .pos(inputBG->getPositionX() + (Settings::TextObjectUtils::swapCopyPaste.get() ? -SIDE_BUTTON_DISTANCE : SIDE_BUTTON_DISTANCE), inputBG->getPositionY())
-                .scaleToFit(SIDE_BUTTON_SIZE)
+        auto copyTextButton = ui::node(Setup(ui::buttonFrame(
+            "GJ_copyBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onCopyText)
+        ))
+            .id("copy-text-button"_spr)
+            .pos(inputBG->getPositionX() + (Settings::TextObjectUtils::swapCopyPaste.get() ? -SIDE_BUTTON_DISTANCE : SIDE_BUTTON_DISTANCE), inputBG->getPositionY())
+            .scaleToFit(SIDE_BUTTON_SIZE)
         );
-        auto pasteTextButton = ui::node(
-            Setup(ui::buttonFrame("GJ_pasteBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onPasteText)))
-                .id("paste-text-button"_spr)
-                .pos(inputBG->getPositionX() + (Settings::TextObjectUtils::swapCopyPaste.get() ? SIDE_BUTTON_DISTANCE : -SIDE_BUTTON_DISTANCE), inputBG->getPositionY())
-                .scaleToFit(SIDE_BUTTON_SIZE)
+        auto pasteTextButton = ui::node(Setup(ui::buttonFrame(
+            "GJ_pasteBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onPasteText)
+        ))
+            .id("paste-text-button"_spr)
+            .pos(inputBG->getPositionX() + (Settings::TextObjectUtils::swapCopyPaste.get() ? SIDE_BUTTON_DISTANCE : -SIDE_BUTTON_DISTANCE), inputBG->getPositionY())
+            .scaleToFit(SIDE_BUTTON_SIZE)
         );
-        auto customClearTextButton = ui::node(
-            Setup(ui::buttonFrame("GJ_trashBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onClearText)))
-                .id("clear-text-button"_spr)
-                .pos(inputBG->getPositionX() + SIDE_BUTTON_DISTANCE + SIDE_BUTTON_SIZE + SIDE_BUTTON_GAP, inputBG->getPositionY())
-                .scaleToFit(SIDE_BUTTON_SIZE)
+        auto customClearTextButton = ui::node(Setup(ui::buttonFrame(
+            "GJ_trashBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onClearText)
+        ))
+            .id("clear-text-button"_spr)
+            .pos(inputBG->getPositionX() + SIDE_BUTTON_DISTANCE + SIDE_BUTTON_SIZE + SIDE_BUTTON_GAP, inputBG->getPositionY())
+            .scaleToFit(SIDE_BUTTON_SIZE)
         );
-        auto newlineTextButton = ui::node(
-            Setup(ui::buttonFrame("GJ_redoBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onNewline)))
-                .id("newline-text-button"_spr)
-                .pos(inputBG->getPositionX() - SIDE_BUTTON_DISTANCE - SIDE_BUTTON_SIZE - SIDE_BUTTON_GAP, inputBG->getPositionY())
-                .scaleToFit(SIDE_BUTTON_SIZE)
+        auto newlineTextButton = ui::node(Setup(ui::buttonFrame(
+            "GJ_redoBtn_001.png", this, menu_selector(TextObjectUtilsCustomizeObjectLayer::onNewline)
+        ))
+            .id("newline-text-button"_spr)
+            .pos(inputBG->getPositionX() - SIDE_BUTTON_DISTANCE - SIDE_BUTTON_SIZE - SIDE_BUTTON_GAP, inputBG->getPositionY())
+            .scaleToFit(SIDE_BUTTON_SIZE)
         );
 
-        m_fields->textObjectUtilsMenu = ui::node(
-            Setup(ui::menu())
-                .id("text-object-utils-menu"_spr)
-                .pos(CCPointZero)
-                .children(
+        m_fields->textObjectUtilsMenu = ui::node(Setup(ui::menu(true))
+            .id("text-object-utils-menu"_spr)
+            .pos(CCPointZero)
+            .children(
                     copyTextButton,
                     pasteTextButton,
                     customClearTextButton,
                     newlineTextButton
                 )
-                .parent(m_mainLayer)
+            .parent(m_mainLayer)
         );
         m_textTabNodes->addObject(m_fields->textObjectUtilsMenu);
 
-        m_fields->kerningInput = ui::node(
-            Setup(ui::input(45.0f, "0"))
-                .id("kerning-input"_spr)
-                .filter(CommonFilter::Int)
-                .callback([this] (const std::string& pStr) {
+        m_fields->kerningInput = ui::node(Setup(ui::input(45.0f, "0"))
+            .id("kerning-input"_spr)
+            .filter(CommonFilter::Int)
+            .callback([this] (const std::string& pStr) {
                     if (pStr.empty()) {
                         return;
                     }
@@ -118,7 +120,7 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
 
                     updateKerningLabel();
                 })
-                .parent(m_mainLayer)
+            .parent(m_mainLayer)
         );
         m_textTabNodes->addObject(m_fields->kerningInput);
 
@@ -176,16 +178,16 @@ class $modify(TextObjectUtilsCustomizeObjectLayer, CustomizeObjectLayer) {
         CustomizeObjectLayer::onClose(sender);
     }
 
-    void onCopyText(CCObject* pSender) {
+    void onCopyText(CCObject*) {
         clipboard::write(m_textInput->getString());
     }
-    void onPasteText(CCObject* pSender) {
+    void onPasteText(CCObject*) {
         m_textInput->setString(clipboard::read());
     }
-    void onClearText(CCObject* pSender) {
+    void onClearText(CCObject*) {
         m_textInput->setString("");
     }
-    void onNewline(CCObject* pSender) {
+    void onNewline(CCObject*) {
         m_textInput->setString(fmt::format("{}\n", m_textInput->getString()));
     }
 

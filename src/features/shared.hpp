@@ -1,9 +1,11 @@
 #pragma once
 
+#include <internal/utils/utils.hpp>
+
 namespace Shared {
-    cocos2d::CCDrawNode* getGridDraw();
+    nwo5::utils::SillyDrawNode* getGridDraw();
     cocos2d::CCLayer* getGridLayer();
-    cocos2d::CCDrawNode* getOverlayDraw();
+    nwo5::utils::SillyDrawNode* getOverlayDraw();
     cocos2d::CCLayer* getOverlayLayer();
     cocos2d::CCLayer* getHiddenLayer();
     

@@ -21,6 +21,10 @@ class $modify(BetterLayersEditorUI, EditorUI) {
         // remind me to make some kind of system of select filters in api cuz this is copy pasted from replace obj
         bool canDestroyUndo = false;
         bool updateLockButton = true;
+
+        ~Fields() {
+            BetterLayers::getLayerSettingsPtr() = nullptr;
+        }
     };
 
     static constexpr float GAP = 5.0f;
@@ -29,7 +33,7 @@ class $modify(BetterLayersEditorUI, EditorUI) {
     static constexpr float LAYER_EXTRA_BUTTON_SIZE = 20.0f;
 
     static void onModify(auto& pSelf) {
-        (void)pSelf.setHookPriority("EditorUI::init", Priority::LatePost);
+        (void)pSelf.setHookPriorityAfter("EditorUI::init", nwo5::utils::TINKER_EDIT_ID);
     }
 
     bool init(LevelEditorLayer* editorLayer) {
@@ -43,14 +47,15 @@ class $modify(BetterLayersEditorUI, EditorUI) {
         
         auto fields = m_fields.self();
 
+        // will i make this a ccobject managed obj in the future, mayb if i remember
         fields->settings = std::make_unique<BetterLayers::LayerSettings>();
+        BetterLayers::getLayerSettingsPtr() = fields->settings.get();
 
-        fields->layerInput = ui::node(
-            Setup(ui::input(LAYER_INPUT_SIZE, "All"))
-                .id("layer-input"_spr)
-                .filter("aA1234567890")
-                .maxCharCount(4)
-                .callback([this] (const std::string& pStr) {
+        fields->layerInput = ui::node(Setup(ui::input(LAYER_INPUT_SIZE, "All"))
+            .id("layer-input"_spr)
+            .filter("aA1234567890")
+            .maxCharCount(4)
+            .callback([this] (const std::string& pStr) {
                     if (pStr == "a" || pStr == "A") {
                         editor::setLayer(editor::constants::ALL_LAYERS);
                     }
@@ -67,43 +72,49 @@ class $modify(BetterLayersEditorUI, EditorUI) {
                 })
         );
 
-        auto nextLayer = ui::node(
-            Setup(ui::buttonFrame("GJ_arrow_03_001.png", this, menu_selector(EditorUI::onGroupUp)))
-                .id("next-layer-button"_spr)
-                .scaleToFit(LAYER_SHIFT_BUTTON_SIZE)
-                .flipX()
+        auto nextLayer = ui::node(Setup(ui::buttonFrame(
+            "GJ_arrow_03_001.png", this, menu_selector(EditorUI::onGroupUp)
+        ))
+            .id("next-layer-button"_spr)
+            .scaleToFit(LAYER_SHIFT_BUTTON_SIZE)
+            .flipX()
         );
-        auto prevLayer = ui::node(
-            Setup(ui::buttonFrame("GJ_arrow_03_001.png", this, menu_selector(EditorUI::onGroupDown)))
-                .id("prev-layer-button"_spr)
-                .scaleToFit(LAYER_SHIFT_BUTTON_SIZE)
+        auto prevLayer = ui::node(Setup(ui::buttonFrame(
+            "GJ_arrow_03_001.png", this, menu_selector(EditorUI::onGroupDown)
+        ))
+            .id("prev-layer-button"_spr)
+            .scaleToFit(LAYER_SHIFT_BUTTON_SIZE)
         );
 
-        fields->allLayersButton = ui::node(
+        fields->allLayersButton = ui::node(Setup(ui::buttonFrame(
             // girl robtop, ur function names, what the fuck is this, why only name it layer here </3
-            Setup(ui::buttonFrame("GJ_arrow_02_001.png", this, menu_selector(EditorUI::onGoToBaseLayer)))
-                .id("next-free-layer-button"_spr)
-                .scaleToFit(LAYER_EXTRA_BUTTON_SIZE)
+            "GJ_arrow_02_001.png", this, menu_selector(EditorUI::onGoToBaseLayer)
+        ))
+            .id("next-free-layer-button"_spr)
+            .scaleToFit(LAYER_EXTRA_BUTTON_SIZE)
         );
 
-        auto nextFreeLayer = ui::node(
-            Setup(ui::buttonFrame("GJ_plusBtn_001.png", this, menu_selector(BetterLayersEditorUI::onNextFreeLayer)))
-                .id("next-free-layer-button"_spr)
-                .scaleToFit(LAYER_EXTRA_BUTTON_SIZE)
-                .visible(Settings::BetterLayers::nextFreeButton.get())
+        auto nextFreeLayer = ui::node(Setup(ui::buttonFrame(
+            "GJ_plusBtn_001.png", this, menu_selector(BetterLayersEditorUI::onNextFreeLayer)
+        ))
+            .id("next-free-layer-button"_spr)
+            .scaleToFit(LAYER_EXTRA_BUTTON_SIZE)
+            .visible(Settings::BetterLayers::nextFreeButton.get())
         );
 
-        fields->lockLayerButton = ui::node(
-            Setup(ui::togglerFrame("warpLockOffBtn_001.png", "warpLockOnBtn_001.png", this, menu_selector(BetterLayersEditorUI::onToggleLayerLocked)))
-                .id("lock-layer-button"_spr)
-                .scaleToFit(LAYER_EXTRA_BUTTON_SIZE)
-                .visible(Settings::BetterLayers::lockButton.get())
+        fields->lockLayerButton = ui::node(Setup(ui::togglerFrame(
+            "warpLockOffBtn_001.png", "warpLockOnBtn_001.png", this, menu_selector(BetterLayersEditorUI::onToggleLayerLocked), 1.25f, 1.25f
+        ))
+            .id("lock-layer-button"_spr)
+            .scaleToFit(LAYER_EXTRA_BUTTON_SIZE)
+            .visible(Settings::BetterLayers::lockButton.get())
         );
 
-        auto layerSettings = ui::node(
-            Setup(ui::buttonFrame("GJ_optionsBtn_001.png", this, menu_selector(BetterLayersEditorUI::onLayerSettings)))
-                .id("layer-settings-button"_spr)
-                .scaleToFit((LAYER_SHIFT_BUTTON_SIZE + LAYER_EXTRA_BUTTON_SIZE) / 2)
+        auto layerSettings = ui::node(Setup(ui::buttonFrame(
+            "GJ_optionsBtn_001.png", this, menu_selector(BetterLayersEditorUI::onLayerSettings)
+        ))
+            .id("layer-settings-button"_spr)
+            .scaleToFit((LAYER_SHIFT_BUTTON_SIZE + LAYER_EXTRA_BUTTON_SIZE) / 2)
         );
 
         auto oldLayerMenu = m_currentLayerLabel->getParent();
@@ -113,14 +124,9 @@ class $modify(BetterLayersEditorUI, EditorUI) {
             m_currentLayerLabel->setPositionX(999.0f); // i give up dealing with better edits editablelabelproxy fuck that
         }
 
-        fields->newLayerMenu = ui::node(
-            Setup(ui::menu(ui::horizontalDistrbLayout(GAP)))
-                .id("new-layer-menu"_spr)
-                .scale(oldLayerMenu)
-                .anchor(oldLayerMenu)
-                .pos(oldLayerMenu)
-                .order(oldLayerMenu)
-                .children(
+        fields->newLayerMenu = ui::node(Setup(ui::menu(ui::horizontalDistrbLayout(GAP)))
+            .id("new-layer-menu"_spr)
+            .children(
                     layerSettings,
                     fields->lockLayerButton,
                     fields->allLayersButton,
@@ -129,12 +135,16 @@ class $modify(BetterLayersEditorUI, EditorUI) {
                     nextLayer,
                     nextFreeLayer
                 )
-                .parent(this)
+            .parent(this)
         );
 
         m_uiItems->addObject(fields->newLayerMenu);
 
         m_editorLayer->m_currentLayer = m_editorLayer->m_level->m_lastBuildGroupID;
+
+        this->addEventListener(tinker::api::ui_scaling::UIScaleUpdated(), [this] (float, bool, bool) {
+            updateLayerMenu();
+        });
         updateLayerMenu();
 
         return true;
@@ -176,6 +186,14 @@ class $modify(BetterLayersEditorUI, EditorUI) {
         fields->allLayersButton->setVisible(layer != editor::constants::ALL_LAYERS);
 
         fields->newLayerMenu->updateLayout();
+
+        if (auto oldLayerMenu = m_currentLayerLabel->getParent()) {
+            Setup(fields->newLayerMenu)
+                .scale(oldLayerMenu)
+                .anchor(oldLayerMenu)
+                .pos(oldLayerMenu)
+                .order(oldLayerMenu);
+        }
     }
 
     // hjfod highway robbery
@@ -252,6 +270,8 @@ class $modify(BetterLayersEditorUI, EditorUI) {
         }
         else if (m_fields->canDestroyUndo) {
             m_editorLayer->m_undoObjects->removeLastObject(false);
+
+            m_fields->canDestroyUndo = false;
         }
     }
 
@@ -286,32 +306,8 @@ class $modify(BetterLayersEditorUI, EditorUI) {
         }
         else if (m_fields->canDestroyUndo) {
             m_editorLayer->m_undoObjects->removeLastObject(false);
+
+            m_fields->canDestroyUndo = false;
         }
-    }
-};
-
-// idk girl im at my wits end with this fucking god forsaken mod im js typing shit atp let me be done and release this shit omfg
-static bool& shouldDoSillyLayerShenanigans() {
-    static bool val = false;
-    return val;
-}
-
-class $modify(LevelEditorLayer) {
-    void updateVisibility(float dt) {
-        shouldDoSillyLayerShenanigans() = !editor::isPlaytesting();
-
-        LevelEditorLayer::updateVisibility(dt);
-
-        shouldDoSillyLayerShenanigans() = false;
-    }
-};
-
-class $modify(GameObject) {
-    void setOpacity(unsigned char opacity) {
-        GameObject::setOpacity(
-            shouldDoSillyLayerShenanigans() 
-                ? editor::ui<BetterLayersEditorUI*>()->m_fields.self()->settings->opacityForObject(opacity, this) 
-                : opacity
-        );
     }
 };

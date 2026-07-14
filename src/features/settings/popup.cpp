@@ -1,12 +1,11 @@
 #include <internal/utils/utils.hpp>
-#include<Geode/ui/GeodeUI.hpp>
+#include <Geode/ui/GeodeUI.hpp>
 #include <Geode/ui/Button.hpp>
 #include "popup.hpp"
 #include "setting-button.hpp"
 
 using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
-using namespace nwo5::utils::setup;
 
 namespace Settings {
     bool SettingsPopup::init() {
@@ -14,13 +13,15 @@ namespace Settings {
             return false;
         }
 
-        m_pageDotMenu = nwo5::utils::setupNode(
-            CCMenu::create(),
-
-            SetNodeID{"dot-menu"_spr},
-            SetNodeSize{WIDTH - EDGE_PADDING * 2, DOT_MENU_HEIGHT},
-            SetNodePosition{WIDTH / 2, EDGE_PADDING + DOT_MENU_HEIGHT / 2},
-            SetNodeParent{m_mainLayer}
+        m_pageDotMenu = ui::node(Setup(ui::menu(AxisLayout::create()
+            ->setGap(DOT_MENU_GAP)
+            ->setGrowCrossAxis(false)
+            ->setAutoScale(true)
+        ))
+            .id("dot-menu"_spr)
+            .size(WIDTH - EDGE_PADDING * 2, DOT_MENU_HEIGHT)
+            .pos(WIDTH / 2, EDGE_PADDING + DOT_MENU_HEIGHT / 2)
+            .parent(m_mainLayer)
         );
 
         for (auto& category : SettingsManager::get()->getCategories()) {
@@ -40,33 +41,26 @@ namespace Settings {
             }
         }
 
-        m_pageDotMenu->setLayout(AxisLayout::create()
-            ->setGap(DOT_MENU_GAP)
-            ->setGrowCrossAxis(false)
-            ->setAutoScale(false)
-        );
-        m_pageDotMenu->updateLayout();
-
-        auto next = nwo5::utils::setupNode(
-            nwo5::utils::createButtonFrame("GJ_arrow_01_001.png", this, menu_selector(SettingsPopup::onNextPage)),
-
-            SetNodeID{"next-page-button"_spr},
-            SetNodeScaleWithSize{ARROW_SIZE},
-            SetNodePosition{WIDTH + ARROW_DISTANCE, HEIGHT / 2},
-            SetNodeVisibility{Settings::General::showPageArrows.get()},
-            SetNodeParent{m_buttonMenu}
+        auto next = ui::node(Setup(ui::buttonFrame(
+            "GJ_arrow_01_001.png", this, menu_selector(SettingsPopup::onNextPage)
+        ))
+            .id("next-page-button"_spr)
+            .scaleToFit(ARROW_SIZE)
+            .pos(WIDTH + ARROW_DISTANCE, HEIGHT / 2)
+            .visible(Settings::General::showPageArrows.get())
+            .parent(m_buttonMenu)
         );
 
         next->setRotationY(180.0f);
 
-        auto prev = nwo5::utils::setupNode(
-            nwo5::utils::createButtonFrame("GJ_arrow_01_001.png", this, menu_selector(SettingsPopup::onPreviousPage)),
-
-            SetNodeID{"previous-page-button"_spr},
-            SetNodeScaleWithSize{ARROW_SIZE},
-            SetNodePosition{-ARROW_DISTANCE, HEIGHT / 2},
-            SetNodeVisibility{Settings::General::showPageArrows.get()},
-            SetNodeParent{m_buttonMenu}
+        auto prev = ui::node(Setup(ui::buttonFrame(
+            "GJ_arrow_01_001.png", this, menu_selector(SettingsPopup::onPreviousPage)
+        ))
+            .id("previous-page-button"_spr)
+            .scaleToFit(ARROW_SIZE)
+            .pos(-ARROW_DISTANCE, HEIGHT / 2)
+            .visible(Settings::General::showPageArrows.get())
+            .parent(m_buttonMenu)
         );
 
         m_closeBtn->setPosition(WIDTH, HEIGHT);
@@ -79,67 +73,53 @@ namespace Settings {
     CCMenu* SettingsPopup::createPage(Category* pCategory) {  
         const auto page = m_pages.size();
 
-        auto pageContainer = nwo5::utils::setupNode(
-            CCNode::create(),
-
-            SetNodeID{"page-container-{}"_spr, page},
-            SetNodePosition{WIDTH / 2, HEIGHT / 2},
-            SetNodeParent{m_mainLayer}
+        auto pageContainer = ui::node(Setup(CCNode::create())
+            .id("page-container-{}"_spr, page)
+            .pos(WIDTH / 2, HEIGHT / 2)
+            .parent(m_mainLayer)
         );
 
         m_pages.push_back(pageContainer);
         
-        nwo5::utils::setupNode(
-            nwo5::utils::createButton(
-                Settings::General::useLogosForDots.get() ? pCategory->logo() : "smallDot.png", 
-                this, menu_selector(SettingsPopup::onPageDot)
-            ),
-
-            SetNodeID{"page-{}-dot"_spr, page},
-            SetNodeScaleWithSize{DOT_MENU_HEIGHT},
-            SetNodeTag{static_cast<int>(page)},
-            SetNodeParent{m_pageDotMenu}
+        ui::node(Setup(ui::buttonSprite(
+            Settings::General::useLogosForDots.get() ? pCategory->logo() : "smallDot.png", 
+            this, menu_selector(SettingsPopup::onPageDot)
+        ))
+            .id("page-{}-dot"_spr, page)
+            .scaleToFit(DOT_MENU_HEIGHT)
+            .tag(page)
+            .parent(m_pageDotMenu)
         );
 
-        auto menu = nwo5::utils::setupNode(
-            CCMenu::create(),
-
-            SetNodeID{"settings_menu"_spr},
-            SetNodeSize{
-                SettingButtonBase::SETTING_BUTTON_SIZE.width * 3 + SETTING_BUTTON_GAP * 2, 
-                SettingButtonBase::SETTING_BUTTON_SIZE.height * 4 + SETTING_BUTTON_GAP * 2
-            },
-            SetNodePosition{0.0f, -HEIGHT / 2 + EDGE_PADDING + DOT_MENU_HEIGHT + PADDING + SettingButtonBase::SETTING_BUTTON_SIZE.height * 2 + SETTING_BUTTON_GAP},
-            SetNodeParent{pageContainer}
-        );
-
-        menu->setLayout(AxisLayout::create(Axis::Row)
+        auto menu = ui::node(Setup(ui::menu(AxisLayout::create(Axis::Row)
             ->setAxisAlignment(AxisAlignment::Start)
             ->setCrossAxisAlignment(geode::AxisAlignment::End)
             ->setGap(SETTING_BUTTON_GAP)
             ->setGrowCrossAxis(true)
             ->setCrossAxisOverflow(false)
+        ))
+            .id("settings_menu"_spr)
+            .size(
+                SettingButtonBase::SETTING_BUTTON_SIZE.width * 3 + SETTING_BUTTON_GAP * 2, 
+                SettingButtonBase::SETTING_BUTTON_SIZE.height * 4 + SETTING_BUTTON_GAP * 2
+            )
+            .pos(0.0f, -HEIGHT / 2 + EDGE_PADDING + DOT_MENU_HEIGHT + PADDING + SettingButtonBase::SETTING_BUTTON_SIZE.height * 2 + SETTING_BUTTON_GAP)
+            .parent(pageContainer)
         );
 
-        auto logo = nwo5::utils::setupNode(
-            CCSprite::create(pCategory->logo().c_str()),
-
-            SetNodeID{"logo"_spr},
-            SetNodePosition{-WIDTH / 2 + EDGE_PADDING + LOGO_SIZE / 2, HEIGHT / 2 - EDGE_PADDING - LOGO_SIZE / 2},
-            SetNodeScaleWithSize{LOGO_SIZE},
-            SetNodeParent{pageContainer}
+        auto logo = ui::node(Setup(CCSprite::create(pCategory->logo().c_str()))
+            .id("logo"_spr)
+            .pos(-WIDTH / 2 + EDGE_PADDING + LOGO_SIZE / 2, HEIGHT / 2 - EDGE_PADDING - LOGO_SIZE / 2)
+            .scaleToFit(LOGO_SIZE)
+            .parent(pageContainer)
         );
 
-        auto label = CCLabelBMFont::create(pCategory->name().c_str(), "bigFont.fnt");
-
-        nwo5::utils::setupNode(
-            label,
-
-            SetNodeID{"category-label"_spr},
-            SetNodeAnchor{LEFT_CENTER_ANCHOR},
-            SetNodeScale{0.5f},
-            SetNodePosition{logo->getPositionX() + LOGO_SIZE / 2 + PADDING, logo->getPositionY()},
-            SetNodeParent{pageContainer}
+        auto label = ui::node(Setup(ui::label(pCategory->name()))
+            .id("category-label"_spr)
+            .anchor(LEFT_CENTER_ANCHOR)
+            .scale(0.5f)
+            .pos(logo->getPositionX() + LOGO_SIZE / 2 + PADDING, logo->getPositionY())
+            .parent(pageContainer)
         );
 
         if (pCategory->name() == "Keybinds") {
@@ -168,15 +148,13 @@ namespace Settings {
     }
 
     void SettingsPopup::setupKeybindsMenu(cocos2d::CCNode* pContainer) {
-        nwo5::utils::setupNode(
-            Button::createWithNode(ButtonSprite::create("Open Keybinds"), [this] (Button*) {
-                geode::openSettingsPopup(Mod::get(), true);
-            }),
-
-            SetNodeID{"keybinds_button"_spr},
-            SetNodeScaleWithSize{KEYBINDS_BUTTON_SIZE},
-            SetNodePosition{CCPointZero},
-            SetNodeParent{pContainer}
+        ui::node(Setup(Button::createWithNode(ButtonSprite::create("Open Keybinds"), [this] (Button*) {
+            geode::openSettingsPopup(Mod::get(), true);
+        }))
+            .id("keybinds_button"_spr)
+            .scaleToFit(KEYBINDS_BUTTON_SIZE)
+            .pos(CCPointZero)
+            .parent(pContainer)
         );
     }
 

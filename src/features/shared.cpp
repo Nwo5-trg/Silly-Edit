@@ -1,15 +1,14 @@
 #include <Geode/modify/LevelEditorLayer.hpp>
-#include <internal/utils/utils.hpp>
 #include "features/shared.hpp"
 
 using namespace geode::prelude;
-using namespace nwo5::utils::setup;
+using namespace nwo5::ui::prelude;
 
 class $modify(SharedLevelEditorLayer, LevelEditorLayer) {
     struct Fields {
-        CCDrawNode* gridDraw = nullptr;
+        SillyDrawNode* gridDraw = nullptr;
         CCLayer* gridLayer = nullptr;
-        CCDrawNode* overlayDraw = nullptr;
+        SillyDrawNode* overlayDraw = nullptr;
         CCLayer* overlayLayer = nullptr;
 
         CCLayer* hiddenLayer = nullptr;
@@ -18,28 +17,17 @@ class $modify(SharedLevelEditorLayer, LevelEditorLayer) {
     };
 
     CCLayer* createLayer(std::string_view pID, int pZ) {
-        return nwo5::utils::setupNode(
-            CCLayer::create(),
-
-            SetNodeID{pID},
-            SetNodePosition{CCPointZero},
-            SetNodeOrder{pZ},
-            SetNodeParent{m_objectLayer}
-        );
+        return Setup(CCLayer::create())
+            .id(pID)
+            .pos(CCPointZero)
+            .order(pZ)
+            .parent(m_objectLayer);
     }
-    CCDrawNode* createDrawNode(std::string_view pID, CCNode* pParent) {
-        auto drawNode = nwo5::utils::setupNode(
-            CCDrawNode::create(),
-
-            SetNodeID{pID},
-            SetNodePosition{CCPointZero},
-            SetNodeParent{pParent}
-        );
-
-        drawNode->setBlendFunc({GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA});
-        drawNode->m_bUseArea = false;
-        
-        return drawNode;
+    SillyDrawNode* createDrawNode(std::string_view pID, CCNode* pParent) {
+        return Setup(SillyDrawNode::create())
+            .id(pID)
+            .pos(CCPointZero)
+            .parent(m_objectLayer);
     }
 
     bool init(GJGameLevel* level, bool noUI) {
@@ -75,7 +63,7 @@ class $modify(SharedLevelEditorLayer, LevelEditorLayer) {
 };
 
 namespace Shared {
-    CCDrawNode* getGridDraw() {
+    SillyDrawNode* getGridDraw() {
         if (auto layer = editor::layer<SharedLevelEditorLayer*>()) {
             return layer->m_fields->gridDraw;
         }
@@ -89,7 +77,7 @@ namespace Shared {
         
         return nullptr;
     }
-    CCDrawNode* getOverlayDraw() {
+    SillyDrawNode* getOverlayDraw() {
         if (auto layer = editor::layer<SharedLevelEditorLayer*>()) {
             return layer->m_fields->overlayDraw;
         }

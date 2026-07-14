@@ -9,7 +9,7 @@ namespace Settings::BetterLayers {
     inline SillySetting<bool> nextFreeButton{"Next Free Button", "Better Layers", true, SettingReload::Editor};
     inline SillySetting<bool> lockButton{"Lock Button", "Better Layers", true, SettingReload::Editor};
     inline SillySetting<bool> unselectableHiddenLayers{"Unselectable Hidden Layers", "Better Layers", true};
-    inline SillySetting<int> layerOpacity{"Layer Opacity", "Better Layers", 50};
-    inline SillySetting<int> unfocusedLayerOpacity{"Unfocused Layer Opacity", "Better Layers", 25};
+    inline SillySetting<int> layerOpacity{"Layer Opacity", "Better Layers", 50, {0, 255}, "from 0-255"};
+    inline SillySetting<int> unfocusedLayerOpacity{"Unfocused Layer Opacity", "Better Layers", 25, {0, 255}, "from 0-255"};
     inline SillySetting<bool> unselectableUnfocusedLayers{"Unselectable Unfocused Layers", "Better Layers", false};
 }

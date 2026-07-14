@@ -1,4 +1,15 @@
 ## v0.1.0-beta.2
+**Added**
+
+- miscellaneous tab
+- hide in playtest
+- removed replace obj (for now, rework coming)
+- setting min/max
+- made better layers faster
+- bumped silly api version
+- better tinker compat
+- better edit incompat
+
 **Fixed**
 
 - default object options working in general :pray:
@@ -6,10 +17,16 @@
 - default object options initializing trigger values wrong
 - use json and simple default obj options not working together
 - copy paste obj string not copying to clipboard unless u click the button twice
-- better edit better scale compat
-- floodfill crash i think
+- better edit/better touch prio better scale compat
 - ugly layer lock color
 - free snap colors still showing if hsv overlay/color overlay was enabled
+- some crashes
+- hook prio
+
+**Internal**
+
+- ported ui code to actually good ui builder for more features
+- a bunch of internal changes mainly cuz i merged utils into silly api
 
 ## v0.1.0-beta.1
 **Added**

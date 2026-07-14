@@ -15,10 +15,22 @@ class $modify(EditorUI) {
         return m_snapObjectExists ? m_snapObject : nullptr;
     }
 
+    CCPoint getSnappedPos(GameObject* pObj) {
+        const auto id = editor::object::id(pObj);
+        const auto offset = offsetForKey(id);
+        const auto pos = pObj->getRealPosition() - offset;
+        const auto gridSize = Settings::FreeSnap::gridSize.get() * (editor::object::size(pObj) / 30.0f);
+
+        return CCPoint{
+            std::round(pos.x / gridSize) * gridSize,
+            std::round(pos.y / gridSize) * gridSize
+        } + offset;
+    }
+
     void snapSelection(GameObject* pSnapObj) {
         editor::object::move(
             editor::selection::get(), 
-            editor::object::snappedPos(pSnapObj, Settings::FreeSnap::gridSize.get()), 
+            getSnappedPos(pSnapObj), 
             false, pSnapObj->getRealPosition()
         );
         
@@ -31,8 +43,8 @@ class $modify(EditorUI) {
         }
 
         // disable snap and do our own thing :3 (idk if snap obj would b valid rn and i dont feel like testing so i wont check for it)
-        if (Settings::FreeSnap::enabled.get() && GameManager::sharedState()->getGameVariable("0008") && !editor::selection::empty()) {
-            GameManager::sharedState()->setGameVariable("0008", false);
+        if (Settings::FreeSnap::enabled.get() && GameManager::sharedState()->getGameVariable(GameVar::EnableSnap) && !editor::selection::empty()) {
+            GameManager::sharedState()->setGameVariable(GameVar::EnableSnap, false);
             m_fields->prollySnapping = true;
 
             // i dont exactly remember y i need this and cant just use a member variable but im trusting
@@ -66,7 +78,7 @@ class $modify(EditorUI) {
 
         EditorUI::ccTouchEnded(touch, event);
 
-        GameManager::sharedState()->setGameVariable("0008", true);
+        GameManager::sharedState()->setGameVariable(GameVar::EnableSnap, true);
 
         if (continueSwipe && obj) {
             snapSelection(obj);
@@ -80,6 +92,8 @@ class $modify(EditorUI) {
             return;
         }
 
+        const bool shouldntColorObjects = m_colorOverlay || m_hsvOverlay;
+
         const auto selectionCol = Settings::FreeSnap::chroma.get() 
             ? nwo5::utils::getChroma<ccColor3B>(Shared::ChromaNode::FreeSnap) 
             : Settings::FreeSnap::selectedObjectColor.get();
@@ -88,20 +102,22 @@ class $modify(EditorUI) {
             : Settings::FreeSnap::snapObjectColor.get();
 
         // touches happen before schedulers so this works :3c
-        if (!m_colorOverlay && !m_hsvOverlay) {
-            for (auto obj : editor::selection::getExt()) {
+        for (auto obj : editor::selection::getExt()) {
+            if (!shouldntColorObjects) {
                 obj->selectObject(selectionCol);
             }
         }
 
         if (const auto obj = getSnapObject(); obj && m_continueSwipe && m_fields->prollySnapping) {
-            obj->selectObject(snapCol);
+            if (!shouldntColorObjects) {
+                obj->selectObject(selectionCol);
+            }
 
             if (!Settings::FreeSnap::snapIndicator.get()) {
                 return;
             }
 
-            const auto pos = editor::object::snappedPos(obj, Settings::FreeSnap::gridSize.get());
+            const auto pos = getSnappedPos(obj);
             const auto scale = obj->getScaledContentSize() / 2.0f;
             const auto theta = kmDegreesToRadians(-obj->getRotation());
 
