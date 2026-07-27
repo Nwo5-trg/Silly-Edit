@@ -6,14 +6,9 @@
 using namespace geode::prelude;
 
 class $modify(EditorUI) {
-    void clickOnPosition(CCPoint position) {
-        EditorUI::clickOnPosition(position);
+    void selectObject(GameObject* object, bool ignoreFilter) {
+        EditorUI::selectObject(object, ignoreFilter);
 
-        if (Settings::Miscellaneous::minorBugfixes.get()) {
-            updateObjectInfoLabel();
-        }
+        updateObjectInfoLabel();
     }
-};
-
-class $modify(LevelEditorLayer) {
 };

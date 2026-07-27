@@ -136,109 +136,29 @@ class $modify(RulerEditorUI, EditorUI) {
         }
     }
 
-    void updateMeasurements() {
-        // border alignment no workie :fire:
-        const auto padding = CCPoint{Settings::Ruler::padding.get(), Settings::Ruler::padding.get()} / 2 
-            + CCPoint{Settings::Ruler::thickness.get(), Settings::Ruler::thickness.get()} / 2;
-
-        for (const auto& measurement : m_fields->measurements) {
-            const auto start = measurement.start - padding;
-            const auto end = measurement.end + padding;
-
-            const auto col = Settings::Ruler::chroma.get() ? nwo5::utils::getChroma(measurement.color.chroma) : s_colors[measurement.color.main];
-
-            Shared::getOverlayDraw()->drawRect(
-                start, end, {col.r, col.g, col.b, Settings::Ruler::fillOpacity.get()}, Settings::Ruler::thickness.get(), col
-            );
-
-            for (auto label : {measurement.xLabel, measurement.yLabel}) {
-                const auto y = (label == measurement.yLabel);
-
-                Setup(label)
-                    .scale(Settings::Ruler::labelSize.get())
-                    .anchor( // this is prolly a war crime icl but atleast its better than my old ruler impl
-                        y 
-                            ? (Settings::Ruler::dontRotateLabel.get() 
-                                ? (Settings::Ruler::labelOnRight.get() 
-                                    ? LEFT_CENTER_ANCHOR 
-                                    : RIGHT_CENTER_ANCHOR
-                                ) 
-                                : BOTTOM_CENTER_ANCHOR
-                            )
-                            : (Settings::Ruler::labelOnBottom.get() 
-                                ? TOP_CENTER_ANCHOR 
-                                : BOTTOM_CENTER_ANCHOR
-                            )
-                    )
-                    .pos(
-                        y
-                            ? (Settings::Ruler::labelOnRight.get()
-                                ? ccp(
-                                    measurement.end.x + Settings::Ruler::thickness.get() + Settings::Ruler::labelDistance.get(),
-                                    (measurement.start.y + measurement.end.y) / 2
-                                  )
-                                : ccp(
-                                    measurement.start.x - Settings::Ruler::thickness.get() - Settings::Ruler::labelDistance.get(),
-                                    (measurement.start.y + measurement.end.y) / 2
-                                  )
-                              )
-                            : (Settings::Ruler::labelOnBottom.get()
-                                ? ccp(
-                                    (measurement.start.x + measurement.end.x) / 2,
-                                    measurement.start.y - Settings::Ruler::thickness.get() - Settings::Ruler::labelDistance.get()
-                                  )
-                                : ccp(
-                                    (measurement.start.x + measurement.end.x) / 2,
-                                    measurement.end.y + Settings::Ruler::thickness.get() + Settings::Ruler::labelDistance.get()
-                                  )
-                              )
-                    )
-                    .rotation(
-                            Settings::Ruler::dontRotateLabel.get() 
-                                ? 0.0f 
-                                : (y 
-                                    ? (Settings::Ruler::labelOnRight.get() 
-                                        ? 90.0f 
-                                        : 270.0f
-                                    ) 
-                                    : (Settings::Ruler::labelOnBottom.get() 
-                                        ? 180.0f 
-                                        : 0.0f
-                                    )
-                                )
-                        )
-                    .color(ccc3(col.r * 255, col.g * 255, col.b * 255));
-            }
-        } 
-    }
-
     bool init(LevelEditorLayer* editorLayer) {
-        if (!Settings::Ruler::enabled.get() || !Settings::Ruler::editorTabButton.get()) {
-            editor::unregisterEditTabButton("ruler-button"_spr);
-        }
-        else {
-            editor::registerEditTabButtonFrame("ruler.png"_spr, "create-measurement-button"_spr, 1, [this] (auto) {
+        editor::conditionallyRegisterEditTabButtonFrame(
+            Settings::Ruler::enabled.get() && Settings::Ruler::editorTabButton.get(),
+            "ruler.png"_spr, "create-measurement-button"_spr, 1, [this] (auto) {
                 if (!Settings::Ruler::enabled.get()) {
                     return;
                 }
 
                 if (editor::selection::empty()) {
-                    deleteMeasurement(false);
+                    this->deleteMeasurement(false);
                 }
                 else {
-                    createMeasurement();
+                    this->createMeasurement();
                 }
-            });
-        }
+            }
+        );
         
         if (!EditorUI::init(editorLayer)) {
             return false;
         }
     
         // i dont want the same colors in the same order every time (or mayb it doesnt do that and i js got *very* lucky in my testing idk)
-        // btw ik theres some time utils w/ asp but i actually cant figure them out and i dont wanna go thru the source so wtv man
-        random::_getGenerator().seed(time(nullptr));
-        Shared::addUpdateFunc(SE_UPDATE_FUNC(updateMeasurements));
+        random::_getGenerator().seed(asp::SystemTime::now().timeSinceEpoch().seconds());
 
         nwo5::utils::setupKeybind(this, "ruler-create-measurement-key", [this] (const Keybind&, bool pDown, bool, double) {
             if (Settings::Ruler::enabled.get() && pDown) {
@@ -248,6 +168,83 @@ class $modify(RulerEditorUI, EditorUI) {
         nwo5::utils::setupKeybind(this, "ruler-delete-last-measurement-key", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
             if (Settings::Ruler::enabled.get() && pDown) {
                 deleteMeasurement(pRepeat);
+            }
+        });
+
+        Shared::addUpdateFunc([this] {
+            // border alignment no workie :fire: - update to this comment like months later, now i use my own drawnode so it shoudl work but i havent implemented it yet so it still doesnt and im now too scared to touch this code soooo
+            const auto padding = CCPoint{Settings::Ruler::padding.get(), Settings::Ruler::padding.get()} / 2 
+                + CCPoint{Settings::Ruler::thickness.get(), Settings::Ruler::thickness.get()} / 2;
+
+            for (const auto& measurement : m_fields->measurements) {
+                const auto start = measurement.start - padding;
+                const auto end = measurement.end + padding;
+
+                const auto col = Settings::Ruler::chroma.get() ? nwo5::utils::getChroma(measurement.color.chroma) : s_colors[measurement.color.main];
+
+                Shared::getOverlayDraw()->drawRect(
+                    start, end, nwo5::utils::setOpacity(col, Settings::Ruler::fillOpacity.get()), 
+                    Settings::Ruler::thickness.get() / (Settings::Ruler::scaleWithZoom.get() ? editor::zoom() : 1.0f), col
+                );
+
+                for (auto label : {measurement.xLabel, measurement.yLabel}) {
+                    const auto y = (label == measurement.yLabel);
+
+                    Setup(label)
+                        .scale(Settings::Ruler::labelSize.get())
+                        .anchor( // this is prolly a war crime icl but atleast its better than my old ruler impl
+                            y 
+                                ? (Settings::Ruler::dontRotateLabel.get() 
+                                    ? (Settings::Ruler::labelOnRight.get() 
+                                        ? LEFT_CENTER_ANCHOR 
+                                        : RIGHT_CENTER_ANCHOR
+                                    ) 
+                                    : BOTTOM_CENTER_ANCHOR
+                                )
+                                : (Settings::Ruler::labelOnBottom.get() 
+                                    ? TOP_CENTER_ANCHOR 
+                                    : BOTTOM_CENTER_ANCHOR
+                                )
+                        )
+                        .pos(
+                            y
+                                ? (Settings::Ruler::labelOnRight.get()
+                                    ? ccp(
+                                        measurement.end.x + Settings::Ruler::thickness.get() + Settings::Ruler::labelDistance.get(),
+                                        (measurement.start.y + measurement.end.y) / 2
+                                    )
+                                    : ccp(
+                                        measurement.start.x - Settings::Ruler::thickness.get() - Settings::Ruler::labelDistance.get(),
+                                        (measurement.start.y + measurement.end.y) / 2
+                                    )
+                                )
+                                : (Settings::Ruler::labelOnBottom.get()
+                                    ? ccp(
+                                        (measurement.start.x + measurement.end.x) / 2,
+                                        measurement.start.y - Settings::Ruler::thickness.get() - Settings::Ruler::labelDistance.get()
+                                    )
+                                    : ccp(
+                                        (measurement.start.x + measurement.end.x) / 2,
+                                        measurement.end.y + Settings::Ruler::thickness.get() + Settings::Ruler::labelDistance.get()
+                                    )
+                                )
+                        )
+                        .rotation(
+                                Settings::Ruler::dontRotateLabel.get() 
+                                    ? 0.0f 
+                                    : (y 
+                                        ? (Settings::Ruler::labelOnRight.get() 
+                                            ? 90.0f 
+                                            : 270.0f
+                                        ) 
+                                        : (Settings::Ruler::labelOnBottom.get() 
+                                            ? 180.0f 
+                                            : 0.0f
+                                        )
+                                    )
+                            )
+                        .color(ccc3(col.r * 255, col.g * 255, col.b * 255));
+                }
             }
         });
 

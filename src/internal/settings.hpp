@@ -76,7 +76,7 @@ enum class SettingCategory {
     SetupStartpos,
     BetterScale,
     ReplaceObjects,
-    FreeSnap,
+    SelectionUtils,
     BetterLayers,
     HideWithPlaytest,
     TextObjectUtils,
@@ -84,7 +84,7 @@ enum class SettingCategory {
     CopyPasteObjectStrings,
     BetterSelectAll,
     ObjectTabIcons,
-    Templates,
+    UI,
     Miscellaneous,
     Compat
 };

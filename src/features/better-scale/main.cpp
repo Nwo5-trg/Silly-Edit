@@ -4,7 +4,7 @@
 #include "settings.hpp"
 
 using namespace geode::prelude;
-using namespace nwo5::utils::setup;
+using namespace nwo5::ui::prelude;
 
 class $modify(BetterScaleGJScaleControl, GJScaleControl) {
     struct Fields {
@@ -45,7 +45,7 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
     static constexpr float DEFAULT_LOCK_XY_HEIGHT = 120.0f;
 
     static void onModify(auto& pSelf) {
-        (void)pSelf.setHookPriorityAfter("GJScaleControl::init", nwo5::utils::TINKER_EDIT_ID);
+        (void)pSelf.setHookPriorityAfterPost("GJScaleControl::init", nwo5::utils::TINKER_EDIT_ID);
     }
 
     void customScale(float pScale, ObjectScaleType pType) {
@@ -85,18 +85,18 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
 
         m_scaleLabel->setOpacity(0);
 
-        fields->newScaleLabel = nwo5::utils::setupNode(
-            CCLabelBMFont::create("Scale: ", "bigFont.fnt"),
-
-            SetNodeID{"new_scale-label"_spr},
-            SetNodeScale{LABEL_SCALE},
-            SetNodePosition{-INPUT_SIZE.width / 2, m_scaleLabel->getPositionY()},
-            SetNodeParent{this}
+        fields->newScaleLabel = ui::node(Setup(ui::label("Scale: ", "bigFont.fnt"))
+            .id("new_scale-label"_spr)
+            .scale(LABEL_SCALE)
+            .pos(-INPUT_SIZE.width / 2, m_scaleLabel->getPositionY())
+            .parent(this)
         );
         fields->scaleNodes.push_back(fields->newScaleLabel);
 
-        fields->scaleInput = nwo5::utils::setupNode(
-            nwo5::utils::createTextInput(INPUT_SIZE.width, INPUT_SIZE.height, "1", [this] (const std::string& pStr) {
+        fields->scaleInput = ui::node(Setup(ui::input(INPUT_SIZE.width, INPUT_SIZE.height, "1"))
+            .id("scale-input"_spr)
+            .pos(fields->newScaleLabel->getScaledContentWidth() / 2, m_scaleLabel->getPositionY())
+            .callback([this] (const std::string& pStr) {
                 if (!pStr.empty()) {
                     const auto num = utils::numFromString<float>(pStr).unwrapOrDefault();
 
@@ -104,44 +104,38 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
 
                     updateInputValues();
                 }
-            }),
-
-            SetNodeID{"scale-input"_spr},
-            SetNodePosition{fields->newScaleLabel->getScaledContentWidth() / 2, m_scaleLabel->getPositionY()},
-            SetNodeParent{this}
+            })
+            .parent(this)
         );
         fields->scaleNodes.push_back(fields->scaleInput);
 
-        fields->shortcutsMenu = nwo5::utils::setupNode(
-            CCMenu::create(),
-
-            SetNodeID{"shortcuts-menu"_spr},
-            SetNodeTag{static_cast<int>(ObjectScaleType::XY)},
-            SetNodeHeight{SHORTCUT_SIZE},
-            SetNodePosition{0.0f, fields->newScaleLabel->getPositionY() + SHORTCUT_SPACE},
-            SetNodeParent{this}
-        );
-        fields->shortcutsMenu->setLayout(AxisLayout::create()
+        fields->shortcutsMenu = ui::node(Setup(ui::menu(AxisLayout::create()
             ->setGrowCrossAxis(false)
             ->setAutoScale(false)
             ->setGap(SHORTCUT_GAP)
+        ))
+            .id("shortcuts-menu"_spr)
+            .tag(static_cast<int>(ObjectScaleType::XY))
+            .height(SHORTCUT_SIZE)
+            .pos(0.0f, fields->newScaleLabel->getPositionY() + SHORTCUT_SPACE)
+            .parent(this)
         );
         fields->scaleNodes.push_back(fields->shortcutsMenu);
 
         m_scaleXLabel->setOpacity(0);
 
-        fields->newScaleXLabel = nwo5::utils::setupNode(
-            CCLabelBMFont::create("ScaleX: ", "bigFont.fnt"),
-
-            SetNodeID{"new-scale-x-label"_spr},
-            SetNodeScale{LABEL_SCALE},
-            SetNodePosition{-INPUT_SIZE.width / 2, m_scaleXLabel->getPositionY()},
-            SetNodeParent{this}
+        fields->newScaleXLabel = ui::node(Setup(ui::label("ScaleX: ", "bigFont.fnt"))
+            .id("new-scale-x-label"_spr)
+            .scale(LABEL_SCALE)
+            .pos(-INPUT_SIZE.width / 2, m_scaleXLabel->getPositionY())
+            .parent(this)
         );
         fields->scaleXYNodes.push_back(fields->newScaleXLabel);
 
-        fields->scaleXInput = nwo5::utils::setupNode(
-            nwo5::utils::createTextInput(INPUT_SIZE.width, INPUT_SIZE.height, "1", [this] (const std::string& pStr) {
+        fields->scaleXInput = ui::node(Setup(ui::input(INPUT_SIZE.width, INPUT_SIZE.height, "1"))
+            .id("scale-x-input"_spr)
+            .pos(fields->newScaleXLabel->getScaledContentWidth() / 2, m_scaleXLabel->getPositionY())
+            .callback([this] (const std::string& pStr) {
                 if (!pStr.empty()) {
                     const auto num = utils::numFromString<float>(pStr).unwrapOrDefault();
                     
@@ -149,44 +143,38 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
 
                     updateInputValues();
                 }
-            }),
-
-            SetNodeID{"scale-x-input"_spr},
-            SetNodePosition{fields->newScaleXLabel->getScaledContentWidth() / 2, m_scaleXLabel->getPositionY()},
-            SetNodeParent{this}
+            })
+            .parent(this)
         );
         fields->scaleXYNodes.push_back(fields->scaleXInput);
 
-        fields->shortcutsXMenu = nwo5::utils::setupNode(
-            CCMenu::create(),
-
-            SetNodeID{"shortcuts-x-menu"_spr},
-            SetNodeTag{static_cast<int>(ObjectScaleType::X)},
-            SetNodeHeight{SHORTCUT_SIZE},
-            SetNodePosition{0.0f, fields->newScaleXLabel->getPositionY() + SHORTCUT_SPACE},
-            SetNodeParent{this}
-        );
-        fields->shortcutsXMenu->setLayout(AxisLayout::create()
+        fields->shortcutsXMenu = ui::node(Setup(ui::menu(AxisLayout::create()
             ->setGrowCrossAxis(false)
             ->setAutoScale(false)
             ->setGap(SHORTCUT_GAP)
+        ))
+            .id("shortcuts-x-menu"_spr)
+            .tag(static_cast<int>(ObjectScaleType::X))
+            .height(SHORTCUT_SIZE)
+            .pos(0.0f, fields->newScaleXLabel->getPositionY() + SHORTCUT_SPACE)
+            .parent(this)
         );
         fields->scaleXYNodes.push_back(fields->shortcutsXMenu);
 
         m_scaleYLabel->setOpacity(0);
 
-        fields->newScaleYLabel = nwo5::utils::setupNode(
-            CCLabelBMFont::create("ScaleY: ", "bigFont.fnt"),
-
-            SetNodeID{"new-scale-y-label"_spr},
-            SetNodeScale{LABEL_SCALE},
-            SetNodePosition{-INPUT_SIZE.width / 2, m_scaleYLabel->getPositionY()},
-            SetNodeParent{this}
+        fields->newScaleYLabel = ui::node(Setup(ui::label("ScaleY: ", "bigFont.fnt"))
+            .id("new-scale-y-label"_spr)
+            .scale(LABEL_SCALE)
+            .pos(-INPUT_SIZE.width / 2, m_scaleYLabel->getPositionY())
+            .parent(this)
         );
         fields->scaleXYNodes.push_back(fields->newScaleYLabel);
 
-        fields->scaleYInput = nwo5::utils::setupNode(
-            nwo5::utils::createTextInput(INPUT_SIZE.width, INPUT_SIZE.height, "1", [this] (const std::string& pStr) {
+        fields->scaleYInput = ui::node(Setup(ui::input(INPUT_SIZE.width, INPUT_SIZE.height, "1"))
+            .id("scale-y-input"_spr)
+            .pos(fields->newScaleYLabel->getScaledContentWidth() / 2, m_scaleYLabel->getPositionY())
+            .callback([this] (const std::string& pStr) {
                 if (!pStr.empty()) {
                     const auto num = utils::numFromString<float>(pStr).unwrapOrDefault();
                     
@@ -194,73 +182,58 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
 
                     updateInputValues();
                 }
-            }),
-
-            SetNodeID{"scale-y-input"_spr},
-            SetNodePosition{fields->newScaleYLabel->getScaledContentWidth() / 2, m_scaleYLabel->getPositionY()},
-            SetNodeParent{this}
+            })
+            .parent(this)
         );
         fields->scaleXYNodes.push_back(fields->scaleYInput);
 
-        fields->shortcutsYMenu = nwo5::utils::setupNode(
-            CCMenu::create(),
-
-            SetNodeID{"shortcuts-y-menu"_spr},
-            SetNodeTag{static_cast<int>(ObjectScaleType::Y)},
-            SetNodeHeight{SHORTCUT_SIZE},
-            SetNodePosition{0.0f, DEFAULT_LABEL_Y_HEIGHT + SHORTCUT_SPACE * 2},
-            SetNodeParent{this}
-        );
-        fields->shortcutsYMenu->setLayout(AxisLayout::create()
+        fields->shortcutsYMenu = ui::node(Setup(ui::menu(AxisLayout::create()
             ->setGrowCrossAxis(false)
             ->setAutoScale(false)
             ->setGap(SHORTCUT_GAP)
+        ))
+            .id("shortcuts-y-menu"_spr)
+            .tag(static_cast<int>(ObjectScaleType::Y))
+            .height(SHORTCUT_SIZE)
+            .pos(0.0f, DEFAULT_LABEL_Y_HEIGHT + SHORTCUT_SPACE * 2)
+            .parent(this)
         );
         fields->scaleXYNodes.push_back(fields->shortcutsYMenu);
 
         m_scaleLockButton->getParent()->setVisible(false);
 
-        fields->extrasMenu = nwo5::utils::setupNode(
-            CCMenu::create(),
-
-            SetNodeID{"extras-menu"_spr},
-            SetNodeHeight{EXTRAS_BUTTON_SIZE},
-            SetNodePositionX{0.0f},
-            SetNodeParent{this}
-        );
-        fields->extrasMenu->setLayout(AxisLayout::create()
+        fields->extrasMenu = ui::node(Setup(ui::menu(AxisLayout::create()
             ->setGrowCrossAxis(false)
             ->setAutoScale(false)
             ->setGap(EXTRAS_GAP)
+        ))
+            .id("extras-menu"_spr)
+            .height(EXTRAS_BUTTON_SIZE)
+            .posX(0.0f)
+            .parent(this)
         );
 
-        nwo5::utils::setupNode(
-            CCMenuItemToggler::create(
-                Settings::BetterScale::newLockTexture.get() 
-                    ? CircleButtonSprite::createWithSprite("unlocked-icon.png"_spr, 1.0f, CircleBaseColor::Gray)
-                    : CCSprite::createWithSpriteFrameName("warpLockOffBtn_001.png"),
-                Settings::BetterScale::newLockTexture.get() 
-                    ? CircleButtonSprite::createWithSprite("locked-icon.png"_spr, 1.0f, CircleBaseColor::Blue)
-                    : CCSprite::createWithSpriteFrameName("warpLockOnBtn_001.png"),
-                this, menu_selector(GJScaleControl::onToggleLockScale)
-            ),
-
-            SetNodeID{"lock-button"_spr},
-            SetNodeScaleWithSize{EXTRAS_BUTTON_SIZE},
-            SetNodeParent{fields->extrasMenu}
-        );
+        Setup(ui::toggler(
+            Settings::BetterScale::newLockTexture.get() 
+                ? CircleButtonSprite::createWithSprite("unlocked-icon.png"_spr, 1.0f, CircleBaseColor::Gray)
+                : CCSprite::createWithSpriteFrameName("warpLockOffBtn_001.png"),
+            Settings::BetterScale::newLockTexture.get() 
+                ? CircleButtonSprite::createWithSprite("locked-icon.png"_spr, 1.0f, CircleBaseColor::Blue)
+                : CCSprite::createWithSpriteFrameName("warpLockOnBtn_001.png"),
+            this, menu_selector(GJScaleControl::onToggleLockScale)
+        ))
+            .id("lock-button"_spr)
+            .scaleToFit(EXTRAS_BUTTON_SIZE)
+            .parent(fields->extrasMenu);
 
         if (Settings::BetterScale::switchModeButton.get()) {
-            nwo5::utils::setupNode(
-                nwo5::utils::createCircleButtonFrame(
-                    "GJ_sortIcon_001.png", CircleBaseColor::Pink, 
-                    this, menu_selector(BetterScaleGJScaleControl::onSwitchMode)
-                ),
-
-                SetNodeID{"switch-mode-button"_spr},
-                SetNodeScaleWithSize{EXTRAS_BUTTON_SIZE},
-                SetNodeParent{fields->extrasMenu}
-            );
+            Setup(ui::circleButtonFrame(
+                "GJ_sortIcon_001.png", CircleBaseColor::Pink, 
+                this, menu_selector(BetterScaleGJScaleControl::onSwitchMode)
+            ))
+                .id("switch-mode-button"_spr)
+                .scaleToFit(EXTRAS_BUTTON_SIZE)
+                .parent(fields->extrasMenu);
         }
 
         fields->extrasMenu->updateLayout();
@@ -302,16 +275,13 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
 
         for (auto menu : {fields->shortcutsMenu, fields->shortcutsXMenu, fields->shortcutsYMenu}) {
             for (int i = 0; i < split.size(); i++) {
-                nwo5::utils::setupNode(
-                    CCMenuItemSpriteExtra::create(
-                        CircleButtonSprite::create(CCLabelBMFont::create(split[i].c_str(), "bigFont.fnt")),
-                        this, menu_selector(BetterScaleGJScaleControl::onScaleShortcut)
-                    ),
-
-                    SetNodeTag{i},
-                    SetNodeScaleWithSize{SHORTCUT_SIZE},
-                    SetNodeParent{menu}
-                );
+                Setup(ui::circleButton(
+                    ui::label(split[i]), CircleBaseColor::Green, 
+                    this, menu_selector(BetterScaleGJScaleControl::onScaleShortcut)
+                ))
+                    .tag(i)
+                    .scaleToFit(SHORTCUT_SIZE)
+                    .parent(menu);
             }
 
             menu->updateLayout();

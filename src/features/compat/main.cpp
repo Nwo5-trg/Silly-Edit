@@ -7,7 +7,7 @@ using namespace geode::prelude;
 
 class $modify(EditorUI) {
     static void onModify(auto& pSelf) {
-        (void)pSelf.setHookPriorityAfter("EditorUI::init", nwo5::utils::TINKER_EDIT_ID);
+        (void)pSelf.setHookPriorityAfterPost("EditorUI::init", nwo5::utils::TINKER_EDIT_ID);
     }
 
     bool init(LevelEditorLayer* editorLayer) {
@@ -15,22 +15,23 @@ class $modify(EditorUI) {
             return false;
         }
 
-        auto undoMenu = this->getChildByID("guidelines-menu");
+        auto undoMenu = this->getChildByID("undo-menu");
 
         if (!undoMenu) {
             return true;
         }
 
         // if (auto button = static_cast<CCMenuItemToggler*>(undoMenu->getChildByID(nwo5::utils::TINKER_EDIT_ID + "/hide-ui"))) {
-        if (auto button = undoMenu->getChildByType<CCMenuItemToggler*>(0)) {
+        if (auto button = static_cast<CCMenuItemToggler*>(undoMenu->getChildByID(nwo5::utils::TINKER_EDIT_ID + "/hide-ui-toggle"))) {
+            log::error("nothing");
             if (Settings::Compat::tinkerBEUIButton.get()) {
-                auto unhideSpr = CircleButtonSprite::createWithSpriteFrameName(
+                auto unhideSpr = CircleButtonSprite::createWithSprite(
                     "be-eye-off.png"_spr, 1.0f, CircleBaseColor::Gray, CircleBaseSize::Tiny
                 );
                 unhideSpr->setOpacity(105);
                 static_cast<CCSprite*>(unhideSpr->getTopNode())->setOpacity(105);
                 
-                auto hideSpr = CircleButtonSprite::createWithSpriteFrameName(
+                auto hideSpr = CircleButtonSprite::createWithSprite(
                     "be-eye-on.png"_spr, 1.0f, CircleBaseColor::Green, CircleBaseSize::Tiny
                 );
 
@@ -47,7 +48,7 @@ class $modify(EditorUI) {
 
 class $modify(EditorPauseLayer) {
     static void onModify(auto& pSelf) {
-        (void)pSelf.setHookPriorityAfter("EditorPauseLayer::init", nwo5::utils::TINKER_EDIT_ID);
+        (void)pSelf.setHookPriorityAfterPost("EditorPauseLayer::init", nwo5::utils::TINKER_EDIT_ID);
     }
 
     bool init(LevelEditorLayer* layer) {

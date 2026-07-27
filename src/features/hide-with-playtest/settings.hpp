@@ -7,7 +7,7 @@ namespace Settings::HideWithPlaytest {
     inline SillySetting<bool> enabled{"Enabled", "Hide With Playtest", true};
 
     inline SillySetting<bool> hideTriggers{"Hide Triggers", "Hide With Playtest", true};
-    inline SillySetting<int> triggerOpacity{"Trigger Opacity", "Hide With Playtest", 0, {0, 255}, "from 0-255"};
-    inline SillySetting<bool> hideSpecialBlocks{"Hide Special Blocks", "Hide With Playtest", true};
-    inline SillySetting<int> specialBlockOpacity{"Special Block Opacity", "Hide With Playtest", 0, {0, 255}, "from 0-255"};
+    inline SillySetting<int> triggerOpacity{"Trigger Opacity", "Hide With Playtest", 0, {0, 255}};
+    inline SillySetting<bool> hideSpecialBlocks{"Hide Special\nBlocks", "Hide With Playtest", true};
+    inline SillySetting<int> specialBlockOpacity{"Special Block\nOpacity", "Hide With Playtest", 0, {0, 255}};
 }

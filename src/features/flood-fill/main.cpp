@@ -1,30 +1,21 @@
-#include <internal/utils/utils.hpp>
 #include <Geode/modify/EditorUI.hpp>
+#include <internal/utils/utils.hpp>
+#include <features/shared.hpp>
+#include <features/miscellaneous/include.hpp>
 #include "settings.hpp"
 #include "include.hpp"
 
 using namespace geode::prelude;
 
-using FloodFillFuckWindows::Rect;
+constexpr float MINIMUM_SPECIAL_MOUSE_DISTANCE = 5.0f;
 
 class $modify(FloodFillEditorUI, EditorUI) {
-    Rect rectFromObject(GameObject* pObj, std::optional<CCPoint> pCenter = std::nullopt) {
-        return {
-            pCenter.has_value() ? pCenter.value() : pObj->getRealPosition(), 
-            CCSize(pObj->m_scaleX, pObj->m_scaleY) * editor::object::size(pObj)
-        };
-    }
-    std::vector<Rect> rectsFromObjects(CCArray* pObjs) {
-        std::vector<Rect> out;
+    struct Fields {
+        bool specialHold = false;
+        CCPoint specialStart = CCPointZero;
+    };
 
-        for (auto obj : CCArrayExt<GameObject*>(pObjs)) {
-            out.emplace_back(obj->getRealPosition(), CCSize(obj->m_scaleX, obj->m_scaleY) * editor::object::size(obj));
-        }
-
-        return out;
-    }
-
-    void showNotification(ZStringView pStr, NotificationIcon pIcon) {
+    static void showNotification(ZStringView pStr, NotificationIcon pIcon) {
         if (Settings::FloodFill::notifications.get()) {
             Notification::create(pStr, pIcon)->show();
         }
@@ -35,25 +26,25 @@ class $modify(FloodFillEditorUI, EditorUI) {
         const auto bPos = static_cast<GameObject*>(pObjs->lastObject())->getRealPosition();
 
         if (aPos == bPos) {
-            return showNotification("objects overlapped", NotificationIcon::Warning);
+            return this->showNotification("objects overlapped", NotificationIcon::Warning);
         }
 
         auto base = static_cast<GameObject*>(pObjs->firstObject());
 
         const std::string str{base->getSaveString(m_editorLayer)};
 
-        CCSize gridSize = CCSize(base->m_scaleX, base->m_scaleY) * editor::object::size(base);
-        const auto min = ccp(
+        const auto size = CCSize{base->m_scaleX, base->m_scaleY} * editor::object::size(base);
+        const CCPoint min{
             std::min(aPos.x, bPos.x), std::min(aPos.y, bPos.y)
-        );
-        const auto max = ccp(
+        };
+        const CCPoint max{
             std::max(aPos.x, bPos.x), std::max(aPos.y, bPos.y)
-        );
+        };
 
         auto placedObjs = CCArray::create();
 
-        for (auto x = min.x; x <= max.x; x += gridSize.width) {
-            for (auto y = min.y; y <= max.y; y += gridSize.height) {
+        for (auto x = min.x; x <= max.x; x += size.width) {
+            for (auto y = min.y; y <= max.y; y += size.height) {
                 if (auto res = m_editorLayer->createObjectsFromString(str, true, true); res && res->count()) {
                     auto obj = static_cast<GameObject*>(res->firstObject());
 
@@ -66,18 +57,20 @@ class $modify(FloodFillEditorUI, EditorUI) {
 
         editor::object::remove(pObjs, true);
 
-        m_editorLayer->addToUndoList(UndoObject::createWithArray(placedObjs, UndoCommand::Paste), true);
-
         if (Settings::FloodFill::selectFill.get()) {
-            editor::selection::add(placedObjs, true, true);
+            editor::selection::add(placedObjs, false, true);
         }
+
+        m_editorLayer->m_undoObjects->addObject(
+            UndoObject::createWithArray(placedObjs, UndoCommand::Paste)
+        );
 
         editor::update();
 
-        showNotification("successfully rect filled !", NotificationIcon::Info);
+        this->showNotification("successfully rect filled !", NotificationIcon::Info);
     }
-    void createFromRects(const std::vector<Rect>& pRects, CCArray* pBoundry, GameObject* pBase) {
-        auto placed = CCArray::create();
+    void createFromRects(const std::vector<FF::Rect>& pRects, CCArray* pBoundry, GameObject* pBase) {
+        auto placedObjs = CCArray::create();
 
         const std::string str{pBase->getSaveString(m_editorLayer)};
         const auto size = editor::object::size(pBase);
@@ -89,33 +82,35 @@ class $modify(FloodFillEditorUI, EditorUI) {
                 editor::object::move(obj, rect.center());
                 editor::object::scale(obj, rect.width() / size, rect.height() / size);
 
-                placed->addObject(obj);
+                placedObjs->addObject(obj);
             }
         }
 
-        if (placed->count()) {
-            m_editorLayer->addToUndoList(UndoObject::createWithArray(placed, UndoCommand::Paste), true);
-        }
+        if (placedObjs->count()) {
+            if (Settings::FloodFill::selectFill.get()) {
+                editor::selection::add(pBase, false, true);
+                editor::selection::add(placedObjs, false, true);
+            }
+            if (Settings::FloodFill::selectBoundry.get()) {
+                editor::selection::add(pBoundry, false, true);
+            }
 
-        if (Settings::FloodFill::selectFill.get()) {
-            editor::selection::add(pBase, true, true);
-            editor::selection::add(placed, true, true);
-        }
-        if (Settings::FloodFill::selectBoundry.get()) {
-            editor::selection::add(pBoundry, true, true);
+            m_editorLayer->m_undoObjects->addObject(
+                UndoObject::createWithArray(placedObjs, UndoCommand::Paste)
+            );
         }
         
         editor::update();
 
-        showNotification("successfully flood filled !", NotificationIcon::Info);
+        this->showNotification("successfully flood filled !", NotificationIcon::Info);
     }
 
     void quickFill() {
         if (const auto count = editor::selection::count(); count < 2) {
-            return showNotification("no (or too little) objs selected !", NotificationIcon::Warning);
+            return this->showNotification("no (or too little) objs selected !", NotificationIcon::Warning);
         }
         else if (count == 2) {
-            return rectFill(editor::selection::get());
+            return this->rectFill(editor::selection::get());
         }
 
         auto objs = editor::selection::get();
@@ -140,23 +135,38 @@ class $modify(FloodFillEditorUI, EditorUI) {
         }
 
         if (!mainID.has_value()) {
-            return showNotification("quickfill unable to resolve fill type ! (mayb use floodfill)", NotificationIcon::Warning);
+            return this->showNotification("quickfill unable to resolve fill type !", NotificationIcon::Warning);
         }
 
         if (center) {
             objs->removeObject(center, false);
-        }
 
-        createFromRects(
-            FloodFillFuckWindows::gridFloodFill(
-                std::move(rectsFromObjects(objs)), 
-                center 
-                    ? rectFromObject(center) 
-                    : rectFromObject(static_cast<GameObject*>(objs->firstObject()), editor::object::center(objs, true)), 
-                false
-            ),
-            objs, center ? center : static_cast<GameObject*>(objs->firstObject())
-        );
+            this->createFromRects(
+                FF::gridFloodFill(std::move(FF::rectsFromObjects(objs)), FF::rectFromObject(center), false),
+                objs, center
+            );
+        }
+        else {
+            this->createFromRects(
+                FF::gridFloodFill(
+                    std::move(FF::rectsFromObjects(objs)), 
+                    FF::rectFromObject(static_cast<GameObject*>(objs->firstObject()), editor::object::center(objs, true)), false
+                ),
+                objs, static_cast<GameObject*>(objs->firstObject())
+            );
+        }
+    }
+
+    void keyDown(enumKeyCodes key, double timestamp) {
+        auto fields = m_fields.self();
+
+        if (fields->specialHold && key == enumKeyCodes::KEY_Escape) {
+            fields->specialHold = false;
+
+            return;
+        }
+        
+        EditorUI::keyDown(key, timestamp);
     }
 
     bool init(LevelEditorLayer* editorLayer) {
@@ -164,7 +174,7 @@ class $modify(FloodFillEditorUI, EditorUI) {
             Settings::FloodFill::enabled.get() && Settings::FloodFill::quickFillButton.get(),
             "quickfill.png"_spr, "quick-fill-button"_spr, 2, [this] (auto) {
                 if (Settings::FloodFill::enabled.get()) {
-                    quickFill();
+                    this->quickFill();
                 }
             }
         );
@@ -173,10 +183,112 @@ class $modify(FloodFillEditorUI, EditorUI) {
             return false;
         }
 
-        nwo5::utils::setupKeybind(this, "flood-fill-quick-fill-key", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
-            if (Settings::FloodFill::enabled.get() && pDown && !pRepeat) {
-                quickFill();
+        Shared::addUpdateFunc([this] {
+            Miscellaneous::shouldHidePreviewObject() = false;
+
+            if (!Settings::FloodFill::enabled.get()) {
+                return;
             }
+
+            auto fields = this->m_fields.self();
+
+            if (this->m_isPaused || this->m_editorLayer->m_playbackMode != PlaybackMode::Not || !this->m_selectedObjectIndex || this->m_selectedMode != 2) {
+                fields->specialHold = false;
+            }
+
+            if (!fields->specialHold) {
+                return;
+            }
+
+            const auto mouse = this->m_editorLayer->m_objectLayer->convertToNodeSpace(cocos::getMousePos());
+
+            if (fields->specialStart.getDistance(mouse) <= MINIMUM_SPECIAL_MOUSE_DISTANCE) {
+                return;
+            }
+
+            Miscellaneous::shouldHidePreviewObject() = true;
+
+            const auto size = editor::object::size(this->m_selectedObjectIndex);
+
+            const auto start = this->getGridSnappedPos(CCPoint{
+                std::min(fields->specialStart.x, mouse.x), std::min(fields->specialStart.y, mouse.y)
+            }) - ccp(size, size) / 2;
+            const auto end = this->getGridSnappedPos(CCPoint{
+                std::max(fields->specialStart.x, mouse.x), std::max(fields->specialStart.y, mouse.y)
+            }) + ccp(size, size) / 2;
+            
+            const auto col = Settings::FloodFill::chroma.get() 
+                ? nwo5::utils::getChroma<ccColor4F>(Shared::ChromaNode::Default) 
+                : color_cast<ccColor4F>(Settings::FloodFill::specialPreviewColor.get());
+
+            Shared::getGridDraw()->drawRect(
+                start, end, nwo5::utils::setOpacity(col, Settings::FloodFill::specialPreviewFill.get()),
+                Settings::FloodFill::specialPreviewThickness.get() / (Settings::FloodFill::scaleWithZoom.get() ? editor::zoom() : 1.0f), col
+            );
+        });
+
+        nwo5::utils::setupKeybind(this, "flood-fill-special-key", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
+            if (!Settings::FloodFill::enabled.get()) {
+                return;
+            }
+
+            if (Settings::FloodFill::specialAsButton.get()) {
+                if (pDown && !pRepeat) {
+                    this->quickFill();
+                }
+
+                return;
+            }
+
+            auto fields = this->m_fields.self();
+            
+            if (pDown && !pRepeat) {
+                fields->specialHold = true;
+                fields->specialStart = this->m_editorLayer->m_objectLayer->convertToNodeSpace(cocos::getMousePos());
+            }
+            else if (!pDown && fields->specialHold) {
+                fields->specialHold = false;
+
+                const auto mouse = this->m_editorLayer->m_objectLayer->convertToNodeSpace(cocos::getMousePos());
+
+                if (fields->specialStart.getDistance(mouse) <= MINIMUM_SPECIAL_MOUSE_DISTANCE) {
+                    return;
+                }
+
+                const auto size = editor::object::size(this->m_selectedObjectIndex);
+                const auto min = this->getGridSnappedPos({
+                    std::min(fields->specialStart.x, mouse.x), std::min(fields->specialStart.y, mouse.y)
+                }) + offsetForKey(this->m_selectedObjectIndex);
+                const auto max = this->getGridSnappedPos({
+                    std::max(fields->specialStart.x, mouse.x), std::max(fields->specialStart.y, mouse.y)
+                }) + offsetForKey(this->m_selectedObjectIndex);
+
+                // i dont think i even need this but idek anymore
+                Miscellaneous::removePreviewObject();
+
+                auto placedObjs = CCArray::create();
+
+                for (auto x = min.x; x <= max.x; x += size) {
+                    for (auto y = min.y; y <= max.y; y += size) {
+                        if (auto obj = this->m_editorLayer->createObject(this->m_selectedObjectIndex, {x, y}, true)) {
+                            placedObjs->addObject(obj);
+                        }
+                    }
+                }
+                    
+                if (Settings::FloodFill::selectFill.get() && Settings::FloodFill::selectSpecialFill.get()) {
+                    editor::selection::add(placedObjs, false, true);
+                }
+
+                this->m_editorLayer->m_undoObjects->addObject(
+                    UndoObject::createWithArray(placedObjs, UndoCommand::Paste)
+                );
+
+                editor::update();
+
+                this->showNotification("successfully rect filled !", NotificationIcon::Info);
+            }
+
         });
 
         return true;

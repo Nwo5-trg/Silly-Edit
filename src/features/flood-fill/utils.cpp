@@ -1,8 +1,9 @@
+#include <internal/utils/utils.hpp>
 #include "include.hpp"
 
 using namespace geode::prelude;
 
-namespace FloodFillFuckWindows {
+namespace FF {
     std::vector<Rect> gridFloodFill(std::vector<Rect> pShape, const Rect& pCenter, bool p8Direction) {
         const auto bounds = Rect::bounds(pShape);
 
@@ -41,6 +42,22 @@ namespace FloodFillFuckWindows {
                 stack.push_back(rect + ccp(-rect.width(), -rect.height()));
                 stack.push_back(rect + ccp(rect.width(), -rect.height()));
             }
+        }
+
+        return out;
+    }
+
+    Rect rectFromObject(GameObject* pObj, std::optional<CCPoint> pCenter) {
+        return {
+            pCenter.has_value() ? pCenter.value() : pObj->getRealPosition(), 
+            CCSize{pObj->m_scaleX, pObj->m_scaleY} * editor::object::size(pObj)
+        };
+    }
+    std::vector<Rect> rectsFromObjects(CCArray* pObjs) {
+        std::vector<Rect> out;
+
+        for (auto obj : CCArrayExt<GameObject*>(pObjs)) {
+            out.emplace_back(obj->getRealPosition(), CCSize{obj->m_scaleX, obj->m_scaleY} * editor::object::size(obj));
         }
 
         return out;

@@ -3,19 +3,25 @@
 #include <internal/utils/utils.hpp>
 
 namespace Shared {
-    nwo5::utils::SillyDrawNode* getGridDraw();
-    cocos2d::CCLayer* getGridLayer();
-    nwo5::utils::SillyDrawNode* getOverlayDraw();
-    cocos2d::CCLayer* getOverlayLayer();
-    cocos2d::CCLayer* getHiddenLayer();
-    
-    enum class ChromaNode {
-        FreeSnap = 0,
-        FreeSnapInvert = 180,
+    enum class DrawNode {
+        Default
     };
 
-    // idk how cocos does their c style bullshit and quite frankly i dont care to find out rn
-    // note from the future wtf was i doing here but also im too lazy to change it so :3c
-    #define SE_UPDATE_FUNC(pFunc) [this]{ pFunc (); }
+    nwo5::utils::SillyDrawNode* getGridDraw(DrawNode pDrawNode = DrawNode::Default);
+    cocos2d::CCLayer* getGridLayer();
+    nwo5::utils::SillyDrawNode* getOverlayDraw(DrawNode pDrawNode = DrawNode::Default);
+    cocos2d::CCLayer* getOverlayLayer();
+    cocos2d::CCLayer* getHiddenLayer();
+
+    enum class ChromaNode {
+        Default = 0,
+        SelectionUtilsInvert = 180,
+    };
+
     void addUpdateFunc(geode::Function<void()> pFunc);
+
+    inline auto& shouldApplyCustomPlacedObjectOptions() {
+        static bool val = false;
+        return val;
+    }
 }

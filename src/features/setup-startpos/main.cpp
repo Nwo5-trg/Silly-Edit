@@ -1,5 +1,6 @@
 #include <Geode/modify/LevelEditorLayer.hpp>
 #include <internal/utils/utils.hpp>
+#include <features/shared.hpp>
 #include "settings.hpp"
 
 using namespace geode::prelude;
@@ -31,7 +32,7 @@ class $modify(LevelEditorLayer) {
     GameObject* createObject(int objectID, CCPoint position, bool noUndo) {
         GameObject* ret = LevelEditorLayer::createObject(objectID, position, noUndo);
 
-        if (Settings::SetupStartpos::enabled.get() && !noUndo && ret && ret->m_isStartPos) {
+        if (Settings::SetupStartpos::enabled.get() && Shared::shouldApplyCustomPlacedObjectOptions() && objectID == 31) {
             setupStartpos(static_cast<StartPosObject*>(ret));
         }
         

@@ -1,6 +1,7 @@
 ## v0.1.0-beta.2
 **Added**
 
+- pretty heavily reworked flood fill for pc
 - miscellaneous tab
 - hide in playtest
 - removed replace obj (for now, rework coming)
@@ -25,8 +26,9 @@
 
 **Internal**
 
+- some cleanup and refactoring so styling is a bit more consistent
 - ported ui code to actually good ui builder for more features
-- a bunch of internal changes mainly cuz i merged utils into silly api
+- a bunch of little changes mainly cuz i merged utils into silly api
 
 ## v0.1.0-beta.1
 **Added**

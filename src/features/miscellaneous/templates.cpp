@@ -16,7 +16,7 @@ class $modify(TemplatesLevelOptionsLayer, LevelOptionsLayer) {
     void setupOptions() {
         LevelOptionsLayer::setupOptions();
 
-        if (!Settings::Templates::enabled.get()) {
+        if (!Settings::Miscellaneous::templates.get()) {
             return;
         }
 
@@ -34,7 +34,7 @@ class $modify(TemplatesLevelOptionsLayer, LevelOptionsLayer) {
                 auto res = gmd::exportLevelAsGmd(editor::layer()->m_level, getTemplatePath());
 
                 if (res.isErr()) {
-                    return Notification::create("everything is crashing and burning and were all gonna die !", NotificationIcon::Error)->show();
+                    return Notification::create("(templates) everything is crashing and burning and we're all gonna die !", NotificationIcon::Error)->show();
                 }
 
                 Notification::create("template updated !", NotificationIcon::Info)->show();
@@ -53,7 +53,7 @@ class $modify(GameLevelManager) {
     GJGameLevel* createNewLevel() {
         auto ret = GameLevelManager::createNewLevel();
 
-        if (!Settings::Templates::enabled.get()) {
+        if (!Settings::Miscellaneous::templates.get()) {
             return ret;
         }
 

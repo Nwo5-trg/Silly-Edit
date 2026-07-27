@@ -1,23 +1,11 @@
+#include <Geode/modify/LevelEditorLayer.hpp>
+#include <Geode/modify/EditorUI.hpp>
+#include <internal/utils/utils.hpp>
+#include <features/shared.hpp>
 #include "settings.hpp"
 #include "include.hpp"
-#include <internal/utils/utils.hpp>
-#include <Geode/modify/EditorUI.hpp>
-#include <Geode/modify/LevelEditorLayer.hpp>
 
 using namespace geode::prelude;
-
-class $modify(EditorUI) {
-    bool onCreate() {
-        // to not break custom objects
-        DefaultObjectOptions::shouldApplyObjectOptions() = m_selectedObjectIndex >= 1;
-
-        auto ret = EditorUI::onCreate();
-
-        DefaultObjectOptions::shouldApplyObjectOptions() = false;
-
-        return ret;
-    }
-};
 
 class $modify(LevelEditorLayer) {
     struct Fields {
@@ -54,11 +42,14 @@ class $modify(LevelEditorLayer) {
         return true;
     }
 
-    // please god remind me to actually get off my ass and reverse engineer this cuz this is diabolical
+    static void onModify(auto& pSelf) {
+        (void)pSelf.setHookPriorityPost("LevelEditorLayer::createObject", Priority::VeryEarly);
+    }
+
     GameObject* createObject(int key, CCPoint position, bool noUndo) {
         auto ret = LevelEditorLayer::createObject(key, position, noUndo);
 
-        if (!ret || !Settings::DefaultObjectOptions::enabled.get() || noUndo || !DefaultObjectOptions::shouldApplyObjectOptions()) {
+        if (!Settings::DefaultObjectOptions::enabled.get() || !Shared::shouldApplyCustomPlacedObjectOptions()) {
             return ret;
         }
 
@@ -81,6 +72,18 @@ class $modify(LevelEditorLayer) {
             objectString = objectString.substr(0, i);
         }
         
+        // our father
+        // who art in heaven
+        // hallowed be thy name
+        // thy kingdom come
+        // thy will be done
+        // on earth as it is in heaven
+        // give us this day or daily bread
+        // and forgive us our trespasses
+        // as we forgive those who trespass against us
+        // and lead us not into temptation
+        // but deliver us from evil
+        // lord forgive me for i have sinned
         editor::object::remove(ret);
 
         return static_cast<GameObject*>(

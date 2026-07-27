@@ -4,7 +4,7 @@
 #include "popup.hpp"
 
 using namespace geode::prelude;
-using namespace nwo5::utils::setup;
+using namespace nwo5::ui::prelude;
 
 static void tryShowWarningPopup(LevelEditorLayer* pLayer) {
     static bool shown = false;
@@ -69,16 +69,14 @@ class $modify(SettingsEditorPauseLayer, EditorPauseLayer) {
         );
         spr->setScale(0.85f),
 
-        nwo5::utils::setupNode(
-            CCMenuItemSpriteExtra::create(
-                spr, this, menu_selector(SettingsEditorPauseLayer::onSESettings)
-            ),
-
-            SetNodeID{"se-settings-button"_spr},
-            SetNodeParent{menu}
-        );
-
-        menu->updateLayout();
+        Setup(ui::buttonSprite(
+            fmt::format(
+                "settings-button-{}.png"_spr, 
+                string::toLower(Settings::General::settingsButtonTexture.get())
+            ), this, menu_selector(SettingsEditorPauseLayer::onSESettings), 0.85f
+        ))
+            .id("se-settings-button"_spr)
+            .parent(menu);
 
         return true;
     }

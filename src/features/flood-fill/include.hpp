@@ -1,6 +1,7 @@
 #pragma once
 
-namespace FloodFillFuckWindows {
+// fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows 
+namespace FF {
     struct Rect {
         cocos2d::CCPoint start;
         cocos2d::CCPoint end;
@@ -83,4 +84,6 @@ namespace FloodFillFuckWindows {
     
     // doesnt include center
     std::vector<Rect> gridFloodFill(std::vector<Rect> pShape, const Rect& pCenter, bool p8Direction);
+    Rect rectFromObject(GameObject* pObj, std::optional<cocos2d::CCPoint> pCenter = std::nullopt);
+    std::vector<Rect> rectsFromObjects(cocos2d::CCArray* pObjs);
 }

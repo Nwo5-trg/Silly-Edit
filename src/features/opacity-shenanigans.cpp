@@ -38,7 +38,7 @@ class $modify(GameObject) {
     void setOpacity(unsigned char opacity) {
         const auto state = getSetOpacityHookState();
 
-        if (!enum_cast<int>(state)) {
+        if (state == SetOpacityHookState::ShouldntHook) {
             return GameObject::setOpacity(opacity);
         }
 

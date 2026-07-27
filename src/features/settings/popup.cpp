@@ -29,8 +29,8 @@ namespace Settings {
 
             auto menu = createPage(category);
 
-            for (int i = 0; i < size; i += SETTINGS_PER_PAGE) {
-                for (int j = 0; j < SETTINGS_PER_PAGE && (i + j) < size; j++) {
+            for (size_t i = 0; i < size; i += SETTINGS_PER_PAGE) {
+                for (size_t j = 0; j < SETTINGS_PER_PAGE && (i + j) < size; j++) {
                     auto button = createSettingButton(category->getSettings()[i + j], this);
                     
                     menu->addChild(button);

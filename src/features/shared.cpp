@@ -1,71 +1,91 @@
 #include <Geode/modify/LevelEditorLayer.hpp>
+#include <Geode/modify/EditorUI.hpp>
 #include "features/shared.hpp"
 
 using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
 
-class $modify(SharedLevelEditorLayer, LevelEditorLayer) {
-    struct Fields {
-        SillyDrawNode* gridDraw = nullptr;
-        CCLayer* gridLayer = nullptr;
-        SillyDrawNode* overlayDraw = nullptr;
-        CCLayer* overlayLayer = nullptr;
+namespace Shared {
+    class $modify(EditorUI) {
+        bool onCreate() {
+            // to not break custom objects
+            shouldApplyCustomPlacedObjectOptions() = m_selectedObjectIndex >= 1;
 
-        CCLayer* hiddenLayer = nullptr;
+            auto ret = EditorUI::onCreate();
 
-        std::vector<geode::Function<void()>> drawFuncs;
+            shouldApplyCustomPlacedObjectOptions() = false;
+
+            return ret;
+        }
     };
 
-    CCLayer* createLayer(std::string_view pID, int pZ) {
-        return Setup(CCLayer::create())
-            .id(pID)
-            .pos(CCPointZero)
-            .order(pZ)
-            .parent(m_objectLayer);
-    }
-    SillyDrawNode* createDrawNode(std::string_view pID, CCNode* pParent) {
-        return Setup(SillyDrawNode::create())
-            .id(pID)
-            .pos(CCPointZero)
-            .parent(m_objectLayer);
-    }
+    class $modify(SharedLevelEditorLayer, LevelEditorLayer) {
+        struct Fields {
+            std::unordered_map<DrawNode, SillyDrawNode*> gridDraw;
+            CCLayer* gridLayer = nullptr;
+            std::unordered_map<DrawNode, SillyDrawNode*> overlayDraw;
+            CCLayer* overlayLayer = nullptr;
 
-    bool init(GJGameLevel* level, bool noUI) {
-        if (!LevelEditorLayer::init(level, noUI)) {
-            return false;
+            CCLayer* hiddenLayer = nullptr;
+
+            std::vector<geode::Function<void()>> drawFuncs;
+        };
+
+        CCLayer* createLayer(std::string_view pID, int pZ) {
+            return Setup(CCLayer::create())
+                .id(pID)
+                .pos(CCPointZero)
+                .order(pZ)
+                .parent(m_objectLayer);
+        }
+        SillyDrawNode* createDrawNode(std::string_view pID, CCNode* pParent) {
+            return Setup(SillyDrawNode::create())
+                .id(pID)
+                .pos(CCPointZero)
+                .parent(m_objectLayer);
         }
 
-        m_fields->gridLayer = createLayer("grid-layer"_spr, m_drawGridLayer->getZOrder() + 1);
-        m_fields->gridDraw = createDrawNode("grid-draw"_spr, m_fields->gridLayer);
-        m_fields->overlayLayer = createLayer("overlay-layer"_spr, m_editorUI->m_scaleControl->getZOrder() - 1);
-        m_fields->overlayDraw = createDrawNode("overlay-draw"_spr, m_fields->overlayLayer);
-        (m_fields->hiddenLayer = createLayer("hidden-layer"_spr, 0))->setVisible(false);
-    
-        return true;
-    }
+        bool init(GJGameLevel* level, bool noUI) {
+            if (!LevelEditorLayer::init(level, noUI)) {
+                return false;
+            }
 
-    void updateEditor(float dt) {
-        LevelEditorLayer::updateEditor(dt);
+            m_fields->gridLayer = createLayer("grid-layer"_spr, m_drawGridLayer->getZOrder() + 1);
+            m_fields->overlayLayer = createLayer("overlay-layer"_spr, m_editorUI->m_scaleControl->getZOrder() - 1);
 
-        auto& fields = m_fields;
+            (m_fields->hiddenLayer = createLayer("hidden-layer"_spr, 0))->setVisible(false);
 
-        if (!fields->gridDraw) {
-            return;
+            m_fields->gridDraw[DrawNode::Default] = createDrawNode("grid-draw"_spr, m_fields->gridLayer);
+            m_fields->overlayDraw[DrawNode::Default] = createDrawNode("overlay-draw"_spr, m_fields->overlayLayer);
+        
+            return true;
         }
 
-        fields->gridDraw->clear();
-        fields->overlayDraw->clear();
+        void updateEditor(float dt) {
+            LevelEditorLayer::updateEditor(dt);
 
-        for (auto& func : m_fields->drawFuncs) {
-            func();
+            auto& fields = m_fields;
+
+            if (!fields->gridLayer) {
+                return;
+            }
+
+            for (auto [_, node] : fields->gridDraw) {
+                node->clear();
+            }
+            for (auto [_, node] : fields->overlayDraw) {
+                node->clear();
+            }
+
+            for (auto& func : m_fields->drawFuncs) {
+                func();
+            }
         }
-    }
-};
+    };
 
-namespace Shared {
-    SillyDrawNode* getGridDraw() {
+    SillyDrawNode* getGridDraw(DrawNode pNode) {
         if (auto layer = editor::layer<SharedLevelEditorLayer*>()) {
-            return layer->m_fields->gridDraw;
+            return layer->m_fields->gridDraw[pNode];
         }
 
         return nullptr;
@@ -77,9 +97,9 @@ namespace Shared {
         
         return nullptr;
     }
-    SillyDrawNode* getOverlayDraw() {
+    SillyDrawNode* getOverlayDraw(DrawNode pNode) {
         if (auto layer = editor::layer<SharedLevelEditorLayer*>()) {
-            return layer->m_fields->overlayDraw;
+            return layer->m_fields->overlayDraw[pNode];
         }
 
         return nullptr;

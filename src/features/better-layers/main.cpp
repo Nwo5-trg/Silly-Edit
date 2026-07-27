@@ -33,7 +33,7 @@ class $modify(BetterLayersEditorUI, EditorUI) {
     static constexpr float LAYER_EXTRA_BUTTON_SIZE = 20.0f;
 
     static void onModify(auto& pSelf) {
-        (void)pSelf.setHookPriorityAfter("EditorUI::init", nwo5::utils::TINKER_EDIT_ID);
+        (void)pSelf.setHookPriorityAfterPost("EditorUI::init", nwo5::utils::TINKER_EDIT_ID);
     }
 
     bool init(LevelEditorLayer* editorLayer) {
@@ -190,8 +190,8 @@ class $modify(BetterLayersEditorUI, EditorUI) {
         if (auto oldLayerMenu = m_currentLayerLabel->getParent()) {
             Setup(fields->newLayerMenu)
                 .scale(oldLayerMenu)
-                .anchor(oldLayerMenu)
-                .pos(oldLayerMenu)
+                .anchor(RIGHT_CENTER_ANCHOR)
+                .pos(oldLayerMenu->getPositionX() + oldLayerMenu->getScaledContentWidth() / 2, oldLayerMenu->getPositionY())
                 .order(oldLayerMenu);
         }
     }

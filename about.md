@@ -18,7 +18,13 @@ for more advanced users u can edit any obj prop or inject an obj string per id (
 its kinda in the name - *now with a new impl that actually draws stuff instead of using scaled sprites (what the actual hell was i doing a year ago) :3 !*
 
 ### Flood Fill
-will b expanded but for now features a quick fill button and keybind, which works as follows
+fill a rect or floodfill an area !
+
+holding a special key (`k` by default but i recommend changing it to a modifier key) and moving your cursor while in the create tab will place a rect of objects in that selection
+
+*btw if anyone would find it useful to have the rect resizable before its placed lmk since* ***alpha*** *suggested this*
+
+for mobile, a button is added to the edit tab which does the following on click:
 1. if less than 2 objects are selected to nothing
 2. if exactly 2 objects (of the same id) are selected, fills the area like a rect
 3. if all selected objects but 1 are of the same id, that different id object will be the center and area will be flood filled
@@ -35,8 +41,8 @@ scale input+ but "+"-er but also not really
 - scale control tweaks
 - scale control keybinds
 
-### Free Snap
-a few snap/selection utils
+### Selection Utils
+a few snap/general selection utils
 - changing snap grid size
 - custom selected obj/snap colors
 - snap preview
@@ -78,10 +84,8 @@ select all, but better
 ### Better Object Tab Icons
 makes object tab icons prettier and changeable with resource packs
 
-### Templates
-save a level as a "template" which all new levels now copy (save template button in leveloptions)
-
-(in the future mayb a feature to save multiple templates ????)
+### UI (WIP)
+changes some trigger ui
 
 ### Miscellaneous
 some smaller features that make the editor a bit nicer
