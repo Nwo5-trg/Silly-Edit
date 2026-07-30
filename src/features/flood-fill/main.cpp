@@ -58,7 +58,7 @@ class $modify(FloodFillEditorUI, EditorUI) {
         editor::object::remove(pObjs, true);
 
         if (Settings::FloodFill::selectFill.get()) {
-            editor::selection::add(placedObjs, false, true);
+            editor::selection::set(placedObjs, false, true);
         }
 
         m_editorLayer->m_undoObjects->addObject(
@@ -87,6 +87,8 @@ class $modify(FloodFillEditorUI, EditorUI) {
         }
 
         if (placedObjs->count()) {
+            editor::selection::clear();
+
             if (Settings::FloodFill::selectFill.get()) {
                 editor::selection::add(pBase, false, true);
                 editor::selection::add(placedObjs, false, true);
@@ -277,7 +279,7 @@ class $modify(FloodFillEditorUI, EditorUI) {
                 }
                     
                 if (Settings::FloodFill::selectFill.get() && Settings::FloodFill::selectSpecialFill.get()) {
-                    editor::selection::add(placedObjs, false, true);
+                    editor::selection::set(placedObjs, false, true);
                 }
 
                 this->m_editorLayer->m_undoObjects->addObject(

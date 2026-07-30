@@ -1,8 +1,3 @@
-# final touches i need to do before index release
-- finish camera mode (that one crush trigger type thingy wtv)
-- fix the compat stuff like the hide ui retexture
-- mayb ask alpha for a better way to deal with copy paste obj strings compat other than disabling hooks :sob:
-
 # things i need to do before full release
 - fix some of the createobject functions in silly api
 - add drag + modifier to fill rect thing to flood fill (holy fuck this will b so good)
@@ -10,9 +5,9 @@
 - add better move menu
 - add the custom filters system in whatever way i eventually decide
 - add feature descriptions to settings popup
+- add keybinds button to all categories which add keybinds
 - refactor settings popup ui code to use more layout abuse
 - get off my ass and reverse engineer so i dont have to create objects twice for default object options
-- make setup startpos hook createobject with teh same conditions as default object options for consistency sake
 
 # chores i should get around to sometimes but arent rly important
 - refactor ui code to use new layout stuff i added so i can leverage them more (especially replacing deprecated horizontal/verticaldistriblayout)
@@ -22,3 +17,4 @@
 - add proper this-> access to all called member functions (and accessed members in lambdas)
 - mayb some uniform system for select filters throughout the mod cuz a few features use that alrdy
 - mayb allow updatefunc to take a setting* and that just auto disables it ???? idk
+- add searching settings mayb

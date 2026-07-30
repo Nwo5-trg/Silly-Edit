@@ -13,10 +13,8 @@ namespace Settings {
             return false;
         }
 
-        m_pageDotMenu = ui::node(Setup(ui::menu(AxisLayout::create()
-            ->setGap(DOT_MENU_GAP)
-            ->setGrowCrossAxis(false)
-            ->setAutoScale(true)
+        m_pageDotMenu = ui::node(Setup(ui::menu(ui::row(AxisAlignment::Center, DOT_MENU_GAP)
+            .autoScale()
         ))
             .id("dot-menu"_spr)
             .size(WIDTH - EDGE_PADDING * 2, DOT_MENU_HEIGHT)
@@ -29,13 +27,11 @@ namespace Settings {
 
             auto menu = createPage(category);
 
-            for (size_t i = 0; i < size; i += SETTINGS_PER_PAGE) {
-                for (size_t j = 0; j < SETTINGS_PER_PAGE && (i + j) < size; j++) {
-                    auto button = createSettingButton(category->getSettings()[i + j], this);
+            for (size_t i = 0; i < size; i++) {
+                auto button = createSettingButton(category->getSettings()[i], this);
                     
-                    menu->addChild(button);
-                    m_settings.push_back(button);
-                }
+                menu->addChild(button);
+                m_settings.push_back(button);
 
                 menu->updateLayout();
             }
@@ -91,13 +87,9 @@ namespace Settings {
             .parent(m_pageDotMenu)
         );
 
-        auto menu = ui::node(Setup(ui::menu(AxisLayout::create(Axis::Row)
-            ->setAxisAlignment(AxisAlignment::Start)
-            ->setCrossAxisAlignment(geode::AxisAlignment::End)
-            ->setGap(SETTING_BUTTON_GAP)
-            ->setGrowCrossAxis(true)
-            ->setCrossAxisOverflow(false)
-        ))
+        auto menu = ui::node(Setup(ui::menu(ui::row(
+            AxisAlignment::Start, SETTING_BUTTON_GAP, AxisAlignment::End
+        )))
             .id("settings_menu"_spr)
             .size(
                 SettingButtonBase::SETTING_BUTTON_SIZE.width * 3 + SETTING_BUTTON_GAP * 2, 

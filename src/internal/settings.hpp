@@ -85,8 +85,7 @@ enum class SettingCategory {
     BetterSelectAll,
     ObjectTabIcons,
     UI,
-    Miscellaneous,
-    Compat
+    Miscellaneous
 };
 
 namespace Settings::General {

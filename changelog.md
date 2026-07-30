@@ -37,7 +37,6 @@
 - setup startpos
 - templates
 - better layers
-- compat options (and betteredit/tinker support)
 - some general options
 - reworked replace object
 - strenum settings

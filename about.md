@@ -2,7 +2,9 @@
 a very (un)serious editor mod with a lot of overcomplicated possibly useful features
 
 ## Disclaimer
-**i make literally no promises as to when this mod gets updated or what gets added/removed, i develop this mod completely for fun and with my own needs in mind first, as a design philosophy (and to make things easier for myself :3) everything in the mod is as customizable as possible, this also means u can break things if u try hard enough and im not responsible for any stupid stuff u do (i** ***am*** **responsible for crashes and stuff that rly shouldnt b breaking things tho)**
+***betteredit is largely unsupported***, **it is instead recommended to use this mod with tinker as with both mods combined most of better edits features are already implemented, if you use better edit** ***and*** **tinker and sillyedit then ironically it would prolly be better supported than not using tinker cuz tinker handles a couple compat issues with betteredit, so you could mayb get away with using all 3, but still keep in mind i am not trying to support betteredit at all and anything regarding that will be ignored**
+
+**i make literally no promises as to when this mod gets updated or what gets added/removed, i develop this mod completely for fun and with my own needs in mind first**
 
 ## Features
 pretty much everything can be configured in the settings menu
@@ -39,14 +41,14 @@ scale input+ but "+"-er but also not really
 - scale input
 - scale shortcut buttons
 - scale control tweaks
-- scale control keybinds
+- keybinds
 
 ### Selection Utils
 a few snap/general selection utils
 - changing snap grid size
 - custom selected obj/snap colors
 - snap preview
-- snap keybind
+- keybinds
 
 ### Better Layers
 my impl of layer input but some other stuff too :3
@@ -66,11 +68,7 @@ scuffed text utils
 - kerning input
 
 ### Zoom Input
-fw all things zoom
-- zoom bypass
-- multiplicative zoom
-- zoom input
-- zoom keybinds
+zoom input which technically also serves as constant zoom text
 
 ### Copy Paste Object String
 iykyk, iydk then dw abt it ***disabled by default***
@@ -88,7 +86,11 @@ makes object tab icons prettier and changeable with resource packs
 changes some trigger ui
 
 ### Miscellaneous
-some smaller features that make the editor a bit nicer
+some smaller features
+- bugfixes
+- place object preview (fml)
+- templates (save a level as a "template" which all new levels now copy (save template button in leveloptions))
+- keybinds
 
 ## Credits
 tyyyy <cr>\<3</c> !

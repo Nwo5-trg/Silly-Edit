@@ -13,7 +13,11 @@ static void tryShowWarningPopup(LevelEditorLayer* pLayer) {
         return;
     }
 
-    auto popup = FLAlertLayer::create("SillyEdit", "sillyedit is in <cr>BETA</c> ! there prolly will be <cd>bugs</c> and or <cs>crashes</c>", "Ok !");
+    const auto text = Loader::get()->isModLoaded("hjfod.betteredit")
+        ? "sillyedit is <cr>LARGELY INCOMPATIBLE</c> with <co>betteredit</c>, if you want more <co>betteredit</c> features, of which sillyedit already adds a couple, use <cf>tinker</c> along side sillyedit (read <cl>about</c> for more info)"
+        : "sillyedit is in <cr>BETA</c> ! there prolly will be <cd>bugs</c> and or <cs>crashes</c> (you can disable this popup in <cl>settings</c>)";
+    
+    auto popup = FLAlertLayer::create("SillyEdit", text, "Ok !");
     popup->m_scene = pLayer;
     popup->show();
 

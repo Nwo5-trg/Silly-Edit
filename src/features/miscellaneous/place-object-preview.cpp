@@ -112,16 +112,9 @@ class $modify(PlaceObjectPreviewEditorUI, EditorUI) {
             }
         }
 
-        if (editor::trigger::category(obj) == editor::trigger::Category::Shader) {
-            static_cast<ShaderGameObject*>(obj)->m_editorDisabled = true;
+        if (editor::trigger::is(obj)) {
+            static_cast<EffectGameObject*>(obj)->m_isSpawnTriggered = true;
         }
-    }
-
-    // fixes something with startpos and prolly other things
-    void onPlaytest(CCObject* sender) {
-        Miscellaneous::removePreviewObject();
-
-        EditorUI::onPlaytest(sender);
     }
 
     // fixes obj count
@@ -176,6 +169,13 @@ class $modify(LevelEditorLayer) {
         else {
             LevelEditorLayer::addSpecial(object);
         }
+    }
+
+    // startpos stuff
+    void onPlaytest() {
+        Miscellaneous::removePreviewObject();
+
+        LevelEditorLayer::onPlaytest();
     }
 
     // *should* fix better edit auto save

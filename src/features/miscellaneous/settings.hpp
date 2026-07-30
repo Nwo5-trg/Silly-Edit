@@ -12,7 +12,10 @@ namespace Settings::Miscellaneous {
         false
     #endif
     , "only works on android with mouse and doesnt work on ios ! show a ghost of the object ur about to place"};
-    inline SillySetting<int> placeObjectPreviewOpacity{"Preview\nOpacity", "Miscellaneous", 75, {0, 255}};
+    inline SillySetting<int> placeObjectPreviewOpacity{"Preview Opacity", "Miscellaneous", 75, {0, 255}};
     inline SillySetting<bool> fixObjectLabel{"Fix Object\nLabel", "Miscellaneous", true, "sometimes it doesnt show, this should fix it"};
     inline SillySetting<bool> templates{"Templates", "Miscellaneous", true, "save a level as a \"template\" which all new levels now copy (save template button in leveloptions)"};
+    inline SillySetting<bool> ignoreDamageKeybind{"Ignore Damage\nKeybind", "Miscellaneous", true};
+    inline SillySetting<bool> makeObjectInvisibleKeybind{"Make Object\nInvisible Keybind", "Miscellaneous", true};
+    inline SillySetting<int> invisibleWithGroup{"Invisible With\nGroup", "Miscellaneous", 0, {0, 9999}, "by settings to a number above 0, keybind will, instead of toggling always hide, toggle the object haivng an invisible group"};
 }
