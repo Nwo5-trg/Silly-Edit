@@ -18,7 +18,6 @@ class $modify(EditorUI) {
             }
         });
         nwo5::utils::setupKeybind(this, "miscellaneous-make-object-invisible", [this] (const Keybind&, bool pDown, bool, double) {
-            log::error("rawr");
             if (Settings::Miscellaneous::makeObjectInvisibleKeybind.get() && pDown && editor::selection::count()) {
                 if (Settings::Miscellaneous::invisibleWithGroup.get()) {
                     bool hasGroup = false;
@@ -31,7 +30,6 @@ class $modify(EditorUI) {
                         }
                     }
 
-                    log::error("has group {}", hasGroup);
                     if (hasGroup) {
                         editor::object::removeGroup(editor::selection::get(), Settings::Miscellaneous::invisibleWithGroup.get());
                     }
@@ -50,7 +48,6 @@ class $modify(EditorUI) {
                         }
                     }
 
-                    log::error("is hide {}", isHide);
                     for (auto obj : editor::selection::getExt()) {
                         obj->m_isHide = !isHide;
                     }

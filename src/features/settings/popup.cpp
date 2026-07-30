@@ -89,7 +89,10 @@ namespace Settings {
 
         auto menu = ui::node(Setup(ui::menu(ui::row(
             AxisAlignment::Start, SETTING_BUTTON_GAP, AxisAlignment::End
-        )))
+        )
+            .autoScale()
+            .crossOverflow(false)
+        ))
             .id("settings_menu"_spr)
             .size(
                 SettingButtonBase::SETTING_BUTTON_SIZE.width * 3 + SETTING_BUTTON_GAP * 2, 

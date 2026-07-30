@@ -1,5 +1,4 @@
 # things i need to do before full release
-- fix some of the createobject functions in silly api
 - add drag + modifier to fill rect thing to flood fill (holy fuck this will b so good)
 - finish ui feature
 - add better move menu
