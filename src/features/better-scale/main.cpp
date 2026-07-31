@@ -109,10 +109,8 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
         );
         fields->scaleNodes.push_back(fields->scaleInput);
 
-        fields->shortcutsMenu = ui::node(Setup(ui::menu(AxisLayout::create()
-            ->setGrowCrossAxis(false)
-            ->setAutoScale(false)
-            ->setGap(SHORTCUT_GAP)
+        fields->shortcutsMenu = ui::node(Setup(ui::menu(ui::row(AxisAlignment::Center, SHORTCUT_GAP)
+            .autoScale(false)
         ))
             .id("shortcuts-menu"_spr)
             .tag(static_cast<int>(ObjectScaleType::XY))
@@ -148,10 +146,8 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
         );
         fields->scaleXYNodes.push_back(fields->scaleXInput);
 
-        fields->shortcutsXMenu = ui::node(Setup(ui::menu(AxisLayout::create()
-            ->setGrowCrossAxis(false)
-            ->setAutoScale(false)
-            ->setGap(SHORTCUT_GAP)
+        fields->shortcutsXMenu = ui::node(Setup(ui::menu(ui::row(AxisAlignment::Center, SHORTCUT_GAP)
+            .autoScale(false)
         ))
             .id("shortcuts-x-menu"_spr)
             .tag(static_cast<int>(ObjectScaleType::X))
@@ -187,10 +183,8 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
         );
         fields->scaleXYNodes.push_back(fields->scaleYInput);
 
-        fields->shortcutsYMenu = ui::node(Setup(ui::menu(AxisLayout::create()
-            ->setGrowCrossAxis(false)
-            ->setAutoScale(false)
-            ->setGap(SHORTCUT_GAP)
+        fields->shortcutsYMenu = ui::node(Setup(ui::menu(ui::row(AxisAlignment::Center, SHORTCUT_GAP)
+            .autoScale(false)
         ))
             .id("shortcuts-y-menu"_spr)
             .tag(static_cast<int>(ObjectScaleType::Y))
@@ -202,10 +196,8 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
 
         m_scaleLockButton->getParent()->setVisible(false);
 
-        fields->extrasMenu = ui::node(Setup(ui::menu(AxisLayout::create()
-            ->setGrowCrossAxis(false)
-            ->setAutoScale(false)
-            ->setGap(EXTRAS_GAP)
+        fields->extrasMenu = ui::node(Setup(ui::menu(ui::row(AxisAlignment::Center, SHORTCUT_GAP)
+            .autoScale(false)
         ))
             .id("extras-menu"_spr)
             .height(EXTRAS_BUTTON_SIZE)
@@ -235,8 +227,6 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
                 .scaleToFit(EXTRAS_BUTTON_SIZE)
                 .parent(fields->extrasMenu);
         }
-
-        fields->extrasMenu->updateLayout();
 
         updateShortcuts();
 
@@ -283,8 +273,6 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
                     .scaleToFit(SHORTCUT_SIZE)
                     .parent(menu);
             }
-
-            menu->updateLayout();
         }
 
         for (const auto& str : split) {
