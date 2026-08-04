@@ -1,6 +1,7 @@
 #include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/LevelEditorLayer.hpp>
 #include <internal/utils/utils.hpp>
+#include <nwo5.ui-scaling/include/include.hpp>
 #include "settings.hpp"
 
 using namespace geode::prelude;
@@ -27,52 +28,33 @@ class $modify(ZoomInputEditorUI, EditorUI) {
         }
 
         auto fields = m_fields.self();
-
-        auto zoomLabel = ui::node(Setup(ui::label("Zoom: ", Font::Default))
-            .id("zoom-label"_spr)
-            .scaleHeightToFit(BASE_ZOOM_INPUT_SIZE.height)
-        );
-
-        fields->zoomInput = ui::node(Setup(ui::input(BASE_ZOOM_INPUT_SIZE, "1"))
-            .filter("1234567890.")
-            .id("zoom-input"_spr)
-        );
-
-        auto zoomButton = ui::node(Setup(ui::circleButtonFrame(
-            "edit_findBtn_001.png", CircleBaseColor::Green, this, menu_selector(ZoomInputEditorUI::onZoomInputButton)
-        ))
-            .id("zoom-button"_spr)
-            .scaleHeightToFit(BASE_ZOOM_INPUT_SIZE.height)
-        );
-        zoomButton->setLayoutOptions(AxisLayoutOptions::create()
-            ->setPrevGap(5.0f)
-        );
-
+        
         fields->zoomContainer = ui::node(Setup(ui::menu(nwo5::ui::horizontalDistrbLayout(0.0f)))
             .id("zoom-input-container"_spr)
             .height(BASE_ZOOM_INPUT_SIZE.height)
             .anchor(TOP_CENTER_ANCHOR)
-            .scale(m_positionSlider->getScale() * Settings::ZoomInput::zoomInputScale.get())
-            .pos(
-                Settings::ZoomInput::centered.get() ? CCDirector::get()->getWinSize().width / 2 : m_positionSlider->getPositionX(),
-                m_positionSlider->getPositionY() + (Settings::ZoomInput::zoomInputOffset.get() * m_positionSlider->getScale())
-            )
             .children(
-                zoomLabel,
-                fields->zoomInput,
-                zoomButton
+                Setup(ui::label("Zoom: ", Font::Default))
+                    .id("zoom-label"_spr)
+                    .scaleHeightToFit(BASE_ZOOM_INPUT_SIZE.height),
+                (fields->zoomInput = ui::node(Setup(ui::input(BASE_ZOOM_INPUT_SIZE, "1"))
+                    .filter("1234567890.")
+                    .id("zoom-input"_spr))),
+                Setup(ui::circleButtonFrame(
+                    "edit_findBtn_001.png", CircleBaseColor::Green, this, menu_selector(ZoomInputEditorUI::onZoomInputButton)
+                ))
+                    .id("zoom-button"_spr)
+                    .scaleHeightToFit(BASE_ZOOM_INPUT_SIZE.height)
+                    .prevGap(5.0f)
             )
             .parent(this)
+            .addTo(m_uiItems)
         );
-        m_uiItems->addObject(fields->zoomContainer);
 
-        this->addEventListener(tinker::api::ui_scaling::UIScaleUpdated(), [this] (float, bool, bool) {
-            Setup(m_fields->zoomContainer)
-                .scale(m_positionSlider->getScale() * Settings::ZoomInput::zoomInputScale.get())
-                .pos(
-                    Settings::ZoomInput::centered.get() ? CCDirector::get()->getWinSize().width / 2 : m_positionSlider->getPositionX(),
-                    m_positionSlider->getPositionY() + (Settings::ZoomInput::zoomInputOffset.get() * m_positionSlider->getScale())
-                ); 
+        this->updateZoomContainer(1.0f);
+
+        this->addEventListener(nwo5::uiscaling::EditorUIScaleChanged(), [this] (float pScale) {
+            this->updateZoomContainer(pScale);
         });
 
         nwo5::utils::setupKeybind(this, "zoom-input-zoom-in", [this] (const Keybind&, bool pDown, bool, double) {
@@ -94,6 +76,15 @@ class $modify(ZoomInputEditorUI, EditorUI) {
         if (auto input = m_fields->zoomInput) {
             input->setString(nwo5::utils::numToString(pZoom));
         }
+    }
+
+    void updateZoomContainer(float pScale) {
+        Setup(m_fields->zoomContainer)
+            .scale(m_positionSlider->getScale() * Settings::ZoomInput::zoomInputScale.get())
+            .pos(
+                Settings::ZoomInput::centered.get() ? CCDirector::get()->getWinSize().width / 2 : m_positionSlider->getPositionX(),
+                m_positionSlider->getPositionY() + (Settings::ZoomInput::zoomInputOffset.get() * m_positionSlider->getScale())
+            ); 
     }
 
     void onZoomInputButton(CCObject*) {

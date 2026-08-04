@@ -2,6 +2,7 @@
 #include <Geode/modify/LevelEditorLayer.hpp>
 #include <Geode/modify/GameObject.hpp>
 #include <internal/utils/utils.hpp>
+#include <nwo5.ui-scaling/include/include.hpp>
 #include "settings.hpp"
 #include "include.hpp"
 
@@ -56,20 +57,20 @@ class $modify(BetterLayersEditorUI, EditorUI) {
             .filter("aA1234567890")
             .maxCharCount(4)
             .callback([this] (const std::string& pStr) {
-                    if (pStr == "a" || pStr == "A") {
-                        editor::setLayer(editor::constants::ALL_LAYERS);
-                    }
-                    else if (pStr.contains('A') || pStr.contains('l')) {
-                        m_fields->layerInput->setString(string::remove(pStr, "Al"));
-                    }
-                    else if (!pStr.empty()) {
-                        auto res = utils::numFromString<int>(pStr);
+                if (pStr == "a" || pStr == "A") {
+                    editor::setLayer(editor::constants::ALL_LAYERS);
+                }
+                else if (pStr.contains('A') || pStr.contains('l')) {
+                    m_fields->layerInput->setString(string::remove(pStr, "Al"));
+                }
+                else if (!pStr.empty()) {
+                    auto res = utils::numFromString<int>(pStr);
 
-                        if (auto res = utils::numFromString<int>(pStr); res.isOk()) {
-                            editor::setLayer(std::clamp(res.unwrap(), 0, editor::constants::MAX_LAYERS));
-                        }
+                    if (auto res = utils::numFromString<int>(pStr); res.isOk()) {
+                        editor::setLayer(std::clamp(res.unwrap(), 0, editor::constants::MAX_LAYERS));
                     }
-                })
+                }
+            })
         );
 
         auto nextLayer = ui::node(Setup(ui::buttonFrame(
@@ -136,16 +137,16 @@ class $modify(BetterLayersEditorUI, EditorUI) {
                     nextFreeLayer
                 )
             .parent(this)
+            .addTo(m_uiItems)
         );
-
-        m_uiItems->addObject(fields->newLayerMenu);
 
         m_editorLayer->m_currentLayer = m_editorLayer->m_level->m_lastBuildGroupID;
 
-        this->addEventListener(tinker::api::ui_scaling::UIScaleUpdated(), [this] (float, bool, bool) {
-            updateLayerMenu();
+        this->updateLayerMenu();
+
+        this->addEventListener(nwo5::uiscaling::EditorUIScaleChanged(), [this] (float) {
+            this->updateLayerMenu();
         });
-        updateLayerMenu();
 
         return true;
     }

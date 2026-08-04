@@ -18,20 +18,26 @@ static bool isProbablierObjectString(std::string_view pStr) {
 }
 
 class $modify(EditorUI) {
-    static void disableTinkerStuffs() {
+    static void disableHooksCuzFuckYou() {
         nwo5::utils::conditionallyEnableHook(
             !Settings::CopyPasteObjectStrings::enabled.get(), nwo5::utils::getTinker(), "EditorUI::doCopyObjects"
         );
         nwo5::utils::conditionallyEnableHook(
             !Settings::CopyPasteObjectStrings::enabled.get(), nwo5::utils::getTinker(), "EditorUI::doPasteObjects"
         );
+        nwo5::utils::conditionallyEnableHook(
+            !Settings::CopyPasteObjectStrings::enabled.get(), nwo5::utils::getBetterEdit(), "EditorUI::doCopyObjects"
+        );
+        nwo5::utils::conditionallyEnableHook(
+            !Settings::CopyPasteObjectStrings::enabled.get(), nwo5::utils::getBetterEdit(), "EditorUI::doPasteObjects"
+        );
     }
 
     bool init(LevelEditorLayer* editorLayer) {
         listenForSavedSettingChanges<SillySetting<bool>>(this, "copy-paste-object-strings-enabled", [] (SillySetting<bool>*) {
-            disableTinkerStuffs();
+            disableHooksCuzFuckYou();
         });
-        disableTinkerStuffs();
+        disableHooksCuzFuckYou();
         
         return EditorUI::init(editorLayer);
     }

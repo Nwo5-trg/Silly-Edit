@@ -1,11 +1,15 @@
 #include <Geode/modify/EditorUI.hpp>
-#include <Geode/modify/LevelEditorLayer.hpp>
 #include <internal/utils/utils.hpp>
 #include "settings.hpp"
 
 using namespace geode::prelude;
+using namespace nwo5::ui::prelude;
 
-class $modify(EditorUI) {
+class $modify(MiscellaneousEditorUI, EditorUI) {
+    struct Fields {
+        CCMenuItemToggler* hideUIToggle = nullptr;
+    };
+
     bool init(LevelEditorLayer* editorLayer) {
         if (!EditorUI::init(editorLayer)) {
             return false;
@@ -70,16 +74,43 @@ class $modify(EditorUI) {
                 }
             }
         });
+
+        auto fields = m_fields.self();
         
+        if (Settings::Miscellaneous::hideUIButton.get()) {
+            if (auto undoMenu = this->getChildByID("undo-menu")) {
+                auto off = CircleButtonSprite::createWithSprite(
+                    "eye-on.png"_spr, 1.0f, CircleBaseColor::Green, CircleBaseSize::Tiny
+                );
+
+                auto on = CircleButtonSprite::createWithSprite(
+                    "eye-off.png"_spr, 1.0f, CircleBaseColor::Gray, CircleBaseSize::Tiny
+                );
+                on->setOpacity(105);
+                static_cast<CCSprite*>(on->getTopNode())->setOpacity(105);
+
+                fields->hideUIToggle = ui::node(Setup(ui::toggler(
+                    off, on, this, menu_selector(MiscellaneousEditorUI::onHideUI)
+                ))
+                    .id("hide-ui-toggle"_spr)
+                    .parent(undoMenu)
+                );
+            }
+        }
 
         return true;
     }
 
-    void selectObject(GameObject* object, bool ignoreFilter) {
-        EditorUI::selectObject(object, ignoreFilter);
+    void onHideUI(CCObject* pSender) {
+        this->showUI(!nwo5::utils::isToggled(pSender));
+    }
 
-        if (Settings::Miscellaneous::fixObjectLabel.get()) {
-            updateObjectInfoLabel();
+    void showUI(bool show) {
+        EditorUI::showUI(show);
+
+        if (auto toggler = m_fields->hideUIToggle) {
+            // toggler->toggle(!show);
+            toggler->setVisible(!editor::isPlaytesting());
         }
-    } 
+    }
 };

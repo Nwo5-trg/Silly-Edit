@@ -12,7 +12,8 @@
 	"developer": "Nwo5",
 	"description": "betteredits adopted little sister est. 2.2081",
 	"links": {
-		"source": "https://github.com/Nwo5-trg/Silly-Edit"
+		"source": "https://github.com/Nwo5-trg/Silly-Edit",
+		"community": "https://discord.gg/AeFeYWGUxZ"
 	},
 	"tags": ["editor", "bugfix", "customization", "enhancement", "interface", "utility", "offline"],
 	"dependencies": {
@@ -22,6 +23,10 @@
 		"cvolton.level-id-api": ">=2.0.0",
 		"alphalaneous.editortab_api": ">=v2.1.10",
 		"alk.better-touch-prio": ">=1.0.20",
+		"nwo5.ui-scaling": {
+			"version": ">=v1.0.0",
+			"required": false
+		},
 		"blueblock6.cleanstartpos": {
 			"version": ">=2.0.6",
 			"required": false

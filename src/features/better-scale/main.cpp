@@ -233,15 +233,13 @@ class $modify(BetterScaleGJScaleControl, GJScaleControl) {
         fields->betterScaleLoaded = true;
 
         // laziest solution works so fuck you
-        if (nwo5::utils::isTinkerLoaded()) {
-            for (auto child : getChildrenExt()) {
-                if (child->getID().view().contains(nwo5::utils::TINKER_EDIT_ID)) {
-                    // not making invisible cuz that would just be reset so close enough
-                    child->setScale(0.0f);
+        for (auto node : getChildrenExt()) {
+            if (const auto id = node->getID().view(); id.contains(nwo5::utils::TINKER_EDIT_ID) || id.contains(nwo5::utils::BETTER_EDIT_ID)) {
+                // not making invisible cuz that would just be reset so close enough
+                node->setScale(0.0f);
 
-                    if (auto input = typeinfo_cast<TextInput*>(child)) {
-                        input->setEnabled(false);
-                    }
+                if (auto input = typeinfo_cast<TextInput*>(node)) {
+                    input->setEnabled(false);
                 }
             }
         }

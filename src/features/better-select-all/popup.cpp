@@ -14,13 +14,9 @@ namespace BetterSelectAll {
 
         setTitle("Select All");
 
-        auto menu = ui::node(Setup(ui::menu(AxisLayout::create()
-            ->setAxisAlignment(AxisAlignment::Start)
-            ->setCrossAxisAlignment(geode::AxisAlignment::End)
-            ->setGap(SELECT_BUTTON_GAP)
-            ->setGrowCrossAxis(true)
-            ->setCrossAxisOverflow(false)
-            ->setAutoScale(false)
+        auto menu = ui::node(Setup(ui::menu(ui::row(AxisAlignment::Start, SELECT_BUTTON_GAP, AxisAlignment::End)
+            .crossOverflow(false)
+            .autoScale(false)
         ))
             .id("button-menu"_spr)
             .size(SELECT_BUTTON_SIZE * 3 + SELECT_BUTTON_GAP * 2, SELECT_BUTTON_SIZE * 3 + SELECT_BUTTON_GAP * 2)

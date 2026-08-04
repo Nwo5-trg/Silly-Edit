@@ -37,7 +37,7 @@ namespace Settings {
             }
         }
 
-        auto next = ui::node(Setup(ui::buttonFrame(
+        Setup(ui::buttonFrame(
             "GJ_arrow_01_001.png", this, menu_selector(SettingsPopup::onNextPage)
         ))
             .id("next-page-button"_spr)
@@ -45,19 +45,15 @@ namespace Settings {
             .pos(WIDTH + ARROW_DISTANCE, HEIGHT / 2)
             .visible(Settings::General::showPageArrows.get())
             .parent(m_buttonMenu)
-        );
-
-        next->setRotationY(180.0f);
-
-        auto prev = ui::node(Setup(ui::buttonFrame(
+            .flipX();
+        Setup(ui::buttonFrame(
             "GJ_arrow_01_001.png", this, menu_selector(SettingsPopup::onPreviousPage)
         ))
             .id("previous-page-button"_spr)
             .scaleToFit(ARROW_SIZE)
             .pos(-ARROW_DISTANCE, HEIGHT / 2)
             .visible(Settings::General::showPageArrows.get())
-            .parent(m_buttonMenu)
-        );
+            .parent(m_buttonMenu);
 
         m_closeBtn->setPosition(WIDTH, HEIGHT);
 
@@ -77,15 +73,14 @@ namespace Settings {
 
         m_pages.push_back(pageContainer);
         
-        ui::node(Setup(ui::buttonSprite(
+        Setup(ui::buttonSprite(
             Settings::General::useLogosForDots.get() ? pCategory->logo() : "smallDot.png", 
             this, menu_selector(SettingsPopup::onPageDot)
         ))
             .id("page-{}-dot"_spr, page)
             .scaleToFit(DOT_MENU_HEIGHT)
             .tag(page)
-            .parent(m_pageDotMenu)
-        );
+            .parent(m_pageDotMenu);
 
         auto menu = ui::node(Setup(ui::menu(ui::row(
             AxisAlignment::Start, SETTING_BUTTON_GAP, AxisAlignment::End
@@ -109,16 +104,21 @@ namespace Settings {
             .parent(pageContainer)
         );
 
-        auto label = ui::node(Setup(ui::label(pCategory->name()))
+        Setup(ui::label(pCategory->name()))
             .id("category-label"_spr)
             .anchor(LEFT_CENTER_ANCHOR)
             .scale(0.5f)
             .pos(logo->getPositionX() + LOGO_SIZE / 2 + PADDING, logo->getPositionY())
-            .parent(pageContainer)
-        );
+            .parent(pageContainer);
 
         if (pCategory->name() == "Keybinds") {
-            setupKeybindsMenu(pageContainer);
+            Setup(Button::createWithNode(ButtonSprite::create("Open Keybinds"), [this] (Button*) {
+                geode::openSettingsPopup(Mod::get(), true);
+            }))
+                .id("keybinds_button"_spr)
+                .scaleToFit(KEYBINDS_BUTTON_SIZE)
+                .pos(CCPointZero)
+                .parent(pageContainer);
         }
 
         return menu;
@@ -140,17 +140,6 @@ namespace Settings {
         m_pageDotMenu->getChildByType<CCMenuItemSpriteExtra*>(m_currentPage)->setColor(ccWHITE);
 
         Mod::get()->setSavedValue<int>("general-settings-page", m_currentPage);
-    }
-
-    void SettingsPopup::setupKeybindsMenu(cocos2d::CCNode* pContainer) {
-        ui::node(Setup(Button::createWithNode(ButtonSprite::create("Open Keybinds"), [this] (Button*) {
-            geode::openSettingsPopup(Mod::get(), true);
-        }))
-            .id("keybinds_button"_spr)
-            .scaleToFit(KEYBINDS_BUTTON_SIZE)
-            .pos(CCPointZero)
-            .parent(pContainer)
-        );
     }
 
     void SettingsPopup::onPageDot(CCObject* pSender) {

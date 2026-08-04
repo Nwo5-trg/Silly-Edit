@@ -39,8 +39,6 @@ namespace Settings {
         
         void goToPage(int pPage);
 
-        void setupKeybindsMenu(cocos2d::CCNode* pContainer);
-
         void onPageDot(cocos2d::CCObject* pSender);
         void onNextPage(cocos2d::CCObject* pSender);
         void onPreviousPage(cocos2d::CCObject* pSender);

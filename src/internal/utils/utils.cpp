@@ -8,6 +8,15 @@ namespace nwo5::utils {
         return {Settings::General::sayoDeviceSensitivity.get(), Settings::General::sayoDeviceScreenBrightness.get()};
     }
 
+    bool isBetterEditLoaded() {
+        static bool loaded = static_cast<bool>(getBetterEdit());
+        return loaded;
+    }
+    Mod* getBetterEdit() {
+        static auto be = Loader::get()->getLoadedMod(BETTER_EDIT_ID);
+        return be;
+    }
+
     bool isTinkerLoaded() {
         static bool loaded = static_cast<bool>(getTinker());
         return loaded;

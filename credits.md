@@ -17,17 +17,11 @@ tyyyy <cr>\<3</c> !
 - text obj utils suggestion
 
 ## Special Thanks
-### Alphalaneous
-- made tinker
-- made some fixes to tinker i requested :3c
-- helped with mods ui
-- help with text obj utils
-- help with replace objects
-
 ### Ery
 - geode gremlin
 - pr for obj tab icons
+- prolly accepting this mod
 
 ### HJFod
 - made better edit
-- also i stole bunch of better edit code and features kinda >:3
+- let me steal a bunch of stuff tyyyy

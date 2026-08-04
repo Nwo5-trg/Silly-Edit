@@ -1,8 +1,8 @@
 # SillyEdit
 a very (un)serious editor mod with a lot of overcomplicated possibly useful features
 
-## Disclaimer
-***betteredit is largely unsupported***, **it is instead recommended to use this mod with tinker as with both mods combined most of better edits features are already implemented, if you use better edit** ***and*** **tinker and sillyedit then ironically it would prolly be better supported than not using tinker cuz tinker handles a couple compat issues with betteredit, so you could mayb get away with using all 3, but still keep in mind i am not trying to support betteredit at all and anything regarding that will be ignored**
+## Disclaimer(s)
+***betteredit is unsupported***, **it might still kinda work, but still keep in mind i am not trying to support betteredit at all and anything regarding that will be ignored**
 
 **i make literally no promises as to when this mod gets updated or what gets added/removed, i develop this mod completely for fun and with my own needs in mind first**
 
@@ -62,6 +62,7 @@ choose what to hide when playtesting (e.g. triggers, special blocks)
 
 ### Text Object Utils
 scuffed text utils
+- edit multiple text objects
 - open text menu when edit object on text
 - newline shortcut/buttons
 - copy/paste
@@ -111,17 +112,11 @@ tyyyy <cr>\<3</c> !
 - text obj utils suggestion
 
 ## Special Thanks
-### Alphalaneous
-- made tinker
-- made some fixes to tinker i requested :3c
-- helped with mods ui
-- help with text obj utils
-- help with replace objects
-
 ### Ery
 - geode gremlin
 - pr for obj tab icons
+- prolly accepting this mod
 
 ### HJFod
 - made better edit
-- also i stole bunch of better edit code and features kinda >:3
+- let me steal a bunch of stuff tyyyy
