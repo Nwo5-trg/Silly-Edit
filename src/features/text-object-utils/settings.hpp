@@ -1,9 +1,9 @@
 #pragma once
 
-#include <internal/settings.hpp>
+#include <settings/include.hpp>
 
 namespace Settings::TextObjectUtils {
-    SILLY_API_INLINE_CATEGORY("Text Object Utils", std::nullopt, "text-object-utils-logo.png"_spr, SettingCategory::TextObjectUtils)
+    SILLY_API_INLINE_CATEGORY("Text Object Utils", std::nullopt, "text-object-utils-logo.png"_spr, Settings::Order::TextObjectUtils)
     inline SillySetting<bool> enabled{"Enabled", "Text Object Utils", true};
 
     inline SillySetting<std::string> newlineShortcut{"Newline Shortcut", "Text Object Utils", "\\n"};

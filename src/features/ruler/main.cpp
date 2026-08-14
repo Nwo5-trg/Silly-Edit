@@ -1,253 +1,212 @@
-#include <Geode/modify/EditorUI.hpp>
-#include <internal/utils/utils.hpp>
-#include <features/shared.hpp>
-#include "settings.hpp"
+#include <utils/include.hpp>
+#include "include.hpp"
 
 using namespace geode::prelude; 
 using namespace nwo5::ui::prelude;
 
-struct MeasurementColor {
-    int main;
-    int chroma;
-};
+Ruler::MeasurementColor Ruler::EditorUI::getMeasurementColor() {
+    const auto& measurements = m_fields->measurements;
 
-struct Measurement {
-    CCPoint start;
-    CCPoint end;
+    int main = measurements.empty() ? -1 : measurements.back().color.main;
 
-    MeasurementColor color;
+    while (true) {
+        const auto random = nwo5::utils::random(0, static_cast<int>(MEASUREMENT_COLOR.size()) - 1);
 
-    CCLabelBMFont* xLabel = nullptr;
-    CCLabelBMFont* yLabel = nullptr;
-};
+        if (random != main) {
+            main = random;
 
-// catpuccin mocha :3
-static constexpr std::array<ccColor4F, 14> s_colors{
-    ccColor4F{0.96f, 0.88f, 0.86f, 1.0f},
-    ccColor4F{0.95f, 0.8f, 0.8f, 1.0f},
-    ccColor4F{0.96f, 0.76f, 0.91f, 1.0f},
-    ccColor4F{0.8f, 0.65f, 0.97f, 1.0f},
-    ccColor4F{0.95f, 0.55f, 0.66f, 1.0f},
-    ccColor4F{0.92f, 0.63f, 0.67f, 1.0f},
-    ccColor4F{0.98f, 0.7f, 0.53f, 1.0f},
-    ccColor4F{0.98f, 0.89f, 0.69f, 1.0f},
-    ccColor4F{0.65f, 0.89f, 0.63f, 1.0f},
-    ccColor4F{0.58f, 0.89f, 0.84f, 1.0f},
-    ccColor4F{0.54f, 0.86f, 0.92f, 1.0f},
-    ccColor4F{0.45f, 0.78f, 0.93f, 1.0f},
-    ccColor4F{0.54f, 0.71f, 0.98f, 1.0f},
-    ccColor4F{0.71f, 0.75f, 1.0f, 1.0f}
-};
+            break;
+        }
+    }
 
-class $modify(RulerEditorUI, EditorUI) {
-    struct Fields {
-        std::vector<Measurement> measurements;
+    int chroma = measurements.empty() ? -1 : measurements.back().color.chroma;
+
+    while (true) {
+        const auto random = nwo5::utils::random(0, 360);
+
+        if (random != chroma) {
+            chroma = random;
+
+            break;
+        }
+    }
+
+    return {main, chroma};
+}
+
+std::string Ruler::EditorUI::getMeasurementString(float pMeasure) {
+    if (Ruler::useGDUnits) {
+        // i think the correct way to do the math is slightly different but this works so
+        const auto measure = pMeasure / (Ruler::useGDUnits ? editor::constants::GRID_SIZE : 1);
+        const auto units = std::floor(measure);
+
+        const auto str =  nwo5::utils::numToString(units);
+
+        // floating point trust issues
+        if (std::abs(measure - units) > std::numeric_limits<float>::epsilon()) {
+            return fmt::format("{}, {}", str, nwo5::utils::numToString((measure - units) * editor::constants::GRID_SIZE_OBJECT));
+        }
+
+        return str;
+    }
+    else {
+        return nwo5::utils::numToString(pMeasure);
+    }
+}
+
+CCLabelBMFont* Ruler::EditorUI::createMeasurementLabel(float pMeasure) {
+    auto label = ui::label(this->getMeasurementString(pMeasure), ui::Font::ChatFont);
+
+    Shared::getOverlayLayer()->addChild(label);
+
+    return label;
+}
+
+void Ruler::EditorUI::createMeasurement() {
+    auto objs = editor::selection::get();
+    const auto bounds = editor::object::bounds(objs, true);
+
+    Measurement measurement = {
+        bounds.origin, bounds.origin + bounds.size, this->getMeasurementColor(),
+        this->createMeasurementLabel(bounds.size.width), this->createMeasurementLabel(bounds.size.height)
     };
 
-    MeasurementColor getMeasurementColor() {
-        const auto& measurements = m_fields->measurements;
+    m_fields->measurements.push_back(std::move(measurement));
+}
 
-        int main = measurements.empty() ? -1 : measurements.back().color.main;
+void Ruler::EditorUI::deleteMeasurement(bool pDeleteAll) {
+    auto& measurements = m_fields->measurements;
 
-        while (true) {
-            const auto random = nwo5::utils::random(0, static_cast<int>(s_colors.size()) - 1);
-
-            if (random != main) {
-                main = random;
-
-                break;
-            }
-        }
-
-        int chroma = measurements.empty() ? -1 : measurements.back().color.chroma;
-
-        while (true) {
-            const auto random = nwo5::utils::random(0, 360);
-
-            if (random != chroma) {
-                chroma = random;
-
-                break;
-            }
-        }
-
-        return {main, chroma};
+    if (measurements.empty()) {
+        return;
     }
 
-    std::string getMeasurementString(float pMeasure) {
-        if (Settings::Ruler::useGDUnits.get()) {
-            // i think the correct way to do the math is slightly different but this works so
-            const auto measure = pMeasure / (Settings::Ruler::useGDUnits.get() ? editor::constants::GRID_SIZE : 1);
-            const auto units = std::floor(measure);
+    measurements.back().xLabel->removeMeAndCleanup();
+    measurements.back().yLabel->removeMeAndCleanup();
 
-            const auto str =  nwo5::utils::numToString(units);
+    measurements.pop_back();
 
-            // floating point trust issues
-            if (std::abs(measure - units) > std::numeric_limits<float>::epsilon()) {
-                return fmt::format("{}, {}", str, nwo5::utils::numToString((measure - units) * editor::constants::GRID_SIZE_OBJECT));
+    if (pDeleteAll) {
+        for (auto& measurement : measurements) {
+            measurement.xLabel->removeMeAndCleanup();
+            measurement.yLabel->removeMeAndCleanup();
+        }
+
+        measurements.clear();
+    }
+}
+
+void Ruler::Feature::onEditor() {
+    auto ui = editor::ui<Ruler::EditorUI>();
+
+    editor::conditionallyRegisterEditTabButtonFrame(
+        Ruler::enabled() && Ruler::editorTabButton,
+        "ruler.png"_spr, "create-measurement-button"_spr, 1, [ui] (auto) {
+            if (!Ruler::enabled()) {
+                return;
             }
 
-            return str;
-        }
-        else {
-            return nwo5::utils::numToString(pMeasure);
-        }
-    }
-
-    CCLabelBMFont* createMeasurementLabel(float pMeasure) {
-        auto label = ui::label(getMeasurementString(pMeasure), ui::Font::ChatFont);
-
-        Shared::getOverlayLayer()->addChild(label);
-
-        return label;
-    }
-
-    void createMeasurement() {
-        auto objs = editor::selection::get();
-        const auto bounds = editor::object::bounds(objs, true);
-
-        Measurement measurement = {
-            bounds.origin, bounds.origin + bounds.size, getMeasurementColor(),
-            createMeasurementLabel(bounds.size.width), createMeasurementLabel(bounds.size.height)
-        };
-
-        m_fields->measurements.push_back(std::move(measurement));
-    }
-
-    void deleteMeasurement(bool pDeleteAll) {
-        auto& measurements = m_fields->measurements;
-
-        if (measurements.empty()) {
-            return;
-        }
-
-        measurements.back().xLabel->removeMeAndCleanup();
-        measurements.back().yLabel->removeMeAndCleanup();
-
-        measurements.pop_back();
-
-        if (pDeleteAll) {
-            for (auto& measurement : measurements) {
-                measurement.xLabel->removeMeAndCleanup();
-                measurement.yLabel->removeMeAndCleanup();
+            if (editor::selection::empty()) {
+                ui->deleteMeasurement(false);
             }
-
-            measurements.clear();
-        }
-    }
-
-    bool init(LevelEditorLayer* editorLayer) {
-        editor::conditionallyRegisterEditTabButtonFrame(
-            Settings::Ruler::enabled.get() && Settings::Ruler::editorTabButton.get(),
-            "ruler.png"_spr, "create-measurement-button"_spr, 1, [this] (auto) {
-                if (!Settings::Ruler::enabled.get()) {
-                    return;
-                }
-
-                if (editor::selection::empty()) {
-                    this->deleteMeasurement(false);
-                }
-                else {
-                    this->createMeasurement();
-                }
+            else {
+                ui->createMeasurement();
             }
+        }
+    );
+
+    // i dont want the same colors in the same order every time (or mayb it doesnt do that and i js got *very* lucky in my testing idk)
+    random::_getGenerator().seed(asp::SystemTime::now().timeSinceEpoch().seconds());
+
+    nwo5::utils::setupKeybind(ui, "ruler-create-measurement-key", [ui] (const Keybind&, bool pDown, bool, double) {
+        if (Ruler::enabled() && pDown) {
+            ui->createMeasurement();
+        }
+    });
+    nwo5::utils::setupKeybind(ui, "ruler-delete-last-measurement-key", [ui] (const Keybind&, bool pDown, bool pRepeat, double) {
+        if (Ruler::enabled() && pDown) {
+            ui->deleteMeasurement(pRepeat);
+        }
+    });
+}
+
+void Ruler::Feature::onUpdate() {
+    auto ui = editor::ui<Ruler::EditorUI>();
+
+    // border alignment no workie :fire: - update to this comment like months later, now i use my own drawnode so it shoudl work but i havent implemented it yet so it still doesnt and im now too scared to touch this code soooo
+    const auto padding = CCPoint{Ruler::padding, Ruler::padding} / 2 
+        + CCPoint{Ruler::thickness, Ruler::thickness} / 2;
+
+    for (const auto& measurement : ui->m_fields->measurements) {
+        const auto start = measurement.start - padding;
+        const auto end = measurement.end + padding;
+
+        const auto col = Ruler::chroma 
+            ? nwo5::utils::getChroma(measurement.color.chroma) 
+            : MEASUREMENT_COLOR[measurement.color.main];
+
+        Shared::getOverlayDraw()->drawRect(
+            start, end, nwo5::utils::setOpacity(col, Ruler::fillOpacity.get()), 
+            Ruler::thickness / (Ruler::scaleWithZoom ? editor::zoom() : 1.0f), col
         );
-        
-        if (!EditorUI::init(editorLayer)) {
-            return false;
-        }
-    
-        // i dont want the same colors in the same order every time (or mayb it doesnt do that and i js got *very* lucky in my testing idk)
-        random::_getGenerator().seed(asp::SystemTime::now().timeSinceEpoch().seconds());
 
-        nwo5::utils::setupKeybind(this, "ruler-create-measurement-key", [this] (const Keybind&, bool pDown, bool, double) {
-            if (Settings::Ruler::enabled.get() && pDown) {
-                createMeasurement();
-            }
-        });
-        nwo5::utils::setupKeybind(this, "ruler-delete-last-measurement-key", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
-            if (Settings::Ruler::enabled.get() && pDown) {
-                deleteMeasurement(pRepeat);
-            }
-        });
+        for (auto label : {measurement.xLabel, measurement.yLabel}) {
+            const auto y = (label == measurement.yLabel);
 
-        Shared::addUpdateFunc([this] {
-            // border alignment no workie :fire: - update to this comment like months later, now i use my own drawnode so it shoudl work but i havent implemented it yet so it still doesnt and im now too scared to touch this code soooo
-            const auto padding = CCPoint{Settings::Ruler::padding.get(), Settings::Ruler::padding.get()} / 2 
-                + CCPoint{Settings::Ruler::thickness.get(), Settings::Ruler::thickness.get()} / 2;
-
-            for (const auto& measurement : m_fields->measurements) {
-                const auto start = measurement.start - padding;
-                const auto end = measurement.end + padding;
-
-                const auto col = Settings::Ruler::chroma.get() ? nwo5::utils::getChroma(measurement.color.chroma) : s_colors[measurement.color.main];
-
-                Shared::getOverlayDraw()->drawRect(
-                    start, end, nwo5::utils::setOpacity(col, Settings::Ruler::fillOpacity.get()), 
-                    Settings::Ruler::thickness.get() / (Settings::Ruler::scaleWithZoom.get() ? editor::zoom() : 1.0f), col
-                );
-
-                for (auto label : {measurement.xLabel, measurement.yLabel}) {
-                    const auto y = (label == measurement.yLabel);
-
-                    Setup(label)
-                        .scale(Settings::Ruler::labelSize.get())
-                        .anchor( // this is prolly a war crime icl but atleast its better than my old ruler impl
-                            y 
-                                ? (Settings::Ruler::dontRotateLabel.get() 
-                                    ? (Settings::Ruler::labelOnRight.get() 
-                                        ? LEFT_CENTER_ANCHOR 
-                                        : RIGHT_CENTER_ANCHOR
-                                    ) 
-                                    : BOTTOM_CENTER_ANCHOR
-                                )
-                                : (Settings::Ruler::labelOnBottom.get() 
-                                    ? TOP_CENTER_ANCHOR 
-                                    : BOTTOM_CENTER_ANCHOR
-                                )
+            Setup(label)
+                .scale(Ruler::labelSize)
+                .anchor( // this is prolly a war crime icl but atleast its better than my old ruler impl
+                    y 
+                        ? (Ruler::dontRotateLabel 
+                            ? (Ruler::labelOnRight 
+                                ? LEFT_CENTER_ANCHOR 
+                                : RIGHT_CENTER_ANCHOR
+                            ) 
+                            : BOTTOM_CENTER_ANCHOR
                         )
-                        .pos(
-                            y
-                                ? (Settings::Ruler::labelOnRight.get()
-                                    ? ccp(
-                                        measurement.end.x + Settings::Ruler::thickness.get() + Settings::Ruler::labelDistance.get(),
-                                        (measurement.start.y + measurement.end.y) / 2
-                                    )
-                                    : ccp(
-                                        measurement.start.x - Settings::Ruler::thickness.get() - Settings::Ruler::labelDistance.get(),
-                                        (measurement.start.y + measurement.end.y) / 2
-                                    )
-                                )
-                                : (Settings::Ruler::labelOnBottom.get()
-                                    ? ccp(
-                                        (measurement.start.x + measurement.end.x) / 2,
-                                        measurement.start.y - Settings::Ruler::thickness.get() - Settings::Ruler::labelDistance.get()
-                                    )
-                                    : ccp(
-                                        (measurement.start.x + measurement.end.x) / 2,
-                                        measurement.end.y + Settings::Ruler::thickness.get() + Settings::Ruler::labelDistance.get()
-                                    )
-                                )
+                        : (Ruler::labelOnBottom 
+                            ? TOP_CENTER_ANCHOR 
+                            : BOTTOM_CENTER_ANCHOR
                         )
-                        .rotation(
-                                Settings::Ruler::dontRotateLabel.get() 
-                                    ? 0.0f 
-                                    : (y 
-                                        ? (Settings::Ruler::labelOnRight.get() 
-                                            ? 90.0f 
-                                            : 270.0f
-                                        ) 
-                                        : (Settings::Ruler::labelOnBottom.get() 
-                                            ? 180.0f 
-                                            : 0.0f
-                                        )
-                                    )
+                )
+                .pos(
+                    y
+                        ? (Ruler::labelOnRight
+                            ? ccp(
+                                measurement.end.x + Ruler::thickness + Ruler::labelDistance,
+                                (measurement.start.y + measurement.end.y) / 2
                             )
-                        .color(ccc3(col.r * 255, col.g * 255, col.b * 255));
-                }
-            }
-        });
-
-        return true;
+                            : ccp(
+                                measurement.start.x - Ruler::thickness - Ruler::labelDistance,
+                                (measurement.start.y + measurement.end.y) / 2
+                            )
+                        )
+                        : (Ruler::labelOnBottom
+                            ? ccp(
+                                (measurement.start.x + measurement.end.x) / 2,
+                                measurement.start.y - Ruler::thickness - Ruler::labelDistance
+                            )
+                            : ccp(
+                                (measurement.start.x + measurement.end.x) / 2,
+                                measurement.end.y + Ruler::thickness + Ruler::labelDistance
+                            )
+                        )
+                )
+                .rotation(
+                        Ruler::dontRotateLabel 
+                            ? 0.0f 
+                            : (y 
+                                ? (Ruler::labelOnRight 
+                                    ? 90.0f 
+                                    : 270.0f
+                                ) 
+                                : (Ruler::labelOnBottom 
+                                    ? 180.0f 
+                                    : 0.0f
+                                )
+                            )
+                    )
+                .color(ccc3(col.r * 255, col.g * 255, col.b * 255));
+        }
     }
-};
+}

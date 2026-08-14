@@ -1,7 +1,7 @@
 #include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/LevelEditorLayer.hpp>
 #include <Geode/modify/GameObject.hpp>
-#include <internal/utils/utils.hpp>
+#include <utils/include.hpp>
 #include <nwo5.ui-scaling/include/include.hpp>
 #include "settings.hpp"
 #include "include.hpp"

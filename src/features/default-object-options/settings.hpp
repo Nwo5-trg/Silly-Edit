@@ -1,9 +1,9 @@
 #pragma once
 
-#include <internal/settings.hpp>
+#include <settings/include.hpp>
 
 namespace Settings::DefaultObjectOptions {
-    SILLY_API_INLINE_CATEGORY("Default Object Options", std::nullopt, "default-object-options-logo.png"_spr, SettingCategory::DefaultObjectOptions)
+    SILLY_API_INLINE_CATEGORY("Default Object Options", std::nullopt, "default-object-options-logo.png"_spr, Settings::Order::DefaultObjectOptions)
     inline SillySetting<bool> enabled{"Enabled", "Default Object Options", true};
 
     inline SillySetting<bool> dontFade{"Dont Fade", "Default Object Options", false};

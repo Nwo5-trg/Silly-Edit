@@ -1,9 +1,9 @@
 #pragma once
 
-#include <internal/settings.hpp>
+#include <settings/include.hpp>
 
 namespace Settings::BetterScale {
-    SILLY_API_INLINE_CATEGORY("Better Scale", std::nullopt, "better-scale-logo.png"_spr, SettingCategory::BetterScale)
+    SILLY_API_INLINE_CATEGORY("Better Scale", std::nullopt, "better-scale-logo.png"_spr, Settings::Order::BetterScale)
     inline SillySetting<bool> enabled{"Enabled", "Better Scale", true, SettingReload::Editor};
 
     inline SillySetting<bool> scaleShortcuts{"Scale Shortcuts", "Better Scale", true, SettingReload::Editor};

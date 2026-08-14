@@ -1,3 +1,17 @@
+## v0.1.0-beta.3
+**Added**
+- api for disabling features
+- multi text edit
+- editor bug fixes
+- license
+
+**Fixed**
+- some ui stuff
+
+**Internal**
+- reorganized the code base
+- features now use a module system similar to tinker
+
 ## v0.1.0-beta.2
 **Added**
 

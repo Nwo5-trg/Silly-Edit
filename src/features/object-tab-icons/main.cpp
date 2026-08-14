@@ -1,72 +1,66 @@
-#include "settings.hpp"
-#include <internal/utils/utils.hpp>
 #include <Geode/modify/EditorUI.hpp>
+#include <utils/include.hpp>
+#include "include.hpp"
 
 using namespace geode::prelude;
 using namespace nwo5::ui;
 
-class $modify(EditorUI) {
-	bool init(LevelEditorLayer* editorLayer) {	
-		if (!EditorUI::init(editorLayer)) {
-            return false;
+void ObjectTabIcons::Feature::onEditor() {
+    if (!ObjectTabIcons::enabled()) {
+        return;
+    }
+
+    auto ui = editor::ui<ObjectTabIcons::EditorUI>();
+
+    const std::pair<const char*, std::string> tabs[] {
+        {"block-tab", ObjectTabIcons::blockTabMode},  {"outline-tab", ObjectTabIcons::outlineTabMode}, {"slope-tab", ObjectTabIcons::slopeTabMode},
+        {"hazard-tab", ObjectTabIcons::hazardTabMode}, {"3d-tab", ObjectTabIcons::threedTabMode}, {"portal-tab", ObjectTabIcons::portalTabMode},
+        {"monster-tab", ObjectTabIcons::monsterTabMode}, {"pixel-tab", ObjectTabIcons::pixelTabMode}, {"collectible-tab", ObjectTabIcons::collectibleTabMode},
+        {"icon-tab", ObjectTabIcons::iconTabMode}, {"deco-tab", ObjectTabIcons::decoTabMode}, {"sawblade-tab", ObjectTabIcons::sawbladeTabMode},
+        {"trigger-tab", ObjectTabIcons::triggerTabMode}, {"custom-tab", ObjectTabIcons::customTabMode}
+    };
+
+    for (const auto& [name, mode] : tabs) {
+        if (mode == "Default") {
+            continue;
         }
 
-        if (!Settings::ObjectTabIcons::enabled.get()) {
-            return true;
-        }
+        // we're js gonna trust u ery pr from a year ago
+        for (int i = 0; i < 2; i++) {
+            auto tab = nwo5::utils::getNestedChildSafe<CCSprite*>(
+                ui->m_tabsMenu,
 
-        const std::pair<const char*, std::string> tabs[] {
-            {"block-tab", Settings::ObjectTabIcons::blockTabMode.get()},  {"outline-tab", Settings::ObjectTabIcons::outlineTabMode.get()}, {"slope-tab", Settings::ObjectTabIcons::slopeTabMode.get()},
-            {"hazard-tab", Settings::ObjectTabIcons::hazardTabMode.get()}, {"3d-tab", Settings::ObjectTabIcons::threedTabMode.get()}, {"portal-tab", Settings::ObjectTabIcons::portalTabMode.get()},
-            {"monster-tab", Settings::ObjectTabIcons::monsterTabMode.get()}, {"pixel-tab", Settings::ObjectTabIcons::pixelTabMode.get()}, {"collectible-tab", Settings::ObjectTabIcons::collectibleTabMode.get()},
-            {"icon-tab", Settings::ObjectTabIcons::iconTabMode.get()}, {"deco-tab", Settings::ObjectTabIcons::decoTabMode.get()}, {"sawblade-tab", Settings::ObjectTabIcons::sawbladeTabMode.get()},
-            {"trigger-tab", Settings::ObjectTabIcons::triggerTabMode.get()}, {"custom-tab", Settings::ObjectTabIcons::customTabMode.get()}
-        };
-
-        for (const auto& [name, mode] : tabs) {
-            if (mode == "Default") {
+                GetChildQuery{name},
+                GetChildQuery<CCMenuItemSpriteExtra>{i},
+                GetChildQuery<CCSprite>{}
+            );
+        
+            if (!tab) {
                 continue;
             }
 
-            // we're js gonna trust u ery pr from a year ago
-            for (int i = 0; i < 2; i++) {
-                auto tab = nwo5::utils::getNestedChildSafe<CCSprite*>(
-                    m_tabsMenu,
+            const auto texture = fmt::format("{}{}.png"_spr, name, mode == "Alt" ? "-alt" : "");
+            
+            auto spr = CCSprite::create(texture.c_str());
 
-                    GetChildQuery{name},
-                    GetChildQuery<CCMenuItemSpriteExtra>{i},
-                    GetChildQuery<CCSprite>{}
-                );
-         
-                if (!tab) {
-                    continue;
-                }
-
-                const auto texture = fmt::format("{}{}.png"_spr, name, mode == "Alt" ? "-alt" : "");
-                
-                auto spr = CCSprite::create(texture.c_str());
-
-                if (!spr || !cocos::isSpriteName(spr, texture.c_str())) {
-                    continue;
-                }
-                
-                auto originalIcon = tab->getChildByType<CCNodeRGBA>(0);
-
-                if (!originalIcon) {
-                    continue;
-                }
-
-                originalIcon->setVisible(false);
-
-                Setup(spr)
-                    .id("{}"_spr, name)
-                    .scale(0.5f)
-                    .opacity(150)
-                    .pos(originalIcon)
-                    .parent(tab);
+            if (!spr || !cocos::isSpriteName(spr, texture.c_str())) {
+                continue;
             }
+            
+            auto originalIcon = tab->getChildByType<CCNodeRGBA>(0);
+
+            if (!originalIcon) {
+                continue;
+            }
+
+            originalIcon->setVisible(false);
+
+            Setup(spr)
+                .id("{}"_spr, name)
+                .scale(0.5f)
+                .opacity(150)
+                .pos(originalIcon)
+                .parent(tab);
         }
-        
-		return true;
-	}
+    }
 };

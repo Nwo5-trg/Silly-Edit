@@ -111,6 +111,9 @@ tyyyy <cr>\<3</c> !
 ### Doranell
 - text obj utils suggestion
 
+### DasshuDev
+- copy particle string idea
+
 ## Special Thanks
 ### Ery
 - geode gremlin

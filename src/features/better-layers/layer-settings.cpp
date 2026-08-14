@@ -1,6 +1,6 @@
 #include "settings.hpp"
 #include "include.hpp"
-#include <internal/utils/utils.hpp>
+#include <utils/include.hpp>
 #include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/LevelEditorLayer.hpp>
 #include <cvolton.level-id-api/include/EditorIDs.hpp>

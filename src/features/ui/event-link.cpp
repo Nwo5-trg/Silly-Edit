@@ -1,5 +1,5 @@
 #include <Geode/modify/SetupEventLinkPopup.hpp>
-#include <internal/utils/utils.hpp>
+#include <utils/include.hpp>
 #include "settings.hpp"
 #include "include.hpp"
 
@@ -38,7 +38,7 @@ class $modify(UISetupEventLinkPopup, SetupEventLinkPopup) {
         std::vector<int> out;
 
         for (const auto substr : string::splitView(Settings::UI::pinnedEvents.get(), ",")) {
-            if (const auto val = utils::numFromString<int>(substr).unwrapOrDefault(); val > 0 && val <= 78) {
+            if (const auto val =utils::numFromString<int>(substr).unwrapOrDefault(); val > 0 && val <= 78) {
                 out.push_back(val);
             }
         }

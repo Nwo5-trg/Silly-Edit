@@ -1,9 +1,9 @@
 #pragma once
 
-#include <internal/settings.hpp>
+#include <settings/include.hpp>
 
 namespace Settings::UI {
-    SILLY_API_INLINE_CATEGORY("UI (WIP)", std::nullopt, "ui-logo.png"_spr, SettingCategory::UI)
+    SILLY_API_INLINE_CATEGORY("UI (WIP)", std::nullopt, "ui-logo.png"_spr, Settings::Order::UI)
     inline SillySetting<bool> enabled{"Enabled", "UI (WIP)", true};
 
     inline SillySetting<bool> eventLink{"Event Link\nPopup", "UI (WIP)", true};

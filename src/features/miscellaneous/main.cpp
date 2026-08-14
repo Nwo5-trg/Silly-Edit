@@ -1,5 +1,5 @@
 #include <Geode/modify/EditorUI.hpp>
-#include <internal/utils/utils.hpp>
+#include <utils/include.hpp>
 #include "settings.hpp"
 
 using namespace geode::prelude;

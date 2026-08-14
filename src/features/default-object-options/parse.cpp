@@ -1,3 +1,4 @@
+#include <utils/utils.hpp>
 #include "include.hpp"
 #include "settings.hpp"
 
@@ -35,7 +36,7 @@ namespace DefaultObjectOptions {
             Mod::get()->getConfigDir() / Settings::DefaultObjectOptions::path.get()
         ); 
 
-        if (!std::filesystem::exists(path)) {
+        if (!asp::fs::exists(path)) {
             log::error("not real {}", path);
             return;
         }
@@ -57,7 +58,7 @@ namespace DefaultObjectOptions {
         }
 
         for (const auto& [idKey, options] : json) {
-            const auto id = numFromString<int>(idKey).unwrapOr(0);
+            const auto id = utils::numFromString<int>(idKey).unwrapOr(0);
 
             for (const auto& [prop, value] : options) {
                 const auto key = DefaultObjectOptions::stringToPropKey(prop);
@@ -68,79 +69,79 @@ namespace DefaultObjectOptions {
 
                 // thx chatgpt im far too lazy to do this
                 switch (key) {
-                    case 4: [[__fallthrough__]];
-                    case 5: [[__fallthrough__]];
-                    case 41: [[__fallthrough__]];
-                    case 42: [[__fallthrough__]];
-                    case 13: [[__fallthrough__]];
-                    case 36: [[__fallthrough__]];
-                    case 64: [[__fallthrough__]];
-                    case 67: [[__fallthrough__]];
-                    case 116: [[__fallthrough__]];
-                    case 34: [[__fallthrough__]];
-                    case 279: [[__fallthrough__]];
-                    case 509: [[__fallthrough__]];
-                    case 496: [[__fallthrough__]];
-                    case 284: [[__fallthrough__]];
-                    case 103: [[__fallthrough__]];
-                    case 121: [[__fallthrough__]];
-                    case 134: [[__fallthrough__]];
-                    case 135: [[__fallthrough__]];
-                    case 136: [[__fallthrough__]];
-                    case 289: [[__fallthrough__]];
-                    case 495: [[__fallthrough__]];
-                    case 511: [[__fallthrough__]];
-                    case 369: [[__fallthrough__]];
-                    case 137: [[__fallthrough__]];
-                    case 193: [[__fallthrough__]];
-                    case 96: [[__fallthrough__]];
-                    case 507: [[__fallthrough__]];
-                    case 356: [[__fallthrough__]];
-                    case 372: [[__fallthrough__]];
-                    case 117: [[__fallthrough__]];
-                    case 99: [[__fallthrough__]];
+                    case 4: [[fallthrough]];
+                    case 5: [[fallthrough]];
+                    case 41: [[fallthrough]];
+                    case 42: [[fallthrough]];
+                    case 13: [[fallthrough]];
+                    case 36: [[fallthrough]];
+                    case 64: [[fallthrough]];
+                    case 67: [[fallthrough]];
+                    case 116: [[fallthrough]];
+                    case 34: [[fallthrough]];
+                    case 279: [[fallthrough]];
+                    case 509: [[fallthrough]];
+                    case 496: [[fallthrough]];
+                    case 284: [[fallthrough]];
+                    case 103: [[fallthrough]];
+                    case 121: [[fallthrough]];
+                    case 134: [[fallthrough]];
+                    case 135: [[fallthrough]];
+                    case 136: [[fallthrough]];
+                    case 289: [[fallthrough]];
+                    case 495: [[fallthrough]];
+                    case 511: [[fallthrough]];
+                    case 369: [[fallthrough]];
+                    case 137: [[fallthrough]];
+                    case 193: [[fallthrough]];
+                    case 96: [[fallthrough]];
+                    case 507: [[fallthrough]];
+                    case 356: [[fallthrough]];
+                    case 372: [[fallthrough]];
+                    case 117: [[fallthrough]];
+                    case 99: [[fallthrough]];
                     case 444: {
                         if (value.isBool()) {
                             pObjectOptions.addOption(id, key, value.asBool().unwrap());
                         }
                     break; }
-                    case 21: [[__fallthrough__]];
-                    case 22: [[__fallthrough__]];
-                    case 497: [[__fallthrough__]];
-                    case 155: [[__fallthrough__]];
-                    case 156: [[__fallthrough__]];
-                    case 33: [[__fallthrough__]];
-                    case 20: [[__fallthrough__]];
-                    case 61: [[__fallthrough__]];
-                    case 24: [[__fallthrough__]];
-                    case 25: [[__fallthrough__]];
-                    case 115: [[__fallthrough__]];
-                    case 170: [[__fallthrough__]];
-                    case 108: [[__fallthrough__]];
-                    case 343: [[__fallthrough__]];
+                    case 21: [[fallthrough]];
+                    case 22: [[fallthrough]];
+                    case 497: [[fallthrough]];
+                    case 155: [[fallthrough]];
+                    case 156: [[fallthrough]];
+                    case 33: [[fallthrough]];
+                    case 20: [[fallthrough]];
+                    case 61: [[fallthrough]];
+                    case 24: [[fallthrough]];
+                    case 25: [[fallthrough]];
+                    case 115: [[fallthrough]];
+                    case 170: [[fallthrough]];
+                    case 108: [[fallthrough]];
+                    case 343: [[fallthrough]];
                     case 446: {
                         if (value.isNumber()) {
                             pObjectOptions.addOption(id, key, value.asInt().unwrap());
                         }
                     break; }
-                    case 2: [[__fallthrough__]];
-                    case 3: [[__fallthrough__]];
-                    case 6: [[__fallthrough__]];
-                    case 32: [[__fallthrough__]];
-                    case 128: [[__fallthrough__]];
-                    case 129: [[__fallthrough__]];
-                    case 131: [[__fallthrough__]];
-                    case 132: [[__fallthrough__]];
+                    case 2: [[fallthrough]];
+                    case 3: [[fallthrough]];
+                    case 6: [[fallthrough]];
+                    case 32: [[fallthrough]];
+                    case 128: [[fallthrough]];
+                    case 129: [[fallthrough]];
+                    case 131: [[fallthrough]];
+                    case 132: [[fallthrough]];
                     case 54: {
                         if (value.isNumber()) {
                             pObjectOptions.addOption(id, key, value.asDouble().unwrap());
                         }
                     break; }
-                    case 19: [[__fallthrough__]];
-                    case 43: [[__fallthrough__]];
-                    case 44: [[__fallthrough__]];
-                    case 57: [[__fallthrough__]];
-                    case 274: [[__fallthrough__]];
+                    case 19: [[fallthrough]];
+                    case 43: [[fallthrough]];
+                    case 44: [[fallthrough]];
+                    case 57: [[fallthrough]];
+                    case 274: [[fallthrough]];
                     case 534: {
                         if (value.isString()) {
                             pObjectOptions.addOption(id, key, value.asString().unwrap());

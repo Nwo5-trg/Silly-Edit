@@ -1,4 +1,4 @@
-#include <internal/utils/utils.hpp>
+#include <utils/include.hpp>
 #include <Geode/ui/Button.hpp>
 #include "include.hpp"
 #include "settings.hpp"

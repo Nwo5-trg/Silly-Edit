@@ -1,9 +1,9 @@
 #pragma once
 
-#include <internal/settings.hpp>
+#include <settings/include.hpp>
 
 namespace Settings::BetterSelectAll {
-    SILLY_API_INLINE_CATEGORY("Better Select All", std::nullopt, "better-select-all-logo.png"_spr, SettingCategory::BetterSelectAll)
+    SILLY_API_INLINE_CATEGORY("Better Select All", std::nullopt, "better-select-all-logo.png"_spr, Settings::Order::BetterSelectAll)
     inline SillySetting<bool> enabled{"Enabled", "Better Select All", true, SettingReload::Pause};
     
     inline SillySetting<bool> saveState{"Save State", "Better Select All", true, "save toggles for the next time u open the popup"};

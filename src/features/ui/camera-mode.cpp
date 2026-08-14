@@ -1,5 +1,5 @@
 #include <Geode/modify/SetupCameraModePopup.hpp>
-#include <internal/utils/utils.hpp>
+#include <utils/include.hpp>
 #include "settings.hpp"
 #include "include.hpp"
 

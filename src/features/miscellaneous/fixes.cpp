@@ -1,7 +1,7 @@
 #include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/GJBaseGameLayer.hpp>
 #include <Geode/modify/PlayerObject.hpp>
-#include <internal/utils/utils.hpp>
+#include <utils/include.hpp>
 #include "settings.hpp"
 
 using namespace geode::prelude;

@@ -1,9 +1,9 @@
 #pragma once
 
-#include <internal/settings.hpp>
+#include <settings/include.hpp>
 
 namespace Settings::BetterLayers {
-    SILLY_API_INLINE_CATEGORY("Better Layers", std::nullopt, "better-layers-logo.png"_spr, SettingCategory::BetterLayers)
+    SILLY_API_INLINE_CATEGORY("Better Layers", std::nullopt, "better-layers-logo.png"_spr, Settings::Order::BetterLayers)
     inline SillySetting<bool> enabled{"Enabled", "Better Layers", true, SettingReload::Editor};
 
     inline SillySetting<bool> nextFreeButton{"Next Free Button", "Better Layers", true, SettingReload::Editor};

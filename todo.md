@@ -1,4 +1,22 @@
+# things i need to do before index release
+- finish porting features to new system
+- fix ui camera mode thing
+- a btn to copy particle string to clipboard
+
+- figure out why warning popup not warning popup-ing
+
+- kerning label/input
+- test multi text edit
+- make sure empty text edit sets label to a
+- separate kerning input update function from slider changed
+
+- rewrite that one flood fill feature
+
+- trigger group scrolling
+
 # things i need to do before full release
+- settings rework
+- use events for reload required settings lol
 - add drag + modifier to fill rect thing to flood fill (holy fuck this will b so good)
 - finish ui feature
 - add better move menu

@@ -9,7 +9,7 @@
 #include <features/hide-with-playtest/include.hpp>
 #include <Geode/modify/LevelEditorLayer.hpp>
 #include <Geode/modify/GameObject.hpp>
-#include <internal/utils/utils.hpp>
+#include <utils/include.hpp>
 
 using namespace geode::prelude;
 

@@ -5,8 +5,7 @@
 #include <Geode/modify/LevelEditorLayer.hpp>
 #include <features/default-object-options/include.hpp>
 #include <Geode/modify/GameObject.hpp>
-#include <internal/utils/utils.hpp>
-#include <features/shared.hpp>
+#include <utils/include.hpp>
 #include "settings.hpp"
 #include "include.hpp"
 

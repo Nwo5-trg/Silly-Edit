@@ -1,7 +1,5 @@
-#include <Geode/modify/EditorUI.hpp>
-#include <features/shared.hpp>
-#include <internal/utils/utils.hpp>
-#include "settings.hpp"
+#include <utils/include.hpp>
+#include "include.hpp"
 
 using namespace geode::prelude;
 
@@ -17,86 +15,84 @@ static bool isProbablierObjectString(std::string_view pStr) {
     return true;
 }
 
-class $modify(EditorUI) {
-    static void disableHooksCuzFuckYou() {
-        nwo5::utils::conditionallyEnableHook(
-            !Settings::CopyPasteObjectStrings::enabled.get(), nwo5::utils::getTinker(), "EditorUI::doCopyObjects"
-        );
-        nwo5::utils::conditionallyEnableHook(
-            !Settings::CopyPasteObjectStrings::enabled.get(), nwo5::utils::getTinker(), "EditorUI::doPasteObjects"
-        );
-        nwo5::utils::conditionallyEnableHook(
-            !Settings::CopyPasteObjectStrings::enabled.get(), nwo5::utils::getBetterEdit(), "EditorUI::doCopyObjects"
-        );
-        nwo5::utils::conditionallyEnableHook(
-            !Settings::CopyPasteObjectStrings::enabled.get(), nwo5::utils::getBetterEdit(), "EditorUI::doPasteObjects"
-        );
-    }
+static void disableHooksCuzFuckYou() {
+    nwo5::utils::conditionallyEnableHook(
+        !CopyPasteObjectStrings::enabled(), nwo5::utils::getTinker(), "EditorUI::doCopyObjects"
+    );
+    nwo5::utils::conditionallyEnableHook(
+        !CopyPasteObjectStrings::enabled(), nwo5::utils::getTinker(), "EditorUI::doPasteObjects"
+    );
+    nwo5::utils::conditionallyEnableHook(
+        !CopyPasteObjectStrings::enabled(), nwo5::utils::getBetterEdit(), "EditorUI::doCopyObjects"
+    );
+    nwo5::utils::conditionallyEnableHook(
+        !CopyPasteObjectStrings::enabled(), nwo5::utils::getBetterEdit(), "EditorUI::doPasteObjects"
+    );
+}
 
-    bool init(LevelEditorLayer* editorLayer) {
-        listenForSavedSettingChanges<SillySetting<bool>>(this, "copy-paste-object-strings-enabled", [] (SillySetting<bool>*) {
-            disableHooksCuzFuckYou();
-        });
-        disableHooksCuzFuckYou();
-        
-        return EditorUI::init(editorLayer);
-    }
+void CopyPasteObjectStrings::EditorUI::doCopyObjects(bool withColor) {
+    GD::EditorUI::doCopyObjects(withColor);
 
-    void doCopyObjects(bool withColor) {
-        EditorUI::doCopyObjects(withColor);
+    if (CopyPasteObjectStrings::enabled() && CopyPasteObjectStrings::copy.get()) {
+        std::string str{GameManager::get()->m_editorClipboard};
 
-        if (Settings::CopyPasteObjectStrings::enabled.get() && Settings::CopyPasteObjectStrings::copy.get()) {
-            std::string str{GameManager::get()->m_editorClipboard};
+        if (str.ends_with(';')) {
+            str.pop_back();
+        }
 
-            if (str.ends_with(';')) {
-                str.pop_back();
-            }
+        clipboard::write(str);
 
-            clipboard::write(str);
-
-            if (Settings::CopyPasteObjectStrings::copyNotification.get()) {
-                geode::Notification::create("Object String Copied To Clipboard", NotificationIcon::Info)->show();
-            }
+        if (CopyPasteObjectStrings::copyNotification.get()) {
+            geode::Notification::create("Object String Copied To Clipboard", NotificationIcon::Info)->show();
         }
     }
-    void doPasteObjects(bool withColor) {
-        if (!Settings::CopyPasteObjectStrings::enabled.get() || !Settings::CopyPasteObjectStrings::paste.get()) {
-            return EditorUI::doPasteObjects(withColor);
-        }
-
-        const auto clipboard = clipboard::read();
-
-        if (!isProbablierObjectString(clipboard)) {
-            if (Settings::CopyPasteObjectStrings::fallbackEditor.get()) {
-                EditorUI::doPasteObjects(withColor);
-
-                if (Settings::CopyPasteObjectStrings::pasteNotification.get()) {
-                    geode::Notification::create("Invalid Object String, Pasted Fallback", NotificationIcon::Warning)->show();
-                }
-            }
-            else if (Settings::CopyPasteObjectStrings::pasteNotification.get()) {
-                geode::Notification::create("Invalid Object String", NotificationIcon::Warning)->show();
-            }
-
-            return;
-        }
-
-        if (!Settings::CopyPasteObjectStrings::dontOverrideEditor.get()) {
-            const std::string ret{GameManager::get()->m_editorClipboard};
-            GameManager::get()->m_editorClipboard = clipboard::read();
-
-            EditorUI::doPasteObjects(withColor);
-
-            GameManager::get()->m_editorClipboard = ret;
-        }
-        else {
-            GameManager::get()->m_editorClipboard = clipboard::read();
-
-            EditorUI::doPasteObjects(withColor);
-        }
-
-        if (Settings::CopyPasteObjectStrings::pasteNotification.get()) {
-            geode::Notification::create("Object String Pasted", NotificationIcon::Info)->show();
-        }
+}
+void CopyPasteObjectStrings::EditorUI::doPasteObjects(bool withColor) {
+    if (!CopyPasteObjectStrings::enabled() || !CopyPasteObjectStrings::paste.get()) {
+        return GD::EditorUI::doPasteObjects(withColor);
     }
-};
+
+    const auto clipboard = clipboard::read();
+
+    if (!isProbablierObjectString(clipboard)) {
+        if (CopyPasteObjectStrings::fallbackEditor.get()) {
+            GD::EditorUI::doPasteObjects(withColor);
+
+            if (CopyPasteObjectStrings::pasteNotification.get()) {
+                geode::Notification::create("Invalid Object String, Pasted Fallback", NotificationIcon::Warning)->show();
+            }
+        }
+        else if (CopyPasteObjectStrings::pasteNotification.get()) {
+            geode::Notification::create("Invalid Object String", NotificationIcon::Warning)->show();
+        }
+
+        return;
+    }
+
+    if (!CopyPasteObjectStrings::dontOverrideEditor.get()) {
+        const std::string ret{GameManager::get()->m_editorClipboard};
+        GameManager::get()->m_editorClipboard = clipboard::read();
+
+        GD::EditorUI::doPasteObjects(withColor);
+
+        GameManager::get()->m_editorClipboard = ret;
+    }
+    else {
+        GameManager::get()->m_editorClipboard = clipboard::read();
+
+        GD::EditorUI::doPasteObjects(withColor);
+    }
+
+    if (CopyPasteObjectStrings::pasteNotification.get()) {
+        geode::Notification::create("Object String Pasted", NotificationIcon::Info)->show();
+    }
+}
+
+void CopyPasteObjectStrings::Feature::onEditor() {
+    auto ui = editor::ui<CopyPasteObjectStrings::EditorUI>();
+    
+    disableHooksCuzFuckYou();
+}
+void CopyPasteObjectStrings::Feature::onToggled(bool) {
+    disableHooksCuzFuckYou();
+}

@@ -1,123 +1,107 @@
-#include <Geode/modify/EditorUI.hpp>
-#include <Geode/modify/LevelEditorLayer.hpp>
-#include <internal/utils/utils.hpp>
 #include <nwo5.ui-scaling/include/include.hpp>
-#include "settings.hpp"
+#include <utils/include.hpp>
+#include "include.hpp"
 
 using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
 
-// ill prolly add a seperate modifier for keybind zoom
-// so remind me to replace ternary hell with a proper enum system
+static constexpr CCSize BASE_ZOOM_INPUT_SIZE = {20.0f, 10.0f};
 
-class $modify(ZoomInputEditorUI, EditorUI) {
-    struct Fields {
-        CCMenu* zoomContainer = nullptr;
-        TextInput* zoomInput = nullptr;
-    };
-
-    static constexpr CCSize BASE_ZOOM_INPUT_SIZE = {20.0f, 10.0f};
-
-    bool init(LevelEditorLayer* editorLayer) {
-        if (!EditorUI::init(editorLayer)) {
-            return false;
-        }
-
-        if (!Settings::ZoomInput::zoomInput.get()) {
-            return true;
-        }
-
-        auto fields = m_fields.self();
-        
-        fields->zoomContainer = ui::node(Setup(ui::menu(nwo5::ui::horizontalDistrbLayout(0.0f)))
-            .id("zoom-input-container"_spr)
-            .height(BASE_ZOOM_INPUT_SIZE.height)
-            .anchor(TOP_CENTER_ANCHOR)
-            .children(
-                Setup(ui::label("Zoom: ", Font::Default))
-                    .id("zoom-label"_spr)
-                    .scaleHeightToFit(BASE_ZOOM_INPUT_SIZE.height),
-                (fields->zoomInput = ui::node(Setup(ui::input(BASE_ZOOM_INPUT_SIZE, "1"))
-                    .filter("1234567890.")
-                    .id("zoom-input"_spr))),
-                Setup(ui::circleButtonFrame(
-                    "edit_findBtn_001.png", CircleBaseColor::Green, this, menu_selector(ZoomInputEditorUI::onZoomInputButton)
-                ))
-                    .id("zoom-button"_spr)
-                    .scaleHeightToFit(BASE_ZOOM_INPUT_SIZE.height)
-                    .prevGap(5.0f)
-            )
-            .parent(this)
-            .addTo(m_uiItems)
-        );
-
-        this->updateZoomContainer(1.0f);
-
-        this->addEventListener(nwo5::uiscaling::EditorUIScaleChanged(), [this] (float pScale) {
-            this->updateZoomContainer(pScale);
-        });
-
-        nwo5::utils::setupKeybind(this, "zoom-input-zoom-in", [this] (const Keybind&, bool pDown, bool, double) {
-            if (pDown) {
-                zoomGameLayer(true);
-            }
-        });
-
-        nwo5::utils::setupKeybind(this, "zoom-input-zoom-out", [this] (const Keybind&, bool pDown, bool, double) {
-            if (pDown) {
-                zoomGameLayer(false);
-            }
-        });
-
-        return true;
+void ZoomInput::EditorUI::updateZoomInput(float pZoom = editor::zoom()) {
+    if (auto input = m_fields->zoomInput) {
+        input->setString(nwo5::utils::numToString(pZoom));
     }
+}
 
-    void updateZoomInput(float pZoom = editor::zoom()) {
-        if (auto input = m_fields->zoomInput) {
-            input->setString(nwo5::utils::numToString(pZoom));
-        }
-    }
+void ZoomInput::EditorUI::updateZoomContainer(float pScale) {
+    Setup(m_fields->zoomContainer)
+        .scale(m_positionSlider->getScale() * ZoomInput::zoomInputScale)
+        .pos(
+            ZoomInput::centered ? CCDirector::get()->getWinSize().width / 2 : m_positionSlider->getPositionX(),
+            m_positionSlider->getPositionY() + (ZoomInput::zoomInputOffset * m_positionSlider->getScale())
+        ); 
+}
 
-    void updateZoomContainer(float pScale) {
-        Setup(m_fields->zoomContainer)
-            .scale(m_positionSlider->getScale() * Settings::ZoomInput::zoomInputScale.get())
-            .pos(
-                Settings::ZoomInput::centered.get() ? CCDirector::get()->getWinSize().width / 2 : m_positionSlider->getPositionX(),
-                m_positionSlider->getPositionY() + (Settings::ZoomInput::zoomInputOffset.get() * m_positionSlider->getScale())
-            ); 
-    }
+void ZoomInput::EditorUI::onZoomInputButton(CCObject*) {
+    const auto val = utils::numFromString<float>(m_fields->zoomInput->getString()).unwrapOr(1.0f);
 
-    void onZoomInputButton(CCObject*) {
-        const auto val = numFromString<float>(m_fields->zoomInput->getString()).unwrapOr(1.0f);
+    GD::EditorUI::updateZoom(val > 0.0f ? val : 1.0f);
+}
 
-        EditorUI::updateZoom(val > 0.0f ? val : 1.0f);
-    }
+void ZoomInput::EditorUI::updateZoom(float zoom) {
+    GD::EditorUI::updateZoom(zoom);
 
-    void updateZoom(float zoom) {
-        EditorUI::updateZoom(zoom);
-
-        updateZoomInput(zoom);
-    };
-
-    void constrainGameLayerPosition(float x, float y) {
-        if (Settings::ZoomInput::noConstrainPosition.get() && !m_editorLayer->m_initializing) {
-            EditorUI::constrainGameLayerPosition(std::numeric_limits<float>::lowest(), std::numeric_limits<float>::max());
-        }
-        else {
-            EditorUI::constrainGameLayerPosition(x, y);
-        }
-    };
+    this->updateZoomInput(zoom);
 };
 
-class $modify(LevelEditorLayer) {
-    bool init(GJGameLevel* level, bool noUI) {
-        if (!LevelEditorLayer::init(level, noUI)) {
-            return false;
-        }
-
-        // zoom gets set after editorui init
-        editor::ui<ZoomInputEditorUI>()->updateZoomInput();
-
-        return true;
+void ZoomInput::EditorUI::constrainGameLayerPosition(float x, float y) {
+    if (ZoomInput::noConstrainPosition && !m_editorLayer->m_initializing) {
+        GD::EditorUI::constrainGameLayerPosition(std::numeric_limits<float>::lowest(), std::numeric_limits<float>::max());
+    }
+    else {
+        GD::EditorUI::constrainGameLayerPosition(x, y);
     }
 };
+
+bool ZoomInput::LevelEditorLayer::init(GJGameLevel* level, bool noUI) {
+    if (!GD::LevelEditorLayer::init(level, noUI)) {
+        return false;
+    }
+
+    // zoom gets set after editorui init
+    editor::ui<ZoomInput::EditorUI>()->updateZoomInput();
+
+    return true;
+}
+
+void ZoomInput::Feature::onEditor() {
+    if (!ZoomInput::enabled()) {
+        return;
+    }
+
+    auto ui = editor::ui<ZoomInput::EditorUI>();
+
+    auto fields = ui->m_fields.self();
+    
+    fields->zoomContainer = ui::node(Setup(ui::menu(ui::row(AxisAlignment::Start, 0.0f)
+        .autoScale(false)
+    ))
+        .id("zoom-input-container"_spr)
+        .height(BASE_ZOOM_INPUT_SIZE.height)
+        .anchor(TOP_CENTER_ANCHOR)
+        .children(
+            Setup(ui::label("Zoom: ", Font::Default))
+                .id("zoom-label"_spr)
+                .scaleHeightToFit(BASE_ZOOM_INPUT_SIZE.height),
+            (fields->zoomInput = ui::node(Setup(ui::input(BASE_ZOOM_INPUT_SIZE, "1"))
+                .filter("1234567890.")
+                .id("zoom-input"_spr))),
+            Setup(ui::circleButtonFrame(
+                "edit_findBtn_001.png", CircleBaseColor::Green, ui, menu_selector(ZoomInput::EditorUI::onZoomInputButton)
+            ))
+                .id("zoom-button"_spr)
+                .scaleHeightToFit(BASE_ZOOM_INPUT_SIZE.height)
+                .prevGap(5.0f)
+        )
+        .parent(ui)
+        .addTo(ui->m_uiItems)
+    );
+
+    nwo5::utils::setupKeybind(ui, "zoom-input-zoom-in", [ui] (const Keybind&, bool pDown, bool, double) {
+        if (pDown) {
+            ui->zoomGameLayer(true);
+        }
+    });
+
+    nwo5::utils::setupKeybind(ui, "zoom-input-zoom-out", [ui] (const Keybind&, bool pDown, bool, double) {
+        if (pDown) {
+            ui->zoomGameLayer(false);
+        }
+    });
+}
+
+void ZoomInput::Feature::onUIUpdated(float pScale) {
+    if (auto ui = editor::ui<ZoomInput::EditorUI>()) {
+        ui->updateZoom(pScale);
+    }
+}

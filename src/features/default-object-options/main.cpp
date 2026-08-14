@@ -1,7 +1,6 @@
 #include <Geode/modify/LevelEditorLayer.hpp>
 #include <Geode/modify/EditorUI.hpp>
-#include <internal/utils/utils.hpp>
-#include <features/shared.hpp>
+#include <utils/include.hpp>
 #include "settings.hpp"
 #include "include.hpp"
 

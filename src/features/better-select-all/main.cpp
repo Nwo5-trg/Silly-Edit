@@ -1,6 +1,6 @@
 #include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/EditorPauseLayer.hpp>
-#include <internal/utils/utils.hpp>
+#include <utils/include.hpp>
 #include "include.hpp"
 #include "settings.hpp"
 

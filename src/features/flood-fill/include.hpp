@@ -1,89 +1,68 @@
 #pragma once
 
+#include <Geode/modify/EditorUI.hpp>
+#include <feature/include.hpp>
+#include "utils.hpp"
+
 // fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows fuck windows 
 namespace FF {
-    struct Rect {
-        cocos2d::CCPoint start;
-        cocos2d::CCPoint end;
+    class $feature(FloodFill) {
+        void onEditor() override;
+        void onUpdate() override;
+    } feature;
 
-        Rect(cocos2d::CCPoint pCenter, cocos2d::CCSize pSize)
-            : start(pCenter - pSize / 2), end(pCenter + pSize / 2) {}
-        Rect(cocos2d::CCPoint pStart, cocos2d::CCPoint pEnd)
-            : start(pStart), end(pEnd) {}
-        Rect(float pTop, float pLeft, float pBottom, float pRight)
-            : start(pLeft, pBottom), end(pRight, pTop) {}
+    class $feature_modify(EditorUI) {
+        struct Fields {
+            bool specialHold = false;
+            cocos2d::CCPoint specialStart = cocos2d::CCPointZero;
+        };
 
-        static Rect bounds(std::span<const Rect> pRects) {
-            Rect out {
-                ccp(std::numeric_limits<float>::max(), std::numeric_limits<float>::max()),
-                ccp(std::numeric_limits<float>::lowest(), std::numeric_limits<float>::lowest())
-            };
+        void rectFill(cocos2d::CCArray* pObjs);
+        void createFromRects(const std::vector<FF::Rect>& pRects, cocos2d::CCArray* pBoundry, GameObject* pBase);
+        void quickFill();
 
-            for (const auto& rect : pRects) {
-                out.start.x = std::min(rect.start.x, out.start.x);
-                out.start.y = std::min(rect.start.y, out.start.y);
-                out.end.x = std::max(rect.end.x, out.end.x);
-                out.end.y = std::max(rect.end.y, out.end.y);
-            }
-            
-            return out;
-        }
-        
-        Rect operator+(cocos2d::CCPoint pOffset) const {
-            return {start + pOffset, end + pOffset};
-        }
-        bool operator==(const Rect& pOther) const {
-            return start == pOther.start && end == pOther.end;
-        }
-
-        bool contains(cocos2d::CCPoint pPoint) const {
-            return pPoint.x >= start.x 
-                && pPoint.x <= end.x 
-                && pPoint.y >= start.y 
-                && pPoint.y <= end.y;
-        }
-        bool touches(const Rect& pOther) const {
-            return (start.x <= pOther.end.x && end.x >= pOther.start.x) 
-                && (start.y <= pOther.end.y && end.y >= pOther.start.y);
-        }
-
-        float top() const {
-            return end.y;
-        }
-        float& top() {
-            return end.y;
-        }
-        float left() const {
-            return start.x;
-        }
-        float& left() {
-            return start.x;
-        }
-        float bottom() const {
-            return start.y;
-        }
-        float& bottom() {
-            return start.y;
-        }
-        float right() const {
-            return end.x;
-        }
-        float& right() {
-            return end.x;
-        }
-        cocos2d::CCPoint center() const {
-            return (start + end) / 2;
-        }
-        float height() const {
-            return end.y - start.y;
-        }
-        float width() const {
-            return end.x - start.x;
-        }
+        void keyDown(cocos2d::enumKeyCodes key, double timestamp);
     };
-    
-    // doesnt include center
-    std::vector<Rect> gridFloodFill(std::vector<Rect> pShape, const Rect& pCenter, bool p8Direction);
-    Rect rectFromObject(GameObject* pObj, std::optional<cocos2d::CCPoint> pCenter = std::nullopt);
-    std::vector<Rect> rectsFromObjects(cocos2d::CCArray* pObjs);
+
+    class $setting_category("flood-fill-logo.png"_spr);
+
+    inline SillySetting<bool> notifications{
+        "Notifications", feature, true
+    };
+    inline SillySetting<bool> selectFill{
+        "Select Fill", feature, true, "select filled objects after filling"
+    };
+    inline SillySetting<bool> selectBoundry{
+        "Select Boundry", feature, false, "select flood fill boundry after filling"
+    };
+    inline SillySetting<bool> quickFillButton{
+        "Quick Fill\nButton", feature, true, SettingReload::Editor
+    };
+    inline SillySetting<bool> selectSpecialFill{
+        "Select Special\nFill", feature, true, "select filled objects after rect filling with special key"
+    };
+    inline SillySetting<bool> specialAsButton{
+        "Special As\nButton", feature, 
+    #ifdef GEODE_IS_DESKTOP
+        true
+    #else
+        false
+    #endif
+        , "use special key as a shortcut to quick fill button instead of its own functionality"
+    };
+    inline SillySetting<float> specialPreviewThickness{
+        "Special Preview\nThickness", feature, 1.0f, {0.0f, std::nullopt}
+    };
+    inline SillySetting<bool> scaleWithZoom{
+        "Scale With\nZoom", feature, false
+    };
+    inline SillySetting<cocos2d::ccColor3B> specialPreviewColor{
+        "Special Preview\nColor", feature, { 255, 50, 200 }
+    };
+    inline SillySetting<float> specialPreviewFill{
+        "Special Preview\nFill", feature, 0.0f, {0.0f, 1.0f}
+    };
+    inline SillySetting<bool> chroma{
+        "Chroma", feature, false
+    };
 }

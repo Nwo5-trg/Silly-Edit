@@ -1,9 +1,9 @@
 #pragma once
 
-#include <internal/settings.hpp>
+#include <settings/include.hpp>
 
 namespace Settings::Miscellaneous {
-    SILLY_API_INLINE_CATEGORY("Miscellaneous", std::nullopt, "miscellaneous-logo.png"_spr, SettingCategory::Miscellaneous)
+    SILLY_API_INLINE_CATEGORY("Miscellaneous", std::nullopt, "miscellaneous-logo.png"_spr, Settings::Order::Miscellaneous)
 
     inline SillySetting<bool> fixes{"Fixes", "Miscellaneous", true, "fixes: area corruption, object label not showing up, and ignore damage wave"};
     inline SillySetting<bool> placeObjectPreview{"Place Object\nPreview", "Miscellaneous", 

@@ -1,9 +1,9 @@
 #pragma once
 
-#include <internal/settings.hpp>
+#include <settings/include.hpp>
 
 namespace Settings::HideWithPlaytest {
-    SILLY_API_INLINE_CATEGORY("Hide With Playtest", std::nullopt, "hide-with-playtest-logo.png"_spr, SettingCategory::HideWithPlaytest)
+    SILLY_API_INLINE_CATEGORY("Hide With Playtest", std::nullopt, "hide-with-playtest-logo.png"_spr, Settings::Order::HideWithPlaytest)
     inline SillySetting<bool> enabled{"Enabled", "Hide With Playtest", true};
 
     inline SillySetting<bool> hideTriggers{"Hide Triggers", "Hide With Playtest", true};

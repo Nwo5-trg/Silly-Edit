@@ -1,4 +1,4 @@
-#include <internal/utils/utils.hpp>
+#include <utils/include.hpp>
 #include <hjfod.gmd-api/include/GMD.hpp>
 #include <Geode/modify/LevelOptionsLayer.hpp>
 #include <Geode/modify/GameLevelManager.hpp>
@@ -59,7 +59,7 @@ class $modify(GameLevelManager) {
 
         const auto path = getTemplatePath();
 
-        if (!std::filesystem::exists(path)) {
+        if (!asp::fs::exists(path)) {
             return ret;
         }
 
