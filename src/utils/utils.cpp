@@ -5,7 +5,7 @@ using namespace geode::prelude;
 
 namespace nwo5::utils {
     std::pair<float, float> getChromaSettings() {
-        return {Settings::General::sayoDeviceSensitivity.get(), Settings::General::sayoDeviceScreenBrightness.get()};
+        return {Settings::sayoDeviceSensitivity, Settings::sayoDeviceScreenBrightness};
     }
 
     bool isBetterEditLoaded() {

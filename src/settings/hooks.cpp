@@ -1,5 +1,6 @@
 #include <Geode/modify/EditorPauseLayer.hpp>
 #include <Geode/modify/LevelEditorLayer.hpp>
+#include <Geode/modify/EditorUI.hpp>
 #include <utils/include.hpp>
 #include "popup.hpp"
 
@@ -13,8 +14,13 @@ class $modify(LevelEditorLayer) {
         }
 
         nwo5::utils::setupKeybind(this, "general-open-settings", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
-            if (pDown && !pRepeat && !CCDirector::get()->getRunningScene()->getChildByType<Settings::SettingsPopup>(0)) {
-                Settings::SettingsPopup::create()->show();
+            if (pDown && !pRepeat) {
+                if (auto popup = static_cast<Settings::SettingsPopup*>(CCDirector::get()->getRunningScene()->getChildByID("settings-popup"_spr))) {
+                    popup->onClose(nullptr);
+                }
+                else {
+                    Settings::SettingsPopup::create()->show();
+                }
             }
         });
 
@@ -28,7 +34,7 @@ class $modify(SettingsEditorPauseLayer, EditorPauseLayer) {
             return false;
         }
 
-        if (!Settings::General::showSettingsButton.get()) {
+        if (!Settings::showSettingsButton) {
             return true;
         }
 
@@ -41,7 +47,7 @@ class $modify(SettingsEditorPauseLayer, EditorPauseLayer) {
         auto spr = CCSprite::create(
             fmt::format(
                 "settings-button-{}.png"_spr, 
-                string::toLower(Settings::General::settingsButtonTexture.get())
+                string::toLower(Settings::settingsButtonTexture)
             ).c_str()
         );
         spr->setScale(0.85f),
@@ -49,7 +55,7 @@ class $modify(SettingsEditorPauseLayer, EditorPauseLayer) {
         Setup(ui::buttonSprite(
             fmt::format(
                 "settings-button-{}.png"_spr, 
-                string::toLower(Settings::General::settingsButtonTexture.get())
+                string::toLower(Settings::settingsButtonTexture)
             ), this, menu_selector(SettingsEditorPauseLayer::onSESettings), 0.85f
         ))
             .id("se-settings-button"_spr)
@@ -60,5 +66,13 @@ class $modify(SettingsEditorPauseLayer, EditorPauseLayer) {
 
     void onSESettings(CCObject* sender) {
         Settings::SettingsPopup::create()->show();    
+    }
+};
+
+class $modify(EditorUI) {
+    void scrollWheel(float y, float x) {
+        if (!CCDirector::get()->getRunningScene()->getChildByID("settings-popup"_spr)) {
+            EditorUI::scrollWheel(y, x);
+        }
     }
 };

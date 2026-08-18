@@ -1,0 +1,79 @@
+#include <hjfod.gmd-api/include/GMD.hpp>
+#include <utils/include.hpp>
+#include "include.hpp"
+
+using namespace geode::prelude;
+using namespace nwo5::ui::prelude;
+
+static std::filesystem::path getTemplatePath() {
+    return Mod::get()->getSaveDir() / "template.gmd";
+}
+
+namespace Template {
+    void LevelOptionsLayer::setupOptions() {
+        GD::LevelOptionsLayer::setupOptions();
+
+        if (!Template::enabled()) {
+            return;
+        }
+
+        auto bg = m_mainLayer->getChildByType<CCScale9Sprite>(0);
+
+        if (!bg) {
+            return;
+        }
+
+        auto button = ui::node(Setup(Button::createWithNode(ButtonSprite::create("Save\nTemplate")))
+            .id("save-template-button"_spr)
+            .callback([] (Button*) {
+                editor::save();
+
+                auto res = gmd::exportLevelAsGmd(editor::layer()->m_level, getTemplatePath());
+
+                if (res.isErr()) {
+                    return Notification::create("(templates) everything is crashing and burning and we're all gonna die !", NotificationIcon::Error)->show();
+                }
+
+                Notification::create("template updated !", NotificationIcon::Info)->show();
+            })
+            .scale(0.65f)
+            .parent(m_mainLayer)
+        );
+        button->setPosition(
+            bg->getPositionX() - bg->getScaledContentWidth() / 2 + button->getScaledContentWidth() / 2 + 10.0f,
+            bg->getPositionY() - bg->getScaledContentHeight() / 2 + button->getScaledContentHeight() / 2 + 10.0f
+        );
+    }
+
+
+
+
+    
+    GJGameLevel* GameLevelManager::createNewLevel() {
+        auto ret = GD::GameLevelManager::createNewLevel();
+
+        if (!Template::enabled()) {
+            return ret;
+        }
+
+        const auto path = getTemplatePath();
+
+        if (!asp::fs::exists(path)) {
+            return ret;
+        }
+
+        auto levelRes = gmd::importGmdAsLevel(path);
+
+        if (levelRes.isErr()) {
+            return ret;
+        }
+
+        const auto name = std::string{ret->m_levelName};
+
+        ret->copyLevelInfo(levelRes.unwrap());
+
+        ret->m_levelName = name;
+
+        return ret;
+    }
+}

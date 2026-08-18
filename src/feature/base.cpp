@@ -1,20 +1,10 @@
-#include "base.hpp"
+#include "feature-manager.hpp"
 
 namespace Features {
-    FeatureBase::FeatureBase(FeatureEnum pEnum, bool pDefaultEnabled) {
+    FeatureBase::FeatureBase(FeatureEnum pEnum) {
         m_id = getID(pEnum);
-
-        static Settings::SillySetting<bool> enabled{"Enabled", m_id, pDefaultEnabled};
-        m_enabled = &enabled;
-
-        nwo5::settings::listenForAllSavedSettingChanges([this] (std::string_view pKey, GenericSetting* pSetting) {
-            if (const auto name = pSetting->name(); name != "Enabled") {
-                this->onSettingChanged(name, pSetting);
-            }
-            else {
-                this->onToggled(static_cast<Settings::SillySetting<bool>*>(pSetting)->get());
-            }
-        }, m_id).leak();
+        
+        FeatureManager::get()->registerFeature(this);
     }
 
     void FeatureBase::onEditor() {}

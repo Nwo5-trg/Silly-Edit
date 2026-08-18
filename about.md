@@ -1,5 +1,5 @@
 # SillyEdit
-a very (un)serious editor mod with a lot of overcomplicated possibly useful features
+\<3
 
 ## Disclaimer(s)
 ***betteredit is unsupported***, **it might still kinda work, but still keep in mind i am not trying to support betteredit at all and anything regarding that will be ignored**
@@ -93,14 +93,33 @@ some smaller features
 - templates (save a level as a "template" which all new levels now copy (save template button in leveloptions))
 - keybinds
 
-## Credits
+# Credits
 tyyyy <cr>\<3</c> !
+
+## Special Thanks
+### Ery
+- geode gremlin
+- pr for obj tab icons
+- prolly accepting this mod
+
+### HJFod
+- made better edit
+- let me steal a bunch of stuff
+- let me have a bunch of other stuff
+
+### Alpha
+- made tinker
+- replace obj impl
+- setting popup inspo
+
+## Credits
 
 ### gdjayy
 - replace object suggestion
 
 ### CreatorCreepy
-- feedback about replace object
+- feedback for replace object
+- feedback for floodfill
 
 ### CarlIsBored
 - trigger id search suggestion
@@ -113,13 +132,3 @@ tyyyy <cr>\<3</c> !
 
 ### DasshuDev
 - copy particle string idea
-
-## Special Thanks
-### Ery
-- geode gremlin
-- pr for obj tab icons
-- prolly accepting this mod
-
-### HJFod
-- made better edit
-- let me steal a bunch of stuff tyyyy

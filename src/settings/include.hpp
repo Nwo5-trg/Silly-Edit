@@ -4,3 +4,4 @@
 
 using Settings::SillySetting;
 using Settings::SettingReload;
+using Settings::SettingCondition;

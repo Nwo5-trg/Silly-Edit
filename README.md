@@ -1,5 +1,5 @@
 # SillyEdit
-a very (un)serious editor mod with a lot of overcomplicated possibly useful features
+\<3
 
 ## Disclaimer(s)
 ***betteredit is unsupported***, **it might still kinda work, but still keep in mind i am not trying to support betteredit at all and anything regarding that will be ignored**

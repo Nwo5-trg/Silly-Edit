@@ -1,171 +1,406 @@
 #include <utils/include.hpp>
 #include "popup.hpp"
+#include "general.hpp"
 
 using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
 
 namespace Settings {
     bool SettingsPopup::init() {
-        if (!Popup::init(WIDTH, HEIGHT)) {
+        if (!Popup::init(SIZE.width, SIZE.height, ui::sprite::EMPTY_BACKGROUND)) {
             return false;
         }
 
-        m_pageDotMenu = ui::node(Setup(ui::menu(ui::row(AxisAlignment::Center, DOT_MENU_GAP)
-            .autoScale()
+        const float POPUP_OFFSET = 10.0f / CCDirector::get()->getContentScaleFactor();
+
+        static std::unordered_map<std::string, Theme> THEME_MAP{
+            {"Default", {{152, 86, 51}, {84, 84, 84}, {104, 104, 104}}},
+            {"Custom BG", {{192, 104, 64}, {114, 60, 35}, {150, 150, 150}}},
+            {"Geode", {{25, 24, 33}, {16, 15, 21}, {21, 20, 27}}}
+        };
+
+        this->setID("settings-popup"_spr);
+
+        auto background = CCSprite::create(
+            fmt::format("game_bg_{:02}_001.png", Settings::useCustomBackground ? Settings::settingsBackground : 13).c_str()
+        );
+        Setup(background)
+            .id("background"_spr)
+            .color(THEME_MAP[Settings::popupTheme].background)
+            .optionsAnchor(Anchor::Center)
+            .ignoreAnchorForPos(false)
+            .order(-1)
+            .textureRect({{0.0f, ui::h(background) - SIZE.height - POPUP_OFFSET * 2}, SIZE - POPUP_OFFSET * 2})
+            .parent(m_mainLayer);
+
+        Setup(Button::createWithNode(ButtonSprite::create("Close")))
+            .id("close-button"_spr)
+            .scaleToFit(CLOSE_BUTTON_SIZE)
+            .anchor(Anchor::BottomRight)
+            .optionsAnchor(geode::Anchor::BottomRight)
+            .anchorOffset(-POPUP_OFFSET - EDGE_PADDING, POPUP_OFFSET + EDGE_PADDING)
+            .callback([this] (Button* pSender) {
+                this->onClose(pSender);
+            })
+            .parent(m_mainLayer);
+
+        m_tooltip = Setup(Tooltip::create(Font::Chat))
+            .id("tooltip"_spr)
+            .scale(0.35f)
+            .parent(m_mainLayer);
+
+        auto sideBar = ui::node(Setup(CCLayerColor::create(
+            color_cast<ccColor4B>(THEME_MAP[Settings::popupTheme].sideBar)
         ))
-            .id("dot-menu"_spr)
-            .size(WIDTH - EDGE_PADDING * 2, DOT_MENU_HEIGHT)
-            .pos(WIDTH / 2, EDGE_PADDING + DOT_MENU_HEIGHT / 2)
+            .id("side-bar"_spr)
+            .layout(AnchorLayout::create())
+            .anchor(Anchor::Left)
+            .optionsAnchor(Anchor::Left)
+            .anchorOffsetX(POPUP_OFFSET)
+            .ignoreAnchorForPos(false)
+            .size(SIDE_BAR_WIDTH, SIZE.height - POPUP_OFFSET * 2)
+            .order(-1)
             .parent(m_mainLayer)
         );
 
-        for (auto& category : SettingsManager::get()->getCategories()) {
-            const auto size = category->getSettings().size();
+        m_featuresScroll = Setup(alpha::ui::AdvancedScrollLayer::create(
+            {SIDE_BAR_WIDTH, SIZE.height - TOP_BAR_HEIGHT - POPUP_OFFSET * 2}
+        ))
+            .id("feature-scroll"_spr)
+            .layout(ui::column(AxisAlignment::End, SIDE_BAR_LABEL_GAP)
+                .autoScale(false)
+                .ignoreInvisible(false)
+                .crossOverflow(false)
+                .reverse()
+                .grow(true)
+                .crossAlignment(AxisAlignment::Start)
+                .crossLineAlignment(AxisAlignment::Start)
+                .cross(false)
+                .padding({EDGE_PADDING, 2.5f, 0.0f, 5.0f})
+            )
+            .anchor(Anchor::BottomRight)
+            .optionsAnchor(Anchor::BottomRight)
+            .parent(sideBar);
+        m_featuresScroll->blockTouchBehind(true);
+        m_featuresScroll->setOvershoot(15.0f);
 
-            auto menu = createPage(category);
+        auto featuresScrollbar = alpha::ui::AdvancedScrollBar::create(
+            m_featuresScroll, alpha::ui::ScrollOrientation::VERTICAL
+        );
 
-            for (size_t i = 0; i < size; i++) {
-                auto button = createSettingButton(category->getSettings()[i], this);
-                    
-                menu->addChild(button);
-                m_settings.push_back(button);
+        auto featuresScrollbarStyle = alpha::ui::RoundedScrollStyle();
+        featuresScrollbarStyle.m_track = [] {
+            auto track = alpha::ui::RoundedScrollTrack::create();
+            
+            track->setClickColor({0, 0, 0, 0});
+            track->setBackgroundColor({0, 0, 0, 0});
 
-                menu->updateLayout();
+            return track;
+        };
+        
+        featuresScrollbar->setStyle(featuresScrollbarStyle);
+
+        Setup(featuresScrollbar)
+            .id("features-scroll-bar"_spr)
+            .anchor(Anchor::BottomRight)
+            .optionsAnchor(Anchor::BottomRight)
+            .size(FEATURE_SCROLLBAR_WIDTH, ui::sh(m_featuresScroll))
+            .parent(sideBar);
+
+        auto topBar = ui::node(Setup(CCLayerColor::create(
+            color_cast<ccColor4B>(THEME_MAP[Settings::popupTheme].topBar)
+        ))
+            .id("top-bar"_spr)
+            .layout(AnchorLayout::create())
+            .anchor(Anchor::Top)
+            .optionsAnchor(Anchor::Top)
+            .anchorOffsetY(-POPUP_OFFSET)
+            .ignoreAnchorForPos(false)
+            .size(SIZE.width - POPUP_OFFSET * 2, TOP_BAR_HEIGHT)
+            .order(-1)
+            .children(
+                Setup(CCSprite::createWithSpriteFrameName("d_gradient_c_01_001.png"))
+                    .id("shadow"_spr)
+                    .anchor(Anchor::Top)
+                    .optionsAnchor(Anchor::Bottom)
+                    .flipY()
+                    .opacity(100)
+                    .color(ccBLACK)
+                    .stretchToFit(SIZE.width, TOP_BAR_SHADOW_HEIGHT)
+            )
+            .parent(m_mainLayer)
+        );
+
+        m_versionLabel = Setup(ui::label(Font::Chat))
+            .id("version-label"_spr)
+            .anchor(Anchor::Left)
+            .optionsAnchor(Anchor::Left)
+            .anchorOffsetX(EDGE_PADDING)
+            .string(fmt::format("sillyedit {} <3", Mod::get()->getVersion().toVString()))
+            .scaleHeightToFit(VERSION_LABEL_HEIGHT)
+            .userObject("nwo5.silly-api/tooltip", TooltipInfo::create("Is it \"sillyedit\" or \"SillyEdit\" (idk !)"))
+            .parent(topBar);
+
+        Setup(ui::menu(ui::row(AxisAlignment::End, TOP_BAR_BUTTON_GAP)
+            .autoScale(false)
+            .grow(true)
+            .reverse()
+        ))
+            .id("top_bar_menu"_spr)
+            .anchor(Anchor::Right)
+            .optionsAnchor(Anchor::Right)
+            .anchorOffsetX(-EDGE_PADDING)
+            .height(TOP_BAR_BUTTON_SIZE)
+            .children(
+                Setup(ui::button(
+                    ButtonSprite::create("Open Keybinds"), this, menu_selector(SettingsPopup::onKeybinds)
+                ))
+                    .id("keybinds-button"_spr)
+                    .scaleHeightToFit(TOP_BAR_BUTTON_SIZE)
+                    .userObject("nwo5.silly-api/tooltip", TooltipInfo::create("Open keybinds")),
+                Setup(ui::circleButtonFrame(
+                    ui::frame::FOLDER, CircleBaseColor::Green, this, menu_selector(SettingsPopup::onOpenSaveDir)
+                ))
+                    .id("save-dir-button"_spr)
+                    .scaleToFit(TOP_BAR_BUTTON_SIZE)
+                    .userObject("nwo5.silly-api/tooltip", TooltipInfo::create("Open save dir")),
+                Setup(ui::circleButton(
+                    ui::label("C"), CircleBaseColor::Green, this, menu_selector(SettingsPopup::onCredits)
+                ))
+                    .id("credits-button"_spr)
+                    .scaleToFit(TOP_BAR_BUTTON_SIZE)
+                    .userObject("nwo5.silly-api/tooltip", TooltipInfo::create("Credits"))
+            )
+            .parent(topBar);
+
+        m_settingsScroll = Setup(alpha::ui::AdvancedScrollLayer::create(
+            {SIZE - CCSize{SIDE_BAR_WIDTH, TOP_BAR_HEIGHT} - POPUP_OFFSET * 2}
+        ))
+            .id("settings-scroll"_spr)
+            .layout(ui::row(AxisAlignment::Start, SETTING_BUTTON_GAP, AxisAlignment::End)
+                .autoScale(false)
+                .ignoreInvisible()
+                .crossOverflow()
+                .padding({0.0f, EDGE_PADDING + 5.0f, 0.0f, 0.0f})
+            )
+            .anchor(Anchor::BottomRight)
+            .optionsAnchor(Anchor::BottomRight)
+            .anchorOffset(-POPUP_OFFSET, POPUP_OFFSET)
+            .parent(m_mainLayer);
+        m_settingsScroll->blockTouchBehind(true);
+        m_settingsScroll->setOvershoot(20.0f);
+
+        int index = 0;
+        for (auto category : SettingsManager::get()->getCategories()) {
+            auto name = category->name();
+
+            if (const auto pos = name.find("Title"); pos != std::string::npos) {
+                name.erase(name.find("Title"));
+
+                Setup(ui::dummy())
+                    .id("{}-title"_spr, string::replace(string::toLower(name), " ", "-"))
+                    .layout(ui::row(AxisAlignment::Center, FEATURE_LABEL_ICON_GAP)
+                        .autoScale(false)
+                        .grow(true)
+                        .crossOverflow()
+                    )
+                    .height(TITLE_LABEL_HEIGHT)
+                    .anchor(Anchor::Left)
+                    .children(
+                        Setup(ui::label(name, Font::Gold))
+                            .scaleHeightToFit(TITLE_LABEL_HEIGHT)
+                            .anchor(Anchor::Left)
+                    )
+                    .parent(m_featuresScroll);
+
+                continue;
             }
+
+            auto featureButton = ui::button(
+                ui::label(name), this, menu_selector(SettingsPopup::onFeatureButton)
+            );
+                
+            Setup(ui::menu(ui::row(AxisAlignment::Center, FEATURE_LABEL_ICON_GAP)
+                .autoScale(false)
+                .grow(true)
+                .crossOverflow()
+            ))
+                .id("{}-category"_spr, string::replace(string::toLower(name), " ", "-"))
+                .height(FEATURE_LABEL_HEIGHT)
+                .anchor(Anchor::Left)
+                .children(
+                    Setup(CCSprite::create(category->logo().c_str()))
+                        .scaleHeightToFit(FEATURE_LABEL_HEIGHT),
+                    Setup(featureButton)
+                        .tag(index)
+                        .scaleHeightToFit(FEATURE_LABEL_HEIGHT)
+                        .anchor(Anchor::Left)
+                        .userObject("nwo5.silly-api/tooltip", TooltipInfo::create(category->description()))
+                )
+                .parent(m_featuresScroll);
+
+            m_featureButtons[index] = featureButton;
+
+            m_settingsMap[index] = {{}, category};
+            for (auto setting : category->getSettings()) {
+                auto settingButton = Settings::createSettingButton(setting);
+
+                // it returns false if setting is invalid on platform
+                if (!settingButton) {
+                    if (setting->name() == "Enabled") {
+                        break;
+                    }
+
+                    continue;
+                }
+
+                m_settingsMap[index].first.push_back(
+                    Setup(settingButton)
+                        .parent(m_settingsScroll)
+                );
+            }
+
+            index++;
         }
 
-        Setup(ui::buttonFrame(
-            "GJ_arrow_01_001.png", this, menu_selector(SettingsPopup::onNextPage)
-        ))
-            .id("next-page-button"_spr)
-            .scaleToFit(ARROW_SIZE)
-            .pos(WIDTH + ARROW_DISTANCE, HEIGHT / 2)
-            .visible(Settings::General::showPageArrows.get())
-            .parent(m_buttonMenu)
-            .flipX();
-        Setup(ui::buttonFrame(
-            "GJ_arrow_01_001.png", this, menu_selector(SettingsPopup::onPreviousPage)
-        ))
-            .id("previous-page-button"_spr)
-            .scaleToFit(ARROW_SIZE)
-            .pos(-ARROW_DISTANCE, HEIGHT / 2)
-            .visible(Settings::General::showPageArrows.get())
-            .parent(m_buttonMenu);
+        // i need to update it or it just breaks :3
+        m_featuresScroll->updateLayout();
+        m_featuresScroll->scroll(m_settingsScroll->getScrollPoint().x, m_settingsScroll->getScrollPoint().y);
 
-        m_closeBtn->setPosition(WIDTH, HEIGHT);
+        this->goToFeature(Settings::saveSettingPage ? Mod::get()->getSavedValue<int>("general-settings-page") : 0);
 
-        goToPage(Settings::General::saveSettingPage.get() ? Mod::get()->getSavedValue<int>("general-settings-page") : 0);
+        m_closeBtn->setVisible(false);
+
+        this->scheduleUpdate();
+
+        this->addEventListener(SettingWithReloadChanged(), [this] (std::string pID, SettingReload pReload) {
+            m_reloadSettingsActivated[pID] = pReload;
+        });
 
         return true;
     }
 
-    CCMenu* SettingsPopup::createPage(Category* pCategory) {  
-        const auto page = m_pages.size();
+    void SettingsPopup::update(float) {
+        if (m_selectedFeature < m_featureButtons.size()) {
+            m_featureButtons[m_selectedFeature]->setColor(
+                nwo5::utils::getChroma<ccColor3B>(1.5f, 180.0f, (1.0f/3.0f))
+            );
+        }
+        if (m_versionLabel) {
+            m_versionLabel->setColor(nwo5::utils::getChroma<ccColor3B>(1.5f, {}, 0.5f));
+        }
+    }
 
-        auto pageContainer = ui::node(Setup(CCNode::create())
-            .id("page-container-{}"_spr, page)
-            .pos(WIDTH / 2, HEIGHT / 2)
-            .parent(m_mainLayer)
-        );
+    void SettingsPopup::goToFeature(int pTag) {
+        if (m_settingsMap[pTag].first.empty()) {
+            return Notification::create("feature unsupported on platform 3:", NotificationIcon::Error)->show();
+        }
+        m_selectedFeature = pTag;
 
-        m_pages.push_back(pageContainer);
-        
-        Setup(ui::buttonSprite(
-            Settings::General::useLogosForDots.get() ? pCategory->logo() : "smallDot.png", 
-            this, menu_selector(SettingsPopup::onPageDot)
-        ))
-            .id("page-{}-dot"_spr, page)
-            .scaleToFit(DOT_MENU_HEIGHT)
-            .tag(page)
-            .parent(m_pageDotMenu);
+        Mod::get()->setSavedValue<int>("general-settings-page", m_selectedFeature);
 
-        auto menu = ui::node(Setup(ui::menu(ui::row(
-            AxisAlignment::Start, SETTING_BUTTON_GAP, AxisAlignment::End
-        )
-            .autoScale()
-            .crossOverflow(false)
-        ))
-            .id("settings_menu"_spr)
-            .size(
-                SettingButtonBase::SETTING_BUTTON_SIZE.width * 3 + SETTING_BUTTON_GAP * 2, 
-                SettingButtonBase::SETTING_BUTTON_SIZE.height * 4 + SETTING_BUTTON_GAP * 2
-            )
-            .pos(0.0f, -HEIGHT / 2 + EDGE_PADDING + DOT_MENU_HEIGHT + PADDING + SettingButtonBase::SETTING_BUTTON_SIZE.height * 2 + SETTING_BUTTON_GAP)
-            .parent(pageContainer)
-        );
-
-        auto logo = ui::node(Setup(CCSprite::create(pCategory->logo().c_str()))
-            .id("logo"_spr)
-            .pos(-WIDTH / 2 + EDGE_PADDING + LOGO_SIZE / 2, HEIGHT / 2 - EDGE_PADDING - LOGO_SIZE / 2)
-            .scaleToFit(LOGO_SIZE)
-            .parent(pageContainer)
-        );
-
-        Setup(ui::label(pCategory->name()))
-            .id("category-label"_spr)
-            .anchor(LEFT_CENTER_ANCHOR)
-            .scale(0.5f)
-            .pos(logo->getPositionX() + LOGO_SIZE / 2 + PADDING, logo->getPositionY())
-            .parent(pageContainer);
-
-        if (pCategory->name() == "Keybinds") {
-            Setup(Button::createWithNode(ButtonSprite::create("Open Keybinds"), [this] (Button*) {
-                geode::openSettingsPopup(Mod::get(), true);
-            }))
-                .id("keybinds_button"_spr)
-                .scaleToFit(KEYBINDS_BUTTON_SIZE)
-                .pos(CCPointZero)
-                .parent(pageContainer);
+        for (auto [index, button] : m_featureButtons) {
+            button->setColor(m_settingsMap[index].first.size() ? ccWHITE : ccGRAY);
         }
 
-        return menu;
-    }
+        for (const auto& [index, pair] : m_settingsMap) {
+            for (auto button : pair.first) {
+                const auto visible = index == m_selectedFeature;
 
-    void SettingsPopup::goToPage(int pPage) {
-        m_currentPage = pPage < 0 ? m_pages.size() - 1 : pPage % m_pages.size();
+                button->setVisible(visible);
+                button->setContentSize(visible ? SettingButtonBase::SIZE : CCSizeZero);
 
-        for (auto page : m_pages) {
-            page->setVisible(false);
+                // scroll layer changes visibility so this makes sure everything is actually hidden
+                for (auto child : button->getChildrenExt()) {
+                    child->setVisible(visible);
+                }
+            }
         }
 
-        m_pages[m_currentPage]->setVisible(true);
-
-        for (auto dot : CCArrayExt<CCMenuItemSpriteExtra*>(m_pageDotMenu->getChildren())) {
-            dot->setColor(ccGRAY);
-        }
-
-        m_pageDotMenu->getChildByType<CCMenuItemSpriteExtra*>(m_currentPage)->setColor(ccWHITE);
-
-        Mod::get()->setSavedValue<int>("general-settings-page", m_currentPage);
+        m_settingsScroll->updateLayout();
+        m_settingsScroll->setScrollY(0.0f);
     }
 
-    void SettingsPopup::onPageDot(CCObject* pSender) {
-        goToPage(pSender->getTag());
+    void SettingsPopup::onFeatureButton(cocos2d::CCObject* pSender) {
+        this->goToFeature(pSender->getTag());
     }
-    void SettingsPopup::onNextPage(CCObject* pSender) {
-        goToPage(m_currentPage + 1);
+    void SettingsPopup::onCredits(cocos2d::CCObject*) {
+        MDPopup::create(
+            "Credits",
+R"(tyyyy <cr>\<3</c> !
+
+## Special Thanks
+### Ery
+- geode gremlin
+- pr for obj tab icons
+- prolly accepting this mod
+
+### HJFod
+- made better edit
+- let me steal a bunch of stuff
+- let me have a bunch of other stuff
+
+### Alpha
+- made tinker
+- replace obj impl
+- setting popup inspo
+
+## Credits
+
+### gdjayy
+- replace object suggestion
+
+### CreatorCreepy
+- feedback for replace object
+- feedback for floodfill
+
+### CarlIsBored
+- trigger id search suggestion
+
+### like all the hosts of cornbread megacollab
+- better select all suggestion
+
+### Doranell
+- text obj utils suggestion
+
+### DasshuDev
+- copy particle string idea
+)",     
+            "Close"
+        )->show();
     }
-    void SettingsPopup::onPreviousPage(CCObject* pSender) {
-        goToPage(m_currentPage - 1);
+    void SettingsPopup::onOpenSaveDir(cocos2d::CCObject*) {
+        file::openFolder(Mod::get()->getSaveDir());
+    }
+    void SettingsPopup::onKeybinds(cocos2d::CCObject*) {
+        geode::openSettingsPopup(Mod::get(), Settings::popupTheme != "Geode");
     }
 
-    void SettingsPopup::onClose(CCObject* pSender) {
-        if (!Settings::General::showReloadWarnings.get() || m_reloadSettingsActivated.empty()) {
+    void SettingsPopup::onClose(cocos2d::CCObject* pSender) {
+        if (!Settings::showReloadWarnings || m_reloadSettingsActivated.empty()) {
             return Popup::onClose(pSender);
         }
+        
+        std::vector<SettingReload> reloads;
+
+        for (auto [_, reload] : m_reloadSettingsActivated) {
+            reloads.push_back(reload);
+        }
+
+        Popup::onClose(pSender);
 
         std::string str;
 
-        if (const auto count = std::ranges::count(m_reloadSettingsActivated, SettingReload::Editor)) {
+        if (const auto count = std::ranges::count(reloads, SettingReload::Editor)) {
             str.append(fmt::format("{} settings that require editor reload, ", count));
         }
-        if (const auto count = std::ranges::count(m_reloadSettingsActivated, SettingReload::Game)) {
+        if (const auto count = std::ranges::count(reloads, SettingReload::Game)) {
             str.append(fmt::format("{} settings that require game reload, ", count));
         }
-        if (const auto count = std::ranges::count(m_reloadSettingsActivated, SettingReload::Pause)) {
+        if (const auto count = std::ranges::count(reloads, SettingReload::Pause)) {
             str.append(fmt::format("{} settings that require editor pause menu reload, ", count));
         }
-        if (const auto count = std::ranges::count(m_reloadSettingsActivated, SettingReload::Popup)) {
+        if (const auto count = std::ranges::count(reloads, SettingReload::Popup)) {
             str.append(fmt::format("{} settings that require settings popup reload, ", count));
         }
 
@@ -178,11 +413,9 @@ namespace Settings {
         
         str.append(" have been changed");
         
-        Popup::onClose(pSender);
-        
         FLAlertLayer::create(
             "BTW",
-            str,
+            {str},
             "OK"
         )->show();
     }
@@ -199,12 +432,5 @@ namespace Settings {
         ret->autorelease();
 
         return ret;
-    }
-    void SettingsPopup::settingChanged(GenericSetting* pSetting, SettingReload pReload) {
-        if (pReload != SettingReload::None && !m_settingsChanged.contains(pSetting)) {
-            m_reloadSettingsActivated.push_back(pReload);
-        }
-
-        m_settingsChanged.insert(pSetting);
     }
 }

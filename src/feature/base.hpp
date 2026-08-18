@@ -1,6 +1,5 @@
 #pragma once
 
-#include <settings/include.hpp>
 #include <features/registry.hpp>
 
 namespace Features {
@@ -12,7 +11,7 @@ namespace Features {
         std::unordered_set<std::string> m_disabledBy;
 
     public:
-        FeatureBase(FeatureEnum pEnum, bool pDefaultEnabled);
+        FeatureBase(FeatureEnum pEnum);
 
         // lol
         operator std::string_view() const {
@@ -38,10 +37,27 @@ namespace Features {
         bool forceDisabled() const;
     };
 
-    template<FeatureEnum Enum, bool DefaultEnabled = true>
+    template<FeatureEnum Enum, Settings::SettingCondition Condition = Settings::SettingCondition::None, Settings::SettingReload Reload = Settings::SettingReload::None,  bool DefaultEnabled = true>
     class FeatureTemplate : public FeatureBase {
     protected:
         FeatureTemplate()
-            : FeatureBase(Enum, DefaultEnabled) {}
+            : FeatureBase(Enum) 
+        {
+            static Settings::SillySetting<bool> enabled{"Enabled", m_id, DefaultEnabled, Reload, Condition};
+            m_enabled = &enabled;
+
+            nwo5::settings::listenForAllSavedSettingChanges([this] (std::string_view pKey, GenericSetting* pSetting) {
+                if (!GameManager::get()->m_levelEditorLayer) {
+                    return;
+                }
+
+                if (const auto name = pSetting->name(); name != "Enabled") {
+                    this->onSettingChanged(name, pSetting);
+                }
+                else {
+                    this->onToggled(static_cast<Settings::SillySetting<bool>*>(pSetting)->get());
+                }
+            }, m_id).leak();
+        }
     };
 }

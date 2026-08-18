@@ -4,12 +4,14 @@
 - multi text edit
 - editor bug fixes
 - license
+- overhauled settings popup
+- contributing (project guide)
 
 **Fixed**
 - some ui stuff
 
 **Internal**
-- reorganized the code base
+- refactor fucking everything
 - features now use a module system similar to tinker
 
 ## v0.1.0-beta.2

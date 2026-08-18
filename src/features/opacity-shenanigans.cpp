@@ -3,10 +3,8 @@
 
 // btw looping thru every object again instead of hooking setopacity itself is actually moderately slower ! so
 
-#include <features/better-layers/settings.hpp>
-#include <features/better-layers/include.hpp>
-#include <features/hide-with-playtest/settings.hpp>
-#include <features/hide-with-playtest/include.hpp>
+#include <features/interface/better-layers/shared.hpp>
+#include <features/miscellaneous/hide-with-playtest/shared.hpp>
 #include <Geode/modify/LevelEditorLayer.hpp>
 #include <Geode/modify/GameObject.hpp>
 #include <utils/include.hpp>
@@ -42,11 +40,11 @@ class $modify(GameObject) {
             return GameObject::setOpacity(opacity);
         }
 
-        if (state == SetOpacityHookState::Playtesting && Settings::HideWithPlaytest::enabled.get()) {
-            opacity = HideWithPlaytest::opacityForObject(opacity, this);
+        if (state == SetOpacityHookState::Playtesting && HideWithPlaytest::enabled()) {
+            opacity = Shared::hideWithPlaytestOpacityForObject(opacity, this);
         }
-        else if (Settings::BetterLayers::enabled.get()) {
-            if (auto ptr = BetterLayers::getLayerSettingsPtr()) {
+        else if (BetterLayers::enabled()) {
+            if (auto ptr = Shared::getLayerSettingsPtr()) {
                 opacity = ptr->opacityForObject(opacity, this);
             }
         }
