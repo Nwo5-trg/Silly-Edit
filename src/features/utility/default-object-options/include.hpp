@@ -12,7 +12,7 @@ namespace DefaultObjectOptions {
 
     class $feature_modify(LevelEditorLayer) {
         struct Fields {
-            DefaultObjectOptions::ObjectOptions options;
+            ObjectOptions options;
         };
 
         static void onModify(auto& pSelf);
@@ -20,7 +20,7 @@ namespace DefaultObjectOptions {
         GameObject* createObject(int key, cocos2d::CCPoint position, bool noUndo);
     };
 
-    class $setting_category("default-object-options-logo.png"_spr);
+    class $setting_category("default-object-options-logo.png"_spr, "Configure objects on place");
     
     inline SillySetting<bool> dontFade{
         "Dont Fade", feature, false
@@ -32,9 +32,9 @@ namespace DefaultObjectOptions {
         "No Glow", feature, false
     };
     inline SillySetting<bool> useJSON{
-        "Use JSON", feature, false, "most ppl will prolly find this useful enough for auto enabling noglow/dontfade but if you want more advanced settings like obj str fuckery u can use json :333"
+        "Use JSON", feature, false, "for more complex configurations u can use a json file, for an example check examples/default-object-options.jsonc in the github repo"
     };
     inline SillySetting<std::string> path{
-        "JSON Path", feature, "entries.json", "relative to config folder (mainly just a convenient way to show the file name u need)"
+        "JSON Path", feature, "object-options.json", "relative to config folder (mainly just a convenient way to show the file name u need)"
     };
 }

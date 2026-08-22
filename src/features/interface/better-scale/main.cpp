@@ -6,7 +6,7 @@ using namespace nwo5::ui::prelude;
 
 namespace BetterScale {
     void GJScaleControl::onModify(auto& pSelf) {
-        (void)pSelf.setHookPriorityAfterPost("GJScaleControl::init", nwo5::utils::TINKER_EDIT_ID);
+        (void)pSelf.setHookPriorityAfterPost("GJScaleControl::init", TINKER_EDIT_ID);
     }
 
 
@@ -289,7 +289,7 @@ namespace BetterScale {
 
         // laziest solution works so fuck you
         for (auto node : getChildrenExt()) {
-            if (const auto id = node->getID().view(); id.contains(nwo5::utils::TINKER_EDIT_ID) || id.contains(nwo5::utils::BETTER_EDIT_ID)) {
+            if (const auto id = node->getID().view(); id.contains(TINKER_EDIT_ID) || id.contains(BETTER_EDIT_ID)) {
                 // not making invisible cuz that would just be reset so close enough
                 node->setScale(0.0f);
 
@@ -355,8 +355,8 @@ namespace BetterScale {
     void Feature::onEditor() {
         auto self = editor::ui<BetterScale::EditorUI>();
 
-        nwo5::utils::setupKeybind(self, "better-scale-activate-scale-control", [self] (const Keybind&, bool pDown, bool, double) {
-            if (BetterScale::enabled() && pDown && !editor::selection::empty()) {
+        feature.registerKeybind<"activate-scale-control">([self] (bool pDown, bool) {
+            if (pDown && !editor::selection::empty()) {
                 if (self->m_scaleControl && self->m_scaleControl->isVisible() && self->m_scaleControl->m_scaleLabel->isVisible()) {
                     self->deactivateScaleControl();
                 }
@@ -365,8 +365,8 @@ namespace BetterScale {
                 }
             }
         });
-        nwo5::utils::setupKeybind(self, "better-scale-activate-scale-xy-control", [self] (const Keybind&, bool pDown, bool, double) {
-            if (BetterScale::enabled() && pDown && !editor::selection::empty()) {
+        feature.registerKeybind<"activate-scale-xy-control">([self] (bool pDown, bool) {
+            if (pDown && !editor::selection::empty()) {
                 if (self->m_scaleControl && self->m_scaleControl->isVisible() && !self->m_scaleControl->m_scaleLabel->isVisible()) {
                     self->deactivateScaleControl();
                 }

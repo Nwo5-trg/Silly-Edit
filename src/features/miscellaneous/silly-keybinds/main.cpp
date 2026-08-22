@@ -7,8 +7,8 @@ namespace SillyKeybinds {
     void Feature::onEditor() {
         auto self = editor::ui();
 
-        nwo5::utils::setupKeybind(self, "silly-keybinds-toggle-ignore-damage", [self] (const Keybind&, bool pDown, bool, double) {
-            if (SillyKeybinds::enabled() && SillyKeybinds::ignoreDamageKeybind && pDown) {
+        feature.registerKeybind<"toggle-ignore-damage">([self] (bool pDown, bool) {
+            if (pDown) {
                 GameManager::get()->toggleGameVariable(GameVar::IgnoreDamage);
 
                 self->m_editorLayer->m_ignoreDamage = GameManager::get()->getGameVariable(GameVar::IgnoreDamage);
@@ -30,8 +30,8 @@ namespace SillyKeybinds {
             }
         });
 
-        nwo5::utils::setupKeybind(self, "silly-keybinds-make-object-invisible", [self] (const Keybind&, bool pDown, bool, double) {
-            if (SillyKeybinds::enabled() && SillyKeybinds::makeObjectInvisibleKeybind && pDown && editor::selection::count()) {
+        feature.registerKeybind<"make-object-invisible">([self] (bool pDown, bool) {
+            if (pDown && editor::selection::count()) {
                 if (SillyKeybinds::invisibleWithGroup) {
                     bool hasGroup = false;
 

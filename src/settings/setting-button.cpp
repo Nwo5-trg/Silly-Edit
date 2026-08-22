@@ -37,8 +37,7 @@ namespace Settings {
             "GJ_infoIcon_001.png", this, menu_selector(SettingButtonBase::onHelp)
         ))
             .id("help-button"_spr)
-            .scaleToFit(HELP_BUTTON_SIZE)
-            .userObject("nwo5.silly-api/tooltip", TooltipInfo::create("Description"));
+            .scaleToFit(HELP_BUTTON_SIZE);
 
         m_reloadIndicator = Setup(ui::buttonFrame(
             "edit_ccwBtn_001.png", this, nullptr
@@ -68,6 +67,11 @@ namespace Settings {
         const auto shouldShowHelp = m_setting->hasDescription();
         m_helpButton->setVisible(shouldShowHelp);
 
+        if (shouldShowHelp) {
+            const auto str = m_setting->description();
+            m_helpButton->setUserObject("nwo5.silly-api/tooltip", TooltipInfo::create(string::toUpper(str.substr(0, 1)) + str.substr(1)));
+        }
+
         if (pReload == SettingReload::None) {
             m_reloadIndicator->setVisible(false);
 
@@ -83,7 +87,7 @@ namespace Settings {
                     .callback([] (auto*) {
                         Notification::create("editor reload is required to apply setting !", NotificationIcon::Info)->show();
                     })
-                    .userObject("nwo5.silly-api/tooltip", TooltipInfo::create("Editor reload"));
+                    .userObject("nwo5.silly-api/tooltip", TooltipInfo::create("Editor reload required"));
             break; }
             case SettingReload::Pause: {
                 Setup(m_reloadIndicator)
@@ -91,7 +95,7 @@ namespace Settings {
                     .callback([] (auto*) {
                         Notification::create("pause menu reload is required to apply setting !", NotificationIcon::Info)->show();
                     })
-                    .userObject("nwo5.silly-api/tooltip", TooltipInfo::create("Pause reload"));
+                    .userObject("nwo5.silly-api/tooltip", TooltipInfo::create("Pause reload required"));
             break; }
             case SettingReload::Popup: {
                 Setup(m_reloadIndicator)
@@ -99,7 +103,7 @@ namespace Settings {
                     .callback([] (auto*) {
                         Notification::create("settings popup reload is required to apply setting !", NotificationIcon::Info)->show();
                     })
-                    .userObject("nwo5.silly-api/tooltip", TooltipInfo::create("Popup reload"));
+                    .userObject("nwo5.silly-api/tooltip", TooltipInfo::create("Popup reload required"));
             break; }
             case SettingReload::Game: {
                 Setup(m_reloadIndicator)
@@ -107,7 +111,7 @@ namespace Settings {
                     .callback([] (auto*) {
                         Notification::create("game reload is required to apply setting !", NotificationIcon::Info)->show();
                     })
-                    .userObject("nwo5.silly-api/tooltip", TooltipInfo::create("Game reload"));
+                    .userObject("nwo5.silly-api/tooltip", TooltipInfo::create("Game reload required"));
             break; }
             default: return;
         }
@@ -235,6 +239,7 @@ namespace Settings {
                 }
                 else {
                     setting->set(std::clamp(utils::numFromString<T>(pStr).unwrapOrDefault(), setting->min(), setting->max()));
+                    this->m_input->setString(nwo5::utils::numToString(setting->get()));
                 }
 
                 if (setting->reloadRequired()) {
@@ -271,6 +276,10 @@ namespace Settings {
                 }
                 else {
                     setting->set(std::clamp(utils::numFromString<T>(pStr).unwrapOrDefault(), setting->min(), setting->max()));
+
+                    if (!pStr.ends_with('.') && !pStr.ends_with('-')) {
+                        this->m_input->setString(nwo5::utils::numToString(setting->get()));
+                    }
                 }
 
                 if (setting->reloadRequired()) {

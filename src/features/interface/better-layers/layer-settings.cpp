@@ -166,11 +166,11 @@ namespace BetterLayers {
         }
 
         if (const auto res = getFocusedLayer(); res.has_value() && pObj->m_editorLayer != res.value() && pObj->m_editorLayer2 != res.value()) {
-            return nwo5::utils::modifyOpacity(opacity, BetterLayers::unfocusedLayerOpacity);
+            return Sillyedit::modifyOpacity(opacity, BetterLayers::unfocusedLayerOpacity);
         }
 
         if (!canSelectLayer) {
-            return nwo5::utils::modifyOpacity(opacity, m_defaultOpacity.value_or(BetterLayers::layerOpacity));
+            return Sillyedit::modifyOpacity(opacity, m_defaultOpacity.value_or(BetterLayers::layerOpacity));
         }
 
         return static_cast<unsigned char>(std::clamp(opacity, 0.0f, 255.0f));

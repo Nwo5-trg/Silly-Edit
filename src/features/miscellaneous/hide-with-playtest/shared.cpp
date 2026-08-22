@@ -26,7 +26,7 @@ namespace Shared {
         const auto id = pObj->m_objectID;
 
         if (HideWithPlaytest::hideTriggers.get() && editor::trigger::is(id)) {
-            return nwo5::utils::modifyOpacity(pOpacity, HideWithPlaytest::triggerOpacity.get());
+            return Sillyedit::modifyOpacity(pOpacity, HideWithPlaytest::triggerOpacity.get());
         }
         
         switch (arr[id]) {
@@ -34,7 +34,7 @@ namespace Shared {
                 return pOpacity;
             }
             case HideWithPlaytestType::DBlock: {
-                return nwo5::utils::modifyOpacity(pOpacity, HideWithPlaytest::specialBlockOpacity.get());
+                return Sillyedit::modifyOpacity(pOpacity, HideWithPlaytest::specialBlockOpacity.get());
             }
         }
     }

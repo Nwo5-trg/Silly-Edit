@@ -42,12 +42,15 @@ namespace Settings {
             .callback([this] (Button* pSender) {
                 this->onClose(pSender);
             })
+            .userObject("nwo5.silly-api/tooltip", TooltipInfo::create("I should add commiting settings icl"))
             .parent(m_mainLayer);
 
-        m_tooltip = Setup(Tooltip::create(Font::Chat))
-            .id("tooltip"_spr)
-            .scale(0.35f)
-            .parent(m_mainLayer);
+        if (Settings::showTooltips) {
+            m_tooltip = Setup(Tooltip::create(Font::Chat))
+                .id("tooltip"_spr)
+                .scale(0.35f)
+                .parent(m_mainLayer);
+        }
 
         auto sideBar = ui::node(Setup(CCLayerColor::create(
             color_cast<ccColor4B>(THEME_MAP[Settings::popupTheme].sideBar)
@@ -141,6 +144,13 @@ namespace Settings {
             .userObject("nwo5.silly-api/tooltip", TooltipInfo::create("Is it \"sillyedit\" or \"SillyEdit\" (idk !)"))
             .parent(topBar);
 
+        m_keybindsButton = Setup(ui::button(
+            ButtonSprite::create("Open Keybinds"), this, menu_selector(SettingsPopup::onKeybinds)
+        ))
+            .id("keybinds-button"_spr)
+            .scaleHeightToFit(TOP_BAR_BUTTON_SIZE)
+            .userObject("nwo5.silly-api/tooltip", TooltipInfo::create("Open keybinds"));
+
         Setup(ui::menu(ui::row(AxisAlignment::End, TOP_BAR_BUTTON_GAP)
             .autoScale(false)
             .grow(true)
@@ -152,14 +162,15 @@ namespace Settings {
             .anchorOffsetX(-EDGE_PADDING)
             .height(TOP_BAR_BUTTON_SIZE)
             .children(
-                Setup(ui::button(
-                    ButtonSprite::create("Open Keybinds"), this, menu_selector(SettingsPopup::onKeybinds)
-                ))
-                    .id("keybinds-button"_spr)
-                    .scaleHeightToFit(TOP_BAR_BUTTON_SIZE)
-                    .userObject("nwo5.silly-api/tooltip", TooltipInfo::create("Open keybinds")),
+                m_keybindsButton,
                 Setup(ui::circleButtonFrame(
-                    ui::frame::FOLDER, CircleBaseColor::Green, this, menu_selector(SettingsPopup::onOpenSaveDir)
+                    ui::frame::FOLDER, CircleBaseColor::Green, this, menu_selector(SettingsPopup::onOpenConfigDir)
+                ))
+                    .id("config-dir-button"_spr)
+                    .scaleToFit(TOP_BAR_BUTTON_SIZE)
+                    .userObject("nwo5.silly-api/tooltip", TooltipInfo::create("Open config dir")),
+                Setup(ui::circleButtonFrame(
+                    ui::frame::SAVE, CircleBaseColor::Green, this, menu_selector(SettingsPopup::onOpenSaveDir)
                 ))
                     .id("save-dir-button"_spr)
                     .scaleToFit(TOP_BAR_BUTTON_SIZE)
@@ -319,6 +330,15 @@ namespace Settings {
 
         m_settingsScroll->updateLayout();
         m_settingsScroll->setScrollY(0.0f);
+
+        if (ModSettingsManager::from(Mod::get())->get(m_settingsMap[m_selectedFeature].second->name()).get()) {
+            static_cast<ButtonSprite*>(m_keybindsButton->getNormalImage())->setColor(ccWHITE);
+            m_keybindsButton->setEnabled(true);
+        }
+        else {
+            static_cast<ButtonSprite*>(m_keybindsButton->getNormalImage())->setColor(ccGRAY);
+            m_keybindsButton->setEnabled(false);
+        }
     }
 
     void SettingsPopup::onFeatureButton(cocos2d::CCObject* pSender) {
@@ -330,20 +350,22 @@ namespace Settings {
 R"(tyyyy <cr>\<3</c> !
 
 ## Special Thanks
+### Alpha
+- made tinker
+- replace obj impl
+- setting popup inspo
+- some general help with stuff
+
 ### Ery
 - geode gremlin
 - pr for obj tab icons
+- permission to use them as assets
 - prolly accepting this mod
 
 ### HJFod
 - made better edit
 - let me steal a bunch of stuff
 - let me have a bunch of other stuff
-
-### Alpha
-- made tinker
-- replace obj impl
-- setting popup inspo
 
 ## Credits
 
@@ -372,8 +394,75 @@ R"(tyyyy <cr>\<3</c> !
     void SettingsPopup::onOpenSaveDir(cocos2d::CCObject*) {
         file::openFolder(Mod::get()->getSaveDir());
     }
+    void SettingsPopup::onOpenConfigDir(cocos2d::CCObject*) {
+        file::openFolder(Mod::get()->getConfigDir());
+    }
     void SettingsPopup::onKeybinds(cocos2d::CCObject*) {
-        geode::openSettingsPopup(Mod::get(), Settings::popupTheme != "Geode");
+        auto popup = geode::openSettingsPopup(Mod::get(), Settings::popupTheme != "Geode");
+
+        if (!popup) {
+            return;
+        }
+
+        auto content = popup->getChildByIDRecursive("content-layer");
+        auto input = popup->getChildByIDRecursive("search-input");
+        auto label = popup->m_mainLayer->getChildByType<CCLabelBMFont>();
+        auto bottomMenu = popup->m_mainLayer->getChildByType<CCMenu>();
+
+        if (!content || !input || !label || !bottomMenu) {
+            return;
+        }
+
+        const auto selectedFeature = m_settingsMap[m_selectedFeature].second->name();
+
+        static_cast<TextInput*>(input)->setPlaceholder("Search Keybinds...");
+
+        if (selectedFeature == "General") {
+            label->setString("Keybinds");
+
+            return;
+        }
+
+        label->setString(fmt::format("{} Keybinds", selectedFeature).c_str());
+
+        if (auto resetButton = bottomMenu->getChildByType<CCMenuItemSpriteExtra>(1)) {
+            Setup(resetButton)
+                .size(CCSizeZero)
+                .hide();
+            static_cast<ButtonSprite*>(resetButton->getNormalImage())->setOpacity(0);
+        }
+
+        struct SettingNode {
+            CCNode* self = nullptr;
+            CCMenuItemToggler* toggler = nullptr;
+            CCLabelBMFont* label = nullptr;
+        };
+        std::vector<SettingNode> titleNodes;
+        
+        for (auto child : content->getChildrenExt()) {
+            if (auto menu = child->getChildByType<CCMenu>(1); menu && menu->getChildrenCount() == 1) {
+                if (auto toggler = menu->getChildByType<CCMenuItemToggler>()) {
+                    if (auto label = child->getChildByType<CCMenu>()->getChildByType<CCLabelBMFont>(); label && std::string{label->getFntFile()} == Font::Gold) {
+                        titleNodes.emplace_back(child, toggler, label);
+                    }
+                }
+            }
+        }
+
+        for (const auto& node : titleNodes) {
+            const auto feature = node.label->getString();
+
+            node.self->setContentHeight(0.0f);
+            for (auto child : node.self->getChildrenExt()) {
+                child->setVisible(false);
+            }
+
+            if (selectedFeature != feature) {
+                node.toggler->activate();
+            }
+
+            node.toggler->setVisible(false);
+        }
     }
 
     void SettingsPopup::onClose(cocos2d::CCObject* pSender) {

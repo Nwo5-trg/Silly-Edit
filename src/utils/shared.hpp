@@ -1,11 +1,16 @@
 #pragma once
 
-#include <utils/include.hpp>
+#include <nwo5.silly-api/include/include.hpp>
 
-// all of this depricated soonish
-namespace Shared {
+using namespace nwo5::editor::prelude;
+
+namespace Sillyedit {
     enum class DrawNode {
         Default
+    };
+    enum class ChromaNode {
+        Default = 0,
+        SelectionUtilsInvert = 180,
     };
 
     nwo5::utils::SillyDrawNode* getGridDraw(DrawNode pDrawNode = DrawNode::Default);
@@ -13,15 +18,12 @@ namespace Shared {
     nwo5::utils::SillyDrawNode* getOverlayDraw(DrawNode pDrawNode = DrawNode::Default);
     cocos2d::CCLayer* getOverlayLayer();
     cocos2d::CCLayer* getHiddenLayer();
-
-    enum class ChromaNode {
-        Default = 0,
-        SelectionUtilsInvert = 180,
-    };
-
-    void addUpdateFunc(geode::Function<void()> pFunc);
-
+    
     inline auto& shouldApplyCustomPlacedObjectOptions() {
+        static bool val = false;
+        return val;
+    }
+    inline auto& shouldBlockScrolling() {
         static bool val = false;
         return val;
     }

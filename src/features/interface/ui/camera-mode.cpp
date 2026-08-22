@@ -15,8 +15,8 @@ class $modify(UISetupCameraModePopup, SetupCameraModePopup) {
         CCMenuItemToggler* editCameraToggle = nullptr;
     };
 
-    static void onModify(auto& self) {
-        (void)self.setHookPriorityPost("SetupCameraModePopup::init", Priority::VeryLate);
+    static void onModify(auto& pSelf) {
+        (void)pSelf.setHookPriorityPost("SetupCameraModePopup::init", Priority::VeryLate);
     }
 
     bool init(EffectGameObject* object, CCArray* objects) {

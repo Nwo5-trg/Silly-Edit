@@ -3,8 +3,8 @@
 #include <Geode/modify/EditorUI.hpp>
 #include <feature/include.hpp>
 
-namespace HideUIToggle {
-    class $feature(HideUIToggle, SettingCondition::None, SettingReload::Editor) {
+namespace HideUI {
+    class $feature(HideUI, SettingCondition::None, SettingReload::Editor) {
         void onEditor() override;
     } feature;
 
@@ -18,5 +18,5 @@ namespace HideUIToggle {
         void showUI(bool show);
     };
 
-    class $setting_category("hide-ui-toggle-logo.png"_spr, "Button to show/hide editor ui (practically ripped from betteredit)");
+    class $setting_category("hide-ui-logo.png"_spr, "Button to show/hide editor ui (practically ripped from betteredit)");
 }

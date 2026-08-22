@@ -2,16 +2,22 @@
 **Added**
 - api for disabling features
 - multi text edit
+- group scroll
+- split some features
 - editor bug fixes
-- license
 - overhauled settings popup
-- contributing (project guide)
+- new keybinds system
+- contributing (making features guide)
+- more selection utils
+- license
 
 **Fixed**
+- a couple features just not working lol
+- keybinds
 - some ui stuff
 
 **Internal**
-- refactor fucking everything
+- ***refactor fucking everything***
 - features now use a module system similar to tinker
 
 ## v0.1.0-beta.2

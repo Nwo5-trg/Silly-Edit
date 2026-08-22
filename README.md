@@ -1,10 +1,10 @@
 # SillyEdit
-\<3
+my best geode project forever \<3
 
 ## Disclaimer(s)
-***betteredit is unsupported***, **it might still kinda work, but still keep in mind i am not trying to support betteredit at all and anything regarding that will be ignored**
-
 **i make literally no promises as to when this mod gets updated or what gets added/removed, i develop this mod completely for fun and with my own needs in mind first**
+
+***betteredit is unsupported***, **it might still kinda work, but still keep in mind i am not trying to support betteredit at all and anything regarding that will be ignored**
 
 ## API
 sillyedit has an api for enabling/disabling features
@@ -49,15 +49,14 @@ all sillyedit settings are geode savedvalues, if u rly wanna access them they ar
 so getting this setting
 
 ```cpp
-inline SillySetting<bool> placeObjectPreview{"Place Object\nPreview", "Miscellaneous", true};
+inline SillySetting<bool> snapIndicator{"Snap Indicator", feature, true};
 ```
 
 would be
 
 ```cpp
 void someFunctionRawr() {
-    const auto placeObjectPreviewEnabled = Loader::get()->getLoadedMod("nwo5.sillyedit")
-        // yes for any settings named with newlines thats part of the id fuck you thats why
-        ->getSavedValue<bool>("miscellaneous-place-object\npreview");
+    const auto snapIndicatorEnabled = Loader::get()->getLoadedMod("nwo5.sillyedit")
+        ->getSavedValue<bool>("selection-utils-snap-indicator");
 }
 ```

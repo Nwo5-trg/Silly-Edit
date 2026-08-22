@@ -32,12 +32,12 @@ namespace TextObjectUtils {
         void onClose(CCObject* sender);
     };
 
-    class $setting_category("text-object-utils-logo.png"_spr);
+    class $setting_category("text-object-utils-logo.png"_spr, "Newlines in your text and some other stuff");
 
     inline SillySetting<std::string> newlineShortcut{
         "Newline Shortcut", "Text Object Utils", "\\n"
     };
     inline SillySetting<bool> swapCopyPaste{
-        "Swap Copy Paste", "Text Object Utils", false
+        "Swap\nCopy Paste", "Text Object Utils", false
     };
 }

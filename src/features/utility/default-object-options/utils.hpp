@@ -2,7 +2,7 @@
 
 namespace DefaultObjectOptions {
     class ObjectOptions final {
-    private:
+    protected:
         std::unordered_map<int, std::string> m_options;
         bool m_defaultOption = false;
 

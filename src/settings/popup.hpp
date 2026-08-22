@@ -20,6 +20,7 @@ namespace Settings {
         alpha::ui::AdvancedScrollLayer* m_settingsScroll = nullptr;
 
         cocos2d::CCLabelBMFont* m_versionLabel = nullptr;
+        CCMenuItemSpriteExtra* m_keybindsButton = nullptr;
 
         nwo5::ui::Tooltip* m_tooltip = nullptr;
 
@@ -58,6 +59,7 @@ namespace Settings {
         void onFeatureButton(cocos2d::CCObject* pSender);
         void onCredits(cocos2d::CCObject*);
         void onOpenSaveDir(cocos2d::CCObject*);
+        void onOpenConfigDir(cocos2d::CCObject*);
         void onKeybinds(cocos2d::CCObject*);
 
     public:

@@ -13,7 +13,7 @@ class $modify(LevelEditorLayer) {
             return false;
         }
 
-        nwo5::utils::setupKeybind(this, "general-open-settings", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
+        nwo5::utils::setupKeybind(this, "General-open-settings", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
             if (pDown && !pRepeat) {
                 if (auto popup = static_cast<Settings::SettingsPopup*>(CCDirector::get()->getRunningScene()->getChildByID("settings-popup"_spr))) {
                     popup->onClose(nullptr);
@@ -23,6 +23,12 @@ class $modify(LevelEditorLayer) {
                 }
             }
         });
+
+        this->addEventListener(ScrollWheelEvent(), [] (double, double) {
+            if (CCDirector::get()->getRunningScene()->getChildByID("settings-popup"_spr)) {
+                Sillyedit::shouldBlockScrolling() = true;
+            }
+        }, Priority::Early);
 
         return true;
     }
@@ -66,13 +72,5 @@ class $modify(SettingsEditorPauseLayer, EditorPauseLayer) {
 
     void onSESettings(CCObject* sender) {
         Settings::SettingsPopup::create()->show();    
-    }
-};
-
-class $modify(EditorUI) {
-    void scrollWheel(float y, float x) {
-        if (!CCDirector::get()->getRunningScene()->getChildByID("settings-popup"_spr)) {
-            EditorUI::scrollWheel(y, x);
-        }
     }
 };

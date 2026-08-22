@@ -33,8 +33,6 @@ namespace BetterLayers {
 
         void updateLayerMenu();
 
-        static void onModify(auto& pSelf);
-
         void onNextFreeLayer(cocos2d::CCObject* sender);
         void onLayerSettings(cocos2d::CCObject* sender);
         void onToggleLayerLocked(cocos2d::CCObject* sender);

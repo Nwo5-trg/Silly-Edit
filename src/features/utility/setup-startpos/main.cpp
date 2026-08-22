@@ -178,7 +178,7 @@ namespace SetupStartpos {
     GameObject* LevelEditorLayer::createObject(int objectID, CCPoint position, bool noUndo) {
         GameObject* ret = GD::LevelEditorLayer::createObject(objectID, position, noUndo);
 
-        if (SetupStartpos::enabled() && Shared::shouldApplyCustomPlacedObjectOptions() && objectID == 31) {
+        if (SetupStartpos::enabled() && Sillyedit::shouldApplyCustomPlacedObjectOptions() && objectID == 31) {
             setupStartpos(static_cast<StartPosObject*>(ret));
         }
         

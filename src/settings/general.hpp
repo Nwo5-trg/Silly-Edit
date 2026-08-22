@@ -24,7 +24,7 @@ namespace Settings {
         "Popup Theme", "General", "Default", {"Default", "Alt", "Geode"}, SettingReload::Popup
     };
     inline SillySetting<bool> showTooltips{
-        "Show Tooltips", "General", true
+        "Show Tooltips", "General", true, SettingReload::Popup
     };
     inline SillySetting<std::string> settingsButtonTexture{
         "Settings Button Texture", "General", "Rainbow", {"Bi", "Enby", "Femboy", "Gay", "Genderqueer", "Intersex", "Pan", "Rainbow", "Trans"}, SettingReload::Pause

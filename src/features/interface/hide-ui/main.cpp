@@ -4,7 +4,7 @@
 using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
 
-namespace HideUIToggle {
+namespace HideUI {
     void EditorUI::onHideUI(CCObject* pSender) {
         this->showUI(!nwo5::utils::isToggled(pSender));
     }
@@ -26,7 +26,7 @@ namespace HideUIToggle {
     void Feature::onEditor() {
         auto self = editor::ui<EditorUI>();
 
-        if (!HideUIToggle::enabled()) {
+        if (!HideUI::enabled()) {
             return;
         }
 
@@ -42,7 +42,7 @@ namespace HideUIToggle {
             static_cast<CCSprite*>(on->getTopNode())->setOpacity(105);
 
             self->m_fields->hideUIToggle = ui::node(Setup(ui::toggler(
-                off, on, self, menu_selector(HideUIToggle::EditorUI::onHideUI)
+                off, on, self, menu_selector(HideUI::EditorUI::onHideUI)
             ))
                 .id("hide-ui-toggle"_spr)
                 .parent(undoMenu)

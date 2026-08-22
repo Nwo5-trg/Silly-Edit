@@ -182,11 +182,7 @@ namespace FF {
             }
         );
 
-        nwo5::utils::setupKeybind(self, "flood-fill-special-key", [self] (const Keybind&, bool pDown, bool pRepeat, double) {
-            if (!FF::enabled()) {
-                return;
-            }
-
+        feature.registerKeybind<"special-key">([self] (bool pDown, bool pRepeat) {
             if (FF::specialAsButton) {
                 if (pDown && !pRepeat) {
                     self->quickFill();
@@ -284,10 +280,10 @@ namespace FF {
         }) + ccp(size, size) / 2;
         
         const auto col = FF::chroma 
-            ? nwo5::utils::getChroma<ccColor4F>(Shared::ChromaNode::Default) 
+            ? Sillyedit::getChroma<ccColor4F>(Sillyedit::ChromaNode::Default) 
             : color_cast<ccColor4F>(FF::specialPreviewColor.get());
 
-        Shared::getGridDraw()->drawRect(
+        Sillyedit::getGridDraw()->drawRect(
             start, end, nwo5::utils::setOpacity(col, FF::specialPreviewFill.get()),
             FF::specialPreviewThickness / (FF::scaleWithZoom ? editor::zoom() : 1.0f), col
         );

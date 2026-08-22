@@ -97,13 +97,13 @@ namespace ZoomInput {
             .parent(self)
             .addTo(self->m_uiItems);
 
-        nwo5::utils::setupKeybind(self, "zoom-input-zoom-in", [self] (const Keybind&, bool pDown, bool, double) {
+        feature.registerKeybind<"zoom-in">([self] (bool pDown, bool) {
             if (pDown) {
                 self->zoomGameLayer(true);
             }
         });
 
-        nwo5::utils::setupKeybind(self, "zoom-input-zoom-out", [self] (const Keybind&, bool pDown, bool, double) {
+        feature.registerKeybind<"zoom-out">([self] (bool pDown, bool) {
             if (pDown) {
                 self->zoomGameLayer(false);
             }

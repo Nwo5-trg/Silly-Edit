@@ -1,0 +1,71 @@
+// btw comments arent available in normal json this is a jsonc file that supports c style comments so id advise u remove these if ur copying to game :3
+// (or maybe matjson parses fine with comments idk)
+{
+    // (move trigger)
+    // by default all triggers are set to "primary" so this is technically unnecessary
+    // this would just set the group label as target group
+    /// btw for full documentation on whats considered "primary", "secondary", etc... check out https://github.com/Nwo5-trg/Nwo5-Silly-API/blob/main/include/editor/trigger.hpp
+    // (scroll down to line 200, under every "static constexpr TriggerInfo info{" is the triggers primary, secondary, primary-input, and secondary-input "InputTypes", if said type isnt "None", its supported)
+    "901": "primary",
+    // (rotate trigger)
+    // here, because rotate input has a target and a center input, its set to display both of those on the same line
+    "1346": ["primary", "secondary"],
+    // (collision state trigger)
+    // by default collision state shows its primary and secondary inputs on two different line
+    // u can copy this behaviour by splitting "primary" and "secondary" into 2 nested arrays
+    "3640": [["primary"], ["secondary"]],
+    // (item comp trigger)
+    // the four possible values for displayed numbers are "primary", "secondary", "primary-input", and "secondary-input"
+    // here item comp would show all four of its inputs, true/false on the first line, itemid1/2 on the second
+    "3620": [["primary, secondary"], ["primary-input", "secondary-input"]],
+
+
+    // all triggers ids that should not show an object label
+    // i recommend u just copy this from here
+    "blacklist": [
+        31, 32, 33, 1520, 1612, 1613, 1818, 1819, 1913, 1916, 1917, 1932, 1935, 2015, 2066, 2068,
+        2899, 2900, 2901, 2904, 2905, 2907, 2909, 2910, 2911, 2912, 2916, 2917, 2920, 2921, 2922,
+        2923, 2924, 2925, 2999, 3029, 3030, 3031, 3606, 3607, 3612, 1615
+    ],
+    
+    // config for extras
+    // i recommend u just copy this from here
+    "extras": {
+        // name of extra (all of them are listed here)
+        "active-group": {
+            // color for if condintion for extra is true (RRGGBBAA supported)
+            "color": "#00FF7F",
+            // color for if condintion for extra is false (RRGGBBAA supported)
+            // you can exclude this if you want the extra to be hidden if its false
+            "off-color": "#FF0707",
+            // all triggers ids that should show this extra
+            "objects": [
+                1611, 1811
+            ]
+        },
+        "control-id": {
+            "color": "#FF7F00",
+            "objects": [
+                1616, 3660, 3661
+            ]
+        },
+        "pulse-target": {
+            "color": "#00FF00",
+            "objects": [
+                1006
+            ]
+        },
+        "override": {
+            "color": "#7F7F7F",
+            "objects": [
+                1817
+            ]
+        },
+         "follow": {
+            "color": "#FFFFFF",
+            "objects": [
+                1914, 2905, 2907, 2914, 2916, 901, 1346
+            ]
+        }
+    }
+}

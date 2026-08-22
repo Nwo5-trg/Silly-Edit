@@ -35,8 +35,21 @@ namespace Features {
         void setEnabled(bool pEnabled, geode::Mod* pMod);
         bool enabled() const;
         bool forceDisabled() const;
+
+        template<geode::utils::string::ConstexprString Keybind, typename Callback>
+        void registerKeybind(Callback&& pCallback, cocos2d::CCNode* pNode = LevelEditorLayer::get(), int pPriority = geode::Priority::Normal) {
+            const static auto enabledkey = fmt::format("{}-Enabled", geode::utils::string::replace(m_id, " ", "-"));
+
+            pNode->addEventListener(geode::KeybindSettingPressedEvent(geode::Mod::get(), fmt::format("{}-{}", m_id, std::string{Keybind.data()})), 
+            [this, callback = std::move(pCallback)] (const geode::Keybind&, bool pDown, bool pRepeat, double) {
+                if (this->enabled() && geode::Mod::get()->getSettingValue<bool>(enabledkey)) {
+                    callback(pDown, pRepeat);
+                }
+            }, pPriority);
+        }
     };
 
+    // macro shenanigans
     template<FeatureEnum Enum, Settings::SettingCondition Condition = Settings::SettingCondition::None, Settings::SettingReload Reload = Settings::SettingReload::None,  bool DefaultEnabled = true>
     class FeatureTemplate : public FeatureBase {
     protected:
@@ -51,10 +64,11 @@ namespace Features {
                     return;
                 }
 
-                if (const auto name = pSetting->name(); name != "Enabled") {
-                    this->onSettingChanged(name, pSetting);
-                }
-                else {
+                const auto name = pSetting->name();
+
+                this->onSettingChanged(name, pSetting);
+                
+                if (name == "Enabled") {
                     this->onToggled(static_cast<Settings::SillySetting<bool>*>(pSetting)->get());
                 }
             }, m_id).leak();

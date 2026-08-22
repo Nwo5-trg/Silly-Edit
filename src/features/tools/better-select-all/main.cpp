@@ -20,50 +20,50 @@ namespace BetterSelectAll {
     void Feature::onEditor() {
         auto self = editor::ui();
 
-        nwo5::utils::setupKeybind(self, "better-select-all-select-all-key", [] (const Keybind&, bool pDown, bool pRepeat, double) {
-            if (BetterSelectAll::enabled() && pDown && !pRepeat) {
+        feature.registerKeybind<"select-all-key">([] (bool pDown, bool pRepeat) {
+            if (pDown && !pRepeat) {
                 editor::selection::add(
-                    BetterSelectAll::getObjectsWithDirection(BetterSelectAll::SelectDirection::All, false),
+                    BetterSelectAll::getObjectsWithDirection(SelectDirection::All, false),
                     true, true
                 );
 
                 editor::update(false, true);
             }
         });
-        nwo5::utils::setupKeybind(self, "better-select-all-select-all-left-key", [] (const Keybind&, bool pDown, bool pRepeat, double) {
-            if (BetterSelectAll::enabled() && pDown && !pRepeat) {
+        feature.registerKeybind<"select-all-left-key">([] (bool pDown, bool pRepeat) {
+            if (pDown && !pRepeat) {
                 editor::selection::add(
-                    BetterSelectAll::getObjectsWithDirection(BetterSelectAll::SelectDirection::West, false),
+                    getObjectsWithDirection(SelectDirection::West, false),
                     true, true
                 );
 
                 editor::update(false, true);
             }
         });
-        nwo5::utils::setupKeybind(self, "better-select-all-select-all-down-key", [] (const Keybind&, bool pDown, bool pRepeat, double) {
-            if (BetterSelectAll::enabled() && pDown && !pRepeat) {
+        feature.registerKeybind<"select-all-down-key">([] (bool pDown, bool pRepeat) {
+            if (pDown && !pRepeat) {
                 editor::selection::add(
-                    BetterSelectAll::getObjectsWithDirection(BetterSelectAll::SelectDirection::South, false),
+                    getObjectsWithDirection(SelectDirection::South, false),
                     true, true
                 );
 
                 editor::update(false, true);
             }
         });
-        nwo5::utils::setupKeybind(self, "better-select-all-select-all-up-key", [] (const Keybind&, bool pDown, bool pRepeat, double) {
-            if (BetterSelectAll::enabled() && pDown && !pRepeat) {
+        feature.registerKeybind<"select-all-up-key">([] (bool pDown, bool pRepeat) {
+            if (pDown && !pRepeat) {
                 editor::selection::add(
-                    BetterSelectAll::getObjectsWithDirection(BetterSelectAll::SelectDirection::North, false),
+                    getObjectsWithDirection(SelectDirection::North, false),
                     true, true
                 );
 
                 editor::update(false, true);
             }
         });
-        nwo5::utils::setupKeybind(self, "better-select-all-select-all-right-key", [] (const Keybind&, bool pDown, bool pRepeat, double) {
-            if (BetterSelectAll::enabled() && pDown && !pRepeat) {
+        feature.registerKeybind<"select-all-right-key">([] (bool pDown, bool pRepeat) {
+            if (pDown && !pRepeat) {
                 editor::selection::add(
-                    BetterSelectAll::getObjectsWithDirection(BetterSelectAll::SelectDirection::East, false),
+                    getObjectsWithDirection(SelectDirection::East, false),
                     true, true
                 );
 

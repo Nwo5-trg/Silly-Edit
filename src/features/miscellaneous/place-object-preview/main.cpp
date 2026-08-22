@@ -35,7 +35,7 @@ namespace PlaceObjectPreview {
             // cuz of the other check
             Shared::removePreviewObject();
 
-            Shared::shouldApplyCustomPlacedObjectOptions() = true;
+            Sillyedit::shouldApplyCustomPlacedObjectOptions() = true;
 
             // let me tell you about the story of the girl who wasted
             // 7 and a half FUCKING HOURS OF HER LIFE debugging this one STUPID FUCKING FUNCTION
@@ -62,12 +62,12 @@ namespace PlaceObjectPreview {
                 }
             }
 
-            Shared::shouldApplyCustomPlacedObjectOptions() = false;
+            Sillyedit::shouldApplyCustomPlacedObjectOptions() = false;
         }
 
         fields->wasSelectedObject = false;
 
-        editor::object::move(obj, this->getGridSnappedPos(m_editorLayer->m_objectLayer->convertToNodeSpace(cocos::getMousePos())));
+        obj->setPosition(this->getGridSnappedPos(m_editorLayer->m_objectLayer->convertToNodeSpace(cocos::getMousePos())));
         this->applyOffset(obj);
 
         // rly not a big deal to do every update since duplicatevalues doesnt do anything heavy
@@ -133,14 +133,14 @@ namespace PlaceObjectPreview {
 
 
     void LevelEditorLayer::onModify(auto& pSelf) {
-        (void)pSelf.setHookPriorityAfterPost("LevelEditorLayer::addSpecial", nwo5::utils::TINKER_EDIT_ID);
+        (void)pSelf.setHookPriorityAfterPost("LevelEditorLayer::addSpecial", TINKER_EDIT_ID);
     }
 
 
 
     // some actual bullshit for tinker
     void LevelEditorLayer::addSpecial(GameObject* object) {
-        if (!PlaceObjectPreview::enabled() || object->m_objectID != 31 || !nwo5::utils::isTinkerLoaded() || editor::notLoaded(editor::LoadedType::UI)) {
+        if (!PlaceObjectPreview::enabled() || object->m_objectID != 31 || !Sillyedit::isTinkerLoaded() || editor::notLoaded(editor::LoadedType::UI)) {
             return GD::LevelEditorLayer::addSpecial(object);
         }
 
@@ -189,6 +189,46 @@ namespace PlaceObjectPreview {
         }
     }
 
+    // make the function actually work
+    GameObject* LevelEditorLayer::objectAtPosition(CCPoint position) {
+        if (!PlaceObjectPreview::enabled() || editor::notLoaded(editor::LoadedType::UI)) {
+            return GD::LevelEditorLayer::objectAtPosition(position);
+        }
+
+        if (auto obj = editor::ui<PlaceObjectPreview::EditorUI>()->m_fields->previewObject) {
+            this->removeObjectFromSection(obj);
+
+            const auto ret = GD::LevelEditorLayer::objectAtPosition(position);
+
+            this->addToSection(obj);
+
+            return ret;
+        }
+        else {
+            return GD::LevelEditorLayer::objectAtPosition(position);
+        }
+    }
+
+    // make the function actually work
+    CCArray* LevelEditorLayer::objectsAtPosition(CCPoint position) {
+        if (!PlaceObjectPreview::enabled() || editor::notLoaded(editor::LoadedType::UI)) {
+            return GD::LevelEditorLayer::objectsAtPosition(position);
+        }
+
+        if (auto obj = editor::ui<PlaceObjectPreview::EditorUI>()->m_fields->previewObject) {
+            this->removeObjectFromSection(obj);
+
+            const auto ret = GD::LevelEditorLayer::objectsAtPosition(position);
+
+            this->addToSection(obj);
+
+            return ret;
+        }
+        else {
+            return GD::LevelEditorLayer::objectsAtPosition(position);
+        }
+    }
+
     // this is better than a setopacity hook oki
     void LevelEditorLayer::updateVisibility(float dt) {
         if (!PlaceObjectPreview::enabled() || editor::notLoaded(editor::LoadedType::UI)) {
@@ -198,11 +238,20 @@ namespace PlaceObjectPreview {
         GD::LevelEditorLayer::updateVisibility(dt);
 
         if (auto obj = editor::ui<PlaceObjectPreview::EditorUI>()->m_fields->previewObject) {
-            obj->setOpacity(PlaceObjectPreview::opacity * (obj->getOpacity() / 255.0f));
+            obj->setOpacity(Sillyedit::modifyOpacity(obj->getOpacity(), PlaceObjectPreview::opacity));
+
+            if (editor::trigger::type(obj) != editor::trigger::ObjectType::Normal) {
+                if (auto label = obj->getChildByID("custom-label"_spr)) {
+                    static_cast<geode::Label*>(label)->setOpacity(Sillyedit::modifyOpacity(obj->getOpacity(), PlaceObjectPreview::opacity));
+                }
+                if (auto spr = obj->getChildByID("extra"_spr)) {
+                    static_cast<CCSprite*>(spr)->setOpacity(Sillyedit::modifyOpacity(obj->getOpacity(), PlaceObjectPreview::opacity));
+                }
+            }
 
             if (obj->m_objectID == 747) {
                 if (auto orange = static_cast<TeleportPortalObject*>(obj)->m_orangePortal) {
-                    orange->setOpacity(PlaceObjectPreview::opacity * (orange->getOpacity() / 255.0f));
+                    orange->setOpacity(Sillyedit::modifyOpacity(obj->getOpacity(), PlaceObjectPreview::opacity));
                 }
             }
         }

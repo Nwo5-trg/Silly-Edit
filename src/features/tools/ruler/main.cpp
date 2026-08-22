@@ -58,7 +58,7 @@ namespace Ruler {
     CCLabelBMFont* EditorUI::createMeasurementLabel(float pMeasure) {
         auto label = ui::label(this->getMeasurementString(pMeasure), ui::Font::ChatFont);
 
-        Shared::getOverlayLayer()->addChild(label);
+        Sillyedit::getOverlayLayer()->addChild(label);
 
         return label;
     }
@@ -123,13 +123,13 @@ namespace Ruler {
         // i dont want the same colors in the same order every time (or mayb it doesnt do that and i js got *very* lucky in my testing idk)
         random::_getGenerator().seed(asp::SystemTime::now().timeSinceEpoch().seconds());
 
-        nwo5::utils::setupKeybind(self, "ruler-create-measurement-key", [self] (const Keybind&, bool pDown, bool, double) {
-            if (Ruler::enabled() && pDown) {
+        feature.registerKeybind<"create-measurement-key">([self] (bool pDown, bool) {
+            if (pDown) {
                 self->createMeasurement();
             }
         });
-        nwo5::utils::setupKeybind(self, "ruler-delete-last-measurement-key", [self] (const Keybind&, bool pDown, bool pRepeat, double) {
-            if (Ruler::enabled() && pDown) {
+        feature.registerKeybind<"delete-last-measurement-key">([self] (bool pDown, bool pRepeat) {
+            if (pDown) {
                 self->deleteMeasurement(pRepeat);
             }
         });
@@ -147,10 +147,10 @@ namespace Ruler {
             const auto end = measurement.end + padding;
 
             const auto col = Ruler::chroma 
-                ? nwo5::utils::getChroma(measurement.color.chroma) 
+                ? Sillyedit::getChroma(measurement.color.chroma) 
                 : MEASUREMENT_COLOR[measurement.color.main];
 
-            Shared::getOverlayDraw()->drawRect(
+            Sillyedit::getOverlayDraw()->drawRect(
                 start, end, nwo5::utils::setOpacity(col, Ruler::fillOpacity.get()), 
                 Ruler::thickness / (Ruler::scaleWithZoom ? editor::zoom() : 1.0f), col
             );

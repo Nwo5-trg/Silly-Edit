@@ -1,0 +1,58 @@
+{
+    "1346": ["primary", "secondary"],
+    "2067": ["primary", "secondary"],
+    "3016": ["primary", "secondary"],
+    "3006": ["primary", "secondary"],
+    "3007": ["primary", "secondary"],
+    "3008": ["primary", "secondary"],
+    "3009": ["primary", "secondary"],
+    "3010": ["primary", "secondary"],
+    "3608": ["primary", "secondary"],
+    "3613": ["primary", "secondary"],
+    "1912": ["primary", "secondary"],
+    "3620": ["primary", "secondary"],
+
+    "3640": [["primary"], ["secondary"]],
+
+    "3033": [["secondary"], ["primary"]],
+    
+    "blacklist": [
+        31, 32, 33, 1520, 1612, 1613, 1818, 1819, 1913, 1916, 1917, 1932, 1935, 2015, 2066, 2068,
+        2899, 2900, 2901, 2904, 2905, 2907, 2909, 2910, 2911, 2912, 2916, 2917, 2920, 2921, 2922,
+        2923, 2924, 2925, 2999, 3029, 3030, 3031, 3606, 3607, 3612, 1615, 3602
+    ],
+
+    "extras": {
+        "activate-group": {
+            "color": "#00FF7F",
+            "off-color": "#FF0707",
+            "objects": [
+                1611, 1811
+            ]
+        },
+        "control-id": {
+            "color": "#FF7F00",
+            "objects": [
+                1616, 3660, 3661
+            ]
+        },
+        "pulse-target": {
+            "color": "#00FF00",
+            "objects": [
+                1006
+            ]
+        },
+        "override": {
+            "color": "#7F7F7F",
+            "objects": [
+                1817
+            ]
+        },
+            "follow": {
+            "color": "#FFFFFF",
+            "objects": [
+                1914, 2905, 2907, 2914, 2916, 901, 1346
+            ]
+        }
+    }
+}

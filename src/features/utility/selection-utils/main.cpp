@@ -36,6 +36,51 @@ namespace SelectionUtils {
 
 
 
+    void EditorUI::onModify(auto& pSelf) {
+        (void)pSelf.setHookPriorityPre("EditorUI::draw", Priority::Early);
+    }
+
+
+
+    void EditorUI::draw() {
+        if (!SelectionUtils::enabled()) {
+            return GD::EditorUI::draw();
+        }
+
+        if (m_swipeActive) {
+            const auto col = color_cast<ccColor4B>(
+                SelectionUtils::chroma 
+                    ? Sillyedit::getChroma<ccColor3B>(Sillyedit::ChromaNode::Default) 
+                    : SelectionUtils::selectedObjectColor
+            );
+
+            if (SelectionUtils::snapIndicatorFill) {
+                ccDrawSolidRect(
+                    m_swipeStart, m_swipeEnd, 
+                    color_cast<ccColor4F>(nwo5::utils::setOpacity(col, SelectionUtils::selectionRectFill.get()))
+                );
+            }
+            
+            if (SelectionUtils::selectionRectThickness.get() == 1.0f) {
+                ccDrawColor4B(col);
+                ccDrawRect(m_swipeStart, m_swipeEnd);
+            }
+            else {
+                glLineWidth(SelectionUtils::selectionRectThickness);
+
+                ccDrawColor4B(col);
+                ccDrawRect(m_swipeStart, m_swipeEnd);
+
+                glLineWidth(1.0f);
+            }
+        }
+
+        const bool ret = m_swipeActive;
+        m_swipeActive = false;
+        GD::EditorUI::draw();
+        m_swipeActive = ret;
+    }
+
     bool EditorUI::ccTouchBegan(CCTouch* touch, CCEvent* event) {
         if (!GD::EditorUI::ccTouchBegan(touch, event)) {
             return false;
@@ -63,9 +108,10 @@ namespace SelectionUtils {
     void EditorUI::ccTouchEnded(CCTouch* touch, CCEvent* event) {
         auto fields = m_fields.self();
 
-        const auto draggingCamera  = m_isDraggingCamera;
+        const auto draggingCamera = m_isDraggingCamera;
         const auto swipeActive = m_swipeActive;
         const auto swipeSelected = m_swipeSelected;
+        const auto swipeStart = m_swipeStart;
 
         const auto continueSwipe = m_continueSwipe;
         auto obj = this->getSnapObject();
@@ -74,15 +120,23 @@ namespace SelectionUtils {
 
         // very hacky solution to avoid having to reimpl the entire function (holy fuck robtop ur logic is so fucking bad)
         if (!m_snapObjectExists || !m_continuousSnap || !m_snapObject) {
-            if (m_selectedMode == 3 && m_touchID == -1 && SelectionUtils::alwaysSingleSelect && editor::selection::count() > 1) {
+            const auto trySingleSelect = m_selectedMode == 3 && m_touchID == -1 && SelectionUtils::alwaysSingleSelect && editor::selection::count() > 1;
+            const auto tryEmptyDeselect = m_selectedMode == 3 && m_touchID == -1 && SelectionUtils::clickEmptyToDeselect && !editor::selection::empty();
+
+            if ((trySingleSelect || tryEmptyDeselect) && !swipeActive && !draggingCamera) {
                 const auto world = getTouchPoint(touch, event);
 
-                if (!swipeActive && !draggingCamera && (!swipeSelected || m_swipeStart.getDistance(world) < 20.0f)) {
+                if (!swipeSelected || (m_swipeStart.getDistance(world) < 20.0f)) {
                     auto objs = m_editorLayer->objectsAtPosition(m_editorLayer->m_objectLayer->convertToNodeSpace(world));
 
-                    if (objs->count()) {
+                    if (!objs->count() && tryEmptyDeselect) {
+                        editor::selection::clear(true);
+
+                        editor::update();
+                    }
+                    else if (objs->count() && trySingleSelect) {
                         editor::selection::set(static_cast<GameObject*>(objs->firstObject()), true, true, true, true);
-                        
+                                
                         editor::update();
                     }
                 }
@@ -107,8 +161,8 @@ namespace SelectionUtils {
     void Feature::onEditor() {
         auto self = editor::ui<SelectionUtils::EditorUI>();
 
-        nwo5::utils::setupKeybind(self, "free-snap-snap-selection", [self] (const Keybind&, bool pDown, bool pRepeat, double) {
-            if (SelectionUtils::enabled() && pDown && !pRepeat && !editor::selection::empty()) {
+        feature.registerKeybind<"snap-selection">([self] (bool pDown, bool pRepeat) {
+            if (pDown && !pRepeat && !editor::selection::empty()) {
                 self->snapSelection(editor::selection::getFirst());
             }
         });
@@ -124,10 +178,10 @@ namespace SelectionUtils {
         const bool shouldntColorObjects = self->m_colorOverlay || self->m_hsvOverlay;
 
         const auto selectionCol = SelectionUtils::chroma 
-            ? nwo5::utils::getChroma<ccColor3B>(Shared::ChromaNode::Default) 
+            ? Sillyedit::getChroma<ccColor3B>(Sillyedit::ChromaNode::Default) 
             : SelectionUtils::selectedObjectColor;
         const auto snapCol = SelectionUtils::chroma 
-            ? nwo5::utils::getChroma<ccColor3B>(Shared::ChromaNode::SelectionUtilsInvert) 
+            ? Sillyedit::getChroma<ccColor3B>(Sillyedit::ChromaNode::SelectionUtilsInvert) 
             : SelectionUtils::snapObjectColor;
 
         auto objs = editor::selection::getExt();
@@ -157,7 +211,7 @@ namespace SelectionUtils {
                 CCPoint{scale.width, -scale.height}.rotateByAngle(CCPointZero, theta) + pos
             };
 
-            Shared::getGridDraw()->drawPolygon(
+            Sillyedit::getGridDraw()->drawPolygon(
                 v, 4, nwo5::utils::setOpacity(color_cast<ccColor4F>(snapCol), SelectionUtils::snapIndicatorFill.get()),
                 SelectionUtils::snapIndicatorThickness, color_cast<ccColor4F>(snapCol)
             );

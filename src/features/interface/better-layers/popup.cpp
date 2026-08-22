@@ -14,11 +14,7 @@ namespace BetterLayers {
 
         m_layer = editor::currentLayer();
 
-        auto opacityLabel = ui::node(Setup(ui::label("Opacity:", Font::Default))
-            .id("opacity-label"_spr)
-            .scaleHeightToFit(LABEL_HEIGHT)
-        );
-        m_opacityInput = ui::node(Setup(ui::input(INPUT_SIZE, "255"))
+        m_opacityInput = Setup(ui::input(INPUT_SIZE, "255"))
             .id("opacity-input"_spr)
             .filter(CommonFilter::Uint)
             .maxCharCount(3)
@@ -35,48 +31,45 @@ namespace BetterLayers {
                             this->m_opacityInput->setString("255");
                         }
                     }
-                })
-        );
+                });
+
         if (m_settings->getLayerOpacity(m_layer).has_value()) {
             m_opacityInput->setString(nwo5::utils::numToString(m_settings->getLayerOpacity(m_layer).value()));
         }
 
-        auto clearOpacityButton = ui::node(Setup(
-            ui::buttonFrame("GJ_trashBtn_001.png", this, menu_selector(EditLayerPopup::onClearOpacity)
+        Setup(ui::menu(ui::row(AxisAlignment::Start, GAP)
+            .autoScale(false)
         ))
-            .id("clear-opacity-button"_spr)
-        );
-
-        auto opacityMenu = ui::node(Setup(ui::menu(ui::horizontalDistrbLayout(GAP)))
             .id("opacity-menu"_spr)
             .pos(WIDTH / 2, HEIGHT / 2)
             .children(
-                    opacityLabel,
-                    m_opacityInput,
-                    clearOpacityButton
-                )
-            .parent(m_mainLayer)
-        );
+                Setup(ui::label("Opacity:", Font::Default))
+                    .id("opacity-label"_spr)
+                    .scaleHeightToFit(LABEL_HEIGHT),
+                m_opacityInput,
+                Setup(
+                    ui::buttonFrame("GJ_trashBtn_001.png", this, menu_selector(EditLayerPopup::onClearOpacity)
+                ))
+                    .id("clear-opacity-button"_spr)
+            )
+            .parent(m_mainLayer);
 
-        auto hideLayerToggle = ui::node(Setup(ui::togglerFrame(
+        Setup(ui::togglerFrame(
             "edit_ePHideBtn_001.png", "edit_ePShowBtn_001.png", this, menu_selector(EditLayerPopup::onToggleHidden)
         ))
             .id("hide-layer-toggle"_spr)
             .scaleToFit(BUTTON_SIZE)
             .pos(WIDTH - PADDING - BUTTON_SIZE / 2, HEIGHT / 2)
-            .parent(m_buttonMenu)
-        );
-        hideLayerToggle->toggle(m_settings->isLayerHidden(m_layer));
-
-        auto focusLayerToggle = ui::node(Setup(ui::togglerFrame(
+            .toggle(m_settings->isLayerHidden(m_layer))
+            .parent(m_buttonMenu);
+        Setup(ui::togglerFrame(
             "GJ_starsIcon_gray_001.png", "GJ_starsIcon_001.png", this, menu_selector(EditLayerPopup::onToggleFocused)
         ))
             .id("focus-layer-toggle"_spr)
             .scaleToFit(BUTTON_SIZE)
             .pos(PADDING + BUTTON_SIZE / 2, HEIGHT / 2)
-            .parent(m_buttonMenu)
-        );
-        focusLayerToggle->toggle(m_settings->getFocusedLayer().has_value() && m_settings->getFocusedLayer().value() == m_layer);
+            .toggle(m_settings->getFocusedLayer().has_value() && m_settings->getFocusedLayer().value() == m_layer)
+            .parent(m_buttonMenu);
 
         return true;
     }
@@ -119,16 +112,11 @@ namespace BetterLayers {
             return false;
         }
 
-        setTitle("Edit Level Layer Settings");
+        this->setTitle("Edit Level Layer Settings");
 
         m_settings = pSettings;
 
-        auto defaultOpacityLabel = ui::node(Setup(ui::label("Default Opacity:", Font::Default))
-            .id("defualt-opacity-label"_spr)
-            .scaleHeightToFit(LABEL_HEIGHT)
-        );
-        
-        m_defaultOpacityInput = ui::node(Setup(ui::input(
+        m_defaultOpacityInput = Setup(ui::input(
             INPUT_SIZE, nwo5::utils::numToString(BetterLayers::layerOpacity.getDefault())
         ))
             .filter(CommonFilter::Uint)
@@ -147,24 +135,13 @@ namespace BetterLayers {
                             this->m_defaultOpacityInput->setString("255");
                         }
                     }
-                })
-        );
+                });
+
         if (m_settings->getDefaultOpacity().has_value()) {
             m_defaultOpacityInput->setString(nwo5::utils::numToString(m_settings->getDefaultOpacity().value()));
         }
 
-        auto clearDefaultOpacityButton = ui::node(Setup(ui::buttonFrame(
-            "GJ_trashBtn_001.png", this, menu_selector(EditAllLayersPopup::onClearDefaultOpacity)
-        ))
-            .id("clear-default-opacity-button"_spr)
-        );
-
-        auto focusedLayerLabel = ui::node(Setup(ui::label("Focused Layer:", Font::Default))
-            .id("focused-layer-label"_spr)
-            .scaleHeightToFit(LABEL_HEIGHT)
-        );
-
-        m_focusedLayerInput = ui::node(Setup(ui::input(
+        m_focusedLayerInput = Setup(ui::input(
             INPUT_SIZE, nwo5::utils::numToString(BetterLayers::layerOpacity.getDefault())
         ))
             .id("focused-layer-input"_spr)
@@ -183,47 +160,45 @@ namespace BetterLayers {
                             this->m_focusedLayerInput->setString("9999");
                         }
                     }
-                })
-        );
+                });
+
         if (m_settings->getFocusedLayer().has_value()) {
             m_focusedLayerInput->setString(nwo5::utils::numToString(m_settings->getFocusedLayer().value()));
         }
 
-        auto unfocusLayerButton = ui::node(Setup(
-            ui::buttonFrame("GJ_trashBtn_001.png", this, menu_selector(EditAllLayersPopup::onUnfocusLayer)
-        ))
-            .id("unfocus-layer-button"_spr)
-        );
-
-        auto menu = ui::node(Setup(ui::menu(RowLayout::create()
-            ->setGap(GAP)
-            ->setGrowCrossAxis(true)
-            ->setAxisAlignment(AxisAlignment::Center)
-            ->setCrossAxisAlignment(AxisAlignment::End)
-            ->setAutoScale(false)
+        Setup(ui::menu(ui::row(AxisAlignment::Center, GAP, AxisAlignment::End)
+            .autoScale(false)
         ))
             .id("menu"_spr)
             .pos(WIDTH / 2, HEIGHT / 2)
             .width(WIDTH)
             .children(
-                defaultOpacityLabel,
+                Setup(ui::label("Default Opacity:", Font::Default))
+                    .id("defualt-opacity-label"_spr)
+                    .scaleHeightToFit(LABEL_HEIGHT),
                 m_defaultOpacityInput,
-                clearDefaultOpacityButton,
-                focusedLayerLabel,
+                Setup(ui::buttonFrame(
+                    "GJ_trashBtn_001.png", this, menu_selector(EditAllLayersPopup::onClearDefaultOpacity)
+                ))
+                    .id("clear-default-opacity-button"_spr),
+                Setup(ui::label("Focused Layer:", Font::Default))
+                    .id("focused-layer-label"_spr)
+                    .scaleHeightToFit(LABEL_HEIGHT),
                 m_focusedLayerInput,
-                unfocusLayerButton
+                Setup(
+                    ui::buttonFrame("GJ_trashBtn_001.png", this, menu_selector(EditAllLayersPopup::onUnfocusLayer)
+                ))
+                    .id("unfocus-layer-button"_spr)
             )
-            .parent(m_mainLayer)
-        );
+            .parent(m_mainLayer);
 
-        auto dumbLabel = ui::node(Setup(ui::label(
+        Setup(ui::label(
             "layer opacity is from 0-255, 0.75 = 191, 0.5 = 127, 0.25 = 63", Font::Chat
         ))
             .id("label-for-the-children-because-i-dont-wanna-make-the-inputs-convert-from-float-cuz-im-lazy-this-also-pads-out-space-in-the-popup-tho-uwu"_spr)
             .scaleHeightToFit(10.0f)
             .pos(WIDTH / 2, GAP)
-            .parent(m_mainLayer)
-        );
+            .parent(m_mainLayer);
 
         return true;
     }

@@ -5,7 +5,7 @@
 #include <feature/include.hpp>
 
 namespace PlaceObjectPreview {
-    class $feature(PlaceObjectPreview, SettingCondition::DesktopAndAndroidDisable) {
+    class $feature(PlaceObjectPreview, SettingCondition::DesktopOnly) {
         void onUpdate() override;
     } feature;
 
@@ -31,6 +31,8 @@ namespace PlaceObjectPreview {
         void onPlaytest();
         gd::string getLevelString();
         bool typeExistsAtPosition(int objectID, cocos2d::CCPoint position, bool flipX, bool flipY, float rotation);
+        GameObject* objectAtPosition(cocos2d::CCPoint position);
+        cocos2d::CCArray* objectsAtPosition(cocos2d::CCPoint position);
         void updateVisibility(float dt);
     };
 

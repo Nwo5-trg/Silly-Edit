@@ -56,13 +56,7 @@ namespace BetterLayers {
     }
 
 
-
-    void EditorUI::onModify(auto& pSelf) {
-        (void)pSelf.setHookPriorityAfterPost("EditorUI::init", nwo5::utils::TINKER_EDIT_ID);
-    }
-
-
-
+    
     // hjfod highway robbery
     void EditorUI::onNextFreeLayer(CCObject*) {
         std::set<short> usedLayers;
@@ -214,21 +208,19 @@ namespace BetterLayers {
             })
         );
 
-        fields->allLayersButton = ui::node(Setup(ui::buttonFrame(
+        fields->allLayersButton = Setup(ui::buttonFrame(
             // girl robtop, ur function names, what the fuck is this, why only name it layer here </3
             "GJ_arrow_02_001.png", self, menu_selector(BetterLayers::EditorUI::onGoToBaseLayer)
         ))
             .id("next-free-layer-button"_spr)
-            .scaleToFit(LAYER_EXTRA_BUTTON_SIZE)
-        );
+            .scaleToFit(LAYER_EXTRA_BUTTON_SIZE);
 
-        fields->lockLayerButton = ui::node(Setup(ui::togglerFrame(
+        fields->lockLayerButton = Setup(ui::togglerFrame(
             "warpLockOffBtn_001.png", "warpLockOnBtn_001.png", self, menu_selector(BetterLayers::EditorUI::onToggleLayerLocked), 1.25f, 1.25f
         ))
             .id("lock-layer-button"_spr)
             .scaleToFit(LAYER_EXTRA_BUTTON_SIZE)
-            .visible(BetterLayers::lockButton)
-        );
+            .visible(BetterLayers::lockButton);
 
         auto oldLayerMenu = self->m_currentLayerLabel->getParent();
         oldLayerMenu->setVisible(false);
@@ -237,7 +229,7 @@ namespace BetterLayers {
             self->m_currentLayerLabel->setPositionX(999.0f); // i give up dealing with better edits editablelabelproxy fuck that
         }
 
-        fields->newLayerMenu = ui::node(Setup(ui::menu(ui::horizontalDistrbLayout(GAP)))
+        fields->newLayerMenu = Setup(ui::menu(ui::horizontalDistrbLayout(GAP)))
             .id("new-layer-menu"_spr)
             .children(
                     Setup(ui::buttonFrame(
@@ -267,13 +259,12 @@ namespace BetterLayers {
                         .visible(BetterLayers::nextFreeButton)
                 )
             .parent(self)
-            .addTo(self->m_uiItems)
-        );
+            .addTo(self->m_uiItems);
 
         self->m_editorLayer->m_currentLayer = self->m_editorLayer->m_level->m_lastBuildGroupID;
     }
 
     void Feature::onUIUpdated(float pScale) {
-        editor::layer<BetterLayers::EditorUI>()->updateLayerMenu();
+        editor::ui<BetterLayers::EditorUI>()->updateLayerMenu();
     }
 }

@@ -1,13 +1,9 @@
 #include <settings/include.hpp>
-#include "utils.hpp"
+#include "include.hpp"
 
 using namespace geode::prelude;
 
-namespace nwo5::utils {
-    std::pair<float, float> getChromaSettings() {
-        return {Settings::sayoDeviceSensitivity, Settings::sayoDeviceScreenBrightness};
-    }
-
+namespace Sillyedit {
     bool isBetterEditLoaded() {
         static bool loaded = static_cast<bool>(getBetterEdit());
         return loaded;

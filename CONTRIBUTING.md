@@ -21,6 +21,8 @@ look at the code for the rest idk
 ## Making a feature
 there are pretty much only 3 parts to a feature, their registry, their `include.hpp` and their main.cpp
 
+(feature templates are in `feature/template`)
+
 ## Registering
 just go into `features/registry.hpp` and add ur feature to the `SILLYEDIT_FEATURE_LIST` macro in `PascalCase`, features are organized in settings popup as they appear in the macro
 
@@ -76,7 +78,7 @@ namespace SillyFeature {
         "Cool Setting\nName", feature, true // yes newlines are hardcoded into the names sue me
     };
     inline SillySetting<int> sillySetting{
-        "Silly Setting", feature, 5, "same as cateogry description but without starting with a capital"
+        "Silly Setting", feature, 5, "Same as cateogry description"
     };
 }
 ```

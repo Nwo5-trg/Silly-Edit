@@ -30,8 +30,8 @@ class $modify(UISetupEventLinkPopup, SetupEventLinkPopup) {
     static constexpr float MISC_BUTTON_SIZE = 30.0f;
     static constexpr float MISC_BUTTON_PADDING = 5.0f;
 
-    static void onModify(auto& self) {
-        (void)self.setHookPriorityPost("SetupEventLinkPopup::init", Priority::VeryLate);
+    static void onModify(auto& pSelf) {
+        (void)pSelf.setHookPriorityPost("SetupEventLinkPopup::init", Priority::VeryLate);
     }
 
     auto getPinnedEvents() {

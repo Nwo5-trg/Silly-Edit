@@ -13,7 +13,7 @@ namespace DefaultObjectOptions {
     GameObject* LevelEditorLayer::createObject(int key, CCPoint position, bool noUndo) {
         auto ret = GD::LevelEditorLayer::createObject(key, position, noUndo);
 
-        if (!DefaultObjectOptions::enabled() || !Shared::shouldApplyCustomPlacedObjectOptions()) {
+        if (!DefaultObjectOptions::enabled() || !Sillyedit::shouldApplyCustomPlacedObjectOptions()) {
             return ret;
         }
 

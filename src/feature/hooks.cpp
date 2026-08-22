@@ -8,7 +8,7 @@ using namespace geode::prelude;
 
 class $modify(EditorUI) {
     static void onModify(auto& pSelf) {
-        (void)pSelf.setHookPriorityAfterPost("EditorUI::init", nwo5::utils::TINKER_EDIT_ID);
+        (void)pSelf.setHookPriorityPost("EditorUI::init", Priority::VeryLate - 67);
     }
 
     bool init(LevelEditorLayer* editorLayer) {
@@ -18,6 +18,10 @@ class $modify(EditorUI) {
 
         for (auto [_, feature] : Features::FeatureManager::get()->getFeatures()) {
             feature->onEditor();
+        }
+
+        for (auto [_, feature] : Features::FeatureManager::get()->getFeatures()) {
+            feature->onUIUpdated(nwo5::uiscaling::getEditorUIScale());
         }
 
         this->addEventListener(nwo5::uiscaling::EditorUIScaleChanged(), [] (float pScale) {

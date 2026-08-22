@@ -7,11 +7,11 @@ using namespace geode::prelude;
 static void tryShowWarningPopup(LevelEditorLayer* pLayer) {
     static bool shown = false;
 
-    if (shown || Settings::disableModWarningPopup.get()) {
+    if (shown || Settings::disableModWarningPopup) {
         return;
     }
 
-    const auto text = nwo5::utils::isBetterEditLoaded()
+    const auto text = Sillyedit::isBetterEditLoaded()
         ? "using <co>betteredit</c> is <cr>UNSUPPORTED</c> by sillyedit, might still work but no promises (read <cl>about</c> for more info)"
         : "sillyedit is in <cr>BETA</c> ! there prolly will be <cd>bugs</c> and or <cs>crashes</c> (you can disable this popup in <cl>settings</c>)";
     

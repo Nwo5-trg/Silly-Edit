@@ -16,17 +16,17 @@ static bool isProbablierObjectString(std::string_view pStr) {
 }
 
 static void disableHooksCuzFuckYou() {
-    nwo5::utils::conditionallyEnableHook(
-        !CopyObjectStrings::enabled(), nwo5::utils::getTinker(), "EditorUI::doCopyObjects"
+    Sillyedit::conditionallyEnableHook(
+        !CopyObjectStrings::enabled(), Sillyedit::getTinker(), "EditorUI::doCopyObjects"
     );
-    nwo5::utils::conditionallyEnableHook(
-        !CopyObjectStrings::enabled(), nwo5::utils::getTinker(), "EditorUI::doPasteObjects"
+    Sillyedit::conditionallyEnableHook(
+        !CopyObjectStrings::enabled(), Sillyedit::getTinker(), "EditorUI::doPasteObjects"
     );
-    nwo5::utils::conditionallyEnableHook(
-        !CopyObjectStrings::enabled(), nwo5::utils::getBetterEdit(), "EditorUI::doCopyObjects"
+    Sillyedit::conditionallyEnableHook(
+        !CopyObjectStrings::enabled(), Sillyedit::getBetterEdit(), "EditorUI::doCopyObjects"
     );
-    nwo5::utils::conditionallyEnableHook(
-        !CopyObjectStrings::enabled(), nwo5::utils::getBetterEdit(), "EditorUI::doPasteObjects"
+    Sillyedit::conditionallyEnableHook(
+        !CopyObjectStrings::enabled(), Sillyedit::getBetterEdit(), "EditorUI::doPasteObjects"
     );
 }
 

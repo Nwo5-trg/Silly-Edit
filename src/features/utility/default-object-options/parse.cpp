@@ -1,33 +1,33 @@
-#include <utils/utils.hpp>
+#include <utils/include.hpp>
 #include "include.hpp"
 
 using namespace geode::prelude;
 
-namespace DefaultObjectOptions {
-    static int stringToPropKey(const std::string& pString) {
-        static std::unordered_map<std::string, int> stringToPropKeyMap {
-            {"x", 2}, {"y", 3}, {"rotation", 6}, {"scale", 32}, {"scale_x", 128}, 
-            {"scale_y", 129}, {"flip_horiz", 4}, {"flip_vert", 5}, {"warp_x_angle", 132}, 
-            {"warp_y_angle", 131}, {"color_1point9", 19}, {"color_1", 21}, {"color_2", 22}, 
-            {"single_color_type", 497}, {"no_glow", 96}, {"no_particle", 507}, 
-            {"color_1_hsv_enabled", 41}, {"color_1_hsv", 43}, {"color_2_hsv_enabled", 42}, 
-            {"color_2_hsv", 44}, {"color_1_index", 155}, {"color_2_index", 156}, 
-            {"single_group", 33}, {"groups", 57}, {"parent_groups", 274}, {"group_parent", 34}, 
-            {"area_parent", 279}, {"linked_group", 108}, {"editor_layer", 20}, 
-            {"editor_layer_2", 61}, {"z_layer", 24}, {"z_order", 25}, {"ord", 115}, 
-            {"channel", 170}, {"enter_channel", 343}, {"interactible", 36}, {"passable", 134}, 
-            {"hide", 135}, {"non_stick_x", 136}, {"non_stick_y", 289}, {"extra_sticky", 495}, 
-            {"extended_collision", 511}, {"ice_block", 137}, {"grip_slope", 193}, {"reverse", 117}, 
-            {"material", 446}, {"control_id", 534}, {"multi_activate_classic", 99}, 
-            {"no_multi_activate_platformer", 444}, {"dont_fade", 64}, {"dont_enter", 67}, 
-            {"no_effects", 116}, {"dont_boost_x", 509}, {"dont_boost_y", 496}, {"single_ptouch", 284}, 
-            {"high_detail", 103}, {"no_touch", 121}, {"center_effect", 369}, {"scale_stick", 356}, 
-            {"no_audio_scale", 372}, {"preview", 13}, {"orange_tp_portal_distance", 54},
-            {"custom_string", -1}
-        };
-        return stringToPropKeyMap[pString];
-    }
+static int stringToPropKey(const std::string& pString) {
+    static std::unordered_map<std::string, int> map {
+        {"x", 2}, {"y", 3}, {"rotation", 6}, {"scale", 32}, {"scale_x", 128}, 
+        {"scale_y", 129}, {"flip_horiz", 4}, {"flip_vert", 5}, {"warp_x_angle", 132}, 
+        {"warp_y_angle", 131}, {"color_1point9", 19}, {"color_1", 21}, {"color_2", 22}, 
+        {"single_color_type", 497}, {"no_glow", 96}, {"no_particle", 507}, 
+        {"color_1_hsv_enabled", 41}, {"color_1_hsv", 43}, {"color_2_hsv_enabled", 42}, 
+        {"color_2_hsv", 44}, {"color_1_index", 155}, {"color_2_index", 156}, 
+        {"single_group", 33}, {"groups", 57}, {"parent_groups", 274}, {"group_parent", 34}, 
+        {"area_parent", 279}, {"linked_group", 108}, {"editor_layer", 20}, 
+        {"editor_layer_2", 61}, {"z_layer", 24}, {"z_order", 25}, {"ord", 115}, 
+        {"channel", 170}, {"enter_channel", 343}, {"interactible", 36}, {"passable", 134}, 
+        {"hide", 135}, {"non_stick_x", 136}, {"non_stick_y", 289}, {"extra_sticky", 495}, 
+        {"extended_collision", 511}, {"ice_block", 137}, {"grip_slope", 193}, {"reverse", 117}, 
+        {"material", 446}, {"control_id", 534}, {"multi_activate_classic", 99}, 
+        {"no_multi_activate_platformer", 444}, {"dont_fade", 64}, {"dont_enter", 67}, 
+        {"no_effects", 116}, {"dont_boost_x", 509}, {"dont_boost_y", 496}, {"single_ptouch", 284}, 
+        {"high_detail", 103}, {"no_touch", 121}, {"center_effect", 369}, {"scale_stick", 356}, 
+        {"no_audio_scale", 372}, {"preview", 13}, {"orange_tp_portal_distance", 54},
+        {"custom_string", -1}
+    };
+    return map[pString];
+}
 
+namespace DefaultObjectOptions {
     void parseOptions(ObjectOptions& pObjectOptions) {
         pObjectOptions.reset();
 
@@ -36,7 +36,7 @@ namespace DefaultObjectOptions {
         ); 
 
         if (!asp::fs::exists(path)) {
-            log::error("not real {}", path);
+            log::error("(default object options) not real path {}", path);
             return;
         }
 
@@ -45,14 +45,14 @@ namespace DefaultObjectOptions {
         const auto parseJsonRes = matjson::parse(file);
 
         if (parseJsonRes.isErr()) {
-            log::error("bad");
+            log::error("(default object options) bad json");
             return;
         }
 
         const auto json = parseJsonRes.unwrap();
 
         if (!json.isObject()) {
-            log::error("not obj");
+            log::error("(default object options) bad json");
             return;
         }
 
@@ -60,7 +60,7 @@ namespace DefaultObjectOptions {
             const auto id = utils::numFromString<int>(idKey).unwrapOr(0);
 
             for (const auto& [prop, value] : options) {
-                const auto key = DefaultObjectOptions::stringToPropKey(prop);
+                const auto key = stringToPropKey(prop);
 
                 if (!key) {
                     continue;

@@ -86,7 +86,7 @@ namespace TextObjectUtils {
         m_textInput->setMaxLabelLength(std::numeric_limits<int>::max());
         
         // ill find a better solution to this l8r
-        if (nwo5::utils::isTinkerLoaded() || nwo5::utils::isBetterEditLoaded()) {
+        if (Sillyedit::isTinkerLoaded() || Sillyedit::isBetterEditLoaded()) {
             Loader::get()->queueInMainThread([this] {
                 this->openTextMenu();
             });

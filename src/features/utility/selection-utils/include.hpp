@@ -18,7 +18,10 @@ namespace SelectionUtils {
         GameObject* getSnapObject();
         cocos2d::CCPoint getSnappedPos(GameObject* pObj);
         void snapSelection(GameObject* pSnapObj);
+
+        static void onModify(auto& pSelf);
         
+        void draw();
         bool ccTouchBegan(cocos2d::CCTouch* touch, cocos2d::CCEvent* event);
         void ccTouchMoved(cocos2d::CCTouch* touch, cocos2d::CCEvent* event);
         void ccTouchEnded(cocos2d::CCTouch* touch, cocos2d::CCEvent* event);
@@ -42,10 +45,19 @@ namespace SelectionUtils {
         "Snap Indicator\nThickness", feature, 2.5f, {0.0f, std::nullopt}
     };
     inline SillySetting<cocos2d::ccColor3B> selectedObjectColor{
-        "Selected Object\nColor", feature, cocos2d::ccc3(0, 255, 0), "color selected objects will be changed to"
+        "Selected Object\nColor", feature, cocos2d::ccc3(0, 255, 0), "color selected objects (and selection rect) will be changed to"
+    };
+    inline SillySetting<float> selectionRectThickness{
+        "Selection Rect\nThickness", feature, 1.0f, {0.1, std::nullopt} 
+    };
+    inline SillySetting<int> selectionRectFill{
+        "Selection Rect\nFill", feature, 0, {0, 255}, "selection rect fill opacity, 0-255"
     };
     inline SillySetting<bool> alwaysSingleSelect{
-        "Always Single\nSelect", feature, true, "HACKY ! clicking on a selected object with multiple objects selected, will deselect all but that object"
+        "Always Single\nSelect", feature, false, "HACKY ! clicking on a selected object with multiple objects selected, will deselect all but that object"
+    };
+    inline SillySetting<bool> clickEmptyToDeselect{
+        "Click Empty\nTo Deselect", feature, false, "HACKY ! clicking on blank space in editor deselects current selection"
     };
     inline SillySetting<bool> chroma{
         "Chroma", feature, false

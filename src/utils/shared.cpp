@@ -1,13 +1,42 @@
 #include <Geode/modify/LevelEditorLayer.hpp>
 #include <Geode/modify/EditorUI.hpp>
-#include "utils.hpp"
-#include "shared.hpp"
+#include "include.hpp"
 
 using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
 
-namespace Shared {
-    class $modify(EditorUI) {
+namespace Sillyedit {
+    class $modify(SharedEditorUI, EditorUI) {
+        struct Fields {
+            PlaybackMode playbackModeRet = PlaybackMode::Not;
+            bool blockScrolling = false;
+        };
+
+        static void onModify(auto& pSelf) {
+            (void)pSelf.setHookPriorityBeforePre("EditorUI::scrollWheel", TINKER_EDIT_ID);
+        }
+
+        bool init(LevelEditorLayer* editorLayer) {
+            if (!EditorUI::init(editorLayer)) {
+                return false;
+            }
+
+            // evil hack to get around tinkers scrolling reimpl (its either this or i stop propgating the event entirely ok :sob:)
+            this->addEventListener(ScrollWheelEvent(), [this] (double, double) {
+                if (shouldBlockScrolling()) {
+                    m_fields->playbackModeRet = this->m_editorLayer->m_playbackMode;
+                    this->m_editorLayer->m_playbackMode = PlaybackMode::Playing;
+                }
+            }, Priority::Normal - 1);
+            this->addEventListener(ScrollWheelEvent(), [this] (double, double) {
+                if (shouldBlockScrolling()) {
+                    this->m_editorLayer->m_playbackMode = m_fields->playbackModeRet;
+                }
+            }, Priority::Normal + 1);
+
+            return true;
+        }
+
         bool onCreate() {
             // to not break custom objects
             shouldApplyCustomPlacedObjectOptions() = m_selectedObjectIndex >= 1;
@@ -17,6 +46,14 @@ namespace Shared {
             shouldApplyCustomPlacedObjectOptions() = false;
 
             return ret;
+        }
+
+        void scrollWheel(float y, float x) {
+            if (shouldBlockScrolling()) {
+                return;
+            }
+
+            EditorUI::scrollWheel(y, x);
         }
     };
 
@@ -28,8 +65,6 @@ namespace Shared {
             CCLayer* overlayLayer = nullptr;
 
             CCLayer* hiddenLayer = nullptr;
-
-            std::vector<geode::Function<void()>> drawFuncs;
         };
 
         CCLayer* createLayer(std::string_view pID, int pZ) {
@@ -51,13 +86,13 @@ namespace Shared {
                 return false;
             }
 
-            m_fields->gridLayer = createLayer("grid-layer"_spr, m_drawGridLayer->getZOrder() + 1);
-            m_fields->overlayLayer = createLayer("overlay-layer"_spr, m_editorUI->m_scaleControl->getZOrder() - 1);
+            m_fields->gridLayer = this->createLayer("grid-layer"_spr, m_drawGridLayer->getZOrder() + 1);
+            m_fields->overlayLayer = this->createLayer("overlay-layer"_spr, m_editorUI->m_scaleControl->getZOrder() - 1);
 
-            (m_fields->hiddenLayer = createLayer("hidden-layer"_spr, 0))->setVisible(false);
+            (m_fields->hiddenLayer = this->createLayer("hidden-layer"_spr, 0))->setVisible(false);
 
-            m_fields->gridDraw[DrawNode::Default] = createDrawNode("grid-draw"_spr, m_fields->gridLayer);
-            m_fields->overlayDraw[DrawNode::Default] = createDrawNode("overlay-draw"_spr, m_fields->overlayLayer);
+            m_fields->gridDraw[DrawNode::Default] = this->createDrawNode("grid-draw"_spr, m_fields->gridLayer);
+            m_fields->overlayDraw[DrawNode::Default] = this->createDrawNode("overlay-draw"_spr, m_fields->overlayLayer);
         
             return true;
         }
@@ -74,11 +109,9 @@ namespace Shared {
                 }
             }
 
-            LevelEditorLayer::updateEditor(dt);
+            shouldBlockScrolling() = false;
 
-            for (auto& func : m_fields->drawFuncs) {
-                func();
-            }
+            LevelEditorLayer::updateEditor(dt);
         }
     };
 
@@ -116,11 +149,5 @@ namespace Shared {
         }
 
         return nullptr;
-    }
-
-    void addUpdateFunc(geode::Function<void()> pFunc) {
-        if (auto layer = editor::layer<SharedLevelEditorLayer*>()) {
-            layer->m_fields->drawFuncs.push_back(std::move(pFunc));
-        }
     }
 }
