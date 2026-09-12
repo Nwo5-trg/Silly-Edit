@@ -11,8 +11,8 @@ static void tryShowWarningPopup(LevelEditorLayer* pLayer) {
         return;
     }
 
-    const auto text = Sillyedit::isBetterEditLoaded()
-        ? "using <co>betteredit</c> is <cr>UNSUPPORTED</c> by sillyedit, might still work but no promises (read <cl>about</c> for more info)"
+    const auto text = sillyedit::utils::isBetterEditLoaded()
+        ? "using <co>betteredit</c> is <cr>UNSUPPORTED</c> by sillyedit, might still work but no promises, mayb use tinker instead (read <cl>about</c> for more info)"
         : "sillyedit is in <cr>BETA</c> ! there prolly will be <cd>bugs</c> and or <cs>crashes</c> (you can disable this popup in <cl>settings</c>)";
     
     auto popup = FLAlertLayer::create("SillyEdit", text, "Ok !");

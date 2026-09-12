@@ -3,12 +3,16 @@
 #include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/LevelEditorLayer.hpp>
 #include <feature/include.hpp>
+#include <utils/include.hpp>
 
 namespace PlaceObjectPreview {
     class $feature(PlaceObjectPreview, SettingCondition::DesktopOnly) {
+        void onEditor() override;
         void onUpdate() override;
     } feature;
 
+    constexpr int PREVIEW_OBJECT_TAG = 8373767689;
+    
     class $feature_modify(EditorUI) {
         struct Fields {
             GameObject* previewObject = nullptr;
@@ -25,10 +29,11 @@ namespace PlaceObjectPreview {
     };
 
     class $feature_modify(LevelEditorLayer) {
-        static void onModify(auto& pSelf);
+        static void onModify(auto& pSelf) {
+            (void)pSelf.setHookPriorityBeforePre("LevelEditorLayer::addSpecial", TINKER_EDIT_ID);
+        }
 
         void addSpecial(GameObject* object);
-        void onPlaytest();
         gd::string getLevelString();
         bool typeExistsAtPosition(int objectID, cocos2d::CCPoint position, bool flipX, bool flipY, float rotation);
         GameObject* objectAtPosition(cocos2d::CCPoint position);

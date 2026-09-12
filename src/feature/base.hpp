@@ -23,6 +23,7 @@ namespace Features {
 
         virtual void onEditor();
 
+        /// also activates right after onEditor
         virtual void onToggled(bool pEnabled);
 
         virtual void onUpdate();
@@ -49,13 +50,14 @@ namespace Features {
         }
     };
 
-    // macro shenanigans
+    // macro shenanigans so instead of constructor args i just need to pass template params
     template<FeatureEnum Enum, Settings::SettingCondition Condition = Settings::SettingCondition::None, Settings::SettingReload Reload = Settings::SettingReload::None,  bool DefaultEnabled = true>
     class FeatureTemplate : public FeatureBase {
     protected:
         FeatureTemplate()
             : FeatureBase(Enum) 
         {
+            // technically i could just leak the setting and do this in featurebase constuctor, but this works too !!!
             static Settings::SillySetting<bool> enabled{"Enabled", m_id, DefaultEnabled, Reload, Condition};
             m_enabled = &enabled;
 
@@ -69,7 +71,7 @@ namespace Features {
                 this->onSettingChanged(name, pSetting);
                 
                 if (name == "Enabled") {
-                    this->onToggled(static_cast<Settings::SillySetting<bool>*>(pSetting)->get());
+                    this->onToggled(this->enabled());
                 }
             }, m_id).leak();
         }

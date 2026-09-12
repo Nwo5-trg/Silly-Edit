@@ -3,7 +3,7 @@
 #include "include.hpp"
 
 using namespace geode::prelude;
-using namespace nwo5::ui;
+using namespace nwo5::ui::prelude;
 
 namespace ObjectTabIcons {
     void Feature::onEditor() {
@@ -28,13 +28,10 @@ namespace ObjectTabIcons {
 
             // we're js gonna trust u ery pr from a year ago
             for (int i = 0; i < 2; i++) {
-                auto tab = nwo5::utils::getNestedChildSafe<CCSprite*>(
-                    self->m_tabsMenu,
-
-                    GetChildQuery{name},
-                    GetChildQuery<CCMenuItemSpriteExtra>{i},
-                    GetChildQuery<CCSprite>{}
-                );
+                auto tab = *Query(self->m_tabsMenu)
+                    .byID(name)
+                    .byType<CCMenuItemSpriteExtra>(i)
+                    .byType<CCSprite>();
             
                 if (!tab) {
                     continue;
@@ -42,13 +39,13 @@ namespace ObjectTabIcons {
 
                 const auto texture = fmt::format("{}{}.png"_spr, name, mode == "Alt" ? "-alt" : "");
                 
-                auto spr = CCSprite::create(texture.c_str());
+                auto spr = *ui::spr(texture);
 
                 if (!spr || !cocos::isSpriteName(spr, texture.c_str())) {
                     continue;
                 }
                 
-                auto originalIcon = tab->getChildByType<CCNodeRGBA>(0);
+                auto originalIcon = tab->getChildByType<CCNodeRGBA>();
 
                 if (!originalIcon) {
                     continue;

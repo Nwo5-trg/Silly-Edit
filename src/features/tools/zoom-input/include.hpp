@@ -36,15 +36,15 @@ namespace ZoomInput {
         "Rounding", feature, 3, {0, 7}
     };
     inline SillySetting<float> zoomInputScale{
-        "Zoom Input\nScale", feature, 1.0f, {0.0f, std::nullopt}, SettingReload::Editor
+        "Zoom Input Scale", feature, 1.0f, {0.0f, std::nullopt}, SettingReload::Editor
     };
     inline SillySetting<float> zoomInputOffset{
-        "Zoom Input\nOffset", feature, -17.5f, SettingReload::Editor
+        "Zoom Input Offset", feature, -17.5f, SettingReload::Editor
     };
     inline SillySetting<bool> centered{
         "Centered", feature, false, SettingReload::Editor, "will position at center of the screen instead of under position slider"
     };
     inline SillySetting<bool> noConstrainPosition{
-        "No Constrain\nPosition", feature, false, "use at ur own risk idk if this is a good hacky workaround uwu, works regardless of zook input being enabled"
+        "No Constrain Position", feature, false, "use at ur own risk idk if this is a good hacky workaround uwu, works regardless of zook input being enabled"
     };
 }

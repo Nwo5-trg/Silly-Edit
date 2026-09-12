@@ -26,7 +26,7 @@ class $modify(LevelEditorLayer) {
 
         this->addEventListener(ScrollWheelEvent(), [] (double, double) {
             if (CCDirector::get()->getRunningScene()->getChildByID("settings-popup"_spr)) {
-                Sillyedit::shouldBlockScrolling() = true;
+                sillyedit::utils::shouldBlockScrolling() = true;
             }
         }, Priority::Early);
 

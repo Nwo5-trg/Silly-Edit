@@ -3,33 +3,6 @@
 
 using namespace geode::prelude;
 
-static bool isProbablierObjectString(std::string_view pStr) {
-    if (pStr.find_first_of("1234567890") != 0) {
-        return false;
-    }
-
-    if (pStr.ends_with(',') || pStr.ends_with('.') || nwo5::utils::stringCount(pStr, ',') < 5) {
-        return false;
-    }
-
-    return true;
-}
-
-static void disableHooksCuzFuckYou() {
-    Sillyedit::conditionallyEnableHook(
-        !CopyObjectStrings::enabled(), Sillyedit::getTinker(), "EditorUI::doCopyObjects"
-    );
-    Sillyedit::conditionallyEnableHook(
-        !CopyObjectStrings::enabled(), Sillyedit::getTinker(), "EditorUI::doPasteObjects"
-    );
-    Sillyedit::conditionallyEnableHook(
-        !CopyObjectStrings::enabled(), Sillyedit::getBetterEdit(), "EditorUI::doCopyObjects"
-    );
-    Sillyedit::conditionallyEnableHook(
-        !CopyObjectStrings::enabled(), Sillyedit::getBetterEdit(), "EditorUI::doPasteObjects"
-    );
-}
-
 namespace CopyObjectStrings {
     void EditorUI::doCopyObjects(bool withColor) {
         GD::EditorUI::doCopyObjects(withColor);
@@ -56,7 +29,7 @@ namespace CopyObjectStrings {
 
         const auto clipboard = clipboard::read();
 
-        if (!isProbablierObjectString(clipboard)) {
+        if (!sillyedit::utils::isProbablierObjectString(clipboard)) {
             if (CopyObjectStrings::fallbackEditor) {
                 GD::EditorUI::doPasteObjects(withColor);
 
@@ -94,10 +67,18 @@ namespace CopyObjectStrings {
 
 
 
-    void Feature::onEditor() {
-        disableHooksCuzFuckYou();
-    }
-    void Feature::onToggled(bool) {
-        disableHooksCuzFuckYou();
+    void Feature::onToggled(bool pEnabled) {
+        sillyedit::utils::conditionallyEnableHook(
+            !pEnabled, sillyedit::utils::getTinker(), "EditorUI::doCopyObjects"
+        );
+        sillyedit::utils::conditionallyEnableHook(
+            !pEnabled, sillyedit::utils::getTinker(), "EditorUI::doPasteObjects"
+        );
+        sillyedit::utils::conditionallyEnableHook(
+            !pEnabled, sillyedit::utils::getBetterEdit(), "EditorUI::doCopyObjects"
+        );
+        sillyedit::utils::conditionallyEnableHook(
+            !pEnabled, sillyedit::utils::getBetterEdit(), "EditorUI::doPasteObjects"
+        );
     }
 }

@@ -3,6 +3,7 @@
 #include <Geode/modify/GJScaleControl.hpp>
 #include <Geode/modify/EditorUI.hpp>
 #include <feature/include.hpp>
+#include <utils/include.hpp>
 
 namespace BetterScale {
     class $feature(BetterScale, SettingCondition::None, SettingReload::Editor) {
@@ -14,11 +15,11 @@ namespace BetterScale {
             std::vector<cocos2d::CCNode*> scaleNodes;
             std::vector<cocos2d::CCNode*> scaleXYNodes;
 
-            cocos2d::CCLabelBMFont* newScaleLabel = nullptr;
+            geode::Label* newScaleLabel = nullptr;
             geode::TextInput* scaleInput = nullptr;
-            cocos2d::CCLabelBMFont* newScaleXLabel = nullptr;
+            geode::Label* newScaleXLabel = nullptr;
             geode::TextInput* scaleXInput = nullptr;
-            cocos2d::CCLabelBMFont* newScaleYLabel = nullptr;
+            geode::Label* newScaleYLabel = nullptr;
             geode::TextInput* scaleYInput = nullptr;
 
             std::vector<float> shortcuts;
@@ -47,7 +48,9 @@ namespace BetterScale {
         static constexpr float DEFAULT_LOCK_HEIGHT = 60.0f;
         static constexpr float DEFAULT_LOCK_XY_HEIGHT = 120.0f;
 
-        static void onModify(auto& pSelf);
+        static void onModify(auto& pSelf) {
+            (void)pSelf.setHookPriorityAfterPost("GJScaleControl::init", TINKER_EDIT_ID);
+        }
 
         void customScale(float pScale, ObjectScaleType pType);
         void updateShortcuts();
@@ -77,16 +80,16 @@ namespace BetterScale {
         "Allow Negative", feature, false, "dont use abs for negative scales"
     };
     inline SillySetting<bool> newLockTexture{
-        "New Lock\nTexture", feature, true, SettingReload::Editor
+        "New Lock Texture", feature, true, SettingReload::Editor
     };
     inline SillySetting<bool> switchModeButton{
-        "Switch Mode\nButton", feature, true, SettingReload::Editor
+        "Switch Mode Button", feature, true, SettingReload::Editor
     };
     inline SillySetting<float> controlSize{
-        "Control Size", feature, 1.0f, {0.1f, std::nullopt}, "multiplies scale control size"
+        "Control Size", feature, 0.75f, {0.1f, std::nullopt}, "multiplies scale control size"
     };
     inline SillySetting<bool> lockControlSize{
-        "Lock Control\nSize", feature, false, "treats control size as a static scale that doesnt change with zoom"
+        "Lock Control Size", feature, false, "treats control size as a static scale that doesnt change with zoom"
     };
     inline SillySetting<float> controlOffset{
         "Control Offset", feature, 40.0f, "y offset from default control position"

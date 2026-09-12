@@ -8,17 +8,19 @@ using namespace nwo5::ui::prelude;
 namespace ZoomInput {
     void EditorUI::updateZoomInput(float pZoom = editor::zoom()) {
         if (auto input = m_fields->zoomInput) {
-            input->setString(nwo5::utils::numToString(pZoom));
+            input->setString(misc::numToString(pZoom));
         }
     }
 
     void EditorUI::updateZoomContainer() {
-        Setup(m_fields->zoomContainer)
-            .scale(m_positionSlider->getScale() * ZoomInput::zoomInputScale)
-            .pos(
-                ZoomInput::centered ? CCDirector::get()->getWinSize().width / 2 : m_positionSlider->getPositionX(),
-                m_positionSlider->getPositionY() + (ZoomInput::zoomInputOffset * m_positionSlider->getScale())
-            ); 
+        if (auto container = m_fields->zoomContainer) {
+            Setup(container)
+                .scale(m_positionSlider->getScale() * ZoomInput::zoomInputScale)
+                .pos(
+                    ZoomInput::centered ? CCDirector::get()->getWinSize().width / 2 : ui::x(m_positionSlider),
+                    ui::y(m_positionSlider) + (ZoomInput::zoomInputOffset * m_positionSlider->getScale())
+                ); 
+        }
     }
 
     void EditorUI::onZoomInputButton(CCObject*) {
@@ -71,41 +73,43 @@ namespace ZoomInput {
             return;
         }
 
-        fields->zoomInput = Setup(ui::input(BASE_ZOOM_INPUT_SIZE, "1"))
+        fields->zoomInput = ui::input(BASE_ZOOM_INPUT_SIZE, "1")
             .id("zoom-input"_spr)
             .filter("1234567890.");
 
-        fields->zoomContainer = Setup(ui::menu(ui::row(AxisAlignment::Center, 0.0f)
+        fields->zoomContainer = ui::menu(ui::row()
+            .alignment(AxisAlignment::Center)
+            .gap(0.0f)
             .autoScale(false)
-            .grow(true)
-        ))
+            .grow()
+        )
             .id("zoom-input-container"_spr)
             .height(BASE_ZOOM_INPUT_SIZE.height)
             .anchor(Anchor::Top)
             .children(
-                Setup(ui::label("Zoom: ", Font::Default))
+                ui::label("Zoom: ", Font::Default)
                     .id("zoom-label"_spr)
                     .scaleHeightToFit(BASE_ZOOM_INPUT_SIZE.height),
                 fields->zoomInput,
-                Setup(ui::circleButtonFrame(
-                    "edit_findBtn_001.png", CircleBaseColor::Green, self, menu_selector(ZoomInput::EditorUI::onZoomInputButton)
-                ))
+                ui::circleButtonFrame(
+                    ui::frame::FIND, CircleBaseColor::Green, self, menu_selector(ZoomInput::EditorUI::onZoomInputButton)
+                )
                     .id("zoom-button"_spr)
                     .scaleHeightToFit(BASE_ZOOM_INPUT_SIZE.height)
-                    .prevGap(5.0f)
+                    .layoutPrevGap(5.0f)
             )
             .parent(self)
             .addTo(self->m_uiItems);
 
         feature.registerKeybind<"zoom-in">([self] (bool pDown, bool) {
             if (pDown) {
-                self->zoomGameLayer(true);
+                self->updateZoom(editor::zoom() / 0.9f);
             }
         });
 
         feature.registerKeybind<"zoom-out">([self] (bool pDown, bool) {
             if (pDown) {
-                self->zoomGameLayer(false);
+                self->updateZoom(editor::zoom() * 0.9f);
             }
         });
     }

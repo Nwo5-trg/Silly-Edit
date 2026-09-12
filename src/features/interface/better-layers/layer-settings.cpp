@@ -24,12 +24,23 @@ static std::filesystem::path getLayerSettingsPath() {
 }
 
 namespace BetterLayers {
+    LayerSettings::LayerSettings() {
+        importSettings();
+
+        sillyedit::shared::getLayerSettingsPtr() = this;
+    };
+    LayerSettings::~LayerSettings() {
+        exportSettings();
+
+        sillyedit::shared::getLayerSettingsPtr() = nullptr;
+    }
+
     void LayerSettings::importSettings() {
         m_id = EditorIDs::getID(editor::layer()->m_level);
         
         const auto json = file::readJson(getLayerSettingsPath()).unwrapOrDefault();
 
-        const auto& levelRes = json.get(nwo5::utils::numToString(m_id));
+        const auto& levelRes = json.get(misc::numToString(m_id));
 
         if (levelRes.isErr()) {
             return;
@@ -63,7 +74,7 @@ namespace BetterLayers {
     void LayerSettings::exportSettings() {
         auto json = file::readJson(getLayerSettingsPath()).unwrapOrDefault();
 
-        auto& levelObj = json[nwo5::utils::numToString(m_id)];
+        auto& levelObj = json[misc::numToString(m_id)];
         levelObj.clear();
 
         if (m_focusedLayer.has_value()) {
@@ -80,7 +91,7 @@ namespace BetterLayers {
                 continue;
             }
 
-            auto& layerObj = levelObj[nwo5::utils::numToString(i)];
+            auto& layerObj = levelObj[misc::numToString(i)];
 
             if (state.hidden) {
                 layerObj["hidden"] = state.hidden;
@@ -144,7 +155,7 @@ namespace BetterLayers {
         
         float opacity = static_cast<float>(pUnmodifiedOpacity);
         
-        const auto canSelectLayer = editor::object::canSelectLayer(pObj, true);
+        const auto canSelectLayer = object::canSelectLayer(pObj, true);
 
         // undo robtops thing
         if (!canSelectLayer) {
@@ -166,11 +177,11 @@ namespace BetterLayers {
         }
 
         if (const auto res = getFocusedLayer(); res.has_value() && pObj->m_editorLayer != res.value() && pObj->m_editorLayer2 != res.value()) {
-            return Sillyedit::modifyOpacity(opacity, BetterLayers::unfocusedLayerOpacity);
+            return sillyedit::utils::modifyOpacity(opacity, BetterLayers::unfocusedLayerOpacity);
         }
 
         if (!canSelectLayer) {
-            return Sillyedit::modifyOpacity(opacity, m_defaultOpacity.value_or(BetterLayers::layerOpacity));
+            return sillyedit::utils::modifyOpacity(opacity, m_defaultOpacity.value_or(BetterLayers::layerOpacity));
         }
 
         return static_cast<unsigned char>(std::clamp(opacity, 0.0f, 255.0f));

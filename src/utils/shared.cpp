@@ -5,7 +5,7 @@
 using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
 
-namespace Sillyedit {
+namespace sillyedit::utils {
     class $modify(SharedEditorUI, EditorUI) {
         struct Fields {
             PlaybackMode playbackModeRet = PlaybackMode::Not;
@@ -78,7 +78,7 @@ namespace Sillyedit {
             return Setup(SillyDrawNode::create())
                 .id(pID)
                 .pos(CCPointZero)
-                .parent(m_objectLayer);
+                .parent(pParent);
         }
 
         bool init(GJGameLevel* level, bool noUI) {
@@ -116,35 +116,35 @@ namespace Sillyedit {
     };
 
     SillyDrawNode* getGridDraw(DrawNode pNode) {
-        if (auto layer = editor::layer<SharedLevelEditorLayer*>()) {
+        if (auto layer = editor::layer<SharedLevelEditorLayer>()) {
             return layer->m_fields->gridDraw[pNode];
         }
 
         return nullptr;
     }
     CCLayer* getGridLayer() {
-        if (auto layer = editor::layer<SharedLevelEditorLayer*>()) {
+        if (auto layer = editor::layer<SharedLevelEditorLayer>()) {
             return layer->m_fields->gridLayer;
         }
         
         return nullptr;
     }
     SillyDrawNode* getOverlayDraw(DrawNode pNode) {
-        if (auto layer = editor::layer<SharedLevelEditorLayer*>()) {
+        if (auto layer = editor::layer<SharedLevelEditorLayer>()) {
             return layer->m_fields->overlayDraw[pNode];
         }
 
         return nullptr;
     }
     CCLayer* getOverlayLayer() {
-        if (auto layer = editor::layer<SharedLevelEditorLayer*>()) {
+        if (auto layer = editor::layer<SharedLevelEditorLayer>()) {
             return layer->m_fields->overlayLayer;
         }
         
         return nullptr;
     }
     CCLayer* getHiddenLayer() {
-        if (auto layer = editor::layer<SharedLevelEditorLayer*>()) {
+        if (auto layer = editor::layer<SharedLevelEditorLayer>()) {
             return layer->m_fields->hiddenLayer;
         }
 

@@ -1,7 +1,6 @@
 // my justifications for making the obj preview an actual object instead of just creating a gameobject and managing it myself
 // is so it properly previews all the effects (i.e. alpha and shaders) and thats js the easiest way to do it
 
-#include <utils/include.hpp>
 #include "shared.hpp"
 
 using namespace geode::prelude;
@@ -11,31 +10,31 @@ namespace PlaceObjectPreview {
         auto fields = m_fields.self();
 
         if (!PlaceObjectPreview::enabled()) {
-            return Shared::removePreviewObject();
+            return sillyedit::shared::removePreviewObject();
         }
-        if (Shared::shouldHidePreviewObject()) {
-            return Shared::removePreviewObject();
+        if (sillyedit::shared::shouldHidePreviewObject()) {
+            return sillyedit::shared::removePreviewObject();
         }
         if (m_isPaused || m_editorLayer->m_playbackMode != PlaybackMode::Not) {
-            return Shared::removePreviewObject();
+            return sillyedit::shared::removePreviewObject();
         }
         if (!m_selectedObjectIndex || m_selectedMode != 2) {
-            return Shared::removePreviewObject();
+            return sillyedit::shared::removePreviewObject();
         }
         if (m_selectedObjectIndex == 1329 && m_editorLayer->m_coinCount.value() >= 3) {
-            return Shared::removePreviewObject();
+            return sillyedit::shared::removePreviewObject();
         }
         if (CCDirector::get()->getRunningScene()->getChildByType<FLAlertLayer*>(0)) {
-            return Shared::removePreviewObject();
+            return sillyedit::shared::removePreviewObject();
         }
 
         auto& obj = fields->previewObject;
 
         if (!obj || obj->m_objectID != m_selectedObjectIndex || (fields->wasSelectedObject && !m_selectedObject)) {
             // cuz of the other check
-            Shared::removePreviewObject();
+            sillyedit::shared::removePreviewObject();
 
-            Sillyedit::shouldApplyCustomPlacedObjectOptions() = true;
+            sillyedit::utils::shouldApplyCustomPlacedObjectOptions() = true;
 
             // let me tell you about the story of the girl who wasted
             // 7 and a half FUCKING HOURS OF HER LIFE debugging this one STUPID FUCKING FUNCTION
@@ -60,14 +59,22 @@ namespace PlaceObjectPreview {
                     obj->updateCustomScaleX(obj->m_pixelScaleX);
                     obj->updateCustomScaleY(obj->m_pixelScaleY);
                 }
+
+                obj->setTag(PREVIEW_OBJECT_TAG);
+
+                if (trigger::is(obj)) {
+                    static_cast<EffectGameObject*>(obj)->m_isSpawnTriggered = true;
+                    // no clue what this does but it lets me fix trigger type boxes easily so
+                    obj->m_greenDebugDraw = true;
+                }
             }
 
-            Sillyedit::shouldApplyCustomPlacedObjectOptions() = false;
+            sillyedit::utils::shouldApplyCustomPlacedObjectOptions() = false;
         }
 
         fields->wasSelectedObject = false;
 
-        obj->setPosition(this->getGridSnappedPos(m_editorLayer->m_objectLayer->convertToNodeSpace(cocos::getMousePos())));
+        object::move(obj, this->getGridSnappedPos(m_editorLayer->m_objectLayer->convertToNodeSpace(cocos::getMousePos())));
         this->applyOffset(obj);
 
         // rly not a big deal to do every update since duplicatevalues doesnt do anything heavy
@@ -84,12 +91,8 @@ namespace PlaceObjectPreview {
             if (auto orange = static_cast<TeleportPortalObject*>(obj)->m_orangePortal) {
                 orange->m_editorLayer = editor::currentLayer();
 
-                orange->setPositionOverride(obj->getRealPosition() + ccp(-10.0f, 100.0f));
+                orange->setPositionOverride(obj->getRealPosition() + CCPoint{-10.0f, 100.0f});
             }
-        }
-
-        if (editor::trigger::is(obj)) {
-            static_cast<EffectGameObject*>(obj)->m_isSpawnTriggered = true;
         }
     }
 
@@ -97,26 +100,26 @@ namespace PlaceObjectPreview {
 
     // fixes obj count
     void EditorUI::onPause(CCObject* sender) {
-        Shared::removePreviewObject();
+        sillyedit::shared::removePreviewObject();
 
         GD::EditorUI::onPause(sender);
     }
     // fixes coin limit
     bool EditorUI::onCreate() {
-        Shared::removePreviewObject();
+        sillyedit::shared::removePreviewObject();
 
         return GD::EditorUI::onCreate();
     }
     // fixes getcycledobject
     bool EditorUI::canSelectObject(GameObject* object) {
-        if (PlaceObjectPreview::enabled() && object == m_fields->previewObject) {
+        if (PlaceObjectPreview::enabled() && object->getTag() == PREVIEW_OBJECT_TAG && object == m_fields->previewObject) {
             return false;
         }
         return GD::EditorUI::canSelectObject(object);
     }
     // not technically necessary i dont think but just incase
     void EditorUI::selectObject(GameObject* object, bool ignoreFilter) {
-        if (!PlaceObjectPreview::enabled() || object != m_fields->previewObject) {
+        if (!PlaceObjectPreview::enabled() || object->getTag() != PREVIEW_OBJECT_TAG || object != m_fields->previewObject) {
             GD::EditorUI::selectObject(object, ignoreFilter);
         }
     }
@@ -130,20 +133,11 @@ namespace PlaceObjectPreview {
 
 
 
-
-
-    void LevelEditorLayer::onModify(auto& pSelf) {
-        (void)pSelf.setHookPriorityAfterPost("LevelEditorLayer::addSpecial", TINKER_EDIT_ID);
-    }
-
-
-
     // some actual bullshit for tinker
     void LevelEditorLayer::addSpecial(GameObject* object) {
-        if (!PlaceObjectPreview::enabled() || object->m_objectID != 31 || !Sillyedit::isTinkerLoaded() || editor::notLoaded(editor::LoadedType::UI)) {
+        if (!PlaceObjectPreview::enabled() || object->m_objectID != 31 || !sillyedit::utils::isTinkerLoaded() || editor::notLoaded(editor::LoadedType::UI)) {
             return GD::LevelEditorLayer::addSpecial(object);
         }
-
         if (auto obj = editor::ui<PlaceObjectPreview::EditorUI>()->m_fields->previewObject; obj && object == obj) {
             obj->m_objectID = 0;
             GD::LevelEditorLayer::addSpecial(object);
@@ -154,16 +148,9 @@ namespace PlaceObjectPreview {
         }
     }
 
-    // startpos stuff
-    void LevelEditorLayer::onPlaytest() {
-        Shared::removePreviewObject();
-
-        GD::LevelEditorLayer::onPlaytest();
-    }
-
     // *should* fix better edit auto save
     gd::string LevelEditorLayer::getLevelString() {
-        Shared::removePreviewObject();
+        sillyedit::shared::removePreviewObject();
         
         return GD::LevelEditorLayer::getLevelString();
     }
@@ -176,11 +163,12 @@ namespace PlaceObjectPreview {
 
         // Searching For An Object That Doesn't Exist
         if (auto obj = editor::ui<PlaceObjectPreview::EditorUI>()->m_fields->previewObject) {
-            this->removeObjectFromSection(obj); // could js remove it but funny
+            const auto id = obj->m_objectID;
+            obj->m_objectID = -1;
 
             const auto ret = GD::LevelEditorLayer::typeExistsAtPosition(objectID, position, flipX, flipY, rotation);
 
-            this->addToSection(obj);
+            obj->m_objectID = id;
 
             return ret;
         }
@@ -238,20 +226,16 @@ namespace PlaceObjectPreview {
         GD::LevelEditorLayer::updateVisibility(dt);
 
         if (auto obj = editor::ui<PlaceObjectPreview::EditorUI>()->m_fields->previewObject) {
-            obj->setOpacity(Sillyedit::modifyOpacity(obj->getOpacity(), PlaceObjectPreview::opacity));
+            obj->setOpacity(sillyedit::utils::modifyOpacity(obj->getOpacity(), PlaceObjectPreview::opacity));
 
-            if (editor::trigger::type(obj) != editor::trigger::ObjectType::Normal) {
-                if (auto label = obj->getChildByID("custom-label"_spr)) {
-                    static_cast<geode::Label*>(label)->setOpacity(Sillyedit::modifyOpacity(obj->getOpacity(), PlaceObjectPreview::opacity));
-                }
-                if (auto spr = obj->getChildByID("extra"_spr)) {
-                    static_cast<CCSprite*>(spr)->setOpacity(Sillyedit::modifyOpacity(obj->getOpacity(), PlaceObjectPreview::opacity));
-                }
+            // lol idk y it doesnt work normally honestly, prolly has to do with all the shenanigans i do to make this a fake asl object
+            if (trigger::type(obj) != trigger::ObjectType::Normal) {
+                updateObjectLabel(obj);
             }
 
             if (obj->m_objectID == 747) {
                 if (auto orange = static_cast<TeleportPortalObject*>(obj)->m_orangePortal) {
-                    orange->setOpacity(Sillyedit::modifyOpacity(obj->getOpacity(), PlaceObjectPreview::opacity));
+                    orange->setOpacity(sillyedit::utils::modifyOpacity(obj->getOpacity(), PlaceObjectPreview::opacity));
                 }
             }
         }
@@ -260,6 +244,14 @@ namespace PlaceObjectPreview {
 
 
 
+
+    void Feature::onEditor() {
+        auto self = editor::ui<PlaceObjectPreview::EditorUI>();
+
+        self->addEventListener(OnPlaytestEvent(true), [] {
+            sillyedit::shared::removePreviewObject();
+        });
+    }
 
     void Feature::onUpdate() {
         if (auto self = editor::ui<PlaceObjectPreview::EditorUI>()) {

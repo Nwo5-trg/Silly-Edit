@@ -12,8 +12,17 @@ namespace Ruler {
 
         MeasurementColor color;
 
-        cocos2d::CCLabelBMFont* xLabel = nullptr;
-        cocos2d::CCLabelBMFont* yLabel = nullptr;
+        geode::Label* xLabel = nullptr;
+        geode::Label* yLabel = nullptr;
+        
+        void cleanup() {
+            if (xLabel) {
+                xLabel->removeMeAndCleanup();
+            }
+            if (yLabel) {
+                yLabel->removeMeAndCleanup();
+            }
+        }
     };
 
     // catpuccin mocha :3

@@ -19,14 +19,14 @@ static constexpr auto createTypeArray() {
     return arr;
 }
 
-namespace Shared {
+namespace sillyedit::shared {
     unsigned char hideWithPlaytestOpacityForObject(unsigned char pOpacity, GameObject* pObj) {
         static auto arr = createTypeArray();
 
         const auto id = pObj->m_objectID;
 
-        if (HideWithPlaytest::hideTriggers.get() && editor::trigger::is(id)) {
-            return Sillyedit::modifyOpacity(pOpacity, HideWithPlaytest::triggerOpacity.get());
+        if (HideWithPlaytest::hideTriggers.get() && trigger::is(id)) {
+            return sillyedit::utils::modifyOpacity(pOpacity, HideWithPlaytest::triggerOpacity.get());
         }
         
         switch (arr[id]) {
@@ -34,7 +34,7 @@ namespace Shared {
                 return pOpacity;
             }
             case HideWithPlaytestType::DBlock: {
-                return Sillyedit::modifyOpacity(pOpacity, HideWithPlaytest::specialBlockOpacity.get());
+                return sillyedit::utils::modifyOpacity(pOpacity, HideWithPlaytest::specialBlockOpacity.get());
             }
         }
     }

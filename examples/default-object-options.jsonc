@@ -8,7 +8,7 @@
     },
     "1": {
         // i cant be asked to add some custom syntax for this just read gdinfoexplorer youll figure it out
-        "color_1_hsv_enabed": true,
+        "color_1_hsv_enabled": true,
         "color_1_hsv": "155a0.5a1a0a0"
     },
     "901": {

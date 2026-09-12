@@ -4,13 +4,14 @@
 
 using namespace nwo5::editor::prelude;
 
-namespace Sillyedit {
+namespace sillyedit::utils {
     enum class DrawNode {
         Default
     };
     enum class ChromaNode {
         Default = 0,
-        SelectionUtilsInvert = 180,
+        SelectionUtilsDefault = 60,
+        SelectionUtilsInvert = 240,
     };
 
     nwo5::utils::SillyDrawNode* getGridDraw(DrawNode pDrawNode = DrawNode::Default);

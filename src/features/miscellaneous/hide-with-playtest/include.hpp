@@ -14,9 +14,9 @@ namespace HideWithPlaytest {
         "Trigger Opacity", feature, 0, {0, 255}
     };
     inline SillySetting<bool> hideSpecialBlocks{
-        "Hide Special\nBlocks", feature, true
+        "Hide Special Blocks", feature, true
     };
     inline SillySetting<int> specialBlockOpacity{
-        "Special Block\nOpacity", feature, 0, {0, 255}
+        "Special Block Opacity", feature, 0, {0, 255}
     };
 };

@@ -22,7 +22,7 @@ namespace BetterSelectAll {
 
         feature.registerKeybind<"select-all-key">([] (bool pDown, bool pRepeat) {
             if (pDown && !pRepeat) {
-                editor::selection::add(
+                selection::add(
                     BetterSelectAll::getObjectsWithDirection(SelectDirection::All, false),
                     true, true
                 );
@@ -32,7 +32,7 @@ namespace BetterSelectAll {
         });
         feature.registerKeybind<"select-all-left-key">([] (bool pDown, bool pRepeat) {
             if (pDown && !pRepeat) {
-                editor::selection::add(
+                selection::add(
                     getObjectsWithDirection(SelectDirection::West, false),
                     true, true
                 );
@@ -42,7 +42,7 @@ namespace BetterSelectAll {
         });
         feature.registerKeybind<"select-all-down-key">([] (bool pDown, bool pRepeat) {
             if (pDown && !pRepeat) {
-                editor::selection::add(
+                selection::add(
                     getObjectsWithDirection(SelectDirection::South, false),
                     true, true
                 );
@@ -52,7 +52,7 @@ namespace BetterSelectAll {
         });
         feature.registerKeybind<"select-all-up-key">([] (bool pDown, bool pRepeat) {
             if (pDown && !pRepeat) {
-                editor::selection::add(
+                selection::add(
                     getObjectsWithDirection(SelectDirection::North, false),
                     true, true
                 );
@@ -62,7 +62,7 @@ namespace BetterSelectAll {
         });
         feature.registerKeybind<"select-all-right-key">([] (bool pDown, bool pRepeat) {
             if (pDown && !pRepeat) {
-                editor::selection::add(
+                selection::add(
                     getObjectsWithDirection(SelectDirection::East, false),
                     true, true
                 );

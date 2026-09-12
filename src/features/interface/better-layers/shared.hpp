@@ -2,7 +2,7 @@
 
 #include "include.hpp"
 
-namespace Shared {
+namespace sillyedit::shared {
     inline auto& getLayerSettingsPtr() {
         static BetterLayers::LayerSettings* val = nullptr;
         return val;

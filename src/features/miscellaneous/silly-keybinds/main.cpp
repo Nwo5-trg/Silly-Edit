@@ -31,12 +31,12 @@ namespace SillyKeybinds {
         });
 
         feature.registerKeybind<"make-object-invisible">([self] (bool pDown, bool) {
-            if (pDown && editor::selection::count()) {
-                if (SillyKeybinds::invisibleWithGroup) {
+            if (pDown && selection::count()) {
+                if (Settings::invisibleWithGroup) {
                     bool hasGroup = false;
 
-                    for (auto obj : editor::selection::getExt()) {
-                        hasGroup = editor::object::hasGroup(obj, SillyKeybinds::invisibleWithGroup);
+                    for (auto obj : selection::getExt()) {
+                        hasGroup = object::hasGroup(obj, Settings::invisibleWithGroup);
 
                         if (!hasGroup) {
                             break;
@@ -44,16 +44,16 @@ namespace SillyKeybinds {
                     }
 
                     if (hasGroup) {
-                        editor::object::removeGroup(editor::selection::get(), SillyKeybinds::invisibleWithGroup);
+                        object::removeGroup(selection::get(), Settings::invisibleWithGroup);
                     }
                     else {
-                        editor::object::addGroup(editor::selection::get(), SillyKeybinds::invisibleWithGroup);
+                        object::addGroup(selection::get(), Settings::invisibleWithGroup);
                     }
                 }
                 else {
                     bool isHide = false;
 
-                    for (auto obj : editor::selection::getExt()) {
+                    for (auto obj : selection::getExt()) {
                         isHide = obj->m_isHide;
 
                         if (!isHide) {
@@ -61,7 +61,7 @@ namespace SillyKeybinds {
                         }
                     }
 
-                    for (auto obj : editor::selection::getExt()) {
+                    for (auto obj : selection::getExt()) {
                         obj->m_isHide = !isHide;
                     }
                 }

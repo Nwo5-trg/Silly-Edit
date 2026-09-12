@@ -4,16 +4,10 @@
 using namespace geode::prelude;
 
 namespace DefaultObjectOptions {
-    void LevelEditorLayer::onModify(auto& pSelf) {
-        (void)pSelf.setHookPriorityPost("LevelEditorLayer::createObject", Priority::Replace);
-    }
-
-
-
     GameObject* LevelEditorLayer::createObject(int key, CCPoint position, bool noUndo) {
         auto ret = GD::LevelEditorLayer::createObject(key, position, noUndo);
 
-        if (!DefaultObjectOptions::enabled() || !Sillyedit::shouldApplyCustomPlacedObjectOptions()) {
+        if (!DefaultObjectOptions::enabled() || !sillyedit::utils::shouldApplyCustomPlacedObjectOptions()) {
             return ret;
         }
 
@@ -48,7 +42,7 @@ namespace DefaultObjectOptions {
         // and lead us not into temptation
         // but deliver us from evil
         // lord forgive me for i have sinned
-        editor::object::remove(ret);
+        object::remove(ret);
 
         return static_cast<GameObject*>(
             this->createObjectsFromString(objectString, noUndo, true)->firstObject()

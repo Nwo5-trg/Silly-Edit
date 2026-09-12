@@ -1,8 +1,34 @@
+## v0.1.0-beta.4
+**Added**
+
+- better easing select
+- context menu
+- trigger type boxes
+- feature list in about
+- reset setting button
+- group scroll secondary group modifier
+- made ruler a bit nicer to use
+- shift change modes fix
+- changed line wrapping for setting names
+- opacity setting button types
+
+**Fixed**
+
+- place object preview for the millionth time
+- a couple easing preview graphs
+- flood fill being off grid and selecting incorrectly
+- group label shenanigans doing some shenanigans
+- some ui stuff
+- settings popup close button order
+- hook prio again
+- reverted text obj utils to not have multi text edit (in the process making it actually work again lol)
+
 ## v0.1.0-beta.3
 **Added**
+
 - api for disabling features
-- multi text edit
 - group scroll
+- group label shenanigans
 - split some features
 - editor bug fixes
 - overhauled settings popup
@@ -12,18 +38,19 @@
 - license
 
 **Fixed**
+
 - a couple features just not working lol
 - keybinds
-- some ui stuff
 
 **Internal**
+
 - ***refactor fucking everything***
 - features now use a module system similar to tinker
 
 ## v0.1.0-beta.2
 **Added**
 
-- pretty heavily reworked flood fill for pc
+- pretty heavily reworked flood fill for desktop
 - miscellaneous tab
 - hide in playtest
 - removed replace obj (for now, rework coming)

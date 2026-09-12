@@ -14,8 +14,8 @@ namespace FF {
 
         static Rect bounds(std::span<const Rect> pRects) {
             Rect out {
-                ccp(std::numeric_limits<float>::max(), std::numeric_limits<float>::max()),
-                ccp(std::numeric_limits<float>::lowest(), std::numeric_limits<float>::lowest())
+                cocos2d::CCPoint{std::numeric_limits<float>::max(), std::numeric_limits<float>::max()},
+                cocos2d::CCPoint{std::numeric_limits<float>::lowest(), std::numeric_limits<float>::lowest()}
             };
 
             for (const auto& rect : pRects) {

@@ -7,7 +7,7 @@ namespace BetterSelectAll {
     CCArray* getObjectsWithDirection(SelectDirection pDirection, bool pSelectedObjectsCenter) {
         auto objs = CCArray::create();
 
-        const auto center = pSelectedObjectsCenter ? editor::selection::center() : editor::center();
+        const auto center = pSelectedObjectsCenter ? selection::center() : editor::center();
 
         const auto shouldInclude = [&] (CCPoint pPos) {
             switch (pDirection) {
@@ -23,7 +23,7 @@ namespace BetterSelectAll {
             }
         };
         
-        for (auto obj : CCArrayExt<GameObject*>(editor::object::getAll())) {
+        for (auto obj : CCArrayExt<GameObject*>(object::getAll())) {
             if (shouldInclude(obj->getRealPosition())) {
                 objs->addObject(obj);
             }

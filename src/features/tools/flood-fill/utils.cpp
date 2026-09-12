@@ -31,16 +31,16 @@ namespace FF {
                 out.push_back(rect);
             }
 
-            stack.push_back(rect + ccp(0, rect.height()));
-            stack.push_back(rect + ccp(0, -rect.height()));
-            stack.push_back(rect + ccp(-rect.width(), 0));
-            stack.push_back(rect + ccp(rect.width(), 0));
+            stack.push_back(rect + CCPoint{0, rect.height()});
+            stack.push_back(rect + CCPoint{0, -rect.height()});
+            stack.push_back(rect + CCPoint{-rect.width(), 0});
+            stack.push_back(rect + CCPoint{rect.width(), 0});
             
             if (p8Direction) {
-                stack.push_back(rect + ccp(-rect.width(), rect.height()));
-                stack.push_back(rect + ccp(rect.width(), rect.height()));
-                stack.push_back(rect + ccp(-rect.width(), -rect.height()));
-                stack.push_back(rect + ccp(rect.width(), -rect.height()));
+                stack.push_back(rect + CCPoint{-rect.width(), rect.height()});
+                stack.push_back(rect + CCPoint{rect.width(), rect.height()});
+                stack.push_back(rect + CCPoint{-rect.width(), -rect.height()});
+                stack.push_back(rect + CCPoint{rect.width(), -rect.height()});
             }
         }
 
@@ -50,14 +50,14 @@ namespace FF {
     Rect rectFromObject(GameObject* pObj, std::optional<CCPoint> pCenter) {
         return {
             pCenter.has_value() ? pCenter.value() : pObj->getRealPosition(), 
-            CCSize{pObj->m_scaleX, pObj->m_scaleY} * editor::object::size(pObj)
+            CCSize{pObj->m_scaleX, pObj->m_scaleY} * object::size(pObj)
         };
     }
     std::vector<Rect> rectsFromObjects(CCArray* pObjs) {
         std::vector<Rect> out;
 
         for (auto obj : CCArrayExt<GameObject*>(pObjs)) {
-            out.emplace_back(obj->getRealPosition(), CCSize{obj->m_scaleX, obj->m_scaleY} * editor::object::size(obj));
+            out.emplace_back(obj->getRealPosition(), CCSize{obj->m_scaleX, obj->m_scaleY} * object::size(obj));
         }
 
         return out;

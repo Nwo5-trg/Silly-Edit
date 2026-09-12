@@ -19,7 +19,9 @@ namespace SelectionUtils {
         cocos2d::CCPoint getSnappedPos(GameObject* pObj);
         void snapSelection(GameObject* pSnapObj);
 
-        static void onModify(auto& pSelf);
+        static void onModify(auto& pSelf) {
+            (void)pSelf.setHookPriorityPre("EditorUI::draw", geode::Priority::Late);
+        }
         
         void draw();
         bool ccTouchBegan(cocos2d::CCTouch* touch, cocos2d::CCEvent* event);
@@ -33,31 +35,31 @@ namespace SelectionUtils {
         "Grid Size", feature, 15.0f, {1.0f, std::nullopt}
     };
     inline SillySetting<cocos2d::ccColor3B> snapObjectColor{
-        "Snap Object\nColor", feature, cocos2d::ccc3(255, 127, 0), "color snap object will be changed to" 
+        "Snap Object Color", feature, cocos2d::ccc3(255, 127, 0), "color snap object will be changed to" 
     };
     inline SillySetting<bool> snapIndicator{
         "Snap Indicator", feature, true, "previews where the snap object will snap to"
     };
-    inline SillySetting<float> snapIndicatorFill{
-        "Snap Indicator\nFill", feature, 0.25f, {0.0f, 1.0f}, "opacity of snap indicator fill"
+    inline SillySetting<int> snapIndicatorFill{
+        "Snap Indicator Fill", feature, 63, {0, 255}, "opacity of snap indicator fill"
     };
     inline SillySetting<float> snapIndicatorThickness{
-        "Snap Indicator\nThickness", feature, 2.5f, {0.0f, std::nullopt}
+        "Snap Indicator Thickness", feature, 2.5f, {0.0f, std::nullopt}
     };
     inline SillySetting<cocos2d::ccColor3B> selectedObjectColor{
-        "Selected Object\nColor", feature, cocos2d::ccc3(0, 255, 0), "color selected objects (and selection rect) will be changed to"
+        "Selected Object Color", feature, cocos2d::ccc3(0, 255, 0), "color selected objects (and selection rect) will be changed to"
     };
     inline SillySetting<float> selectionRectThickness{
-        "Selection Rect\nThickness", feature, 1.0f, {0.1, std::nullopt} 
+        "Selection Rect Thickness", feature, 1.0f, {0.1, std::nullopt} 
     };
     inline SillySetting<int> selectionRectFill{
-        "Selection Rect\nFill", feature, 0, {0, 255}, "selection rect fill opacity, 0-255"
+        "Selection Rect Fill", feature, 0, {0, 255}, "selection rect fill opacity, 0-255"
     };
     inline SillySetting<bool> alwaysSingleSelect{
-        "Always Single\nSelect", feature, false, "HACKY ! clicking on a selected object with multiple objects selected, will deselect all but that object"
+        "Always Single Select", feature, false, "HACKY ! clicking on a selected object with multiple objects selected, will deselect all but that object"
     };
     inline SillySetting<bool> clickEmptyToDeselect{
-        "Click Empty\nTo Deselect", feature, false, "HACKY ! clicking on blank space in editor deselects current selection"
+        "Click Empty To Deselect", feature, false, "HACKY ! clicking on blank space in editor deselects current selection"
     };
     inline SillySetting<bool> chroma{
         "Chroma", feature, false

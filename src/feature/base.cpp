@@ -16,7 +16,6 @@ namespace Features {
 
     void FeatureBase::onUIUpdated(float pScale) {}
 
-
     geode::ZStringView FeatureBase::id() const {
         return m_id;
     }
@@ -28,6 +27,8 @@ namespace Features {
         else {
             m_disabledBy.insert(pMod->getID());
         }
+
+        this->onToggled(this->enabled());
     }
     bool FeatureBase::enabled() const {
         return m_enabled->get() && m_disabledBy.empty();

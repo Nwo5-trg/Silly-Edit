@@ -1,6 +1,9 @@
 # Contributing
 this isnt exactlyyyy a contributing md its more like "how to do anything in the project guide"
 
+## AI
+dont use ai for anything whatsoever oki thx \<3
+
 ## Conventions
 - *variables/constants* `camelCase`
 - *constexpr constants* `UPPER_SNAKE_CASE`
@@ -21,7 +24,7 @@ look at the code for the rest idk
 ## Making a feature
 there are pretty much only 3 parts to a feature, their registry, their `include.hpp` and their main.cpp
 
-(feature templates are in `feature/template`)
+(feature templates are in `examples/feature`)
 
 ## Registering
 just go into `features/registry.hpp` and add ur feature to the `SILLYEDIT_FEATURE_LIST` macro in `PascalCase`, features are organized in settings popup as they appear in the macro
@@ -55,7 +58,9 @@ namespace SillyFeature {
         void someCustomMethod();
         void onSomeCallback(CCObject* /*optional*/pSender); // always use function callbacks when it comes to buttons if u can help it
     
-        static void onModify(auto& pSelf); // if necessary
+        static void onModify(auto& pSelf) {
+            (void)pSelf.setHookPriorityPost("GJRawr::someHookedMethod", geode::Priority::Late);
+        } // if necessary
 
         void someHookedMethod();
         void someOtherHookedMethod(bool whateverParamNameBindingsHasNoPrefix);
@@ -108,12 +113,6 @@ namespace SillyFeature {
 
 
 
-    void GJRawr::onModify(auto& pSelf) {
-        (void)pSelf.setHookPriorityAfterPost("GJRawr::someHookedMethod", nwo5::utils::TINKER_EDIT_ID); // c cast to void unless ur doing smth with the result
-    } // three space gap
-
-
-
     void GJRawr::someHookedMethod() {
         GD::GJRawr::someHookedMethod(); // to call original, prefix with the gd namespace
     }
@@ -154,7 +153,7 @@ if u want to make a function a different feature can use, make a `shared.hpp` fi
 
 #include "include.hpp"
 
-namespace Shared {
+namespace sillyedit::shared {
     void someFunctionRawr();
 }
 ```

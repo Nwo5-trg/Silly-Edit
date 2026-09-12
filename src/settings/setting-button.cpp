@@ -1,5 +1,5 @@
 #include <utils/include.hpp>
-#include "setting-button.hpp"
+#include "popup.hpp"
 
 using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
@@ -16,112 +16,71 @@ namespace Settings {
             .id("{}-setting"_spr, pSetting->key())
             .size(SIZE);
 
-        m_label = Setup(ui::label(m_setting->name()))
+        m_label = ui::label(m_setting->name(), Font::Default)
             .id("label"_spr)
-            .anchor(Anchor::Right)
-            .scaleWidthToFit(LABEL_SIZE.width - LABEL_PADDING)
-            .limitScaleHeightToFit(LABEL_SIZE.height - LABEL_PADDING)
-            .pos(
-                SIZE.width - LABEL_PADDING / 2,
-                SIZE.height / 2
-            )
+            .anchor(Anchor::Left)
+            .alignment(Label::Alignment::Left)
+            .pos(INPUT_SIZE.width + LABEL_PADDING / 2, SIZE.height / 2)
             .parent(this);
 
-        m_inputMenu = Setup(ui::menu(true))
+        m_inputMenu = ui::menu(true)
             .id("input-menu"_spr)
             .size(INPUT_SIZE)
             .pos(INPUT_SIZE / 2)
             .parent(this);
 
-        m_helpButton = Setup(ui::buttonFrame(
-            "GJ_infoIcon_001.png", this, menu_selector(SettingButtonBase::onHelp)
-        ))
+        m_helpButton = ui::buttonFrame(
+            ui::frame::HELP, this, menu_selector(SettingButtonBase::onHelp)
+        )
             .id("help-button"_spr)
-            .scaleToFit(HELP_BUTTON_SIZE);
+            .scaleToFit(HELP_BUTTON_SIZE)
+            .hide();
 
-        m_reloadIndicator = Setup(ui::buttonFrame(
-            "edit_ccwBtn_001.png", this, nullptr
-        ))
+        m_resetButton = ui::circleButtonFrame(
+            ui::frame::RELOAD, CircleBaseColor::Green, this, menu_selector(SettingButtonBase::onReset)
+        )
+            .id("reset-button"_spr)
+            .scaleToFit(HELP_BUTTON_SIZE)
+            .userObject("nwo5.silly-api/tooltip", TooltipInfo::create("Reset setting"))
+            .hide();
+
+        m_reloadIndicator = ui::buttonFrame(
+            ui::frame::UPDATE, this, nullptr
+        )
             .id("reload-button"_spr)
-            .scaleToFit(HELP_BUTTON_SIZE);
+            .scaleToFit(HELP_BUTTON_SIZE)
+            .hide();
 
-        m_helpMenu = Setup(ui::menu(ui::row(AxisAlignment::End, HELP_GAP)
+        m_helpMenu = ui::menu(ui::row()
+            .alignment(AxisAlignment::End)
+            .gap(HELP_GAP)
             .autoScale(false)
-            .grow(true)
+            .grow()
             .reverse()
-        ))
+            .ignoreInvisible()
+        )
             .id("help-menu"_spr)
             .height(HELP_BUTTON_SIZE)
             .anchor(Anchor::Right)
             .pos(SIZE.width + HELP_BUTTON_SIZE / 2, SIZE.height)
             .children(
                 m_helpButton,
+                m_resetButton,
                 m_reloadIndicator
             )
             .parent(this);
 
         return true;
     }
-    void SettingButtonBase::setupReloadIndicator(SettingReload pReload) {
-        // idek it wasnt working now it is and im not sure this is a reason - it shoudlnt be the reason - but im scared
-        const auto shouldShowHelp = m_setting->hasDescription();
-        m_helpButton->setVisible(shouldShowHelp);
-
-        if (shouldShowHelp) {
-            const auto str = m_setting->description();
-            m_helpButton->setUserObject("nwo5.silly-api/tooltip", TooltipInfo::create(string::toUpper(str.substr(0, 1)) + str.substr(1)));
-        }
-
-        if (pReload == SettingReload::None) {
-            m_reloadIndicator->setVisible(false);
-
-            return m_helpMenu->updateLayout();
-        }
-
-        m_helpMenu->updateLayout();
-
-        switch (pReload) {
-            case SettingReload::Editor: {
-                Setup(m_reloadIndicator)
-                    .color(ccORANGE)
-                    .callback([] (auto*) {
-                        Notification::create("editor reload is required to apply setting !", NotificationIcon::Info)->show();
-                    })
-                    .userObject("nwo5.silly-api/tooltip", TooltipInfo::create("Editor reload required"));
-            break; }
-            case SettingReload::Pause: {
-                Setup(m_reloadIndicator)
-                    .color(ccRED)
-                    .callback([] (auto*) {
-                        Notification::create("pause menu reload is required to apply setting !", NotificationIcon::Info)->show();
-                    })
-                    .userObject("nwo5.silly-api/tooltip", TooltipInfo::create("Pause reload required"));
-            break; }
-            case SettingReload::Popup: {
-                Setup(m_reloadIndicator)
-                    .color(ccBLUE)
-                    .callback([] (auto*) {
-                        Notification::create("settings popup reload is required to apply setting !", NotificationIcon::Info)->show();
-                    })
-                    .userObject("nwo5.silly-api/tooltip", TooltipInfo::create("Popup reload required"));
-            break; }
-            case SettingReload::Game: {
-                Setup(m_reloadIndicator)
-                    .color(ccGRAY)
-                    .callback([] (auto*) {
-                        Notification::create("game reload is required to apply setting !", NotificationIcon::Info)->show();
-                    })
-                    .userObject("nwo5.silly-api/tooltip", TooltipInfo::create("Game reload required"));
-            break; }
-            default: return;
-        }
-    }
-    void SettingButtonBase::onHelp(CCObject* pSender) {
+    void SettingButtonBase::onHelp(CCObject*) {
         FLAlertLayer::create(
             "Help",
             m_setting->description(),
             "OK"
         )->show();
+    }
+    void SettingButtonBase::onReset(CCObject*) {
+        this->resetSetting();
     }
     auto SettingButtonBase::getSetting() const {
         return m_setting;
@@ -132,12 +91,14 @@ namespace Settings {
             return false;
         }
 
-        m_input = Setup(ui::input(
+        m_input = ui::input(
             INPUT_SIZE.width - INPUT_PADDING, INPUT_SIZE.height * (2.0f / 3.0f) - INPUT_PADDING, std::nullopt
-        ))
+        )
             .id("input"_spr)
             .pos(CCPointZero)
             .parent(m_inputMenu);
+
+        m_label->setFitBox({LABEL_SIZE.width - LABEL_PADDING, LABEL_SIZE.height - LABEL_PADDING}, 0.5f);
 
         return true;
     }
@@ -147,17 +108,19 @@ namespace Settings {
             return false;
         }
 
-        m_colorFill = CCSprite::create("color-button-fill.png"_spr);
+        m_colorFill = ui::spr("color-button-fill.png"_spr);
 
-        Setup(ui::button(
+        ui::button(
             m_colorFill, this, menu_selector(ColorSettingButtonBase::onColorPick)
-        ))
+        )
             .id("color_button"_spr)
-            .scaleToFit(INPUT_SIZE.width - INPUT_PADDING)
+            .scaleToFit(INPUT_SIZE.width * (4.0f/5.0f) - INPUT_PADDING)
             .pos(CCPointZero)
             .parent(m_inputMenu);
 
-        m_colorFill->addChildAtPosition(CCSprite::create("color-button-frame.png"_spr), Anchor::Center);
+        m_colorFill->addChildAtPosition(ui::spr("color-button-frame.png"_spr), Anchor::Center);
+
+        m_label->setFitBox({LABEL_SIZE.width - LABEL_PADDING, LABEL_SIZE.height - LABEL_PADDING}, 0.5f);
 
         return true;
     }
@@ -191,23 +154,34 @@ namespace Settings {
             return false;
         }
 
-        this->setupReloadIndicator(setting->reloadType());
+        this->setup<T>();
 
-        Setup(ui::togglerFrame(
-            "GJ_checkOff_001.png", "GJ_checkOn_001.png", this, menu_selector(BoolSettingButton::onToggle)
-        ))
+        m_toggler = ui::togglerBase(
+            this, menu_selector(BoolSettingButton::onToggle)
+        )
             .id("toggle"_spr)
-            .scaleToFit(INPUT_SIZE.width * (3.0f/4.0f) - INPUT_PADDING)
+            .scaleToFit(INPUT_SIZE.width * (4.0f/5.0f) - INPUT_PADDING)
             .pos(CCPointZero)
             .parent(m_inputMenu)
             .toggle(setting->get());
+        
+        m_label->setFitBox({LABEL_SIZE.width - LABEL_PADDING, LABEL_SIZE.height - LABEL_PADDING}, 0.5f);
 
         return true;
+    }
+    void BoolSettingButton::resetSetting() {
+        auto setting = this->setting<T>();
+
+        if (setting->get() == setting->getDefault()) {
+            return;
+        }
+
+        m_toggler->activate();
     }
     void BoolSettingButton::onToggle(cocos2d::CCObject* pSender) {
         auto setting = this->setting<T>();
 
-        setting->set(nwo5::utils::isToggled(pSender));
+        this->set<T>(misc::isToggled(pSender));
         if (setting->reloadRequired()) {
             SettingWithReloadChanged().send(setting->key(), setting->reloadType());
         }
@@ -225,21 +199,34 @@ namespace Settings {
             return false;
         }
 
-        this->setupReloadIndicator(setting->reloadType());
+        this->setup<T>();
+
+        std::string placeholder;
+        
+        if (setting->hasMin()) {
+            placeholder.append(fmt::format("{}<=", setting->min()));
+        }
+        placeholder.append(fmt::format("({})", misc::numToString(setting->getDefault())));
+        if (setting->hasMax()) {
+            placeholder.append(fmt::format("<={}", setting->max()));
+        }
 
         Setup(m_input)
-            .placeholder(nwo5::utils::numToString(setting->getDefault()))
+            .placeholder(placeholder)
             .filter(CommonFilter::Int)
-            .string(nwo5::utils::numToString(setting->get()))
+            .string(misc::numToString(setting->get()))
             .callback([this] (const std::string& pStr) {
                 auto setting = this->setting<T>();
 
                 if (pStr.empty()) {
-                    setting->set(setting->getDefault());
+                    this->set<T>(setting->getDefault());
                 }
                 else {
-                    setting->set(std::clamp(utils::numFromString<T>(pStr).unwrapOrDefault(), setting->min(), setting->max()));
-                    this->m_input->setString(nwo5::utils::numToString(setting->get()));
+                    this->set<T>(std::clamp(utils::numFromString<T>(pStr).unwrapOrDefault(), setting->min(), setting->max()));
+                    
+                    if (pStr != "0") {
+                        this->m_input->setString(misc::numToString(setting->get()));
+                    }
                 }
 
                 if (setting->reloadRequired()) {
@@ -247,7 +234,20 @@ namespace Settings {
                 }
             });
 
+        if (const auto labelSize = cocos::getLabelSize(placeholder, Font::Default).width, inputSize = ui::w(m_input); labelSize > inputSize) {
+            m_input->getInputNode()->setLabelPlaceholderScale(inputSize / labelSize);
+        }
+
         return true;
+    }
+    void IntSettingButton::resetSetting() {
+        auto setting = this->setting<T>();
+
+        if (setting->get() == setting->getDefault()) {
+            return;
+        }
+
+        m_input->setString(misc::numToString(setting->getDefault()), true);
     }
     SE_SETUP_SETTING_BUTTON_CREATE(IntSettingButton)
 
@@ -262,23 +262,33 @@ namespace Settings {
             return false;
         }
 
-        this->setupReloadIndicator(setting->reloadType());
+        this->setup<T>();
+
+        std::string placeholder;
+        
+        if (setting->hasMin()) {
+            placeholder.append(fmt::format("{}<=", setting->min()));
+        }
+        placeholder.append(fmt::format("({})", misc::numToString(setting->getDefault())));
+        if (setting->hasMax()) {
+            placeholder.append(fmt::format("<={}", setting->max()));
+        }
 
         Setup(m_input)
-            .placeholder(nwo5::utils::numToString(setting->getDefault()))
+            .placeholder(placeholder)
             .filter(CommonFilter::Float)
-            .string(nwo5::utils::numToString(setting->get()))
+            .string(misc::numToString(setting->get()))
             .callback([this] (const std::string& pStr) {
                 auto setting = this->setting<T>();
 
                 if (pStr.empty()) {
-                    setting->set(setting->getDefault());
+                    this->set<T>(setting->getDefault());
                 }
                 else {
-                    setting->set(std::clamp(utils::numFromString<T>(pStr).unwrapOrDefault(), setting->min(), setting->max()));
+                    this->set<T>(std::clamp(utils::numFromString<T>(pStr).unwrapOrDefault(), setting->min(), setting->max()));
 
-                    if (!pStr.ends_with('.') && !pStr.ends_with('-')) {
-                        this->m_input->setString(nwo5::utils::numToString(setting->get()));
+                    if (!pStr.ends_with('.') && !pStr.ends_with('-') && pStr != "0") {
+                        this->m_input->setString(misc::numToString(setting->get()));
                     }
                 }
 
@@ -286,10 +296,101 @@ namespace Settings {
                     SettingWithReloadChanged().send(setting->key(), setting->reloadType());
                 }
             });
+        
+        if (const auto labelSize = cocos::getLabelSize(placeholder, Font::Default).width, inputSize = ui::w(m_input); labelSize > inputSize) {
+            m_input->getInputNode()->setLabelPlaceholderScale(inputSize / labelSize);
+        }
 
         return true;
     }
+    void FloatSettingButton::resetSetting() {
+        auto setting = this->setting<T>();
+
+        if (setting->get() == setting->getDefault()) {
+            return;
+        }
+
+        m_input->setString(misc::numToString(setting->getDefault()), true);
+    }
     SE_SETUP_SETTING_BUTTON_CREATE(FloatSettingButton)
+
+    bool OpacitySettingButton::init(GenericSetting* pSetting) {
+        if (!SettingButtonBase::init(pSetting)) {
+            return false;
+        }
+
+        auto setting = this->setting<T>();
+
+        if (!setting->validOnPlatform()) {
+            return false;
+        }
+
+        this->setup<T>();
+
+        m_inputMenu->setPosition(CCPointZero);
+
+        m_slider = Setup(SliderNode::create(nullptr, true))
+            .id("input"_spr)
+            .pos(SIZE.width / 2, SIZE.height * (3.0f/4.0f) - SLIDER_OFFSET)
+            .scaleWidthToFit(SIZE.width * (3.0f/4.0f) - PADDING)
+            .callback([this] (auto, auto) {
+                auto setting = this->setting<T>();
+
+                this->set<T>(this->m_slider->getPercent() * 255);
+
+                this->updateVisuals();
+
+                if (setting->reloadRequired()) {
+                    SettingWithReloadChanged().send(setting->key(), setting->reloadType());
+                }
+            })
+            .callbackSelect([this] (auto, auto) {
+                if (auto popup = static_cast<SettingsPopup*>(CCDirector::get()->getRunningScene()->getChildByID("settings-popup"_spr))) {
+                    popup->toggleSettingsDrag(false);
+                }
+            })
+            .callbackUnselect([this] (auto, auto) {
+                if (auto popup = static_cast<SettingsPopup*>(CCDirector::get()->getRunningScene()->getChildByID("settings-popup"_spr))) {
+                    popup->toggleSettingsDrag(true);
+                }
+            })
+            .parent(m_inputMenu);
+
+        m_slider->setPercent(setting->get() / 255.0f);
+
+        Setup(m_label)
+            .anchor(Anchor::Center)
+            .scaleHeightToFit(SIZE.height / 2 - PADDING / 2)
+            .limitScaleWidthToFit(SIZE.width - PADDING)
+            .pos(SIZE.width / 2, SIZE.height * (1.0f/4.0f));
+
+        return true;
+    }
+    void OpacitySettingButton::resetSetting() {
+        auto setting = this->setting<T>();
+
+        if (setting->get() == setting->getDefault()) {
+            return;
+        }
+
+        this->set<T>(setting->getDefault());
+
+        m_slider->setPercent(setting->get() / 255.0f);
+        this->updateVisuals();
+    }
+    void OpacitySettingButton::updateVisuals() {
+        auto setting = this->setting<T>();
+
+        m_slider->getBar()->setOpacity(setting->get());
+        m_slider->getGroove()->setOpacity(setting->get() ? setting->get() : 255);
+        m_slider->getGroove()->setColor(setting->get() ? *Col::White : Col::DarkGray);
+
+        Setup(this->m_label)
+            .text(fmt::format("{} ({})", setting->name(), setting->get()))
+            .scaleHeightToFit(SIZE.height / 2 - PADDING / 2)
+            .limitScaleWidthToFit(SIZE.width - PADDING);
+    }
+    SE_SETUP_SETTING_BUTTON_CREATE(OpacitySettingButton)
 
     bool StringSettingButton::init(GenericSetting* pSetting) {
         if (!SettingButtonBase::init(pSetting)) {
@@ -302,13 +403,13 @@ namespace Settings {
             return false;
         }
 
-        this->setupReloadIndicator(setting->reloadType());
+        this->setup<T>();
 
         m_inputMenu->setPosition(CCPointZero);
 
-        Setup(ui::input(
+        m_input = ui::input(
             SIZE.width - PADDING, SIZE.height / 2 - PADDING / 2, setting->getDefault()
-        ))
+        )
             .id("input"_spr)
             .pos(SIZE.width / 2, SIZE.height * (3.0f/4.0f))
             .parent(m_inputMenu)
@@ -316,13 +417,13 @@ namespace Settings {
                 auto setting = this->setting<T>();
 
                 if (pStr.empty()) {
-                    setting->set(setting->getDefault());
+                    this->set<T>(setting->getDefault());
                 }
                 else if (pStr == "\\0") {
-                    setting->set("");
+                    this->set<T>("");
                 }
                 else {
-                    setting->set(pStr);
+                    this->set<T>(pStr);
                 }
 
                 if (setting->reloadRequired()) {
@@ -340,6 +441,15 @@ namespace Settings {
 
         return true;
     }
+    void StringSettingButton::resetSetting() {
+        auto setting = this->setting<T>();
+
+        if (setting->get() == setting->getDefault()) {
+            return;
+        }
+
+        m_input->setString(setting->getDefault(), true);
+    }
     SE_SETUP_SETTING_BUTTON_CREATE(StringSettingButton)
 
     bool StrenumSettingButton::init(GenericSetting* pSetting) {
@@ -353,27 +463,27 @@ namespace Settings {
             return false;
         }
 
-        this->setupReloadIndicator(setting->reloadType());
+        this->setup<T>();
 
         m_inputMenu->setPosition(CCPointZero);
 
-        m_currentLabel = Setup(ui::label())
+        m_currentLabel = ui::label()
             .id("current-label"_spr)
             .pos(SIZE.width / 2, SIZE.height * (3.0f/4.0f))
             .parent(m_inputMenu);
 
-        m_nextArrow = Setup(ui::buttonFrame(
+        m_nextArrow = ui::buttonFrame(
             "GJ_arrow_02_001.png", this, menu_selector(StrenumSettingButton::onNext)
-        ))
+        )
             .id("next-button"_spr)
             .pos(SIZE.width - ARROW_SIZE / 2 - PADDING / 2, SIZE.height * (3.0f/4.0f))
             .scaleToFit(ARROW_SIZE)
             .parent(m_inputMenu)
             .flipX();
         
-        m_prevArrow = Setup(ui::buttonFrame(
+        m_prevArrow = ui::buttonFrame(
             "GJ_arrow_02_001.png", this, menu_selector(StrenumSettingButton::onPrevious)
-        ))
+        )
             .id("previous-button"_spr)
             .pos(0.0f + ARROW_SIZE / 2 + PADDING / 2, SIZE.height * (3.0f/4.0f))
             .scaleToFit(ARROW_SIZE)
@@ -399,6 +509,17 @@ namespace Settings {
 
         return true;
     }
+    void StrenumSettingButton::resetSetting() {
+        auto setting = this->setting<T>();
+
+        if (setting->get() == setting->getDefault()) {
+            return;
+        }
+
+        this->setOption(
+            std::ranges::find(setting->enumOptions(), setting->getDefault()) - setting->enumOptions().begin(), true
+        );
+    }
     void StrenumSettingButton::setOption(int pOption, bool pSet) {
         auto setting = this->setting<T>();
 
@@ -409,11 +530,8 @@ namespace Settings {
             .scaleHeightToFit(SIZE.height * (2.0f/5.0f) - PADDING / 2)
             .limitScaleWidthToFit(SIZE.width * (3.0f/4.0f) - PADDING);
 
-        // m_nextArrow->setPositionX(SIZE.width / 2 + m_currentLabel->getScaledContentWidth() / 2 + ARROW_GAP);
-        // m_prevArrow->setPositionX(SIZE.width / 2 - m_currentLabel->getScaledContentWidth() / 2 - ARROW_GAP);
-
         if (pSet) {
-            setting->set(str);
+            this->set<T>(str);
 
             if (setting->reloadRequired()) {
                 SettingWithReloadChanged().send(setting->key(), setting->reloadType());
@@ -422,10 +540,10 @@ namespace Settings {
 
         m_currentOption = pOption;
     }
-    void StrenumSettingButton::onNext(CCObject* pSender) {
+    void StrenumSettingButton::onNext(CCObject*) {
         this->setOption((m_currentOption + 1) % this->setting<T>()->enumOptions().size(), true);
     }
-    void StrenumSettingButton::onPrevious(CCObject* pSender) {
+    void StrenumSettingButton::onPrevious(CCObject*) {
         this->setOption(m_currentOption ? (m_currentOption - 1) % this->setting<T>()->enumOptions().size() : this->setting<T>()->enumOptions().size() - 1, true);
     }
     SE_SETUP_SETTING_BUTTON_CREATE(StrenumSettingButton)
@@ -441,11 +559,26 @@ namespace Settings {
             return false;
         }
 
-        this->setupReloadIndicator(setting->reloadType());
+        this->setup<T>();
 
         m_colorFill->setColor(setting->get());
 
         return true;
+    }
+    void RGBSettingButton::resetSetting() {
+        auto setting = this->setting<T>();
+
+        if (setting->get() == setting->getDefault()) {
+            return;
+        }
+
+        this->set<T>(setting->getDefault());
+
+        m_colorFill->setColor(setting->get());
+
+        if (setting->reloadRequired()) {
+            SettingWithReloadChanged().send(setting->key(), setting->reloadType());
+        }
     }
     void RGBSettingButton::setupColorPicker() {
         auto popup = ColorPickPopup::create(this->setting<T>()->get());
@@ -457,7 +590,7 @@ namespace Settings {
         
             auto setting = this->setting<T>();
 
-            setting->set(col);
+            this->set<T>(col);
 
             if (setting->reloadRequired()) {
                 SettingWithReloadChanged().send(setting->key(), setting->reloadType());
@@ -479,12 +612,28 @@ namespace Settings {
             return false;
         }
 
-        this->setupReloadIndicator(setting->reloadType());
+        this->setup<T>();
 
         m_colorFill->setColor(color_cast<ccColor3B>(setting->get()));
         m_colorFill->setOpacity(setting->get().a);
 
         return true;
+    }
+    void RGBASettingButton::resetSetting() {
+        auto setting = this->setting<T>();
+
+        if (setting->get() == setting->getDefault()) {
+            return;
+        }
+
+        this->set<T>(setting->getDefault());
+
+        m_colorFill->setColor(color_cast<ccColor3B>(setting->get()));
+        m_colorFill->setOpacity(setting->get().a);
+
+        if (setting->reloadRequired()) {
+            SettingWithReloadChanged().send(setting->key(), setting->reloadType());
+        }
     }
     void RGBASettingButton::setupColorPicker() {
         auto popup = ColorPickPopup::create(this->setting<T>()->get());
@@ -495,7 +644,7 @@ namespace Settings {
 
             auto setting = this->setting<T>();
 
-            setting->set(pCol);
+            this->set<T>(pCol);
 
             if (setting->reloadRequired()) {
                 SettingWithReloadChanged().send(setting->key(), setting->reloadType());
@@ -508,7 +657,14 @@ namespace Settings {
     SettingButtonBase* createSettingButton(GenericSetting* pSetting) {
         switch (pSetting->type()) {
             case SettingType::Bool: return BoolSettingButton::create(pSetting);
-            case SettingType::Int: return IntSettingButton::create(pSetting);
+            case SettingType::Int: {
+                if (auto setting = static_cast<SillySetting<int>*>(pSetting); setting->min() == 0 && setting->max() == 255) {
+                    return OpacitySettingButton::create(pSetting);
+                }
+                else {
+                    return IntSettingButton::create(pSetting);
+                }
+            }
             case SettingType::Float: return FloatSettingButton::create(pSetting);
             case SettingType::String: {
                 if (static_cast<SillySetting<std::string>*>(pSetting)->isEnum()) {

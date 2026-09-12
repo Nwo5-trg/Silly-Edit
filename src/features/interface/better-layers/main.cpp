@@ -6,7 +6,7 @@ using namespace nwo5::ui::prelude;
 
 namespace BetterLayers {
     EditorUI::Fields::~Fields() {
-        Shared::getLayerSettingsPtr() = nullptr;
+        sillyedit::shared::getLayerSettingsPtr() = nullptr;
     }
 
     void EditorUI::updateLayerMenu() {
@@ -23,14 +23,14 @@ namespace BetterLayers {
             fields->layerInput->setString("All");
         }
         else {
-            fields->layerInput->setString(nwo5::utils::numToString(layer));
+            fields->layerInput->setString(misc::numToString(layer));
         }
         
         if (editor::layerLocked(layer)) {
-            fields->layerInput->getInputNode()->getTextLabel()->setColor({255, 200, 2});
+            fields->layerInput->getInputNode()->getTextLabel()->setColor({255, 200, 0});
         }
         else {
-            fields->layerInput->getInputNode()->getTextLabel()->setColor(ccWHITE);
+            fields->layerInput->getInputNode()->getTextLabel()->setColor(Col::White);
         }
 
         fields->lockLayerButton->setVisible(
@@ -50,7 +50,7 @@ namespace BetterLayers {
             Setup(fields->newLayerMenu)
                 .scale(oldLayerMenu)
                 .anchor(Anchor::Right)
-                .pos(oldLayerMenu->getPositionX() + oldLayerMenu->getScaledContentWidth() / 2, oldLayerMenu->getPositionY())
+                .pos(ui::x(oldLayerMenu) + ui::sw(oldLayerMenu) / 2, ui::y(oldLayerMenu))
                 .order(oldLayerMenu);
         }
     }
@@ -106,34 +106,35 @@ namespace BetterLayers {
         m_fields->canDestroyUndo = true;
     }
 
-    void EditorUI::selectObject(GameObject* object, bool ignoreFilter) {
+    bool EditorUI::canSelectObject(GameObject* object) {
         if (!BetterLayers::enabled()) {
-            return GD::EditorUI::selectObject(object, ignoreFilter);
+            return GD::EditorUI::canSelectObject(object);
         }
 
-        if (ignoreFilter == true) {
-            return GD::EditorUI::selectObject(object, ignoreFilter);
+        if (!object || !GD::EditorUI::canSelectObject(object)) {
+            return false;
+        }
+
+        auto fields = m_fields.self();
+
+        if (!fields->settings) {
+            return true;
         }
 
         bool canSelect = true;
 
-        if (BetterLayers::unselectableUnfocusedLayers) {
-            if (auto res = m_fields->settings->getFocusedLayer(); res.has_value() && object->m_editorLayer != res.value() && object->m_editorLayer2 != res.value()) {
-                canSelect = false;
+        if (BetterLayers::unselectableUnfocusedLayers || BetterLayers::unselectableHiddenLayers) {
+            if (BetterLayers::unselectableUnfocusedLayers) {
+                if (auto res = fields->settings->getFocusedLayer(); res.has_value() && object->m_editorLayer != res.value() && object->m_editorLayer2 != res.value()) {
+                    canSelect = false;
+                }
+            }
+            if (BetterLayers::unselectableHiddenLayers) {
+                canSelect = !fields->settings->isLayerHidden(object->m_editorLayer) && !fields->settings->isLayerHidden(object->m_editorLayer2);
             }
         }
-        if (BetterLayers::unselectableHiddenLayers) {
-            canSelect = !m_fields->settings->isLayerHidden(object->m_editorLayer) && !m_fields->settings->isLayerHidden(object->m_editorLayer2);
-        }
 
-        if (canSelect) {
-            GD::EditorUI::selectObject(object, ignoreFilter);
-        }
-        else if (m_fields->canDestroyUndo) {
-            m_editorLayer->m_undoObjects->removeLastObject(false);
-
-            m_fields->canDestroyUndo = false;
-        }
+        return canSelect;
     }
 
     void EditorUI::selectObjects(CCArray* objects, bool ignoreFilter) {
@@ -144,17 +145,27 @@ namespace BetterLayers {
         if (ignoreFilter) {
             return GD::EditorUI::selectObjects(objects, ignoreFilter);
         }
+        
+        auto fields = m_fields.self();
+
+        if (!fields->settings) {
+            return GD::EditorUI::selectObjects(objects, ignoreFilter);
+        }
 
         auto validObjs = CCArray::create();
 
         for (auto obj : CCArrayExt<GameObject*>(objects)) {
+            if (!obj) {
+                continue;
+            }
+            
             if (BetterLayers::unselectableUnfocusedLayers) {
-                if (auto res = m_fields->settings->getFocusedLayer(); res.has_value() && obj->m_editorLayer != res.value() && obj->m_editorLayer2 != res.value()) {
+                if (auto res = fields->settings->getFocusedLayer(); res.has_value() && obj->m_editorLayer != res.value() && obj->m_editorLayer2 != res.value()) {
                     continue;
                 }
             }
             if (BetterLayers::unselectableHiddenLayers) {
-                if (m_fields->settings->isLayerHidden(obj->m_editorLayer) || m_fields->settings->isLayerHidden(obj->m_editorLayer2)) {
+                if (fields->settings->isLayerHidden(obj->m_editorLayer) || fields->settings->isLayerHidden(obj->m_editorLayer2)) {
                     continue;
                 }
             }
@@ -177,19 +188,17 @@ namespace BetterLayers {
 
 
     void Feature::onEditor() {
-        auto self = editor::ui<BetterLayers::EditorUI>();
-
         if (!BetterLayers::enabled()) {
             return;
         }
         
+        auto self = editor::ui<BetterLayers::EditorUI>();
         auto fields = self->m_fields.self();
 
         // will i make this a ccobject managed obj in the future, mayb if i remember
         fields->settings = std::make_unique<LayerSettings>();
-        Shared::getLayerSettingsPtr() = fields->settings.get();
 
-        fields->layerInput = ui::node(Setup(ui::input(LAYER_INPUT_SIZE, "All"))
+        fields->layerInput = ui::input(LAYER_INPUT_SIZE, "All")
             .id("layer-input"_spr)
             .filter("aA1234567890")
             .maxCharCount(4)
@@ -202,22 +211,21 @@ namespace BetterLayers {
                 }
                 else if (!pStr.empty()) {
                     if (auto res = utils::numFromString<int>(pStr); res.isOk()) {
-                        editor::setLayer(std::clamp(res.unwrap(), 0, editor::constants::MAX_LAYERS));
+                        editor::setLayer(std::clamp(res.unwrap(), -1, editor::constants::MAX_LAYERS));
                     }
                 }
-            })
-        );
+            });
 
-        fields->allLayersButton = Setup(ui::buttonFrame(
+        fields->allLayersButton = ui::buttonFrame(
             // girl robtop, ur function names, what the fuck is this, why only name it layer here </3
             "GJ_arrow_02_001.png", self, menu_selector(BetterLayers::EditorUI::onGoToBaseLayer)
-        ))
+        )
             .id("next-free-layer-button"_spr)
             .scaleToFit(LAYER_EXTRA_BUTTON_SIZE);
 
-        fields->lockLayerButton = Setup(ui::togglerFrame(
+        fields->lockLayerButton = ui::togglerFrame(
             "warpLockOffBtn_001.png", "warpLockOnBtn_001.png", self, menu_selector(BetterLayers::EditorUI::onToggleLayerLocked), 1.25f, 1.25f
-        ))
+        )
             .id("lock-layer-button"_spr)
             .scaleToFit(LAYER_EXTRA_BUTTON_SIZE)
             .visible(BetterLayers::lockButton);
@@ -229,31 +237,37 @@ namespace BetterLayers {
             self->m_currentLayerLabel->setPositionX(999.0f); // i give up dealing with better edits editablelabelproxy fuck that
         }
 
-        fields->newLayerMenu = Setup(ui::menu(ui::horizontalDistrbLayout(GAP)))
+        fields->newLayerMenu = ui::menu(ui::row()
+            .alignment(AxisAlignment::Start)
+            .gap(GAP)
+            .autoScale(false)
+            .grow()
+        )
             .id("new-layer-menu"_spr)
             .children(
-                    Setup(ui::buttonFrame(
+                    ui::buttonFrame(
                         "GJ_optionsBtn_001.png", self, menu_selector(BetterLayers::EditorUI::onLayerSettings)
-                    ))
+                    )
                         .id("layer-settings-button"_spr)
-                        .scaleToFit((LAYER_SHIFT_BUTTON_SIZE + LAYER_EXTRA_BUTTON_SIZE) / 2),
+                        .scaleToFit((LAYER_SHIFT_BUTTON_SIZE + LAYER_EXTRA_BUTTON_SIZE) / 2)
+                        .visible(BetterLayers::layerSettingsButton),
                     fields->lockLayerButton,
                     fields->allLayersButton,
-                    Setup(ui::buttonFrame(
+                    ui::buttonFrame(
                         "GJ_arrow_03_001.png", self, menu_selector(BetterLayers::EditorUI::onGroupDown)
-                    ))
+                    )
                         .id("prev-layer-button"_spr)
                         .scaleToFit(LAYER_SHIFT_BUTTON_SIZE),
                     fields->layerInput,
-                    Setup(ui::buttonFrame(
+                    ui::buttonFrame(
                         "GJ_arrow_03_001.png", self, menu_selector(BetterLayers::EditorUI::onGroupUp)
-                    ))
+                    )
                         .id("next-layer-button"_spr)
                         .scaleToFit(LAYER_SHIFT_BUTTON_SIZE)
                         .flipX(),
-                    Setup(ui::buttonFrame(
+                    ui::buttonFrame(
                         "GJ_plusBtn_001.png", self, menu_selector(BetterLayers::EditorUI::onNextFreeLayer)
-                    ))
+                    )
                         .id("next-free-layer-button"_spr)
                         .scaleToFit(LAYER_EXTRA_BUTTON_SIZE)
                         .visible(BetterLayers::nextFreeButton)

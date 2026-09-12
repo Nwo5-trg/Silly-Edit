@@ -6,7 +6,7 @@ using namespace nwo5::ui::prelude;
 
 namespace HideUI {
     void EditorUI::onHideUI(CCObject* pSender) {
-        this->showUI(!nwo5::utils::isToggled(pSender));
+        this->showUI(!misc::isToggled(pSender));
     }
 
 
@@ -20,11 +20,18 @@ namespace HideUI {
         }
     }
 
+    void EditorUI::onPause(CCObject* sender) {
+        if (auto toggler = m_fields->hideUIToggle) {
+            toggler->toggle(false);
+        }
+        GD::EditorUI::onPause(sender);
+    }
+
 
 
 
     void Feature::onEditor() {
-        auto self = editor::ui<EditorUI>();
+        auto self = editor::ui<HideUI::EditorUI>();
 
         if (!HideUI::enabled()) {
             return;
@@ -41,12 +48,11 @@ namespace HideUI {
             on->setOpacity(105);
             static_cast<CCSprite*>(on->getTopNode())->setOpacity(105);
 
-            self->m_fields->hideUIToggle = ui::node(Setup(ui::toggler(
+            self->m_fields->hideUIToggle = ui::toggler(
                 off, on, self, menu_selector(HideUI::EditorUI::onHideUI)
-            ))
+            )
                 .id("hide-ui-toggle"_spr)
-                .parent(undoMenu)
-            );
+                .parent(undoMenu);
         }
     }
 }

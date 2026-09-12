@@ -2,6 +2,6 @@
 
 #include "include.hpp"
 
-namespace Shared {
+namespace sillyedit::shared {
     unsigned char hideWithPlaytestOpacityForObject(unsigned char pOpacity, GameObject* pObj);
 }

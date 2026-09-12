@@ -15,7 +15,9 @@ namespace DefaultObjectOptions {
             ObjectOptions options;
         };
 
-        static void onModify(auto& pSelf);
+        static void onModify(auto& pSelf) {
+            (void)pSelf.setHookPriorityPost("LevelEditorLayer::createObject", geode::Priority::Replace);
+        }
 
         GameObject* createObject(int key, cocos2d::CCPoint position, bool noUndo);
     };

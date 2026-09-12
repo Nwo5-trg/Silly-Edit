@@ -1,32 +1,25 @@
-#include <utils/include.hpp>
 #include "include.hpp"
 
 using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
 
 namespace BetterScale {
-    void GJScaleControl::onModify(auto& pSelf) {
-        (void)pSelf.setHookPriorityAfterPost("GJScaleControl::init", TINKER_EDIT_ID);
-    }
-
-
-
     void GJScaleControl::customScale(float pScale, ObjectScaleType pType) {
         const auto num = BetterScale::allowNegative ? pScale : std::abs(pScale);
 
         switch (pType) {
             case ObjectScaleType::XY: {
-                editor::object::scale(editor::selection::get(), num, true, editor::AUTO_CENTER, !m_scaleLocked);
+                object::scale(selection::get(), num, true, editor::AUTO_CENTER, !m_scaleLocked);
 
                 m_sliderXY->setValue(valueFromScale(num));
             break; }
             case ObjectScaleType::X: {
-                editor::object::scaleX(editor::selection::get(), num, true, editor::AUTO_CENTER, !m_scaleLocked);
+                object::scaleX(selection::get(), num, true, editor::AUTO_CENTER, !m_scaleLocked);
 
                 m_sliderX->setValue(valueFromScale(num));
             break; }
             case ObjectScaleType::Y: {
-                editor::object::scaleY(editor::selection::get(), num, true, editor::AUTO_CENTER, !m_scaleLocked);
+                object::scaleY(selection::get(), num, true, editor::AUTO_CENTER, !m_scaleLocked);
 
                 m_sliderY->setValue(valueFromScale(num)); 
             break; }
@@ -52,10 +45,10 @@ namespace BetterScale {
 
         for (auto menu : {fields->shortcutsMenu, fields->shortcutsXMenu, fields->shortcutsYMenu}) {
             for (int i = 0; i < split.size(); i++) {
-                Setup(ui::circleButton(
-                    ui::label(split[i]), CircleBaseColor::Green, 
+                ui::circleButton(
+                    ui::label(split[i], Font::Default), CircleBaseColor::Green, 
                     this, menu_selector(BetterScale::GJScaleControl::onScaleShortcut)
-                ))
+                )
                     .tag(i)
                     .scaleToFit(SHORTCUT_SIZE)
                     .parent(menu);
@@ -72,14 +65,14 @@ namespace BetterScale {
 
         CCSize max{std::numeric_limits<float>::lowest(), std::numeric_limits<float>::lowest()};
 
-        for (auto obj : editor::selection::getExt()) {
+        for (auto obj : selection::getExt()) {
             max.width = std::max(max.width, obj->m_scaleX);
             max.height = std::max(max.height, obj->m_scaleY);
         }
 
-        fields->scaleInput->setString(nwo5::utils::numToString(std::max(max.width, max.height)));
-        fields->scaleXInput->setString(nwo5::utils::numToString(max.width));
-        fields->scaleYInput->setString(nwo5::utils::numToString(max.height));
+        fields->scaleInput->setString(misc::numToString(std::max(max.width, max.height)));
+        fields->scaleXInput->setString(misc::numToString(max.width));
+        fields->scaleYInput->setString(misc::numToString(max.height));
     }
 
     void GJScaleControl::updateCustomNodes() {
@@ -140,17 +133,16 @@ namespace BetterScale {
 
         m_scaleLabel->setOpacity(0);
 
-        fields->newScaleLabel = ui::node(Setup(ui::label("Scale: ", "bigFont.fnt"))
+        fields->newScaleLabel = ui::label("Scale: ", Font::Default)
             .id("new_scale-label"_spr)
             .scale(LABEL_SCALE)
-            .pos(-INPUT_SIZE.width / 2, m_scaleLabel->getPositionY())
-            .parent(this)
-        );
+            .pos(-INPUT_SIZE.width / 2, ui::y(m_scaleLabel))
+            .parent(this);
         fields->scaleNodes.push_back(fields->newScaleLabel);
 
-        fields->scaleInput = ui::node(Setup(ui::input(INPUT_SIZE.width, INPUT_SIZE.height, "1"))
+        fields->scaleInput = ui::input(INPUT_SIZE.width, INPUT_SIZE.height, "1")
             .id("scale-input"_spr)
-            .pos(fields->newScaleLabel->getScaledContentWidth() / 2, m_scaleLabel->getPositionY())
+            .pos(fields->newScaleLabel->getScaledContentWidth() / 2, ui::y(m_scaleLabel))
             .callback([this] (const std::string& pStr) {
                 if (!pStr.empty()) {
                     const auto num = utils::numFromString<float>(pStr).unwrapOrDefault();
@@ -160,34 +152,35 @@ namespace BetterScale {
                     updateInputValues();
                 }
             })
-            .parent(this)
-        );
+            .parent(this);
         fields->scaleNodes.push_back(fields->scaleInput);
 
-        fields->shortcutsMenu = ui::node(Setup(ui::menu(ui::row(AxisAlignment::Center, SHORTCUT_GAP)
+        fields->shortcutsMenu = ui::menu(ui::row()
+            .alignment(AxisAlignment::Center)
+            .gap(SHORTCUT_GAP)
             .autoScale(false)
-        ))
+            .grow()
+        )
             .id("shortcuts-menu"_spr)
             .tag(static_cast<int>(ObjectScaleType::XY))
             .height(SHORTCUT_SIZE)
-            .pos(0.0f, fields->newScaleLabel->getPositionY() + SHORTCUT_SPACE)
-            .parent(this)
-        );
+            .pos(0.0f, ui::y(fields->newScaleLabel) + SHORTCUT_SPACE)
+            .parent(this);
+
         fields->scaleNodes.push_back(fields->shortcutsMenu);
 
         m_scaleXLabel->setOpacity(0);
 
-        fields->newScaleXLabel = ui::node(Setup(ui::label("ScaleX: ", "bigFont.fnt"))
+        fields->newScaleXLabel = ui::label("ScaleX: ", Font::Default)
             .id("new-scale-x-label"_spr)
             .scale(LABEL_SCALE)
-            .pos(-INPUT_SIZE.width / 2, m_scaleXLabel->getPositionY())
-            .parent(this)
-        );
+            .pos(-INPUT_SIZE.width / 2, ui::y(m_scaleXLabel))
+            .parent(this);
         fields->scaleXYNodes.push_back(fields->newScaleXLabel);
 
-        fields->scaleXInput = ui::node(Setup(ui::input(INPUT_SIZE.width, INPUT_SIZE.height, "1"))
+        fields->scaleXInput = ui::input(INPUT_SIZE.width, INPUT_SIZE.height, "1")
             .id("scale-x-input"_spr)
-            .pos(fields->newScaleXLabel->getScaledContentWidth() / 2, m_scaleXLabel->getPositionY())
+            .pos(fields->newScaleXLabel->getScaledContentWidth() / 2, ui::y(m_scaleXLabel))
             .callback([this] (const std::string& pStr) {
                 if (!pStr.empty()) {
                     const auto num = utils::numFromString<float>(pStr).unwrapOrDefault();
@@ -197,34 +190,34 @@ namespace BetterScale {
                     updateInputValues();
                 }
             })
-            .parent(this)
-        );
+            .parent(this);
         fields->scaleXYNodes.push_back(fields->scaleXInput);
 
-        fields->shortcutsXMenu = ui::node(Setup(ui::menu(ui::row(AxisAlignment::Center, SHORTCUT_GAP)
+        fields->shortcutsXMenu = ui::menu(ui::row()
+            .alignment(AxisAlignment::Center)
+            .gap(SHORTCUT_GAP)
             .autoScale(false)
-        ))
+            .grow()
+        )
             .id("shortcuts-x-menu"_spr)
             .tag(static_cast<int>(ObjectScaleType::X))
             .height(SHORTCUT_SIZE)
-            .pos(0.0f, fields->newScaleXLabel->getPositionY() + SHORTCUT_SPACE)
-            .parent(this)
-        );
+            .pos(0.0f, ui::y(fields->newScaleXLabel) + SHORTCUT_SPACE)
+            .parent(this);
         fields->scaleXYNodes.push_back(fields->shortcutsXMenu);
 
         m_scaleYLabel->setOpacity(0);
 
-        fields->newScaleYLabel = ui::node(Setup(ui::label("ScaleY: ", "bigFont.fnt"))
+        fields->newScaleYLabel = ui::label("ScaleY: ", Font::Default)
             .id("new-scale-y-label"_spr)
             .scale(LABEL_SCALE)
-            .pos(-INPUT_SIZE.width / 2, m_scaleYLabel->getPositionY())
-            .parent(this)
-        );
+            .pos(-INPUT_SIZE.width / 2, ui::y(m_scaleYLabel))
+            .parent(this);
         fields->scaleXYNodes.push_back(fields->newScaleYLabel);
 
-        fields->scaleYInput = ui::node(Setup(ui::input(INPUT_SIZE.width, INPUT_SIZE.height, "1"))
+        fields->scaleYInput = ui::input(INPUT_SIZE.width, INPUT_SIZE.height, "1")
             .id("scale-y-input"_spr)
-            .pos(fields->newScaleYLabel->getScaledContentWidth() / 2, m_scaleYLabel->getPositionY())
+            .pos(fields->newScaleYLabel->getScaledContentWidth() / 2, ui::y(m_scaleYLabel))
             .callback([this] (const std::string& pStr) {
                 if (!pStr.empty()) {
                     const auto num = utils::numFromString<float>(pStr).unwrapOrDefault();
@@ -234,33 +227,36 @@ namespace BetterScale {
                     updateInputValues();
                 }
             })
-            .parent(this)
-        );
+            .parent(this);
         fields->scaleXYNodes.push_back(fields->scaleYInput);
 
-        fields->shortcutsYMenu = ui::node(Setup(ui::menu(ui::row(AxisAlignment::Center, SHORTCUT_GAP)
+        fields->shortcutsYMenu = ui::menu(ui::row()
+            .alignment(AxisAlignment::Center)
+            .gap(SHORTCUT_GAP)
             .autoScale(false)
-        ))
+            .grow()
+        )
             .id("shortcuts-y-menu"_spr)
             .tag(static_cast<int>(ObjectScaleType::Y))
             .height(SHORTCUT_SIZE)
             .pos(0.0f, DEFAULT_LABEL_Y_HEIGHT + SHORTCUT_SPACE * 2)
-            .parent(this)
-        );
+            .parent(this);
         fields->scaleXYNodes.push_back(fields->shortcutsYMenu);
 
         m_scaleLockButton->getParent()->setVisible(false);
 
-        fields->extrasMenu = ui::node(Setup(ui::menu(ui::row(AxisAlignment::Center, SHORTCUT_GAP)
+        fields->extrasMenu = ui::menu(ui::row()
+            .alignment(AxisAlignment::Center)
+            .gap(SHORTCUT_GAP)
             .autoScale(false)
-        ))
+            .grow()
+        )
             .id("extras-menu"_spr)
             .height(EXTRAS_BUTTON_SIZE)
             .posX(0.0f)
-            .parent(this)
-        );
+            .parent(this);
 
-        Setup(ui::toggler(
+        ui::toggler(
             BetterScale::newLockTexture 
                 ? CircleButtonSprite::createWithSprite("unlocked-icon.png"_spr, 1.0f, CircleBaseColor::Gray)
                 : CCSprite::createWithSpriteFrameName("warpLockOffBtn_001.png"),
@@ -268,16 +264,15 @@ namespace BetterScale {
                 ? CircleButtonSprite::createWithSprite("locked-icon.png"_spr, 1.0f, CircleBaseColor::Blue)
                 : CCSprite::createWithSpriteFrameName("warpLockOnBtn_001.png"),
             this, menu_selector(BetterScale::GJScaleControl::onToggleLockScale)
-        ))
+        )
             .id("lock-button"_spr)
             .scaleToFit(EXTRAS_BUTTON_SIZE)
             .parent(fields->extrasMenu);
 
         if (BetterScale::switchModeButton) {
-            Setup(ui::circleButtonFrame(
-                "GJ_sortIcon_001.png", CircleBaseColor::Pink, 
-                this, menu_selector(BetterScale::GJScaleControl::onSwitchMode)
-            ))
+            ui::circleButtonFrame(
+                "GJ_sortIcon_001.png", CircleBaseColor::Pink, this, menu_selector(BetterScale::GJScaleControl::onSwitchMode)
+            )
                 .id("switch-mode-button"_spr)
                 .scaleToFit(EXTRAS_BUTTON_SIZE)
                 .parent(fields->extrasMenu);
@@ -328,7 +323,7 @@ namespace BetterScale {
                         ? BetterScale::controlSize 
                         : ((1 / editor::zoom()) * BetterScale::controlSize) 
                 )
-                .pos(editor::selection::center() + CCPoint{0.0f, BetterScale::controlOffset});
+                .pos(selection::center() + CCPoint{0.0f, BetterScale::controlOffset});
 
             control->updateCustomNodes();
             control->updateInputValues();
@@ -356,7 +351,7 @@ namespace BetterScale {
         auto self = editor::ui<BetterScale::EditorUI>();
 
         feature.registerKeybind<"activate-scale-control">([self] (bool pDown, bool) {
-            if (pDown && !editor::selection::empty()) {
+            if (pDown && !selection::empty()) {
                 if (self->m_scaleControl && self->m_scaleControl->isVisible() && self->m_scaleControl->m_scaleLabel->isVisible()) {
                     self->deactivateScaleControl();
                 }
@@ -366,7 +361,7 @@ namespace BetterScale {
             }
         });
         feature.registerKeybind<"activate-scale-xy-control">([self] (bool pDown, bool) {
-            if (pDown && !editor::selection::empty()) {
+            if (pDown && !selection::empty()) {
                 if (self->m_scaleControl && self->m_scaleControl->isVisible() && !self->m_scaleControl->m_scaleLabel->isVisible()) {
                     self->deactivateScaleControl();
                 }

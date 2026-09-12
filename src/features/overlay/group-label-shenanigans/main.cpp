@@ -9,7 +9,8 @@ static auto& getObjectArray() {
 }
 
 static bool canHaveLabel(GameObject* pObj) {
-    return editor::trigger::type(pObj) != editor::trigger::ObjectType::Normal;
+    // second one for robtops player collision objects
+    return trigger::type(pObj) != trigger::ObjectType::Normal && !pObj->m_bDontDraw;
 }
 
 namespace GroupLabelShenanigans {
@@ -30,7 +31,7 @@ namespace GroupLabelShenanigans {
             return;
         }
 
-        editor::object::forEachInSection([&] (GameObject* pObj) {
+        object::forEachInSection([&] (GameObject* pObj) {
             if (!canHaveLabel(pObj)) {
                 return;
             }
@@ -59,12 +60,8 @@ namespace GroupLabelShenanigans {
 
 
     void LevelEditorLayer::updateObjectLabel(GameObject* object) {
-        if (!GroupLabelShenanigans::enabled()) {
+        if (!GroupLabelShenanigans::enabled() || !GroupLabelShenanigans::optimize || !canHaveLabel(object)) {
             return GD::LevelEditorLayer::updateObjectLabel(object);
-        }
-        
-        if (!GroupLabelShenanigans::optimize || !canHaveLabel(object)) {
-            return;
         }
 
         auto options = editor::layer<GroupLabelShenanigans::LevelEditorLayer>()->m_fields->options.get();
@@ -82,24 +79,7 @@ namespace GroupLabelShenanigans {
         obj->updateShenanigans(options);
     }
 
-    void LevelEditorLayer::updateDebugDraw() {
-        GD::LevelEditorLayer::updateDebugDraw();
-
-        if (!GroupLabelShenanigans::enabled()) {
-            return;
-        }
-
-        if (!GroupLabelShenanigans::optimize || m_fields->lastObjectCount != m_objects->count()) {
-            this->updateLabelsInSection(false);
-
-            m_fields->lastObjectCount = m_objects->count();
-        }
-        else {
-            this->updateLabelsInSection(true);
-        }
-    }
     
-
 
 
 
@@ -127,39 +107,17 @@ namespace GroupLabelShenanigans {
     }
 
     void EffectGameObject::updateShenaniganPositions(geode::Label* pLabel, CCSprite* pSprite) {
-        auto centered = false;
-        switch (m_objectID) {
-            case 22: [[fallthrough]];
-            case 24: [[fallthrough]];
-            case 23: [[fallthrough]];
-            case 25: [[fallthrough]];
-            case 26: [[fallthrough]];
-            case 27: [[fallthrough]];
-            case 28: [[fallthrough]];
-            case 55: [[fallthrough]];
-            case 56: [[fallthrough]];
-            case 57: [[fallthrough]];
-            case 58: [[fallthrough]];
-            case 59: [[fallthrough]];
-            case 1816: [[fallthrough]];
-            case 1915: [[fallthrough]];
-            case 3640: {
-                centered = true;
-            break; }
-            default: {};
-        }
-
         if (pLabel) {
             Setup(pLabel)
-                .pos(CCPoint{0.0f, centered ? 0.0f : -4.0f} + this->getContentSize() / 2)
+                .pos(CCPoint{0.0f, sillyedit::utils::triggerHasBodyOffset(m_objectID) ? sillyedit::utils::TRIGGER_BODY_OFFSET.y : 0.0f} + ui::size(this) / 2)
                 .opacity(this)
                 .rotation(GroupLabelShenanigans::dontRotateLabel ? -this->getRotation() : 0.0f);
         }
 
         if (pSprite) {
             Setup(pSprite)
-                .pos(CCPoint{8.5f, 8.5f} + this->getContentSize() / 2)
-                .opacity(Sillyedit::modifyOpacity(pSprite->getTag(), this->getOpacity()));
+                .pos(ccAdd(ui::size(this) / 2, 8.5f))
+                .opacity(sillyedit::utils::modifyOpacity(pSprite->getTag(), this->getOpacity()));
         }
     }
 
@@ -202,17 +160,17 @@ namespace GroupLabelShenanigans {
         getObjectArray().insert(this);
 
         if (!fields->label) {
-            fields->label = Setup(geode::Label::create(Font::Default))
+            fields->label = ui::label(Font::Default)
                 .id("custom-label"_spr)
                 .scale(0.5f)
                 .maxWidth(50.0f)
                 .parent(this)
+                .alignment(geode::Label::Alignment::Center)
                 .hide();
-            fields->label->setAlignment(geode::Label::Alignment::Center);
         }
 
         if (!fields->sprite) {
-            fields->sprite = Setup(CCSprite::create("extra-dot.png"_spr))
+            fields->sprite = ui::spr("extra-dot.png"_spr)
                 .id("extra"_spr)
                 .scale(0.75f)
                 .tag(255)
@@ -248,19 +206,29 @@ namespace GroupLabelShenanigans {
         self->m_fields->options = std::make_unique<LabelOptions>();
 
         parseLabels(*(self->m_fields->options.get()));
+
+        self->addEventListener(ObjectsChangedEvent(), [self] {
+            self->updateLabelsInSection();
+        });
+    }
+
+    void Feature::onUpdate() {
+        if (!GroupLabelShenanigans::enabled()) {
+            return;
+        }
+
+        editor::layer<GroupLabelShenanigans::LevelEditorLayer>()->updateLabelsInSection(true);
     }
 
     void Feature::onSettingChanged(std::string pName, GenericSetting*) {
         auto self = editor::layer<GroupLabelShenanigans::LevelEditorLayer>();
-        auto fields = self->m_fields.self();
 
-        auto ptr = fields->options.get();
+        auto ptr = self->m_fields->options.get();
 
         if (ptr) {
             getObjectArray().clear();
-            fields->lastObjectCount = -1;
 
-            editor::object::forEachInSection([&, self] (GameObject* pObj) {
+            object::forEachInSection([&, self] (GameObject* pObj) {
                 if (!canHaveLabel(pObj)) {
                     return;
                 }

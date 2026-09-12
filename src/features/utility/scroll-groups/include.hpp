@@ -16,20 +16,21 @@ namespace ScrollGroups {
             float scrollingDistance = 0.0f;
 
             bool modifierDown = false;
+            bool secondaryGroupDown = false;
         };
 
-        void scrollGroup(GameObject* pObj, bool pUp);
+        void scrollGroup(GameObject* pObj, bool pUp, bool pSecondaryGroup);
     };
 
     class $setting_category("scroll-groups-logo.png"_spr, "Scroll groups while holding a modifier, configurable in keybinds");
 
     inline SillySetting<float> scrollSensitivity{
-        "Scroll\nSensitivity", feature, 1.0f, {0.1f, 10.0f}, "to scroll a group, you must scroll 10 / [scroll sensitivity] points"
+        "Scroll Sensitivity", feature, 1.0f, {0.1f, 10.0f}, "to scroll a group, you must scroll 10 / [scroll sensitivity] points"
     };
     inline SillySetting<bool> reverseScroll{
-        "Reverse\nScroll", feature, false, "on by default for mac"
+        "Reverse Scroll", feature, false
     };
     inline SillySetting<int> scrollTimeout{
-        "Scroll\nTimeout", feature, 250, {10, 10000}, "reset scrolling distance if mouse not scrolled for this many milliseconds, u prolly wont need to touch this"
+        "Scroll Timeout", feature, 250, {10, 10000}, "reset scrolling distance if mouse not scrolled for this many milliseconds, u prolly wont need to touch this"
     };
 }

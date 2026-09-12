@@ -12,6 +12,25 @@ namespace Fixes {
         }
     } 
 
+    void EditorUI::keyDown(cocos2d::enumKeyCodes key, double timestamp) {
+        if (Fixes::allowShiftChangeModes && CCKeyboardDispatcher::get()->getShiftKeyPressed()) {
+            if (key == enumKeyCodes::KEY_One) {
+                toggleMode(m_buildModeBtn);
+                return;
+            }
+            if (key == enumKeyCodes::KEY_Two) {
+                toggleMode(m_editModeBtn);
+                return;
+            }
+            if (key == enumKeyCodes::KEY_Three) {
+                toggleMode(m_deleteModeBtn);
+                return;
+            }
+        }
+
+        GD::EditorUI::keyDown(key, timestamp);
+    }
+
 
 
 

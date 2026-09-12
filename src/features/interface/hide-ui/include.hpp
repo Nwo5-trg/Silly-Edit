@@ -16,6 +16,7 @@ namespace HideUI {
         void onHideUI(CCObject* pSender);
 
         void showUI(bool show);
+        void onPause(CCObject* sender);
     };
 
     class $setting_category("hide-ui-logo.png"_spr, "Button to show/hide editor ui (practically ripped from betteredit)");

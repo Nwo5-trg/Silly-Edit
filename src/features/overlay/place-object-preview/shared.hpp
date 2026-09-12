@@ -2,7 +2,7 @@
 
 #include "include.hpp"
 
-namespace Shared {
+namespace sillyedit::shared {
     void removePreviewObject();
 
     inline auto& shouldHidePreviewObject() {

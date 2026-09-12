@@ -4,14 +4,14 @@
 
 using namespace geode::prelude;
 
-namespace Shared {
+namespace sillyedit::shared {
     void removePreviewObject() {
         if (!PlaceObjectPreview::enabled() || editor::notLoaded(editor::LoadedType::UI)) {
             return;
         }
 
         if (auto& obj = editor::ui<PlaceObjectPreview::EditorUI>()->m_fields->previewObject) {
-            editor::object::remove(obj);
+            object::remove(obj);
 
             obj = nullptr;
         }

@@ -13,25 +13,28 @@
         FEATURE(Ruler) \
         FEATURE(FloodFill) \
         FEATURE(ZoomInput) \
+        FEATURE(ContextMenu) \
         FEATURE(BetterSelectAll) \
     TITLE(Interface) \
         FEATURE(BetterScale) \
         FEATURE(BetterLayers) \
         FEATURE(ObjectTabIcons) \
         FEATURE(HideUI) \
-        FEATURE(UI) \
     TITLE(Utility) \
         FEATURE(DefaultObjectOptions) \
         FEATURE(SelectionUtils) \
+        FEATURE(EasingPreview) \
         FEATURE(SetupStartpos) \
         FEATURE(TextObjectUtils) \
         FEATURE(ScrollGroups) \
+    TITLE(Overlay) \
+        FEATURE(GroupLabelShenanigans) \
+        FEATURE(TriggerTypeBoxes) \
+        FEATURE(PlaceObjectPreview) \
     TITLE(Miscellaneous) \
         FEATURE(SillyKeybinds) \
         FEATURE(Fixes) \
-        FEATURE(GroupLabelShenanigans) \
         FEATURE(HideWithPlaytest) \
-        FEATURE(PlaceObjectPreview) \
         FEATURE(CopyObjectStrings) \
         FEATURE(Template) \
     

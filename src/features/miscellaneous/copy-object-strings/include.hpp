@@ -5,8 +5,7 @@
 
 namespace CopyObjectStrings {
     class $feature(CopyObjectStrings, SettingCondition::None, SettingReload::None, false) {
-        void onEditor() override;
-        void onToggled(bool) override;
+        void onToggled(bool pEnabled) override;
     } feature;
 
     class $feature_modify(EditorUI) {
@@ -28,7 +27,7 @@ namespace CopyObjectStrings {
         "Fallback Editor", feature, true, "fallback to editor clipboard if your clipboard doesnt contain a valid object id, if disabled then just nothing gets pasted"
     };
     inline SillySetting<bool> dontOverrideEditor{
-        "Dont Override\nEditor", feature, false, "by default when pasting a valid object string, it overrides the default editor clipboard, enabling this setting still pastes the string, but doesnt set the editor clipboard to the string"
+        "Dont Override Editor", feature, false, "by default when pasting a valid object string, it overrides the default editor clipboard, enabling this setting still pastes the string, but doesnt set the editor clipboard to the string"
     };
     inline SillySetting<bool> copyNotification{
         "Copy Notification", feature, false

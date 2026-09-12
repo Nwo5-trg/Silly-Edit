@@ -9,10 +9,10 @@ namespace SelectionUtils {
     }
 
     CCPoint EditorUI::getSnappedPos(GameObject* pObj) {
-        const auto id = editor::object::id(pObj);
+        const auto id = object::id(pObj);
         const auto offset = this->offsetForKey(id);
         const auto pos = pObj->getRealPosition() - offset;
-        const auto gridSize = SelectionUtils::gridSize * (editor::object::size(pObj) / 30.0f);
+        const auto gridSize = SelectionUtils::gridSize * (object::size(pObj) / 30.0f);
 
         return CCPoint{
             std::round(pos.x / gridSize) * gridSize,
@@ -25,19 +25,13 @@ namespace SelectionUtils {
             return;
         }
 
-        editor::object::move(
-            editor::selection::get(), 
+        object::move(
+            selection::get(), 
             this->getSnappedPos(pSnapObj), 
             false, pSnapObj->getRealPosition()
         );
         
         editor::update();
-    }
-
-
-
-    void EditorUI::onModify(auto& pSelf) {
-        (void)pSelf.setHookPriorityPre("EditorUI::draw", Priority::Early);
     }
 
 
@@ -50,14 +44,14 @@ namespace SelectionUtils {
         if (m_swipeActive) {
             const auto col = color_cast<ccColor4B>(
                 SelectionUtils::chroma 
-                    ? Sillyedit::getChroma<ccColor3B>(Sillyedit::ChromaNode::Default) 
+                    ? sillyedit::utils::getChroma<ccColor3B>() 
                     : SelectionUtils::selectedObjectColor
             );
 
             if (SelectionUtils::snapIndicatorFill) {
                 ccDrawSolidRect(
                     m_swipeStart, m_swipeEnd, 
-                    color_cast<ccColor4F>(nwo5::utils::setOpacity(col, SelectionUtils::selectionRectFill.get()))
+                    color_cast<ccColor4F>(misc::setOpacity(col, SelectionUtils::selectionRectFill.get()))
                 );
             }
             
@@ -87,7 +81,7 @@ namespace SelectionUtils {
         }
 
         // disable snap and do our own thing :3 (idk if snap obj would b valid rn and i dont feel like testing so i wont check for it)
-        if (SelectionUtils::enabled() && GameManager::sharedState()->getGameVariable(GameVar::EnableSnap) && !editor::selection::empty()) {
+        if (SelectionUtils::enabled() && GameManager::sharedState()->getGameVariable(GameVar::EnableSnap) && !selection::empty()) {
             GameManager::sharedState()->setGameVariable(GameVar::EnableSnap, false);
             m_fields->prollySnapping = true;
 
@@ -120,8 +114,8 @@ namespace SelectionUtils {
 
         // very hacky solution to avoid having to reimpl the entire function (holy fuck robtop ur logic is so fucking bad)
         if (!m_snapObjectExists || !m_continuousSnap || !m_snapObject) {
-            const auto trySingleSelect = m_selectedMode == 3 && m_touchID == -1 && SelectionUtils::alwaysSingleSelect && editor::selection::count() > 1;
-            const auto tryEmptyDeselect = m_selectedMode == 3 && m_touchID == -1 && SelectionUtils::clickEmptyToDeselect && !editor::selection::empty();
+            const auto trySingleSelect = m_selectedMode == 3 && m_touchID == -1 && SelectionUtils::alwaysSingleSelect && selection::count() > 1;
+            const auto tryEmptyDeselect = m_selectedMode == 3 && m_touchID == -1 && SelectionUtils::clickEmptyToDeselect && !selection::empty();
 
             if ((trySingleSelect || tryEmptyDeselect) && !swipeActive && !draggingCamera) {
                 const auto world = getTouchPoint(touch, event);
@@ -130,12 +124,12 @@ namespace SelectionUtils {
                     auto objs = m_editorLayer->objectsAtPosition(m_editorLayer->m_objectLayer->convertToNodeSpace(world));
 
                     if (!objs->count() && tryEmptyDeselect) {
-                        editor::selection::clear(true);
+                        selection::clear(true);
 
-                        editor::update();
+                        editor::update(false, true);
                     }
                     else if (objs->count() && trySingleSelect) {
-                        editor::selection::set(static_cast<GameObject*>(objs->firstObject()), true, true, true, true);
+                        selection::set(static_cast<GameObject*>(objs->firstObject()), true, true, true, true);
                                 
                         editor::update();
                     }
@@ -162,8 +156,8 @@ namespace SelectionUtils {
         auto self = editor::ui<SelectionUtils::EditorUI>();
 
         feature.registerKeybind<"snap-selection">([self] (bool pDown, bool pRepeat) {
-            if (pDown && !pRepeat && !editor::selection::empty()) {
-                self->snapSelection(editor::selection::getFirst());
+            if (pDown && !pRepeat && !selection::empty()) {
+                self->snapSelection(selection::getFirst());
             }
         });
     }
@@ -171,30 +165,28 @@ namespace SelectionUtils {
     void Feature::onUpdate() {
         auto self = editor::ui<SelectionUtils::EditorUI>();
 
-        if (editor::selection::empty() || !SelectionUtils::enabled()) {
+        if (selection::empty() || !SelectionUtils::enabled()) {
             return;
         }
 
         const bool shouldntColorObjects = self->m_colorOverlay || self->m_hsvOverlay;
 
         const auto selectionCol = SelectionUtils::chroma 
-            ? Sillyedit::getChroma<ccColor3B>(Sillyedit::ChromaNode::Default) 
+            ? sillyedit::utils::getChroma<ccColor3B>(sillyedit::utils::ChromaNode::SelectionUtilsDefault) 
             : SelectionUtils::selectedObjectColor;
         const auto snapCol = SelectionUtils::chroma 
-            ? Sillyedit::getChroma<ccColor3B>(Sillyedit::ChromaNode::SelectionUtilsInvert) 
+            ? sillyedit::utils::getChroma<ccColor3B>(sillyedit::utils::ChromaNode::SelectionUtilsInvert) 
             : SelectionUtils::snapObjectColor;
-
-        auto objs = editor::selection::getExt();
 
         // touches happen before schedulers so this works :3c
         if (!shouldntColorObjects) {
-            for (auto obj : objs) {
+            for (auto obj : selection::getExt()) {
                 obj->selectObject(selectionCol);
             }
         }
 
         if (const auto obj = self->getSnapObject(); obj && self->m_continueSwipe && self->m_fields->prollySnapping) {
-            obj->selectObject(selectionCol);
+            obj->selectObject(snapCol);
 
             if (!SelectionUtils::snapIndicator) {
                 return;
@@ -211,8 +203,8 @@ namespace SelectionUtils {
                 CCPoint{scale.width, -scale.height}.rotateByAngle(CCPointZero, theta) + pos
             };
 
-            Sillyedit::getGridDraw()->drawPolygon(
-                v, 4, nwo5::utils::setOpacity(color_cast<ccColor4F>(snapCol), SelectionUtils::snapIndicatorFill.get()),
+            sillyedit::utils::getGridDraw()->drawPolygon(
+                v, 4, color_cast<ccColor4F>(misc::setOpacity(color_cast<ccColor4B>(snapCol), SelectionUtils::snapIndicatorFill.get())),
                 SelectionUtils::snapIndicatorThickness, color_cast<ccColor4F>(snapCol)
             );
         }

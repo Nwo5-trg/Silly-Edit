@@ -3,7 +3,7 @@
 
 using namespace geode::prelude;
 
-namespace Sillyedit {
+namespace sillyedit::utils {
     bool isBetterEditLoaded() {
         static bool loaded = static_cast<bool>(getBetterEdit());
         return loaded;

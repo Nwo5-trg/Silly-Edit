@@ -6,21 +6,24 @@
 namespace GroupLabelShenanigans {
     class $feature(GroupLabelShenanigans) {
         void onEditor() override;
+        void onUpdate() override;
         void onSettingChanged(std::string pName, GenericSetting*) override;
     } feature;
 
     class $feature_modify(LevelEditorLayer) {
         struct Fields {
             std::unique_ptr<LabelOptions> options;
-            int lastObjectCount = -1;
 
             ~Fields();
         };
 
-        void updateLabelsInSection(bool pPositionsOnly);
+        static void onModify(auto& pSelf) {
+            (void)pSelf.setHookPriority("LevelEditorLayer::updateObjectLabel", geode::Priority::Replace);
+        }
+
+        void updateLabelsInSection(bool pPositionsOnly = false);
 
         static void updateObjectLabel(GameObject* object);
-        void updateDebugDraw();
     };
 
     class $feature_modify(EffectGameObject) {
@@ -56,6 +59,6 @@ namespace GroupLabelShenanigans {
         "Custom Path", feature, "group-labels.json", "if mode is set to custom, ur path will be configdir/PATH"
     };
     inline SillySetting<bool> dontRotateLabel{
-        "Dont Rotate\nLabel", feature, false, "technically a little slow lol"
+        "Dont Rotate Label", feature, false, "technically a little slow lol"
     };
 }

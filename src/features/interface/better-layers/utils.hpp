@@ -17,12 +17,8 @@ namespace BetterLayers {
         void importSettings();
 
     public:
-        LayerSettings() {
-            importSettings();
-        };
-        ~LayerSettings() {
-            exportSettings();
-        }
+        LayerSettings();
+        ~LayerSettings();
 
         void exportSettings();
 

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/LevelEditorLayer.hpp>
 #include <feature/include.hpp>

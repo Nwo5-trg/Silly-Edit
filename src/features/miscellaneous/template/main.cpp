@@ -23,7 +23,7 @@ namespace Template {
             return;
         }
 
-        auto button = ui::node(Setup(Button::createWithNode(ButtonSprite::create("Save\nTemplate")))
+        auto button = *Setup(Button::createWithNode(ButtonSprite::create("Save\nTemplate")))
             .id("save-template-button"_spr)
             .callback([] (Button*) {
                 editor::save();
@@ -37,11 +37,10 @@ namespace Template {
                 Notification::create("template updated !", NotificationIcon::Info)->show();
             })
             .scale(0.65f)
-            .parent(m_mainLayer)
-        );
+            .parent(m_mainLayer);
+
         button->setPosition(
-            bg->getPositionX() - bg->getScaledContentWidth() / 2 + button->getScaledContentWidth() / 2 + 10.0f,
-            bg->getPositionY() - bg->getScaledContentHeight() / 2 + button->getScaledContentHeight() / 2 + 10.0f
+            ccAdd(ui::pos(bg) - ui::ssize(bg) / 2 + ui::ssize(button) / 2, 10.0f)
         );
     }
 

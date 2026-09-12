@@ -4,10 +4,10 @@ my best geode project forever <cr>\<3</c>
 ## Disclaimer(s)
 **i make literally no promises as to when this mod gets updated or what gets added/removed, i develop this mod completely for fun and with my own needs in mind first**
 
-***betteredit is unsupported***, **it might still kinda work, but still keep in mind i am not trying to support betteredit at all and anything regarding that will be ignored**
+***betteredit is unsupported***, **it might still kinda work, but still keep in mind i am not trying to support betteredit at all and anything regarding that will be ignored, sillyedit already adds a few betteredit features and tinker (which is fully supported) adds pretty much the rest of them so*
 
 ## Features
-pretty much everything can be configured in the settings menu
+pretty much everything can be configure in the settings menu
 
 (clearing the input on a setting with an input will set the setting to its default value, to input an empty string into a string setting, write "\\0")
 

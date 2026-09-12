@@ -38,7 +38,7 @@ namespace BetterLayers {
         void onToggleLayerLocked(cocos2d::CCObject* sender);
         void updateGroupIDLabel();
         void createUndoSelectObject(bool redo);
-        void selectObject(GameObject* object, bool ignoreFilter);
+        bool canSelectObject(GameObject* object);
         void selectObjects(cocos2d::CCArray* objects, bool ignoreFilter);
     };
 
@@ -50,16 +50,19 @@ namespace BetterLayers {
     inline SillySetting<bool> lockButton{
         "Lock Button", feature, true, SettingReload::Editor
     };
+    inline SillySetting<bool> layerSettingsButton{
+        "Layer Settings Button", feature, true, SettingReload::Editor, "disable if u dont plan on using hidden layers and stuff"
+    };
     inline SillySetting<bool> unselectableHiddenLayers{
-        "Unselectable\nHidden Layers", feature, true
+        "Unselectable Hidden Layers", feature, true
     };
     inline SillySetting<int> layerOpacity{
         "Layer Opacity", feature, 50, {0, 255}, "from 0-255"
     };
     inline SillySetting<int> unfocusedLayerOpacity{
-        "Unfocused\nLayer Opacity", feature, 25, {0, 255}, "from 0-255"
+        "Unfocused Layer Opacity", feature, 25, {0, 255}, "from 0-255"
     };
     inline SillySetting<bool> unselectableUnfocusedLayers{
-        "Unselectable\nUnfocused Layers", feature, false
+        "Unselectable Unfocused Layers", feature, false
     };
 }

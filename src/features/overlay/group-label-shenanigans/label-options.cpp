@@ -41,7 +41,7 @@ namespace GroupLabelShenanigans {
         auto ptr = pBuf;
 
         auto pushVal = [&] (int pVal, bool pTryColorLabels) {
-            if (pTryColorLabels && pVal >= 1000 && pVal <= 1012 && nwo5::editor::trigger::primaryTargetType(pObj) == editor::trigger::InputType::Color) {
+            if (pTryColorLabels && pVal >= 1000 && pVal <= 1012 && trigger::primaryTargetType(pObj) == trigger::InputType::Color) {
                 const static std::unordered_map<int, const char*> map{
                     {1004, "obj"}, {1000, "bg"}, {1001, "g1"}, {1009, "g2"},
                     {1013, "mg"}, {1014, "mg2"}, {1002, "line"}, {1003, "3dl"},
@@ -80,16 +80,16 @@ namespace GroupLabelShenanigans {
                 int val = 0;
                 switch (label) {
                     case Label::Primary: {
-                        val = editor::trigger::primaryTarget(pObj);
+                        val = trigger::primaryTarget(pObj);
                     break; }
                     case Label::Secondary: {
-                        val = editor::trigger::secondaryTarget(pObj);
+                        val = trigger::secondaryTarget(pObj);
                     break; }
                     case Label::PrimaryInput: {
-                        val = editor::trigger::primaryInput(pObj);
+                        val = trigger::primaryInput(pObj);
                     break; }
                     case Label::SecondaryInput: {
-                        val = editor::trigger::secondaryInput(pObj);
+                        val = trigger::secondaryInput(pObj);
                     break; }
                 }
 
@@ -106,7 +106,7 @@ namespace GroupLabelShenanigans {
             }
         }
         else {
-            pushVal(editor::trigger::primaryTarget(pObj), true);
+            pushVal(trigger::primaryTarget(pObj), true);
         }
 
         *ptr = '\0';
@@ -122,7 +122,7 @@ namespace GroupLabelShenanigans {
 
         switch (config.type) {
             case Extra::ActivateGroup: {
-                return editor::trigger::activateGroup(pObj) ? config.color : config.offColor;
+                return trigger::activateGroup(pObj) ? config.color : config.offColor;
             }
             case Extra::ControlID: {
                 return static_cast<EffectGameObject*>(pObj)->m_targetControlID ? config.color : config.offColor;
@@ -131,12 +131,12 @@ namespace GroupLabelShenanigans {
                 return static_cast<EffectGameObject*>(pObj)->m_pulseTargetType == 1 ? config.color : config.offColor;
             }
             case Extra::Override: {
-                return pObj->m_objectID == editor::trigger::PICKUP_TRIGGER 
+                return pObj->m_objectID == trigger::PICKUP_TRIGGER 
                     ? (static_cast<CountTriggerGameObject*>(pObj)->m_isOverride ? config.color : config.offColor)
                     : config.offColor;
             }
             case Extra::Follow: {
-                return editor::trigger::targetModeEnabled(pObj) ? config.color : config.offColor;
+                return trigger::targetModeEnabled(pObj) ? config.color : config.offColor;
             }
             default: {
                 return std::nullopt;

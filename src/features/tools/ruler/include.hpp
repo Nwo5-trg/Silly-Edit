@@ -17,7 +17,7 @@ namespace Ruler {
 
         MeasurementColor getMeasurementColor();
         std::string getMeasurementString(float pMeasure);
-        cocos2d::CCLabelBMFont* createMeasurementLabel(float pMeasure);
+        geode::Label* createMeasurementLabel(float pMeasure);
         void createMeasurement();
         void deleteMeasurement(bool pDeleteAll);
     };
@@ -34,13 +34,13 @@ namespace Ruler {
         "Thickness", feature, 1.0f, {0.0f, std::nullopt}
     };
     inline SillySetting<bool> scaleWithZoom{
-        "Scale With\nZoom", feature, true
+        "Scale With Zoom", feature, true
     };
     inline SillySetting<float> padding{
         "Padding", feature, 0.0f
     };
-    inline SillySetting<float> fillOpacity{
-        "Fill Opacity", feature, 0.0f, {0.0f, 1.0f}
+    inline SillySetting<int> fillOpacity{
+        "Fill Opacity", feature, 0, {0, 255}
     };
     inline SillySetting<float> labelSize{
         "Label Scale", feature, 1.25f, {0.0f, std::nullopt}
@@ -49,13 +49,13 @@ namespace Ruler {
         "Label Distance", feature, 2.5f
     };
     inline SillySetting<bool> dontRotateLabel{
-        "Dont Rotate\nLabel", feature, false
+        "Dont Rotate Label", feature, false
     };
     inline SillySetting<bool> labelOnRight{
-        "Label On\nRight", feature, false
+        "Label On Right", feature, false
     };
     inline SillySetting<bool> labelOnBottom{
-        "Label On\nBottom", feature, false
+        "Label On Bottom", feature, false
     };
     inline SillySetting<bool> chroma{
         "Chroma", feature, false

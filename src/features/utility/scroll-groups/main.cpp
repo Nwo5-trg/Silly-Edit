@@ -5,11 +5,20 @@ using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
 
 namespace ScrollGroups {
-    void EditorUI::scrollGroup(GameObject* pObj, bool pUp) {
-        const auto target = editor::trigger::target(pObj) + (pUp ? 1 : -1);
+    void EditorUI::scrollGroup(GameObject* pObj, bool pUp, bool pSecondaryGroup) {
+        if (pSecondaryGroup) {
+            const auto target = trigger::center(pObj) + (pUp ? 1 : -1);
 
-        if (target >= 0 && target <= nwo5::editor::constants::MAX_GROUPS) {
-            editor::trigger::setTarget(pObj, target);
+            if (target >= 0 && target <= nwo5::editor::constants::MAX_GROUPS) {
+                trigger::setCenter(pObj, target);
+            }
+            }
+        else {
+            const auto target = trigger::target(pObj) + (pUp ? 1 : -1);
+
+            if (target >= 0 && target <= nwo5::editor::constants::MAX_GROUPS) {
+                trigger::setTarget(pObj, target);
+            }
         }
     }
 
@@ -19,11 +28,15 @@ namespace ScrollGroups {
         feature.registerKeybind<"modifier">([self] (bool pDown, bool) {
             self->m_fields->modifierDown = pDown;
         });
+        feature.registerKeybind<"secondary-group">([self] (bool pDown, bool) {
+            log::error("{}", pDown);
+            self->m_fields->secondaryGroupDown = pDown;
+        });
 
         self->addEventListener(ScrollWheelEvent(), [self] (double pX, double pY) {
             auto fields = self->m_fields.self();
 
-            if (!ScrollGroups::enabled() || !fields->modifierDown || Sillyedit::shouldBlockScrolling()) {
+            if (!ScrollGroups::enabled() || !fields->modifierDown || sillyedit::utils::shouldBlockScrolling()) {
                 return;
             }
 
@@ -31,17 +44,17 @@ namespace ScrollGroups {
             
             auto obj = self->m_editorLayer->objectAtPosition(pos);
 
-            if (!obj || !editor::trigger::is(obj)) {
+            if (!obj || !trigger::is(obj)) {
                 return;
             }
 
-            const auto primaryTarget = editor::trigger::targetType(obj);
+            const auto primaryTarget = trigger::targetType(obj);
 
-            if (primaryTarget == nwo5::editor::trigger::InputType::None) {
+            if (primaryTarget == trigger::InputType::None) {
                 return;
             }
 
-            Sillyedit::shouldBlockScrolling() = true;
+            sillyedit::utils::shouldBlockScrolling() = true;
 
             if (fields->lastScroll.elapsed() > asp::Duration::fromMillis(ScrollGroups::scrollTimeout)) {
                 fields->scrollingDistance = 0;
@@ -52,7 +65,8 @@ namespace ScrollGroups {
             fields->scrollingDistance += ScrollGroups::reverseScroll ? -pY : pY;
 
             if (std::abs(fields->scrollingDistance) > DEFAULT_SCROLL_DISTANCE / ScrollGroups::scrollSensitivity) {
-                self->scrollGroup(obj, fields->scrollingDistance > 0);
+                log::error("is {}", fields->secondaryGroupDown);
+                self->scrollGroup(obj, fields->scrollingDistance > 0, fields->secondaryGroupDown);
 
                 fields->scrollingDistance = 0;
             }

@@ -2,7 +2,7 @@
 
 #include <nwo5.silly-api/include/include.hpp>
 
-namespace Sillyedit {
+namespace sillyedit::utils {
     inline const std::string BETTER_EDIT_ID{"hjfod.betteredit"};
     bool isBetterEditLoaded();
     geode::Mod* getBetterEdit();
