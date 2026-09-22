@@ -17,7 +17,7 @@ namespace ZoomInput {
             Setup(container)
                 .scale(m_positionSlider->getScale() * ZoomInput::zoomInputScale)
                 .pos(
-                    ZoomInput::centered ? CCDirector::get()->getWinSize().width / 2 : ui::x(m_positionSlider),
+                    ZoomInput::centered ? ui::winWidth() / 2 : ui::x(m_positionSlider),
                     ui::y(m_positionSlider) + (ZoomInput::zoomInputOffset * m_positionSlider->getScale())
                 ); 
         }

@@ -43,7 +43,7 @@ class $modify(GameObject) {
         if (state == SetOpacityHookState::Playtesting && HideWithPlaytest::enabled()) {
             opacity = sillyedit::shared::hideWithPlaytestOpacityForObject(opacity, this);
         }
-        else if (BetterLayers::enabled()) {
+        else if (state != SetOpacityHookState::Playtesting && BetterLayers::enabled()) {
             if (auto ptr = sillyedit::shared::getLayerSettingsPtr()) {
                 opacity = ptr->opacityForObject(opacity, this);
             }

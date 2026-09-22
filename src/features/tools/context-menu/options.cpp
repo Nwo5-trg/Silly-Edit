@@ -106,11 +106,11 @@ namespace ContextMenu {
         }},
         Option{Type::Spacer},
         Option{"Toggle Invisible", Col::White, [] (bool) {
-            if (Settings::invisibleWithGroup) {
+            if (sillyedit::settings::invisibleWithGroup) {
                 bool hasGroup = false;
 
                 for (auto obj : selection::getExt()) {
-                    hasGroup = object::hasGroup(obj, Settings::invisibleWithGroup);
+                    hasGroup = object::hasGroup(obj, sillyedit::settings::invisibleWithGroup);
 
                     if (!hasGroup) {
                         break;
@@ -118,10 +118,10 @@ namespace ContextMenu {
                 }
 
                 if (hasGroup) {
-                    object::removeGroup(selection::get(), Settings::invisibleWithGroup);
+                    object::removeGroup(selection::get(), sillyedit::settings::invisibleWithGroup);
                 }
                 else {
-                    object::addGroup(selection::get(), Settings::invisibleWithGroup);
+                    object::addGroup(selection::get(), sillyedit::settings::invisibleWithGroup);
                 }
             }
             else {

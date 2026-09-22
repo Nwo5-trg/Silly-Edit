@@ -4,7 +4,7 @@
 
 using namespace nwo5::settings::prelude;
 
-namespace Settings {
+namespace sillyedit::settings {
     enum class SettingReload {
         /// dynamically toggled
         None,
@@ -147,4 +147,14 @@ namespace Settings {
         SillySetting(std::string pName, std::string pCategory, T pDefault, typename SillySetting::Range pRange, SettingReload pReloadRequired, SettingCondition pCondition, std::optional<std::string> pDescription = std::nullopt)
             : SillySettingBase<T>(pReloadRequired, pCondition, std::move(pName), std::move(pCategory), std::move(pDefault), std::move(pRange), std::nullopt, std::move(pDescription)) {}
     };
+
+    using Modifier = std::string;
+
+    constexpr auto modifierSettingOptions() {
+        static std::vector<std::string> val{
+            "Shift", "Ctrl+Command", "Alt", "Ctrl", "Command", "None"
+        };
+
+        return val;
+    }
 }

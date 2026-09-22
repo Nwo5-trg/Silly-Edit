@@ -38,7 +38,7 @@ namespace GroupLabelShenanigans {
 
             auto obj = reinterpret_cast<GroupLabelShenanigans::EffectGameObject*>(pObj);
 
-            if (!obj->isVisible() || !obj->getOpacity()) {
+            if (!obj->isVisible()) {
                 return;
             }
 

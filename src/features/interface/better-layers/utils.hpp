@@ -55,7 +55,7 @@ namespace BetterLayers {
         static constexpr float PADDING = 15.0f;
 
         static constexpr float WIDTH = 375.0f;
-        static constexpr float HEIGHT = 60.0f;
+        static constexpr float HEIGHT = 120.0f;
 
         bool init(LayerSettings* pSettings);
 

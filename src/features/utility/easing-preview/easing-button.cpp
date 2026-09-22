@@ -30,8 +30,7 @@ namespace EasingPreview {
         m_drawnode = Setup(SillyDrawNode::create())
             .id("draw"_spr)
             .size(SIZE - PADDING)
-            .parent(this)
-            .center();
+            .parent(this).center();
 
         m_dot = ui::spr("smallDot.png")
             .id("dot"_spr)

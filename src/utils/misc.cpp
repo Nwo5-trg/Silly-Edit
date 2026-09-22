@@ -5,7 +5,7 @@ using namespace geode::prelude;
 
 namespace sillyedit::utils {
     std::pair<float, float> getChromaSettings() {
-        return {Settings::sayoDeviceSensitivity, Settings::sayoDeviceScreenBrightness};
+        return {sillyedit::settings::sayoDeviceSensitivity, sillyedit::settings::sayoDeviceScreenBrightness};
     }
 
     bool isProbablierObjectString(std::string_view pStr) {
@@ -44,5 +44,52 @@ namespace sillyedit::utils {
         }
 
         return trigger::is(pID);
+    }
+
+    bool modifierDown(const settings::SillySetting<std::string>& pStr) {
+        // lollllll
+        switch (pStr.get().length()) {
+            case 3: return CCKeyboardDispatcher::get()->getAltKeyPressed();
+            case 4: return CCKeyboardDispatcher::get()->getControlKeyPressed();
+            case 5: return CCKeyboardDispatcher::get()->getShiftKeyPressed();
+            case 7: return CCKeyboardDispatcher::get()->getCommandKeyPressed();
+            case 12: return CCKeyboardDispatcher::get()->getControlKeyPressed() || CCKeyboardDispatcher::get()->getCommandKeyPressed();
+            default: return false;
+        }
+    }
+
+    CCTextInputNode* findUITextInputs(cocos2d::CCPoint pPos) {
+        std::vector<CCTextInputNode*> inputs;
+
+        auto find = [&] (this auto&& pSelf, CCNode* pNode) -> void {
+            for (auto node : pNode->getChildrenExt()) {
+                if (!node->isVisible()) {
+                    continue;
+                }
+
+                if (node->getChildrenCount() >= 3 && typeinfo_cast<CCTextInputNode*>(node)) {
+                    inputs.push_back(static_cast<CCTextInputNode*>(node));
+                }
+                else {
+                    pSelf(node);
+                }
+            }
+        };
+
+        for (auto node : std::initializer_list<CCNode*>{editor::ui()->m_scaleControl, editor::ui()->m_rotationControl, editor::ui()->m_transformControl, editor::ui()}) {
+            find(node);
+            
+            for (auto input : inputs) {
+                const auto rect = input->boundingBox();
+
+                if (CCRect{rect.origin - rect.size / 2, rect.size}.containsPoint(
+                    input->getParent()->convertToNodeSpace(pPos)
+                )) {
+                    return input;
+                }
+            }
+        }
+
+        return nullptr;
     }
 }

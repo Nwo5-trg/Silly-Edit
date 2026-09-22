@@ -24,11 +24,9 @@ namespace SelectionUtils {
         if (!pSnapObj) {
             return;
         }
-
+        
         object::move(
-            selection::get(), 
-            this->getSnappedPos(pSnapObj), 
-            false, pSnapObj->getRealPosition()
+            selection::get(), this->getSnappedPos(pSnapObj), false, pSnapObj->getRealPosition()
         );
         
         editor::update();
@@ -80,14 +78,19 @@ namespace SelectionUtils {
             return false;
         }
 
+        auto fields = m_fields.self();
+
         // disable snap and do our own thing :3 (idk if snap obj would b valid rn and i dont feel like testing so i wont check for it)
         if (SelectionUtils::enabled() && GameManager::sharedState()->getGameVariable(GameVar::EnableSnap) && !selection::empty()) {
             GameManager::sharedState()->setGameVariable(GameVar::EnableSnap, false);
-            m_fields->prollySnapping = true;
+            fields->prollySnapping = true;
 
             // i dont exactly remember y i need this and cant just use a member variable but im trusting
             // past me for all the logic - current me doesnt wanna figure that stuff out
-            m_fields->correctLastTouchPos = m_editorLayer->m_objectLayer->convertTouchToNodeSpace(touch);
+            fields->correctLastTouchPos = m_editorLayer->m_objectLayer->convertTouchToNodeSpace(touch);
+        }
+        else {
+            fields->prollySnapping = false;
         }
         
         return true;
@@ -106,21 +109,41 @@ namespace SelectionUtils {
         const auto swipeActive = m_swipeActive;
         const auto swipeSelected = m_swipeSelected;
         const auto swipeStart = m_swipeStart;
-
         const auto continueSwipe = m_continueSwipe;
+        const auto rotationtouchID = m_rotationTouchID;
+        const auto scaleTouchID = m_scaleTouchID;
+        const auto transformTouchID = m_transformTouchID;
+
         auto obj = this->getSnapObject();
 
         GD::EditorUI::ccTouchEnded(touch, event);
 
         // very hacky solution to avoid having to reimpl the entire function (holy fuck robtop ur logic is so fucking bad)
+        if (fields->prollySnapping) {
+            GameManager::sharedState()->setGameVariable(GameVar::EnableSnap, true);
+
+            if (continueSwipe && obj) {
+                this->snapSelection(obj);
+
+                return;
+            }
+
+            fields->prollySnapping = false;
+        }
+        
         if (!m_snapObjectExists || !m_continuousSnap || !m_snapObject) {
-            const auto trySingleSelect = m_selectedMode == 3 && m_touchID == -1 && SelectionUtils::alwaysSingleSelect && selection::count() > 1;
-            const auto tryEmptyDeselect = m_selectedMode == 3 && m_touchID == -1 && SelectionUtils::clickEmptyToDeselect && !selection::empty();
+            const auto trySingleSelect = m_selectedMode == 3 
+                && m_touchID == -1 
+                && rotationtouchID == -1 && scaleTouchID == -1 && transformTouchID == -1
+                && SelectionUtils::alwaysSingleSelect && selection::count() > 1;
+            const auto tryEmptyDeselect = m_selectedMode == 3 
+                && rotationtouchID == -1 && scaleTouchID == -1 && transformTouchID == -1
+                && SelectionUtils::clickEmptyToDeselect && !selection::empty();
 
             if ((trySingleSelect || tryEmptyDeselect) && !swipeActive && !draggingCamera) {
                 const auto world = getTouchPoint(touch, event);
 
-                if (!swipeSelected || (m_swipeStart.getDistance(world) < 20.0f)) {
+                if ((!swipeSelected || (m_swipeStart.getDistance(world) < 20.0f)) && !sillyedit::utils::findUITextInputs(world)) {
                     auto objs = m_editorLayer->objectsAtPosition(m_editorLayer->m_objectLayer->convertToNodeSpace(world));
 
                     if (!objs->count() && tryEmptyDeselect) {
@@ -135,16 +158,6 @@ namespace SelectionUtils {
                     }
                 }
             }
-        }
-
-        if (fields->prollySnapping) {
-            GameManager::sharedState()->setGameVariable(GameVar::EnableSnap, true);
-
-            if (continueSwipe && obj) {
-                this->snapSelection(obj);
-            }
-
-            fields->prollySnapping = false;
         }
     }
 

@@ -26,7 +26,7 @@ namespace Ruler {
     };
 
     // catpuccin mocha :3
-    constexpr std::array<cocos2d::ccColor4F, 14> MEASUREMENT_COLOR{
+    inline constexpr std::array<cocos2d::ccColor4F, 14> MEASUREMENT_COLOR{
         cocos2d::ccColor4F{0.96f, 0.88f, 0.86f, 1.0f},
         cocos2d::ccColor4F{0.95f, 0.8f, 0.8f, 1.0f},
         cocos2d::ccColor4F{0.96f, 0.76f, 0.91f, 1.0f},

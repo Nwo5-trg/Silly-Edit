@@ -2,8 +2,8 @@
 
 #include <features/registry.hpp>
 
-namespace Settings {
-    SILLY_API_INLINE_CATEGORY("General", "Global settings for all of sillyedit", "settings-logo.png"_spr, Features::FeatureEnum::General)
+namespace sillyedit::settings {
+    SILLY_API_INLINE_CATEGORY("General", "Global settings for all of sillyedit", "settings-logo.png"_spr, sillyedit::features::FeatureEnum::General)
     
     inline SillySetting<bool> saveSettingPage{
         "Save Setting Page", "General", true, "remembers what page u were on since last time the settings popup was opened"

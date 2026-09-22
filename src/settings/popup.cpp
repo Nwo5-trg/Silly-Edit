@@ -5,7 +5,7 @@
 using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
 
-namespace Settings {
+namespace sillyedit::settings {
     bool SettingsPopup::init() {
         if (!Popup::init(SIZE.width, SIZE.height, ui::sprite::EMPTY_BACKGROUND)) {
             return false;
@@ -22,11 +22,11 @@ namespace Settings {
         this->setID("settings-popup"_spr);
 
         auto background = *ui::spr(
-            fmt::format("game_bg_{:02}_001.png", Settings::useCustomBackground ? Settings::settingsBackground : 13)
+            fmt::format("game_bg_{:02}_001.png", sillyedit::settings::useCustomBackground ? sillyedit::settings::settingsBackground : 13)
         );
         Setup(background)
             .id("background"_spr)
-            .color(THEME_MAP[Settings::popupTheme].background)
+            .color(THEME_MAP[sillyedit::settings::popupTheme].background)
             .layoutAnchor(Anchor::Center)
             .ignoreAnchorForPos(false)
             .order(-1)
@@ -44,7 +44,7 @@ namespace Settings {
             .userObject("nwo5.silly-api/tooltip", TooltipInfo::create("I should add commiting settings icl"))
             .parent(m_mainLayer);
 
-        if (Settings::showTooltips) {
+        if (sillyedit::settings::showTooltips) {
             m_tooltip = Setup(Tooltip::create(Font::Chat))
                 .id("tooltip"_spr)
                 .scale(0.35f)
@@ -52,7 +52,7 @@ namespace Settings {
         }
 
         auto sideBar = *Setup(CCLayerColor::create(
-            color_cast<ccColor4B>(THEME_MAP[Settings::popupTheme].sideBar)
+            color_cast<ccColor4B>(THEME_MAP[sillyedit::settings::popupTheme].sideBar)
         ))
             .id("side-bar"_spr)
             .layout(AnchorLayout::create())
@@ -107,7 +107,7 @@ namespace Settings {
             .parent(sideBar);
 
         auto topBar = *Setup(CCLayerColor::create(
-            color_cast<ccColor4B>(THEME_MAP[Settings::popupTheme].topBar)
+            color_cast<ccColor4B>(THEME_MAP[sillyedit::settings::popupTheme].topBar)
         ))
             .id("top-bar"_spr)
             .layout(AnchorLayout::create())
@@ -229,7 +229,7 @@ namespace Settings {
             m_settingsMap[index] = {category, nullptr, {}};
 
             for (auto setting : category->getSettings()) {
-                auto settingButton = Settings::createSettingButton(setting);
+                auto settingButton = sillyedit::settings::createSettingButton(setting);
 
                 // it returns false if setting is invalid on platform
                 if (!settingButton) {
@@ -281,7 +281,7 @@ namespace Settings {
         m_featuresScroll->updateLayout();
         m_featuresScroll->scroll(m_settingsScroll->getScrollPoint().x, m_settingsScroll->getScrollPoint().y);
 
-        this->goToFeature(Settings::saveSettingPage ? Mod::get()->getSavedValue<int>("general-settings-page") : 0);
+        this->goToFeature(sillyedit::settings::saveSettingPage ? Mod::get()->getSavedValue<int>("general-settings-page") : 0);
 
         m_closeBtn->setVisible(false);
 
@@ -377,7 +377,7 @@ namespace Settings {
         );
     }
     void SettingsPopup::onKeybinds(cocos2d::CCObject*) {
-        auto popup = geode::openSettingsPopup(Mod::get(), Settings::popupTheme != "Geode");
+        auto popup = geode::openSettingsPopup(Mod::get(), sillyedit::settings::popupTheme != "Geode");
 
         if (!popup) {
             return;
@@ -449,7 +449,7 @@ namespace Settings {
     }
 
     void SettingsPopup::onClose(cocos2d::CCObject* pSender) {
-        if (!Settings::showReloadWarnings || m_reloadSettingsActivated.empty()) {
+        if (!sillyedit::settings::showReloadWarnings || m_reloadSettingsActivated.empty()) {
             return Popup::onClose(pSender);
         }
         

@@ -7,7 +7,7 @@ using namespace geode::prelude;
 static void tryShowWarningPopup(LevelEditorLayer* pLayer) {
     static bool shown = false;
 
-    if (shown || Settings::disableModWarningPopup) {
+    if (shown || sillyedit::settings::disableModWarningPopup) {
         return;
     }
 

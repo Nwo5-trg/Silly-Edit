@@ -46,7 +46,7 @@ namespace SillyFeature {
         void onEditor() override; // override necessary functions (check feature/base.hpp), if no functions are overriden make the enitre feature declaration one line
     } feature;
 
-    constexpr float SOME_CONSTANT = 10.0f; // if u need constexpr variables for ui stuff *across the whole feature* (for example in onEditor) define here
+    inline constexpr float SOME_CONSTANT = 10.0f; // if u need constexpr variables for ui stuff *across the whole feature* (for example in onEditor) define here (or in utils, js do whatever makes the most sense)
         
     class $feature_modify(GJRawr) {
         struct Fields { // if any fields are present

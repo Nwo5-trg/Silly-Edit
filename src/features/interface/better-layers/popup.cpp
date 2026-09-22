@@ -10,6 +10,8 @@ namespace BetterLayers {
             return false;
         }
 
+        this->setTitle("Edit Layer Settings");
+
         m_settings = pSettings;
 
         m_layer = editor::currentLayer();
@@ -142,7 +144,7 @@ namespace BetterLayers {
             m_defaultOpacityInput->setString(misc::numToString(m_settings->getDefaultOpacity().value()));
         }
 
-        m_focusedLayerInput = ui::input(INPUT_SIZE, "")
+        m_focusedLayerInput = ui::input(INPUT_SIZE, "None")
             .id("focused-layer-input"_spr)
             .filter(CommonFilter::Uint)
             .maxCharCount(4)

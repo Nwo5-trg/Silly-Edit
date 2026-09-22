@@ -17,16 +17,16 @@ class $modify(EditorUI) {
             return false;
         }
 
-        for (auto [_, feature] : Features::FeatureManager::get()->getFeatures()) {
+        for (auto [_, feature] : sillyedit::features::FeatureManager::get()->getFeatures()) {
             feature->onEditor();
         }
 
-        for (auto [_, feature] : Features::FeatureManager::get()->getFeatures()) {
+        for (auto [_, feature] : sillyedit::features::FeatureManager::get()->getFeatures()) {
             feature->onToggled(feature->enabled());
         }
 
         this->addEventListener(uiscaling::compat::EditorUI::Changed(), [] (float pScale, auto) {
-            for (auto [_, feature] : Features::FeatureManager::get()->getFeatures()) {
+            for (auto [_, feature] : sillyedit::features::FeatureManager::get()->getFeatures()) {
                 feature->onUIUpdated(pScale);
             }
         });
@@ -39,7 +39,7 @@ class $modify(LevelEditorLayer) {
     void updateEditor(float dt) {
         LevelEditorLayer::updateEditor(dt);
 
-        for (auto [_, feature] : Features::FeatureManager::get()->getFeatures()) {
+        for (auto [_, feature] : sillyedit::features::FeatureManager::get()->getFeatures()) {
             feature->onUpdate();
         }
     }

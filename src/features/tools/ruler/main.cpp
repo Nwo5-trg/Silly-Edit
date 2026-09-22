@@ -147,8 +147,9 @@ namespace Ruler {
     void Feature::onUpdate() {
         auto self = editor::ui<Ruler::EditorUI>();
 
+        const auto thicknessFactor = Ruler::scaleWithZoom ? 1.0f / editor::zoom() : 1.0f;
         // border alignment no workie :fire: - update to this comment like months later, now i use my own drawnode so it shoudl work but i havent implemented it yet so it still doesnt and im now too scared to touch this code soooo
-        const auto padding = ccAdd(CCPoint{Ruler::padding, Ruler::padding} / 2, Ruler::thickness / 2);
+        const auto padding = ccAdd(CCPoint{Ruler::padding, Ruler::padding} / 2, Ruler::thickness * thicknessFactor / 2);
 
         for (const auto& measurement : self->m_fields->measurements) {
             const auto start = measurement.start - padding;
@@ -160,8 +161,14 @@ namespace Ruler {
 
             sillyedit::utils::getOverlayDraw()->drawRect(
                 start, end, misc::setOpacity(col, Ruler::fillOpacity.get() / 255.0f), 
-                Ruler::thickness / (Ruler::scaleWithZoom ? editor::zoom() : 1.0f), col
+                Ruler::thickness * thicknessFactor, col
             );
+
+            if (Ruler::showCenter) {
+                sillyedit::utils::getOverlayDraw()->drawDot(
+                    (start + end) / 2, Ruler::centerSize * thicknessFactor, col
+                );
+            }
 
             for (auto label : {measurement.xLabel, measurement.yLabel}) {
                 const auto y = (label == measurement.yLabel);

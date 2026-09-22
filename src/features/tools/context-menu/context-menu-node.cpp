@@ -31,24 +31,32 @@ namespace ContextMenu {
             .id("menu"_spr)
             .parent(this);
 
-        nwo5::utils::setupKeybind(this, "Context Menu-special-key", [this] (const auto&, bool pDown, bool pRepeat, auto) {
-            if (pRepeat || !this->isVisible() || !ContextMenu::enabled()) {
-                return;
-            }
-
-            this->m_specialDown = pDown;
-
-            for (auto [label, option] : this->m_labels) {
-                Setup(label)
-                    .text(pDown ? option->name.special.value() : option->name.label)
-                    .scaleHeightToFit(OPTION_HEIGHT)
-                    .limitScaleWidthToFit(LABEL_WIDTH);
-
-                label->getParent()->setContentSize(ui::ssize(label));
-            }
-        });
+        this->scheduleUpdate();
 
         return true;
+    }
+    void ContextMenuNode::update(float pForceUpdate) {
+        const auto down = sillyedit::utils::modifierDown(ContextMenu::specialModifier);
+
+        // we abusing implicit conversions with this one
+        if (this->m_specialDown == down || pForceUpdate == true) {
+            return;
+        }
+        
+        this->m_specialDown = down;
+
+        if (!this->isVisible()) {
+            return;
+        }
+
+        for (auto [label, option] : this->m_labels) {
+            Setup(label)
+                .text(this->m_specialDown ? option->name.special.value() : option->name.label)
+                .scaleHeightToFit(OPTION_HEIGHT)
+                .limitScaleWidthToFit(LABEL_WIDTH);
+
+            label->getParent()->updateLayout();
+        }
     }
 
     void ContextMenuNode::setup(std::vector<const Option*> pOptions) {
@@ -90,7 +98,7 @@ namespace ContextMenu {
                 .id("label"_spr)
                 .scaleHeightToFit(OPTION_HEIGHT)
                 .limitScaleWidthToFit(LABEL_WIDTH)
-                .parent(wrapper);;
+                .parent(wrapper);
 
             if (option->name.special.has_value()) {
                 m_labels.emplace_back(label, option);
@@ -120,7 +128,7 @@ namespace ContextMenu {
         this->setup(OptionsRegistry::get()->forObjects(pObjects));
 
         const CCPoint anchor{
-            pPos.x + ui::sw(this) + PADDING > CCDirector::get()->getWinSize().width ? 1.0f : 0.0f, 1.0f
+            pPos.x + ui::sw(this) + PADDING > ui::winWidth() ? 1.0f : 0.0f, 1.0f
         };
 
         float y = pPos.y;
@@ -129,18 +137,20 @@ namespace ContextMenu {
             y = minY + ui::sh(this);
         }
 
-        if (const float maxY = CCDirector::get()->getWinSize().height - PADDING; y > maxY) {
+        if (const float maxY = ui::winHeight() - PADDING; y > maxY) {
             y = maxY;
         }
 
         Setup(this)
-            .anchor(pPos.x + ui::sw(this) + PADDING > CCDirector::get()->getWinSize().width ? 1.0f : 0.0f, 1.0f)
+            .anchor(pPos.x + ui::sw(this) + PADDING > ui::winWidth() ? 1.0f : 0.0f, 1.0f)
             .pos(pPos.x, y)
             .scale(ContextMenu::scaleMultiplier)
             .visible(true);
 
         Setup(m_optionsMenu).center();
         Setup(m_background).center();
+
+        this->update(true);
     }
     void ContextMenuNode::hide() {
         this->setVisible(false);

@@ -28,11 +28,13 @@
         FEATURE(TextObjectUtils) \
         FEATURE(ScrollGroups) \
     TITLE(Overlay) \
+        FEATURE(TriggerIndicators) \
         FEATURE(GroupLabelShenanigans) \
         FEATURE(TriggerTypeBoxes) \
         FEATURE(PlaceObjectPreview) \
     TITLE(Miscellaneous) \
         FEATURE(SillyKeybinds) \
+        FEATURE(EditorTime) \
         FEATURE(Fixes) \
         FEATURE(HideWithPlaytest) \
         FEATURE(CopyObjectStrings) \
@@ -42,7 +44,7 @@
 
 // actual stuff
 
-namespace Features {
+namespace sillyedit::features {
     enum class FeatureEnum {
         #define FEATURE(pFeature) pFeature ,
         #define TITLE(pTitle) GEODE_CONCAT(pTitle , Title),

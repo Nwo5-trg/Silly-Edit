@@ -7,7 +7,7 @@ namespace nwo5::ui {
     class Tooltip;
 }
 
-namespace Settings {
+namespace sillyedit::settings {
     class SettingsPopup final : public geode::Popup {
     protected:
         struct Theme {

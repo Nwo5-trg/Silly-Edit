@@ -144,12 +144,12 @@ namespace BetterScale {
             .id("scale-input"_spr)
             .pos(fields->newScaleLabel->getScaledContentWidth() / 2, ui::y(m_scaleLabel))
             .callback([this] (const std::string& pStr) {
-                if (!pStr.empty()) {
+                if (!pStr.empty() && !pStr.ends_with('.') && pStr != "0") {
                     const auto num = utils::numFromString<float>(pStr).unwrapOrDefault();
 
-                    customScale(num, ObjectScaleType::XY);
+                    this->customScale(num, ObjectScaleType::XY);
 
-                    updateInputValues();
+                    this->updateInputValues();
                 }
             })
             .parent(this);
@@ -182,12 +182,12 @@ namespace BetterScale {
             .id("scale-x-input"_spr)
             .pos(fields->newScaleXLabel->getScaledContentWidth() / 2, ui::y(m_scaleXLabel))
             .callback([this] (const std::string& pStr) {
-                if (!pStr.empty()) {
+                if (!pStr.empty() && !pStr.ends_with('.') && pStr != "0") {
                     const auto num = utils::numFromString<float>(pStr).unwrapOrDefault();
                     
-                    customScale(num, ObjectScaleType::X);
+                    this->customScale(num, ObjectScaleType::X);
 
-                    updateInputValues();
+                    this->updateInputValues();
                 }
             })
             .parent(this);
@@ -219,12 +219,12 @@ namespace BetterScale {
             .id("scale-y-input"_spr)
             .pos(fields->newScaleYLabel->getScaledContentWidth() / 2, ui::y(m_scaleYLabel))
             .callback([this] (const std::string& pStr) {
-                if (!pStr.empty()) {
+                if (!pStr.empty() && !pStr.ends_with('.') && pStr != "0") {
                     const auto num = utils::numFromString<float>(pStr).unwrapOrDefault();
                     
-                    customScale(num, ObjectScaleType::Y);
+                    this->customScale(num, ObjectScaleType::Y);
 
-                    updateInputValues();
+                    this->updateInputValues();
                 }
             })
             .parent(this);

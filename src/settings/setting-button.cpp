@@ -4,7 +4,7 @@
 using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
 
-namespace Settings {
+namespace sillyedit::settings {
     bool SettingButtonBase::init(GenericSetting* pSetting) {
         if (!CCNode::init()) {
             return false;
@@ -62,7 +62,7 @@ namespace Settings {
             .id("help-menu"_spr)
             .height(HELP_BUTTON_SIZE)
             .anchor(Anchor::Right)
-            .pos(SIZE.width + HELP_BUTTON_SIZE / 2, SIZE.height)
+            .pos(ccAdd(SIZE, HELP_BUTTON_SIZE / 2))
             .children(
                 m_helpButton,
                 m_resetButton,
@@ -222,7 +222,7 @@ namespace Settings {
                     this->set<T>(setting->getDefault());
                 }
                 else {
-                    this->set<T>(std::clamp(utils::numFromString<T>(pStr).unwrapOrDefault(), setting->min(), setting->max()));
+                    this->set<T>(std::clamp(geode::utils::numFromString<T>(pStr).unwrapOrDefault(), setting->min(), setting->max()));
                     
                     if (pStr != "0") {
                         this->m_input->setString(misc::numToString(setting->get()));
@@ -285,7 +285,7 @@ namespace Settings {
                     this->set<T>(setting->getDefault());
                 }
                 else {
-                    this->set<T>(std::clamp(utils::numFromString<T>(pStr).unwrapOrDefault(), setting->min(), setting->max()));
+                    this->set<T>(std::clamp(geode::utils::numFromString<T>(pStr).unwrapOrDefault(), setting->min(), setting->max()));
 
                     if (!pStr.ends_with('.') && !pStr.ends_with('-') && pStr != "0") {
                         this->m_input->setString(misc::numToString(setting->get()));
@@ -336,7 +336,7 @@ namespace Settings {
             .callback([this] (auto, auto) {
                 auto setting = this->setting<T>();
 
-                this->set<T>(this->m_slider->getPercent() * 255);
+                this->set<T>(std::clamp<int>(this->m_slider->getPercent() * 255, 0, 255));
 
                 this->updateVisuals();
 
@@ -355,6 +355,10 @@ namespace Settings {
                 }
             })
             .parent(m_inputMenu);
+
+        m_opacityLabel = ui::label("255", Font::Default)
+            .scaleToFit(ui::w(m_slider->getThumb()) * 2.0f)
+            .parent(m_slider->getThumb()).center().move(0.5f, 1.5f);
 
         m_slider->setPercent(setting->get() / 255.0f);
 
@@ -385,10 +389,7 @@ namespace Settings {
         m_slider->getGroove()->setOpacity(setting->get() ? setting->get() : 255);
         m_slider->getGroove()->setColor(setting->get() ? *Col::White : Col::DarkGray);
 
-        Setup(this->m_label)
-            .text(fmt::format("{} ({})", setting->name(), setting->get()))
-            .scaleHeightToFit(SIZE.height / 2 - PADDING / 2)
-            .limitScaleWidthToFit(SIZE.width - PADDING);
+        m_opacityLabel->setText(misc::numToString(setting->get()));
     }
     SE_SETUP_SETTING_BUTTON_CREATE(OpacitySettingButton)
 

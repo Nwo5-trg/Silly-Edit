@@ -4,7 +4,7 @@
 #include <nwo5.silly-api/include/ui/include.hpp>
 #include "include.hpp"
 
-namespace Settings {
+namespace sillyedit::settings {
     class SettingButtonBase : public cocos2d::CCNode {
     public:
         static constexpr cocos2d::CCSize SIZE{90.0f, 30.0f};
@@ -167,6 +167,7 @@ namespace Settings {
     };
     class OpacitySettingButton final : public SettingButtonBase {
     private:
+        geode::Label* m_opacityLabel = nullptr;
         geode::SliderNode* m_slider = nullptr;
 
         static constexpr float PADDING = 2.5f;

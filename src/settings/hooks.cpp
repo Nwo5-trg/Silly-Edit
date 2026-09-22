@@ -15,11 +15,11 @@ class $modify(LevelEditorLayer) {
 
         nwo5::utils::setupKeybind(this, "General-open-settings", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
             if (pDown && !pRepeat) {
-                if (auto popup = static_cast<Settings::SettingsPopup*>(CCDirector::get()->getRunningScene()->getChildByID("settings-popup"_spr))) {
+                if (auto popup = static_cast<sillyedit::settings::SettingsPopup*>(CCDirector::get()->getRunningScene()->getChildByID("settings-popup"_spr))) {
                     popup->onClose(nullptr);
                 }
                 else {
-                    Settings::SettingsPopup::create()->show();
+                    sillyedit::settings::SettingsPopup::create()->show();
                 }
             }
         });
@@ -40,7 +40,7 @@ class $modify(SettingsEditorPauseLayer, EditorPauseLayer) {
             return false;
         }
 
-        if (!Settings::showSettingsButton) {
+        if (!sillyedit::settings::showSettingsButton) {
             return true;
         }
 
@@ -53,7 +53,7 @@ class $modify(SettingsEditorPauseLayer, EditorPauseLayer) {
         auto spr = CCSprite::create(
             fmt::format(
                 "settings-button-{}.png"_spr, 
-                string::toLower(Settings::settingsButtonTexture)
+                string::toLower(sillyedit::settings::settingsButtonTexture)
             ).c_str()
         );
         spr->setScale(0.85f),
@@ -61,7 +61,7 @@ class $modify(SettingsEditorPauseLayer, EditorPauseLayer) {
         Setup(ui::buttonSprite(
             fmt::format(
                 "settings-button-{}.png"_spr, 
-                string::toLower(Settings::settingsButtonTexture)
+                string::toLower(sillyedit::settings::settingsButtonTexture)
             ), this, menu_selector(SettingsEditorPauseLayer::onSESettings), 0.85f
         ))
             .id("se-settings-button"_spr)
@@ -71,6 +71,6 @@ class $modify(SettingsEditorPauseLayer, EditorPauseLayer) {
     }
 
     void onSESettings(CCObject* sender) {
-        Settings::SettingsPopup::create()->show();    
+        sillyedit::settings::SettingsPopup::create()->show();    
     }
 };

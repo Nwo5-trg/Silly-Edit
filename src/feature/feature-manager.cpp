@@ -1,6 +1,6 @@
 #include "feature-manager.hpp"
 
-namespace Features {
+namespace sillyedit::features {
     FeatureBase* FeatureManager::getFeature(geode::ZStringView pID) {
         const auto it = m_features.find(pID);
 

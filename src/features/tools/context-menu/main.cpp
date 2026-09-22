@@ -48,11 +48,9 @@ namespace ContextMenu {
             .order(15)
             .parent(self);
 
-        feature.registerKeybind<"modifier">([self] (bool pDown, bool) {
-            self->m_fields->modifierDown = pDown;
-        });
-
         self->addEventListener(MouseInputEvent(), [self, menu] (const MouseInputData& pData) {
+            const auto data = misc::dataInfo(pData);
+            
             if (!ContextMenu::enabled() || !menu) {
                 if (menu) {
                     menu->hide();
@@ -61,7 +59,7 @@ namespace ContextMenu {
                 return;
             }
             
-            if (pData.action != MouseInputData::Action::Press || pData.button != MouseInputData::Button::Right) {
+            if (!data.down() || !data.rightButton()) {
                 return;
             }
 

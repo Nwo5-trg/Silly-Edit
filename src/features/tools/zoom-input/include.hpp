@@ -10,7 +10,7 @@ namespace ZoomInput {
         void onUIUpdated(float pScale) override;
     } feature;
 
-    constexpr cocos2d::CCSize BASE_ZOOM_INPUT_SIZE = {20.0f, 10.0f};
+    inline constexpr cocos2d::CCSize BASE_ZOOM_INPUT_SIZE = {20.0f, 10.0f};
 
     class $feature_modify(EditorUI) {
         struct Fields {

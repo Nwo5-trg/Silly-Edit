@@ -31,10 +31,16 @@ namespace Ruler {
         "Editor Tab Button", feature, true, SettingReload::Editor
     };
     inline SillySetting<float> thickness{
-        "Thickness", feature, 1.0f, {0.0f, std::nullopt}
+        "Thickness", feature, 2.5f, {0.0f, std::nullopt}
+    };
+    inline SillySetting<bool> showCenter{
+        "Show Center", feature, true
+    };
+    inline SillySetting<float> centerSize{
+        "Center Size", feature, 5.0f, {0.0f, std::nullopt}
     };
     inline SillySetting<bool> scaleWithZoom{
-        "Scale With Zoom", feature, true
+        "Scale With Zoom", feature, false
     };
     inline SillySetting<float> padding{
         "Padding", feature, 0.0f

@@ -12,7 +12,6 @@ namespace ContextMenu {
     class $feature_modify(EditorUI) {
         struct Fields {
             ContextMenuNode* menu = nullptr;
-            bool modifierDown = false;
         };
 
         void keyDown(cocos2d::enumKeyCodes key, double timestamp);
@@ -31,8 +30,8 @@ namespace ContextMenu {
     inline SillySetting<bool> scrollAway{
         "Scroll Away", feature, false, "instead of blocking scrolling when context menu is showing, close context menu when scroll is attempted"
     };
-    inline SillySetting<bool> requireModifier{
-        "Require Modifier", feature, false, "by default alt, require modifier key to be held in order to show context menu"
+    inline SillySetting<sillyedit::settings::Modifier> specialModifier{
+        "Special Modifier", feature, "Shift", sillyedit::settings::modifierSettingOptions(), "e.g. changes copy to copy special, scale to scale xy"
     };
     inline SillySetting<bool> editGroup{
         "Edit Group", feature, true

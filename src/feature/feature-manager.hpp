@@ -2,7 +2,7 @@
 
 #include "base.hpp"
 
-namespace Features {
+namespace sillyedit::features {
     class FeatureManager {
     protected:
         geode::utils::StringMap<FeatureBase*> m_features;

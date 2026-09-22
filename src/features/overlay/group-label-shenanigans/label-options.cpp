@@ -40,20 +40,56 @@ namespace GroupLabelShenanigans {
 
         auto ptr = pBuf;
 
-        auto pushVal = [&] (int pVal, bool pTryColorLabels) {
-            if (pTryColorLabels && pVal >= 1000 && pVal <= 1012 && trigger::primaryTargetType(pObj) == trigger::InputType::Color) {
-                const static std::unordered_map<int, const char*> map{
-                    {1004, "obj"}, {1000, "bg"}, {1001, "g1"}, {1009, "g2"},
-                    {1013, "mg"}, {1014, "mg2"}, {1002, "line"}, {1003, "3dl"},
-                    {1005, "p1"}, {1006, "p2"}, {1007, "lbg"}, {1010, "black"},
-                    {1011, "white"}, {1012, "lighter"}
-                };
+        auto pushVal = [&] (int pVal, bool pTryColorLabels, bool pTrySpecial) {
+            if (pTryColorLabels && pVal >= 1000 && pVal <= 1014 && trigger::primaryTargetType(pObj) == trigger::InputType::Color) {
+                const char* str = nullptr;
 
-                const auto it = map.find(pVal);
+                switch (pVal) {
+                    case 1000: str = "BG"; break;
+                    case 1001: str = "G1"; break;
+                    case 1002: str = "LINE"; break;
+                    case 1003: str = "3DL"; break;
+                    case 1004: str = "OBJ"; break;
+                    case 1005: str = "P1"; break;
+                    case 1006: str = "P2"; break;
+                    case 1007: str = "LBG"; break;
+                    case 1009: str = "G2"; break;
+                    case 1010: str = "BLACK"; break;
+                    case 1011: str = "WHITE"; break;
+                    case 1012: str = "LIGHTER"; break;
+                    case 1013: str = "MG"; break;
+                    case 1014: str = "MG2"; break;
+                    default: break;
+                }
 
-                if (it != map.end()) {
-                    auto str = (*it).second;
+                if (str) {
+                    while (*str) {
+                        *(ptr++) = *(str++);
+                    }
+                    
+                    return;
+                }
+            }
 
+            if (pTrySpecial && pVal >= -11 && pVal <= -1) {
+                const char* str = nullptr;
+
+                switch (pVal) {
+                    case -1: str = "P1"; break;
+                    case -2: str = "P2"; break;
+                    case -3: str = "C"; break;
+                    case -4: str = "BL"; break;
+                    case -5: str = "CL"; break;
+                    case -6: str = "TL"; break;
+                    case -7: str = "BC"; break;
+                    case -8: str = "TC"; break;
+                    case -9: str = "BR"; break;
+                    case -10: str = "CR"; break;
+                    case -11: str = "TR"; break;
+                    default: break;
+                }
+
+                if (str) {
                     while (*str) {
                         *(ptr++) = *(str++);
                     }
@@ -93,7 +129,7 @@ namespace GroupLabelShenanigans {
                     break; }
                 }
 
-                pushVal(val, label == Label::Primary);
+                pushVal(val, label == Label::Primary, label == Label::Secondary);
             }
         };
 
@@ -106,7 +142,7 @@ namespace GroupLabelShenanigans {
             }
         }
         else {
-            pushVal(trigger::primaryTarget(pObj), true);
+            pushVal(trigger::primaryTarget(pObj), true, true);
         }
 
         *ptr = '\0';

@@ -1,6 +1,6 @@
 #include "feature-manager.hpp"
 
-namespace Features {
+namespace sillyedit::features {
     FeatureBase::FeatureBase(FeatureEnum pEnum) {
         m_id = getID(pEnum);
         

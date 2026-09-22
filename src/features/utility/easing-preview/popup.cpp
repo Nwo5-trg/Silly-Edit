@@ -48,7 +48,9 @@ namespace EasingPreview {
                 }
             }
             else {
-                button = Setup(EasingButton::create(enum_cast<EasingType>(i), pType, pPopup->m_easingRate, [this, type = i, prop = pProp, popup = pPopup] (EasingType pType) {
+                const auto rate = pProp == 30 ? pPopup->m_easingRate : pPopup->getValue(pProp == 242 ? 243 : 249);
+                
+                button = Setup(EasingButton::create(enum_cast<EasingType>(i), pType, rate, [this, type = i, prop = pProp, popup = pPopup] (EasingType pType) {
                     popup->valueChanged(prop, type);
 
                     if (prop == 30) {

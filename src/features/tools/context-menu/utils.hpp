@@ -26,6 +26,7 @@ namespace ContextMenu {
         static constexpr int SPACER_TAG = 1;
 
         bool init();
+        void update(float pForceUpdate);
 
         void setup(std::vector<const Option*> pOptions);
 

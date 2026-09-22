@@ -10,8 +10,6 @@ namespace PlaceObjectPreview {
         void onEditor() override;
         void onUpdate() override;
     } feature;
-
-    constexpr int PREVIEW_OBJECT_TAG = 8373767689;
     
     class $feature_modify(EditorUI) {
         struct Fields {

@@ -4,6 +4,8 @@
 using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
 
+static constexpr float DEFAULT_SCROLL_DISTANCE = 2.5f;
+
 namespace ScrollGroups {
     void EditorUI::scrollGroup(GameObject* pObj, bool pUp, bool pSecondaryGroup) {
         if (pSecondaryGroup) {
@@ -25,18 +27,10 @@ namespace ScrollGroups {
     void Feature::onEditor() {
         auto self = editor::ui<ScrollGroups::EditorUI>();
 
-        feature.registerKeybind<"modifier">([self] (bool pDown, bool) {
-            self->m_fields->modifierDown = pDown;
-        });
-        feature.registerKeybind<"secondary-group">([self] (bool pDown, bool) {
-            log::error("{}", pDown);
-            self->m_fields->secondaryGroupDown = pDown;
-        });
-
         self->addEventListener(ScrollWheelEvent(), [self] (double pX, double pY) {
             auto fields = self->m_fields.self();
 
-            if (!ScrollGroups::enabled() || !fields->modifierDown || sillyedit::utils::shouldBlockScrolling()) {
+            if (!ScrollGroups::enabled() || !sillyedit::utils::modifierDown(ScrollGroups::modifier) || sillyedit::utils::shouldBlockScrolling()) {
                 return;
             }
 
@@ -65,8 +59,12 @@ namespace ScrollGroups {
             fields->scrollingDistance += ScrollGroups::reverseScroll ? -pY : pY;
 
             if (std::abs(fields->scrollingDistance) > DEFAULT_SCROLL_DISTANCE / ScrollGroups::scrollSensitivity) {
-                log::error("is {}", fields->secondaryGroupDown);
-                self->scrollGroup(obj, fields->scrollingDistance > 0, fields->secondaryGroupDown);
+                auto dispatcher = CCKeyboardDispatcher::get();
+
+                self->scrollGroup(
+                    obj, fields->scrollingDistance > 0,
+                    sillyedit::utils::modifierDown(ScrollGroups::secondaryScroll)
+                );
 
                 fields->scrollingDistance = 0;
             }
