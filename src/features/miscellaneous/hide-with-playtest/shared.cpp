@@ -23,13 +23,11 @@ namespace sillyedit::shared {
     unsigned char hideWithPlaytestOpacityForObject(unsigned char pOpacity, GameObject* pObj) {
         static auto arr = createTypeArray();
 
-        const auto id = pObj->m_objectID;
-
-        if (HideWithPlaytest::hideTriggers.get() && trigger::is(id)) {
+        if (HideWithPlaytest::hideTriggers.get() && sillyedit::utils::isTriggerFast(pObj)) {
             return sillyedit::utils::modifyOpacity(pOpacity, HideWithPlaytest::triggerOpacity.get());
         }
         
-        switch (arr[id]) {
+        switch (arr[pObj->m_objectID]) {
             case HideWithPlaytestType::Default: {
                 return pOpacity;
             }

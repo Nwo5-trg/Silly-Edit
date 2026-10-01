@@ -19,6 +19,7 @@
         FEATURE(BetterScale) \
         FEATURE(BetterLayers) \
         FEATURE(ObjectTabIcons) \
+        FEATURE(BetterEditMenu) \
         FEATURE(HideUI) \
     TITLE(Utility) \
         FEATURE(DefaultObjectOptions) \

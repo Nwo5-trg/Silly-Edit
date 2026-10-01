@@ -173,9 +173,7 @@ namespace FF {
         editor::conditionallyRegisterEditTabButtonFrame(
             pEnabled && FF::quickFillButton,
             "quickfill.png"_spr, "quick-fill-button"_spr, 2, [self] (auto) {
-                if (FF::enabled()) {
-                    self->quickFill();
-                }
+                self->quickFill();
             }
         );
     }

@@ -68,12 +68,12 @@ namespace sillyedit::features {
                 }
 
                 const auto name = pSetting->name();
+                
+                this->onSettingChanged(name, pSetting);
 
                 if (name == "Enabled") {
                     this->onToggled(this->enabled());
                 }
-                
-                this->onSettingChanged(name, pSetting);
             }, m_id).leak();
         }
     };

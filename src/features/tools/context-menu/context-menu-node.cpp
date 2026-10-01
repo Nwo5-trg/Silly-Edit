@@ -79,6 +79,10 @@ namespace ContextMenu {
                 continue;
             }
 
+            if (!option->enabled()) {
+                continue;
+            }
+
             auto wrapper = *ui::dummy(ui::row()
                 .alignment(AxisAlignment::Start)
                 .gap(OPTION_GAP)

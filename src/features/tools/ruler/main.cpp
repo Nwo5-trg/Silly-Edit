@@ -113,22 +113,6 @@ namespace Ruler {
     void Feature::onEditor() {
         auto self = editor::ui<Ruler::EditorUI>();
 
-        editor::conditionallyRegisterEditTabButtonFrame(
-            Ruler::enabled() && Ruler::editorTabButton,
-            "ruler.png"_spr, "create-measurement-button"_spr, 1, [self] (auto) {
-                if (!Ruler::enabled()) {
-                    return;
-                }
-
-                if (selection::empty()) {
-                    self->deleteMeasurement(false);
-                }
-                else {
-                    self->createMeasurement();
-                }
-            }
-        );
-
         // i dont want the same colors in the same order every time (or mayb it doesnt do that and i js got *very* lucky in my testing idk)
         random::_getGenerator().seed(asp::SystemTime::now().timeSinceEpoch().seconds());
 
@@ -142,6 +126,22 @@ namespace Ruler {
                 self->deleteMeasurement(pRepeat);
             }
         });
+    }
+
+    void Feature::onToggled(bool pEnabled) {
+        auto self = editor::ui<Ruler::EditorUI>();
+
+        editor::conditionallyRegisterEditTabButtonFrame(
+            pEnabled && Ruler::editorTabButton,
+            "ruler.png"_spr, "create-measurement-button"_spr, 1, [self] (auto) {
+                if (selection::empty()) {
+                    self->deleteMeasurement(false);
+                }
+                else {
+                    self->createMeasurement();
+                }
+            }
+        );
     }
 
     void Feature::onUpdate() {

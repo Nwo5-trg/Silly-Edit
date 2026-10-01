@@ -64,7 +64,7 @@ namespace PlaceObjectPreview {
 
                 obj->setTag(PREVIEW_OBJECT_TAG);
 
-                if (trigger::is(obj)) {
+                if (sillyedit::utils::isTriggerFast(obj)) {
                     static_cast<EffectGameObject*>(obj)->m_isSpawnTriggered = true;
                     // no clue what this does but it lets me fix trigger type boxes easily so
                     obj->m_greenDebugDraw = true;

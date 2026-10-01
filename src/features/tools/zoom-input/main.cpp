@@ -67,9 +67,30 @@ namespace ZoomInput {
 
     void Feature::onEditor() {
         auto self = editor::ui<ZoomInput::EditorUI>();
+        
+        feature.registerKeybind<"zoom-in">([self] (bool pDown, bool) {
+            if (pDown) {
+                self->updateZoom(editor::zoom() / 0.9f);
+            }
+        });
+
+        feature.registerKeybind<"zoom-out">([self] (bool pDown, bool) {
+            if (pDown) {
+                self->updateZoom(editor::zoom() * 0.9f);
+            }
+        });
+    }
+
+    void Feature::onToggled(bool pEnabled) {
+        auto self = editor::ui<ZoomInput::EditorUI>();
         auto fields = self->m_fields.self();
 
-        if (!ZoomInput::enabled()) {
+        if (!pEnabled) {
+            if (fields->zoomContainer) {
+                self->m_uiItems->removeObject(fields->zoomContainer);
+                fields->zoomContainer->removeMeAndCleanup();
+            }
+
             return;
         }
 
@@ -100,18 +121,6 @@ namespace ZoomInput {
             )
             .parent(self)
             .addTo(self->m_uiItems);
-
-        feature.registerKeybind<"zoom-in">([self] (bool pDown, bool) {
-            if (pDown) {
-                self->updateZoom(editor::zoom() / 0.9f);
-            }
-        });
-
-        feature.registerKeybind<"zoom-out">([self] (bool pDown, bool) {
-            if (pDown) {
-                self->updateZoom(editor::zoom() * 0.9f);
-            }
-        });
     }
 
     void Feature::onUIUpdated(float pScale) {

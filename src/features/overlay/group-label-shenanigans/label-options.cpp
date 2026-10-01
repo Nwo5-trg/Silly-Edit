@@ -45,20 +45,20 @@ namespace GroupLabelShenanigans {
                 const char* str = nullptr;
 
                 switch (pVal) {
-                    case 1000: str = "BG"; break;
-                    case 1001: str = "G1"; break;
-                    case 1002: str = "LINE"; break;
-                    case 1003: str = "3DL"; break;
-                    case 1004: str = "OBJ"; break;
-                    case 1005: str = "P1"; break;
-                    case 1006: str = "P2"; break;
-                    case 1007: str = "LBG"; break;
-                    case 1009: str = "G2"; break;
-                    case 1010: str = "BLACK"; break;
-                    case 1011: str = "WHITE"; break;
-                    case 1012: str = "LIGHTER"; break;
-                    case 1013: str = "MG"; break;
-                    case 1014: str = "MG2"; break;
+                    case editor::constants::BACKGROUND_COLOR: str = "BG"; break;
+                    case editor::constants::GROUND_COLOR: str = "G1"; break;
+                    case editor::constants::LINE_COLOR: str = "LINE"; break;
+                    case editor::constants::LINE_3D_COLOR: str = "3DL"; break;
+                    case editor::constants::OBJECT_COLOR: str = "OBJ"; break;
+                    case editor::constants::PLAYER_1_COLOR: str = "P1"; break;
+                    case editor::constants::PLAYER_2_COLOR: str = "P2"; break;
+                    case editor::constants::LIGHT_BACKGROUND_COLOR: str = "LBG"; break;
+                    case editor::constants::GROUND_2_COLOR: str = "G2"; break;
+                    case editor::constants::BLACK_COLOR: str = "BLACK"; break;
+                    case editor::constants::WHITE_COLOR: str = "WHITE"; break;
+                    case editor::constants::LIGHTER_COLOR: str = "LIGHTER"; break;
+                    case editor::constants::MIDDLEGROUND_COLOR: str = "MG"; break;
+                    case editor::constants::MIDDLEGROUND_2_COLOR: str = "MG2"; break;
                     default: break;
                 }
 
@@ -75,17 +75,17 @@ namespace GroupLabelShenanigans {
                 const char* str = nullptr;
 
                 switch (pVal) {
-                    case -1: str = "P1"; break;
-                    case -2: str = "P2"; break;
-                    case -3: str = "C"; break;
-                    case -4: str = "BL"; break;
-                    case -5: str = "CL"; break;
-                    case -6: str = "TL"; break;
-                    case -7: str = "BC"; break;
-                    case -8: str = "TC"; break;
-                    case -9: str = "BR"; break;
-                    case -10: str = "CR"; break;
-                    case -11: str = "TR"; break;
+                    case editor::constants::P1_AREA_SPECIAL_TARGET: str = "P1"; break;
+                    case editor::constants::P2_AREA_SPECIAL_TARGET: str = "P2"; break;
+                    case editor::constants::CAMERA_AREA_SPECIAL_TARGET: str = "C"; break;
+                    case editor::constants::BOTTOM_LEFT_AREA_SPECIAL_TARGET: str = "BL"; break;
+                    case editor::constants::CENTER_LEFT_AREA_SPECIAL_TARGET: str = "CL"; break;
+                    case editor::constants::TOP_LEFT_AREA_SPECIAL_TARGET: str = "TL"; break;
+                    case editor::constants::BOTTOM_CENTER_AREA_SPECIAL_TARGET: str = "BC"; break;
+                    case editor::constants::TOP_CENTER_AREA_SPECIAL_TARGET: str = "TC"; break;
+                    case editor::constants::BOTTOM_RIGHT_AREA_SPECIAL_TARGET: str = "BR"; break;
+                    case editor::constants::CENTER_RIGHT_AREA_SPECIAL_TARGET: str = "CR"; break;
+                    case editor::constants::TOP_RIGHT_AREA_SPECIAL_TARGET: str = "TR"; break;
                     default: break;
                 }
 

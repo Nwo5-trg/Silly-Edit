@@ -45,6 +45,7 @@ namespace sillyedit::utils {
 
         return trigger::is(pID);
     }
+    
 
     bool modifierDown(const settings::SillySetting<std::string>& pStr) {
         // lollllll

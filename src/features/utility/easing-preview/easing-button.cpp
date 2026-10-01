@@ -89,7 +89,7 @@ namespace EasingPreview {
                 m_sprite->setPosition(m_drawnode->getPosition());
                 
                 action = GameToolbox::getEasedAction(
-                    CCScaleTo::create(EasingPreview::animationDuration, (SIZE.height - PADDING) / SPRITE_SIZE),
+                    CCScaleTo::create(EasingPreview::animationDuration, SIZE.height / SPRITE_SIZE - PADDING),
                     enum_cast<int>(m_easing), m_exponent
                 );
                 returnAction = CCScaleTo::create(0.0f, m_sprite->getScale());

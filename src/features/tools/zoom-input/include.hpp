@@ -5,8 +5,9 @@
 #include <feature/include.hpp>
 
 namespace ZoomInput {
-    class $feature(ZoomInput, SettingCondition::None, SettingReload::Editor) {
+    class $feature(ZoomInput) {
         void onEditor() override;
+        void onToggled(bool pEnabled) override;
         void onUIUpdated(float pScale) override;
     } feature;
 

@@ -1,6 +1,4 @@
 # things i need to do before index release
-3. make everything dynamically toggleable, who the fuck needs reloading
-
 4. write feature list in abt
 
 6. tinker compat :fear:
@@ -31,6 +29,7 @@
 - give settings scroll more leeway to scroll down if possible so close button doesnt potentially block anything
 - instead of using \n in the names of settings, use geode label in settings buttons and make them wrap
 - add the custom filters system in whatever way i eventually decide
+- create gradient with selection button (or if nothings selected create a square of objects)
 - get off my ass and reverse engineer so i dont have to create objects twice for default object options
 
 # chores i should get around to sometimes but arent rly important
@@ -39,6 +38,7 @@
 - reorganize mod.json keybinds to reflect feature order
 - soggy and eri setting button texture
 - instead of dumb workaround for hiding setting buttons, override setvisible and do the content size and children hiding there
+- make default object options use an array of max_object_id + 1 instead of unordered map
 - random shape themes/custom color themes for settings popup (this also means properly scaling sidebar)
 - refactor whatever the fuck is going on in ruler
 - mayb some uniform system for select filters throughout the mod cuz a few features use that alrdy

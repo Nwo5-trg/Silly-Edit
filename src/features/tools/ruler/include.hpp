@@ -7,6 +7,7 @@
 namespace Ruler {
     class $feature(Ruler) {
         void onEditor() override;
+        void onToggled(bool pEnabled) override;
         void onUpdate() override;
     } feature;
 

@@ -38,7 +38,7 @@ namespace ScrollGroups {
             
             auto obj = self->m_editorLayer->objectAtPosition(pos);
 
-            if (!obj || !trigger::is(obj)) {
+            if (!obj || !sillyedit::utils::isTriggerFast(obj)) {
                 return;
             }
 
