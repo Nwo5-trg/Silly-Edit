@@ -24,6 +24,15 @@ namespace TriggerIndicators {
 
         fields->m_drawer = std::make_unique<Drawer>();
         fields->m_drawer->updateBlacklist();
+        fields->m_drawer->updateTriggerList();
+
+        self->addEventListener(ObjectsChangedEvent(), [self] () {
+            auto fields = self->m_fields.self();
+
+            if (TriggerIndicators::enabled() && fields->m_drawer) {
+                fields->m_drawer->updateTriggerList();
+            }
+        });
     }
 
     void Feature::onSettingChanged(std::string pName, GenericSetting*) {
@@ -32,6 +41,7 @@ namespace TriggerIndicators {
 
         if (fields->m_drawer) {
             fields->m_drawer->updateBlacklist();
+            fields->m_drawer->updateTriggerList();
         }
     }
 }

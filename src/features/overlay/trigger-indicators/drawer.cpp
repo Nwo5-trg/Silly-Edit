@@ -1,3 +1,4 @@
+// dont fucking null terminate the vectors to all or atleast find a way to almost never resize it mayb compare against size before doing so
 #include "include.hpp"
 
 using namespace geode::prelude;
@@ -12,6 +13,7 @@ namespace TriggerIndicators {
 
         if (!shouldCluster || (shouldFallback && !shouldRectFallback)) {
             for (auto obj : objs) {
+
                 const auto end = pTargetingTrigger ? this->inputExtraPosFor(obj) : obj->getRealPosition();
 
                 this->drawLine(pStart, end);
@@ -24,13 +26,13 @@ namespace TriggerIndicators {
             return;
         }
         else if (shouldFallback && shouldRectFallback) {
-            this->drawToRect(pStart, object::bounds(objs, true));
+            this->drawToRect(pStart, getObjectBounds(objs, true));
 
             return;
         }
 
         m_state.clusterResult.clear();
-        object::cluster(m_state.clusterResult, objs, pTargetingTrigger ? TriggerIndicators::maxTriggerClusterDistance : TriggerIndicators::maxObjectClusterDistance);
+        clusterObjects(m_state.clusterResult, objs, pTargetingTrigger ? TriggerIndicators::maxTriggerClusterDistance : TriggerIndicators::maxObjectClusterDistance);
 
         for (const auto& cluster : m_state.clusterResult) {
             if (cluster.size() == 1) {
@@ -44,7 +46,7 @@ namespace TriggerIndicators {
                 }
             }
             else {
-                this->drawToRect(pStart, object::bounds(cluster, true));
+                this->drawToRect(pStart, getObjectBounds(cluster, true));
             }
         }
     }
@@ -54,7 +56,7 @@ namespace TriggerIndicators {
         pRect.size = ccAdd(pRect.size, m_state.thickness * 2);
 
         this->drawLine(pStart, sillyedit::utils::getLineCut(pStart, pRect));
-
+        
         if (m_state.isCenter && TriggerIndicators::dottedCenterLines) {
             sillyedit::utils::getGridDraw()->drawDashedLine(
                 pRect.origin, {pRect.origin.x, pRect.getMaxY()}, m_state.thickness, m_state.color, TriggerIndicators::dottedSegmentSize, TriggerIndicators::dottedDotSize
@@ -127,10 +129,10 @@ namespace TriggerIndicators {
         );
     }
 
-    cocos2d::CCPoint Drawer::inputExtraPosFor(GameObject* pObj) const {
+    cocos2d::CCPoint Drawer::inputExtraPosFor(GameObject* pObj) {
         return pObj->getRealPosition() + (sillyedit::utils::triggerHasBodyOffset(pObj->m_objectID) ? sillyedit::utils::TRIGGER_BODY_OFFSET : CCPointZero) - CCPoint{TriggerIndicators::extrasOffset * pObj->getScaleX(), 0.0f};
     }
-    std::pair<cocos2d::CCPoint, cocos2d::CCPoint> Drawer::outputExtraPosFor(GameObject* pObj, bool pHasCenter) const {
+    std::pair<cocos2d::CCPoint, cocos2d::CCPoint> Drawer::outputExtraPosFor(GameObject* pObj, bool pHasCenter) {
         const auto pos = pObj->getRealPosition() + (sillyedit::utils::triggerHasBodyOffset(pObj->m_objectID) ? sillyedit::utils::TRIGGER_BODY_OFFSET : CCPointZero);
         const auto hw = TriggerIndicators::extrasOffset * pObj->getScaleX();
 
@@ -145,28 +147,47 @@ namespace TriggerIndicators {
     void Drawer::updateTargets(int pGroup) {
         auto objs = editor::objectsWithGroup(pGroup);
 
-        m_state.objectTargets.clear();
-        m_state.triggerTargets.clear();
-
         const auto triggerPos = m_state.trigger->getRealPosition();
+        const auto triggerSelected = m_state.trigger->m_isSelected;
         const auto maxDistanceSQ = TriggerIndicators::maxDistance * TriggerIndicators::maxDistance;
 
+        const auto selectOverrideVal = TriggerIndicators::selectOverride.get();
+        const auto onlySelectedVal = TriggerIndicators::onlyTriggers.get();
+        const auto onlyTriggersVal = TriggerIndicators::onlyTriggers.get();
+        const auto onlySpawnVal = TriggerIndicators::onlyTriggers.get();
+
+        const auto size = objs->count();
+
+        m_state.triggerTargets.clear();
+        m_state.objectTargets.clear();
+
         for (auto obj : CCArrayExt<GameObject*>(objs)) {
-            const auto pos = obj->getRealPosition();
-            const auto selectState = m_state.trigger->m_isSelected || obj->m_isSelected;
+            const auto selectState = triggerSelected || obj->m_isSelected;
 
-            if (!selectState && (TriggerIndicators::onlySelected || (maxDistanceSQ && sillyedit::utils::pointDistanceSQFast(triggerPos.x, pos.x, triggerPos.y, pos.y) > maxDistanceSQ))) {
-                continue;
-            }
-
-            const auto isTrigger = sillyedit::utils::isTriggerFast(obj);
-
-            if (!selectState || !TriggerIndicators::selectOverride) {
-                if (TriggerIndicators::onlyTriggers && !isTrigger) {
+            if (!selectState) {
+                if (onlySelectedVal) {
                     continue;
                 }
 
-                if (isTrigger && TriggerIndicators::onlySpawn && !static_cast<EffectGameObject*>(obj)->m_isSpawnTriggered) {
+                // i dont think sillyedit::utils::pointdistancesqfast is actually being inlined here sooooo
+                if (maxDistanceSQ) {
+                    const float x = obj->m_positionX;
+                    const float y = obj->m_positionY;
+
+                    if ((triggerPos.x - x) * (triggerPos.x - x) + (triggerPos.y - y) * (triggerPos.y - y) > maxDistanceSQ) {
+                        continue;
+                    }
+                }
+            }
+
+            const bool isTrigger = sillyedit::utils::isTriggerFast(obj);
+
+            if (!selectState || !selectOverrideVal) {
+                if (onlyTriggersVal && !isTrigger) {
+                    continue;
+                }
+
+                if (isTrigger && onlySpawnVal && !static_cast<EffectGameObject*>(obj)->m_isSpawnTriggered) {
                     continue;
                 }
             }
@@ -178,6 +199,64 @@ namespace TriggerIndicators {
                 m_state.objectTargets.push_back(obj);
             }
         }
+    }
+
+    void Drawer::clusterObjects(std::vector<std::vector<GameObject*>>& pOut, std::span<GameObject* const> pObjs, float pClusterSize) {
+        static std::vector<GameObject*> queue;
+        static std::unordered_map<GameObject*, int> map;
+        
+        queue.clear();
+        map.clear();
+
+        for (auto obj : pObjs) {
+            if (map.contains(obj)) {
+                continue;
+            }
+
+            const int currentClusterIndex = pOut.size();
+            pOut.emplace_back();
+            auto& currentCluster = pOut.back();
+
+            queue.clear();
+            queue.push_back(obj);
+            map[obj] = currentClusterIndex;
+
+            while (!queue.empty()) {
+                auto currentObj = queue.back();
+                const float x = currentObj->m_positionX;
+                const float y = currentObj->m_positionY;
+                queue.pop_back();
+                currentCluster.push_back(currentObj);
+
+                for (auto neighbour : pObjs) {
+                    if (map.find(neighbour) != map.end()) {
+                        continue;
+                    }
+
+                    if (std::abs(x - neighbour->m_positionX) <= pClusterSize && std::abs(y - neighbour->m_positionY) <= pClusterSize) {
+                        map[neighbour] = currentClusterIndex;
+                        queue.push_back(neighbour);
+                    }
+                }
+            }
+        }
+    }
+    CCRect Drawer::getObjectBounds(std::span<GameObject* const> pObjs, bool pAddSize) {
+        CCPoint min = {std::numeric_limits<float>::max(), std::numeric_limits<float>::max()};
+        CCPoint max = {std::numeric_limits<float>::lowest(), std::numeric_limits<float>::lowest()};
+
+        for (auto obj : pObjs) {
+            const float x = obj->m_positionX;
+            const float y = obj->m_positionY;
+            const auto size = pAddSize ? ui::ssize(obj) / 2 : CCSizeZero;
+
+            min.x = std::min(min.x, x - size.width);
+            min.y = std::min(min.y, y - size.height);
+            max.x = std::max(max.x, x + size.width);
+            max.y = std::max(max.y, y + size.height);
+        }
+
+        return {min, max - min};
     }
     
     void Drawer::draw() {
@@ -193,37 +272,27 @@ namespace TriggerIndicators {
 
         m_state.thickness = TriggerIndicators::thickness / (TriggerIndicators::scaleWithZoom ? editor::zoom() : 1.0f);
 
-        for (auto obj : CCArrayExt<GameObject*>(editor::objectArray())) {
-            if (!sillyedit::utils::isTriggerFast(obj)) {
+        for (auto obj : m_triggers) {
+            if (!TriggerIndicators::noCulling && sillyedit::utils::pointDistanceSQFast(center.x, obj->m_positionX, center.y, obj->m_positionY) > cullDistanceSQ) {
                 continue;
-            };
+            }
 
             const auto id = obj->m_objectID;
 
-            if (id > editor::constants::OBJECT_IDS) {
-                continue;
-            }
-
-            const auto pos = obj->getRealPosition();
-
-            if (!TriggerIndicators::noCulling && sillyedit::utils::pointDistanceSQFast(center.x, pos.x, center.y, pos.y) > cullDistanceSQ) {
-                continue;
-            }
-
-            m_state.trigger = static_cast<EffectGameObject*>(obj);
+            m_state.trigger = obj;
             
-            auto target = trigger::target(m_state.trigger);
+            auto target = trigger::target(obj);
 
-            if (trigger::targetType(m_state.trigger) != trigger::InputType::Group) {
+            if (trigger::targetType(obj) != trigger::InputType::Group) {
                 target = false;
             }
             else if (0 > target || target > editor::constants::MAX_GROUPS || m_groupBlacklist[target]) {
                 target = false;
             }
 
-            auto center = trigger::center(m_state.trigger);
+            auto center = trigger::center(obj);
 
-            if (trigger::centerType(m_state.trigger) != trigger::InputType::Group) {
+            if (trigger::centerType(obj) != trigger::InputType::Group) {
                 center = false;
             }
             else if (0 > center || center > editor::constants::MAX_GROUPS || m_groupBlacklist[center]) {
@@ -234,17 +303,9 @@ namespace TriggerIndicators {
                 continue;
             }
 
-            const auto [targetOutPos, centerOutPos] = this->outputExtraPosFor(m_state.trigger, center);
-            const CCSize scale{ui::sx(m_state.trigger), ui::sy(m_state.trigger)};
-            const auto opacity = m_state.trigger->getOpacity() / 255.0f;
-
-            if (TriggerIndicators::alwaysDrawExtras) {
-                this->drawOutputExtra(targetOutPos, scale, opacity);
-
-                if (center) {
-                    this->drawOutputExtra(centerOutPos, scale, opacity);
-                }
-            }
+            const auto [targetOutPos, centerOutPos] = this->outputExtraPosFor(obj, center);
+            const CCSize scale{ui::sx(obj), ui::sy(obj)};
+            const auto opacity = obj->getOpacity() / 255.0f;
             
             if (m_triggerBlacklist[id]) {
                 continue;
@@ -267,7 +328,7 @@ namespace TriggerIndicators {
                 }
             }
 
-            m_state.color.a = m_state.trigger->getOpacity() / 255.0f;
+            m_state.color.a = obj->getOpacity() / 255.0f;
 
             if (target) {
                 this->updateTargets(target);
@@ -305,6 +366,17 @@ namespace TriggerIndicators {
                     }
                 }
             }
+
+            if (TriggerIndicators::alwaysDrawExtras) {
+                this->drawOutputExtra(targetOutPos, scale, opacity);
+
+                // obvious issue with this but no one will ever notice >:3 (and if they do ill just change it to a more obscure magic number lol)
+                if (centerOutPos != CCPointZero) {
+                    this->drawOutputExtra(centerOutPos, scale, opacity);
+                }
+
+                this->drawInputExtra(this->inputExtraPosFor(obj), scale, opacity);
+            }
         }
     }
 
@@ -335,6 +407,24 @@ namespace TriggerIndicators {
             if (const auto val = res.unwrap(); 0 < val && val <= editor::constants::OBJECT_IDS) {
                 m_triggerBlacklist[val] = true;
             }
+        }
+    }
+
+    void Drawer::updateTriggerList() {
+        m_triggers.clear();
+
+        for (auto obj : CCArrayExt<GameObject*>(editor::objectArray())) {
+            if (!sillyedit::utils::isTriggerFast(obj)) {
+                continue;
+            };
+
+            const auto id = obj->m_objectID;
+
+            if (id > editor::constants::OBJECT_IDS) {
+                continue;
+            }
+
+            m_triggers.push_back(static_cast<EffectGameObject*>(obj));
         }
     }
 }

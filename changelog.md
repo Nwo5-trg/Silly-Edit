@@ -4,6 +4,8 @@
 - better easing select
 - context menu
 - trigger type boxes
+- better edit menu
+- trigger indicators
 - feature list in about
 - reset setting button
 - group scroll secondary group modifier
@@ -22,6 +24,7 @@
 - settings popup close button order
 - hook prio again
 - reverted text obj utils to not have multi text edit (in the process making it actually work again lol)
+- a bunch of other stuff i forgot lol
 
 ## v0.1.0-beta.3
 **Added**

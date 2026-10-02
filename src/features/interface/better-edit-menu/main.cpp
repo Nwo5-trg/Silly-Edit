@@ -10,13 +10,13 @@ namespace BetterEditMenu {
             return GD::EditButtonBar::loadFromItems(objects, rows, columns, keepPage);
         }
 
-        GD::EditButtonBar::loadFromItems(objects, 1, columns, keepPage);
+        GD::EditButtonBar::loadFromItems(objects, rows, 1, keepPage);
     }
 
     void Feature::onToggled(bool pEnabled) {
         auto self = editor::ui<BetterEditMenu::EditorUI>();
         auto fields = self->m_fields.self();
-
+        
         editor::updateEditorTabButtons();
     }
 

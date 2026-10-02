@@ -10,11 +10,13 @@ namespace TriggerIndicators {
             float thickness = 0.0f;
             bool isCenter = false;
             EffectGameObject* trigger = nullptr;
+            std::vector<std::vector<GameObject*>> clusterResult;
+
             std::vector<GameObject*> objectTargets;
             std::vector<GameObject*> triggerTargets;
-            std::vector<std::vector<GameObject*>> clusterResult;
         } m_state;
 
+        std::vector<EffectGameObject*> m_triggers;
         std::array<bool, nwo5::editor::constants::MAX_GROUPS + 1> m_groupBlacklist;
         std::array<bool, nwo5::editor::constants::OBJECT_IDS + 1> m_triggerBlacklist;
 
@@ -28,11 +30,15 @@ namespace TriggerIndicators {
 
         void updateTargets(int pGroup);
 
-        cocos2d::CCPoint inputExtraPosFor(GameObject* pObj) const;
-        std::pair<cocos2d::CCPoint, cocos2d::CCPoint> outputExtraPosFor(GameObject* pObj, bool pHasCenter) const;
+        static cocos2d::CCPoint inputExtraPosFor(GameObject* pObj);
+        static std::pair<cocos2d::CCPoint, cocos2d::CCPoint> outputExtraPosFor(GameObject* pObj, bool pHasCenter);
+
+        static void clusterObjects(std::vector<std::vector<GameObject*>>& pOut, std::span<GameObject* const> pObjs, float pClusterSize);
+        static cocos2d::CCRect getObjectBounds(std::span<GameObject* const> pObjs, bool pAddSize);
         
     public:
         void draw();
         void updateBlacklist();
+        void updateTriggerList();
     };
 }

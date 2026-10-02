@@ -78,11 +78,11 @@ namespace sillyedit::utils {
 
     // these help *a lot* btw
     inline constexpr auto localTriggerInfoArray = nwo5::editor::trigger::impl::createTriggerInfoArray();
-    inline bool isTriggerFast(GameObject* pObj) {
+    GEODE_INLINE inline bool isTriggerFast(GameObject* pObj) {
         return pObj->m_classType == GameObjectClassType::Effect && (pObj->m_isTrigger || localTriggerInfoArray[std::min(pObj->m_objectID, nwo5::editor::constants::OBJECT_IDS)].isTrigger());
     }
-    inline float pointDistanceSQFast(float pX1, float pX2, float pY1, float pY2) {
-        return std::abs((pX2 - pX1) * (pX2 - pX1) + (pY2 - pY1) * (pY2 - pY1));
+    GEODE_INLINE inline float pointDistanceSQFast(float pX1, float pX2, float pY1, float pY2) {
+        return (pX2 - pX1) * (pX2 - pX1) + (pY2 - pY1) * (pY2 - pY1);
     }
 
     // remind me to js move this to selection utils or smth cuz its only used there anyway and its dumb and stupod
