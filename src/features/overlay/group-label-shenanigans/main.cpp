@@ -213,11 +213,9 @@ namespace GroupLabelShenanigans {
     }
 
     void Feature::onUpdate() {
-        if (!GroupLabelShenanigans::enabled()) {
-            return;
+        if (GroupLabelShenanigans::enabled()) {
+            editor::layer<GroupLabelShenanigans::LevelEditorLayer>()->updateLabelsInSection(true);
         }
-
-        editor::layer<GroupLabelShenanigans::LevelEditorLayer>()->updateLabelsInSection(true);
     }
 
     void Feature::onSettingChanged(std::string pName, GenericSetting*) {

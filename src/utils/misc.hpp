@@ -84,6 +84,20 @@ namespace sillyedit::utils {
     GEODE_INLINE inline float pointDistanceSQFast(float pX1, float pX2, float pY1, float pY2) {
         return (pX2 - pX1) * (pX2 - pX1) + (pY2 - pY1) * (pY2 - pY1);
     }
+    GEODE_INLINE inline bool canSelectLayerFast(GameObject* pObj, int pCurrentLayer) {
+        if (pCurrentLayer == nwo5::editor::constants::ALL_LAYERS) {
+            return true;
+        }
+
+        if (pObj->m_editorLayer == pCurrentLayer) {
+            return true;
+        }
+        else if (const auto layer2 = pObj->m_editorLayer2; layer2 && layer2 == pCurrentLayer) {
+            return true;
+        }
+
+        return false;
+    }
 
     // remind me to js move this to selection utils or smth cuz its only used there anyway and its dumb and stupod
     CCTextInputNode* findUITextInputs(cocos2d::CCPoint pPos);

@@ -10,7 +10,7 @@ namespace BetterLayers {
             return false;
         }
 
-        this->setTitle("Edit Layer Settings");
+        this->setTitle(fmt::format("Edit Layer ({}) Settings", editor::currentLayer()));
 
         m_settings = pSettings;
 
@@ -73,6 +73,14 @@ namespace BetterLayers {
             .pos(PADDING + BUTTON_SIZE / 2, HEIGHT / 2)
             .toggle(m_settings->getFocusedLayer().has_value() && m_settings->getFocusedLayer().value() == m_layer)
             .parent(m_buttonMenu);
+
+        ui::label(
+            "layer opacity is from 0-255, 0.75 = 191, 0.5 = 127, 0.25 = 63", Font::Chat
+        )
+            .id("label-for-the-children-because-i-dont-wanna-make-the-inputs-convert-from-float-cuz-im-lazy-this-also-pads-out-space-in-the-popup-tho-uwu"_spr)
+            .scaleHeightToFit(10.0f)
+            .layoutAnchor(Anchor::Bottom).layoutAnchorOffsetY(GAP)
+            .parent(m_mainLayer);
 
         return true;
     }
@@ -200,7 +208,7 @@ namespace BetterLayers {
         )
             .id("label-for-the-children-because-i-dont-wanna-make-the-inputs-convert-from-float-cuz-im-lazy-this-also-pads-out-space-in-the-popup-tho-uwu"_spr)
             .scaleHeightToFit(10.0f)
-            .pos(WIDTH / 2, GAP)
+            .layoutAnchor(Anchor::Bottom).layoutAnchorOffsetY(GAP)
             .parent(m_mainLayer);
 
         return true;

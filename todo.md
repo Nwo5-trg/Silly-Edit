@@ -34,6 +34,7 @@
 
 # chores i should get around to sometimes but arent rly important
 - translations mayb ??????? (no)
+- clean up better select all code (this also means renaming the arrow textures to their actual names and not js numbers)
 - stop using the dumb chroma node system
 - reorganize mod.json keybinds to reflect feature order
 - soggy and eri setting button texture
@@ -46,3 +47,4 @@
 - mayb cache keybind enabled settings
 - mayb actually subnamespace shared idk
 - mayb a better system for "if key down" other than a listener + fields
+- update more stuff to properly use layout anchors

@@ -6,7 +6,7 @@ using namespace nwo5::ui::prelude;
 
 namespace TriggerTypeBoxes {
     void LevelEditorLayer::drawTriggerTypeBoxes(GameObject* pObj) {
-        if (pObj->m_classType != GameObjectClassType::Effect || !pObj->isVisible() || pObj->m_isDisabled || pObj->m_greenDebugDraw) {
+        if (pObj->m_classType != GameObjectClassType::Effect || !pObj->isVisible() || pObj->m_isDisabled || pObj->m_greenDebugDraw || pObj->m_objectID == 749) {
             return;
         }
 

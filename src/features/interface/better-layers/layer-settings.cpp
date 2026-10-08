@@ -149,13 +149,16 @@ namespace BetterLayers {
             return pUnmodifiedOpacity;
         }
 
-        if (isLayerHidden(pObj->m_editorLayer) || isLayerHidden(pObj->m_editorLayer2)) {
+        const auto layer = pObj->m_editorLayer;
+        const auto layer2 = pObj->m_editorLayer2;
+
+        if (this->isLayerHidden(layer) || this->isLayerHidden(layer2)) {
             return 0;
         }
         
         float opacity = static_cast<float>(pUnmodifiedOpacity);
         
-        const auto canSelectLayer = object::canSelectLayer(pObj, true);
+        const auto canSelectLayer = sillyedit::utils::canSelectLayerFast(pObj, editor::layer()->m_currentLayer);
 
         // undo robtops thing
         if (!canSelectLayer) {
@@ -165,10 +168,10 @@ namespace BetterLayers {
         std::optional<float> layerOpacity = std::nullopt;
 
         // checking first cuz (i atleast) use editor layer 2 as a way of grouping objs from multiple layers into 1 thing
-        if (const auto layerOpacityRes2 = getLayerOpacity(pObj->m_editorLayer2); pObj->m_editorLayer2 && layerOpacityRes2.has_value()) {
+        if (const auto layerOpacityRes2 = this->getLayerOpacity(layer2); layer2 && layerOpacityRes2.has_value()) {
             layerOpacity = layerOpacityRes2.value();
         }
-        else if (const auto layerOpacityRes = getLayerOpacity(pObj->m_editorLayer); layerOpacityRes.has_value()) {
+        else if (const auto layerOpacityRes = this->getLayerOpacity(layer); layerOpacityRes.has_value()) {
             layerOpacity = layerOpacityRes.value();
         }
 
@@ -176,7 +179,7 @@ namespace BetterLayers {
             opacity = std::clamp(opacity / (255.0f / layerOpacity.value()), 0.0f, 255.0f);
         }
 
-        if (const auto res = getFocusedLayer(); res.has_value() && pObj->m_editorLayer != res.value() && pObj->m_editorLayer2 != res.value()) {
+        if (const auto res = this->getFocusedLayer(); res.has_value() && layer != res.value() && (!layer2 || layer2 != res.value())) {
             return sillyedit::utils::modifyOpacity(opacity, BetterLayers::unfocusedLayerOpacity);
         }
 
