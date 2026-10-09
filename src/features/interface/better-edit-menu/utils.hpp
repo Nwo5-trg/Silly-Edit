@@ -79,6 +79,8 @@ namespace BetterEditMenu {
         
         void position();
 
+        void setVisible(bool pVisible);
+
         static EditMenu* create();
     };
 }

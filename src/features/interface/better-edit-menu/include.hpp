@@ -34,51 +34,51 @@ namespace BetterEditMenu {
     class $setting_category("better-edit-menu-logo.png"_spr, "My impl of an overhauled edit tab menu :3");
 
     inline SillySetting<float> menuGap{
-        "Menu Gap", feature, 5.0f, SettingReload::Editor,
+        "Menu Gap", feature, 5.0f
     };
     inline SillySetting<bool> hideArrowsIfUnused{
-        "Hide Arrows If Unused", feature, false, SettingReload::Editor, "if both arrows are disabled, then hide them"
+        "Hide Arrows If Unused", feature, false, "if both arrows are disabled, then hide them"
     };
     inline SillySetting<bool> noDefaultMoveButtons{
-        "No Default Move Buttons", feature, true, SettingReload::Editor
+        "No Default Move Buttons", feature, true
     };
     inline SillySetting<bool> noDefaultRotateButtons{
-        "No Default Rotate Buttons", feature, true, SettingReload::Editor
+        "No Default Rotate Buttons", feature, true
     };
     inline SillySetting<bool> noDefaultFlipButtons{
-        "No Default Flip Buttons", feature, true, SettingReload::Editor
+        "No Default Flip Buttons", feature, true
     };
     inline SillySetting<float> moveInputDefault{
-        "Move Input Default", feature, 30, {0, std::nullopt}, SettingReload::Editor
+        "Move Input Default", feature, 30, {0, std::nullopt}
     };
     inline SillySetting<std::string> moveShortcut1{
-        "Move Shortcut 1", feature, "1;1/30", SettingReload::Editor, "string is formatted as \"VALUE;OPTIONALLABEL\" if no optional label is provided it will just be set to the value"
+        "Move Shortcut 1", feature, "1;1/30", "string is formatted as \"VALUE;OPTIONALLABEL\" if no optional label is provided it will just be set to the value"
     };
     inline SillySetting<std::string> moveShortcut2{
-        "Move Shortcut 2", feature, "3;1/10", SettingReload::Editor, "string is formatted as \"VALUE;OPTIONALLABEL\" if no optional label is provided it will just be set to the value"
+        "Move Shortcut 2", feature, "3;1/10", "string is formatted as \"VALUE;OPTIONALLABEL\" if no optional label is provided it will just be set to the value"
     };
     inline SillySetting<std::string> moveShortcut3{
-        "Move Shortcut 3", feature, "7.5;1/4", SettingReload::Editor, "string is formatted as \"VALUE;OPTIONALLABEL\" if no optional label is provided it will just be set to the value"
+        "Move Shortcut 3", feature, "7.5;1/4", "string is formatted as \"VALUE;OPTIONALLABEL\" if no optional label is provided it will just be set to the value"
     };
     inline SillySetting<std::string> moveShortcut4{
-        "Move Shortcut 4", feature, "15;1/2", SettingReload::Editor, "string is formatted as \"VALUE;OPTIONALLABEL\" if no optional label is provided it will just be set to the value"
+        "Move Shortcut 4", feature, "15;1/2", "string is formatted as \"VALUE;OPTIONALLABEL\" if no optional label is provided it will just be set to the value"
     };
     inline SillySetting<std::string> moveShortcut5{
-        "Move Shortcut 5", feature, "30;1", SettingReload::Editor, "string is formatted as \"VALUE;OPTIONALLABEL\" if no optional label is provided it will just be set to the value"
+        "Move Shortcut 5", feature, "30;1", "string is formatted as \"VALUE;OPTIONALLABEL\" if no optional label is provided it will just be set to the value"
     };
     inline SillySetting<std::string> moveShortcut6{
-        "Move Shortcut 6", feature, "150;2", SettingReload::Editor, "string is formatted as \"VALUE;OPTIONALLABEL\" if no optional label is provided it will just be set to the value"
+        "Move Shortcut 6", feature, "150;2", "string is formatted as \"VALUE;OPTIONALLABEL\" if no optional label is provided it will just be set to the value"
     };
     inline SillySetting<float> rotationInputDefault{
-        "Rotation Input Default", feature, 90, {0, std::nullopt}, SettingReload::Editor
+        "Rotation Input Default", feature, 90, {0, std::nullopt}
     };
     inline SillySetting<std::string> rotateShortcut1{
-        "Rotate Shortcut 1", feature, "26.56505118;26.5", SettingReload::Editor, "string is formatted as \"VALUE;OPTIONALLABEL\" if no optional label is provided it will just be set to the value"
+        "Rotate Shortcut 1", feature, "26.56505118;26.5", "string is formatted as \"VALUE;OPTIONALLABEL\" if no optional label is provided it will just be set to the value"
     };
     inline SillySetting<std::string> rotateShortcut2{
-        "Rotate Shortcut 2", feature, "45", SettingReload::Editor, "string is formatted as \"VALUE;OPTIONALLABEL\" if no optional label is provided it will just be set to the value"
+        "Rotate Shortcut 2", feature, "45", "string is formatted as \"VALUE;OPTIONALLABEL\" if no optional label is provided it will just be set to the value"
     };
     inline SillySetting<std::string> rotateShortcut3{
-        "Rotate Shortcut 3", feature, "90", SettingReload::Editor, "string is formatted as \"VALUE;OPTIONALLABEL\" if no optional label is provided it will just be set to the value"
+        "Rotate Shortcut 3", feature, "90", "string is formatted as \"VALUE;OPTIONALLABEL\" if no optional label is provided it will just be set to the value"
     };
 }

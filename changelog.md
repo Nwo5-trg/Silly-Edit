@@ -4,6 +4,7 @@
 - better easing select
 - context menu
 - trigger type boxes
+- complete feature list
 - better edit menu
 - trigger indicators
 - feature list in about

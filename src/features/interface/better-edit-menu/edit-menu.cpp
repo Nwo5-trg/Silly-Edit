@@ -1,3 +1,4 @@
+#include <alphalaneous.editortab_api/include/EditorTabAPI.hpp>
 #include <utils/include.hpp>
 #include "include.hpp"
 
@@ -27,6 +28,7 @@ namespace BetterEditMenu {
                 .padding({5.0f, 5.0f, 5.0f, 5.0f})
             )
                 .id("buttons-scroll"_spr);
+                
         m_buttonsScroll->setKeyboardEnabled(false);
         m_buttonsScroll->setOvershoot(BUTTONS_SCROLL_OVERSHOOT);
         m_buttonsScroll->setVerticalScroll(false);
@@ -200,13 +202,13 @@ namespace BetterEditMenu {
                     .id("rotation-buttons-menu"_spr)
                     .children(
                         ui::button(
-                            EditorButtonSprite::createWithSpriteFrameName("rotate-ccw.png"_spr, 0.85f, EditorBaseColor::Green),
+                            EditorButtonSprite::createWithSprite("rotate-ccw.png"_spr, 0.85f, EditorBaseColor::Green),
                             this, menu_selector(EditMenu::onRotationArrow)
                         )
                             .tag(RotationButton::CCW)
                             .scaleToFit(ROTATION_BUTTON_SIZE),
                         ui::button(
-                            EditorButtonSprite::createWithSpriteFrameName("rotate-cw.png"_spr, 0.85f, EditorBaseColor::Green),
+                            EditorButtonSprite::createWithSprite("rotate-cw.png"_spr, 0.85f, EditorBaseColor::Green),
                             this, menu_selector(EditMenu::onRotationArrow)
                         )
                             .tag(RotationButton::CW)
@@ -249,7 +251,7 @@ namespace BetterEditMenu {
             return;
         }
 
-        // parsing input every arrow clcik insteaed of whenever input is updated is dumb but :3c
+        // parsing input every arrow click instead of whenever input is updated is dumb but :3c
         auto res = utils::numFromString<float>(m_moveAmountInput->getString());
 
         if (res.isErr()) {
@@ -505,6 +507,11 @@ namespace BetterEditMenu {
 
         this->updateLayout();
         this->updateArrowButtons();
+    }
+
+    // i was getting a weird bug where it would just show whenever i paused the game no matter what tab i was on so wtv, its dumb but it works
+    void EditMenu::setVisible(bool pVisible) {
+        CCNode::setVisible(pVisible && alpha::editor_tabs::getCurrentTab().unwrapOrDefault() == "edit");
     }
 
     EditMenu* EditMenu::create() {
