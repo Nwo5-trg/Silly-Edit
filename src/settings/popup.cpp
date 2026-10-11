@@ -539,6 +539,12 @@ namespace sillyedit::settings {
                 ? ((ui::h(m_settingsScroll->getContentLayer()) - ui::y(matchedSettingButton)) - ui::sh(matchedSettingButton) / 2 - 5.0f)
                 : 0.0f
         );
+
+        // bandaid fix to nodes occasionally being invisible when seacrhing for some reason
+        // still doesnt fix it rarely scrolling to the wrong place but wtv idec
+        for (auto node : m_settingsScroll->getContentLayer()->getChildrenExt()) {
+            node->setVisible(true);
+        }
     }
 
     void SettingsPopup::onFeatureButton(CCObject* pSender) {
