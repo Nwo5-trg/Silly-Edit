@@ -110,7 +110,8 @@ namespace sillyedit::settings {
         }
     
     public:
-        auto getSetting() const;
+        GenericSetting* getSetting() const;
+        geode::Label* getLabel() const;
 
         virtual void resetSetting() = 0;
     };

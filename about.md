@@ -1,5 +1,5 @@
 # <c-FF9494>s</c><c-FFDB94>i</c><c-DBFF94>l</c><c-94FF94>l</c><c-94FFDB>y</c><c-94DBFF>e</c><c-9494FF>d</c><c-DB94FF>i</c><c-FF94DB>t</c>
-editor mod that adds **over 2 dozen** features all throughout the editor, my best geode project forever <cr>\<3</c>
+silly mod that adds **over 2 dozen** features all throughout the editor, my best geode project forever <cr>\<3</c>
 
 this isnt a sweeping editor overhaul mod, most features are pretty small, but should still make ur life a lil easier
 
@@ -88,7 +88,7 @@ on the bottom right, green button toggles using select filter, blue button toggl
 
 ### Interface
 #### Better Scale
-> ![⚠️](frame:geode.loader/info-warning.png?scale=0.5) <cs>overrides tinkers scale *input*, all other tinker scale modifications work fine tho</c>
+> ![⚠️](frame:geode.loader/info-warning.png?scale=0.5) <cs>with tinkers improved controls enabled, functionality gets limited to only scale shortcuts, custom size/offset work if tinkers scale with zoom is disabled</c>
 
 scale input, but also some other cool stuff like scale/positioning customization and more colorful textures :3
 
@@ -133,7 +133,7 @@ for most people, enabling nofade/noenter/noglow might be enough, but there is fa
 create a json according to [this template](https://github.com/Nwo5-trg/Silly-Edit/blob/main/examples/default-object-options.jsonc) and place it in `[config-dir]/object-options.json`, json allows you to edit object props individually and append object strings
 
 #### Selection Utils
-> ![⚠️](frame:geode.loader/info-warning.png?scale=0.5) <cs>colors might have some quirks with tinker, but nothing too intrusive</c>
+> ![⚠️](frame:geode.loader/info-warning.png?scale=0.5) <cs>colors might have some quirks with tinker, but nothing too breaking</c>
 
 a handful of little selection tweaks !
 - custom grid snap size with a preview of snap position
@@ -212,6 +212,8 @@ right now these are the keybinds included:
 - `n` - toggle ignore damage
 - `j` - toggle object invisible (if you use alpha group, check out general setting "invisible with group")
 - `ctrl+r` - restart playtest
+- `z` - scale control
+- `x` - scale xy control
 
 #### Editor Time
 show a label with how much time youve spent in the editor (kinda like the fps label)

@@ -6,7 +6,13 @@
 #include <utils/include.hpp>
 
 namespace PlaceObjectPreview {
-    class $feature(PlaceObjectPreview, SettingCondition::DesktopOnly) {
+    class $feature(PlaceObjectPreview) {
+        void setup() override {
+            m_data.condition = SettingCondition::DesktopOnly;
+            m_data.incompatMods = TINKER_EDIT_ID;
+            m_data.incompatMessage = "overlapping functionality with tinker";
+        }
+
         void onEditor() override;
         void onUpdate() override;
     } feature;

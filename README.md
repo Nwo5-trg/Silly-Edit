@@ -1,5 +1,5 @@
 # sillyedit
-editor mod that adds over 2 dozen features all throughout the editor, my best geode project forever <cr>\<3</c>
+silly mod that adds **over 2 dozen** features all throughout the editor, my best geode project forever <cr>\<3</c>
 
 this isnt a sweeping editor overhaul mod, most features are pretty small, but should still make ur life a lil easier
 

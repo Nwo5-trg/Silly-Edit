@@ -6,17 +6,9 @@
 using sillyedit::features::FeatureEnum;
 using sillyedit::features::FeatureManager;
 
-#define FEATURE_IMPL_1(pFeature) \
-    inline struct Feature final : public sillyedit::features::FeatureTemplate<FeatureEnum:: pFeature >
-#define FEATURE_IMPL_2(pFeature, pCondition) \
-    inline struct Feature final : public sillyedit::features::FeatureTemplate<FeatureEnum:: pFeature , pCondition >
-#define FEATURE_IMPL_3(pFeature, pCondition, pReload) \
-    inline struct Feature final : public sillyedit::features::FeatureTemplate<FeatureEnum:: pFeature , pCondition , pReload  >
-#define FEATURE_IMPL_4(pFeature, pCondition, pReload, pDefaultEnabled) \
-    inline struct Feature final : public sillyedit::features::FeatureTemplate<FeatureEnum:: pFeature , pCondition , pReload , pDefaultEnabled >
-#define $feature(...) \
+#define $feature(pFeature) \
     featureDummy##__COUNTER__ ; \
-    GEODE_INVOKE(GEODE_CONCAT(FEATURE_IMPL_, GEODE_NUMBER_OF_ARGS(__VA_ARGS__)), __VA_ARGS__)
+    inline struct Feature final : public sillyedit::features::FeatureTemplate<FeatureEnum:: pFeature >
 
 #define $feature_modify(pClass) \
     pClass##Hook##__COUNTER__; \

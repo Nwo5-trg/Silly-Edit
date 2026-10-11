@@ -76,6 +76,8 @@ namespace sillyedit::utils {
     inline constexpr cocos2d::CCPoint TRIGGER_BODY_OFFSET{0.0f, -4.0f};
     bool triggerHasBodyOffset(int pID);
 
+    bool weightedFuzzyMatch(geode::ZStringView pStr, geode::ZStringView pQuery, double pWight, double& pOut);
+
     // these help *a lot* btw
     inline constexpr auto localTriggerInfoArray = nwo5::editor::trigger::impl::createTriggerInfoArray();
     GEODE_INLINE inline bool isTriggerFast(GameObject* pObj) {

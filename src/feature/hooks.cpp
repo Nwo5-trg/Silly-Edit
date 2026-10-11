@@ -1,11 +1,8 @@
 #include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/LevelEditorLayer.hpp>
-#include <nwo5.ui-scaling/include/compat.hpp>
-#include <utils/include.hpp>
 #include "feature-manager.hpp"
 
 using namespace geode::prelude;
-using namespace nwo5::uiscaling::prelude;
 
 class $modify(EditorUI) {
     static void onModify(auto& pSelf) {
@@ -17,19 +14,7 @@ class $modify(EditorUI) {
             return false;
         }
 
-        for (auto [_, feature] : sillyedit::features::FeatureManager::get()->getFeatures()) {
-            feature->onEditor();
-        }
-
-        for (auto [_, feature] : sillyedit::features::FeatureManager::get()->getFeatures()) {
-            feature->onToggled(feature->enabled());
-        }
-
-        this->addEventListener(uiscaling::compat::EditorUI::Changed(), [] (float pScale, auto) {
-            for (auto [_, feature] : sillyedit::features::FeatureManager::get()->getFeatures()) {
-                feature->onUIUpdated(pScale);
-            }
-        });
+        sillyedit::features::FeatureManager::get()->onEditorInit();
         
         return true;
     }
@@ -39,8 +24,6 @@ class $modify(LevelEditorLayer) {
     void updateEditor(float dt) {
         LevelEditorLayer::updateEditor(dt);
 
-        for (auto [_, feature] : sillyedit::features::FeatureManager::get()->getFeatures()) {
-            feature->onUpdate();
-        }
+        sillyedit::features::FeatureManager::get()->onEditorUpdate();
     }
 };

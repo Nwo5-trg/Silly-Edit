@@ -12,12 +12,12 @@ namespace DefaultObjectOptions {
     }
 
     bool ObjectOptions::idHasOptions(int pID) const {
-        return m_options.find(pID) != m_options.end();
+        return pID >= 0 && pID < m_options.size() && m_options[pID].size();
     }
     // starts with ,
     std::string ObjectOptions::getOptionsStringForID(int pID) const {
-        if (const auto it = m_options.find(pID); it != m_options.end()) {
-            return it->second;
+        if (pID >= 0 && pID < m_options.size()) {
+            return m_options[pID];
         }
 
         return "";
@@ -44,7 +44,7 @@ namespace DefaultObjectOptions {
     }
 
     void ObjectOptions::reset() {
-        m_options.clear();
+        m_options.fill("");
         m_simpleOptionsString.clear();
         m_defaultOption = false;
     }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "general.hpp"
+#include "core/general.hpp"
 
 using sillyedit::settings::SillySetting;
 using sillyedit::settings::SettingReload;

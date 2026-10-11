@@ -2,9 +2,16 @@
 
 #include <Geode/modify/EditorUI.hpp>
 #include <feature/include.hpp>
+#include <utils/include.hpp>
 
 namespace HideUI {
-    class $feature(HideUI, SettingCondition::None, SettingReload::Editor) {
+    class $feature(HideUI) {
+        void setup() override {
+            m_data.reload = SettingReload::Editor;
+            m_data.incompatMods = TINKER_EDIT_ID;
+            m_data.incompatMessage = "overlapping functionality with tinker";
+        }
+
         void onEditor() override;
     } feature;
 

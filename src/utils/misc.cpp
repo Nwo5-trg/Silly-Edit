@@ -1,6 +1,9 @@
 #include <settings/include.hpp>
 #include "include.hpp"
 
+#define FTS_FUZZY_MATCH_IMPLEMENTATION
+#include <Geode/external/fts/fts_fuzzy_match.h>
+
 using namespace geode::prelude;
 
 namespace sillyedit::utils {
@@ -45,7 +48,18 @@ namespace sillyedit::utils {
 
         return trigger::is(pID);
     }
-    
+
+    bool weightedFuzzyMatch(geode::ZStringView pStr, geode::ZStringView pQuery, double pWight, double& pOut) {
+        int score;
+
+        if (fts::fuzzy_match(pQuery.c_str(), pStr.c_str(), score)) {
+            pOut = std::max(pOut, score * pWight);
+            
+            return true;
+        }
+        
+        return false;
+    } 
 
     bool modifierDown(const settings::SillySetting<std::string>& pStr) {
         // lollllll

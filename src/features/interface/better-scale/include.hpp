@@ -6,8 +6,12 @@
 #include <utils/include.hpp>
 
 namespace BetterScale {
-    class $feature(BetterScale, SettingCondition::None, SettingReload::Editor) {
-        void onEditor() override;
+    class $feature(BetterScale) {
+        void setup() override {
+            m_data.reload = SettingReload::Editor;
+            m_data.incompatMods = TINKER_EDIT_ID;
+            m_data.incompatMessage = "with tinkers improved controls enabled, functionality gets limited to only scale shortcuts, custom size/offset work if tinkers scale with zoom is disabled";
+        }
     } feature;
 
     class $feature_modify(GJScaleControl) {
@@ -29,7 +33,7 @@ namespace BetterScale {
 
             cocos2d::CCMenu* extrasMenu = nullptr;
 
-            bool betterScaleLoaded = false;
+            bool tinkerLoaded = false;
         };
 
         static constexpr cocos2d::CCSize INPUT_SIZE = {45.0f, 20.0f};

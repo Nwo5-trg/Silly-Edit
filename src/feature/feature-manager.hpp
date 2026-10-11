@@ -6,6 +6,7 @@ namespace sillyedit::features {
     class FeatureManager {
     protected:
         geode::utils::StringMap<FeatureBase*> m_features;
+        std::vector<FeatureBase*> m_queuedFeatures;
     
     public:
         static FeatureManager* get() {
@@ -17,5 +18,10 @@ namespace sillyedit::features {
         const geode::utils::StringMap<FeatureBase*>& getFeatures() const;
 
         void registerFeature(FeatureBase* pFeature);
+ 
+        void onEditorInit();
+        void onEditorUpdate();
+
+        void load();
     };
 }

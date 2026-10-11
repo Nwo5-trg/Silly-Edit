@@ -2,9 +2,15 @@
 
 #include <Geode/modify/EditorUI.hpp>
 #include <feature/include.hpp>
+#include <utils/include.hpp>
 
 namespace SelectionUtils {
     class $feature(SelectionUtils) {
+        void setup() override {
+            m_data.incompatMods = TINKER_EDIT_ID;
+            m_data.incompatMessage = "colors might have some quirks with tinker, but nothing too breaking";
+        }
+
         void onEditor() override;
         void onUpdate() override;
     } feature;

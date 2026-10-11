@@ -1,9 +1,11 @@
 #pragma once
 
+#include <utils/include.hpp>
+
 namespace DefaultObjectOptions {
     class ObjectOptions final {
     protected:
-        std::unordered_map<int, std::string> m_options;
+        std::array<std::string, nwo5::editor::constants::OBJECT_IDS + 1> m_options;
         bool m_defaultOption = false;
 
         std::string m_simpleOptionsString;

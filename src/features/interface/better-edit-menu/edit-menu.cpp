@@ -40,15 +40,15 @@ namespace BetterEditMenu {
         });
 
         m_leftArrow = ui::buttonFrame(ui::frame::BLUE_ARROW, this, menu_selector(EditMenu::onButtonArrow))
-            .id("left-button"_spr)
+            .id("previous-button"_spr)
             .scaleToFit(BUTTONS_SCROLL_ARROW_SIZE)
-            .tag(0);
+            .tag(ButtonScrollArrow::Previous);
 
         m_rightArrow = ui::buttonFrame(ui::frame::BLUE_ARROW, this, menu_selector(EditMenu::onButtonArrow))
-            .id("right-button"_spr)
+            .id("next-button"_spr)
             .scaleToFit(BUTTONS_SCROLL_ARROW_SIZE)
             .flipX()
-            .tag(1);
+            .tag(ButtonScrollArrow::Next);
 
         m_buttonsMenu = ui::menu(ui::row()
             .alignment(AxisAlignment::Center)
@@ -340,7 +340,7 @@ namespace BetterEditMenu {
     void EditMenu::onButtonArrow(CCObject* pSender) {
         const auto scrollX = m_buttonsScroll->getScrollPoint().x;
 
-        if (pSender->getTag()) {
+        if (pSender->getTag() == ButtonScrollArrow::Next) {
             m_buttonsScroll->setScrollX(scrollX + ui::w(m_buttonsScroll), true);
         }
         else {

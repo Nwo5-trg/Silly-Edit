@@ -1,3 +1,22 @@
+## v0.1.0-beta.5
+**Added**
+
+- settings search
+- incompat warnings
+- moved scale/scale xy keybinds to silly keybinds
+- more popup customization
+
+**Fixed**
+
+- context menu spacers
+- crash with better layers
+- dumb way of doing things with default object options
+- better scale with tinker
+
+**Internal**
+
+- more refactoring lol (this time to the feature system, feature metadata is now a bit cleaner)
+
 ## v0.1.0-beta.4
 **Added**
 

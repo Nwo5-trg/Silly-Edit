@@ -8,7 +8,7 @@ namespace ZoomInput {
     class $feature(ZoomInput) {
         void onEditor() override;
         void onToggled(bool pEnabled) override;
-        void onUIUpdated(float pScale) override;
+        void onUpdate() override;
     } feature;
 
     inline constexpr cocos2d::CCSize BASE_ZOOM_INPUT_SIZE = {20.0f, 10.0f};

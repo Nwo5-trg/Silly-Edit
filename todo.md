@@ -1,13 +1,4 @@
-# things i need to do before index release
-7. cross platform
-    - test on windows
-    - get other ppl to test on mobile :pray:
-
-8. release ???????????????????
-
-
 # things i need to do before full release
-- search settings
 - finish trigger ui feature
 - make a startpos disabled extra in group label shenanigans
 - make paste button clickable with copy obj strings if u have an obj string in ur clipboard
@@ -15,30 +6,28 @@
 - add compat feature in core that lets you open ui scale/better trail settings
 - a btn to copy particle string to clipboard
 - make sure everything disables in the best way possible
-- add better move menu
 - double click to edit object (shift to edit group)
 - duration and rate sliders/inputs in easing preview
 - file path settings button
+- add compat warnings in game not just in about
 - make group label shenanigans atleast support p1/p2/c for advanced follow
-- make the settings popup close button have a little faded black square background
-- give settings scroll more leeway to scroll down if possible so close button doesnt potentially block anything
-- instead of using \n in the names of settings, use geode label in settings buttons and make them wrap
 - add the custom filters system in whatever way i eventually decide
 - create gradient with selection button (or if nothings selected create a square of objects)
-- get off my ass and reverse engineer so i dont have to create objects twice for default object options
 
-# chores i should get around to sometimes but arent rly important
+# things i can do whenever
+- popup to show all z layers (or editor layers) in selection and let you change them individually (refer to shadys dms)
+- port over everything to geode button lol (keep separate functions js call them in the lambda callback)
 - translations mayb ??????? (no)
 - clean up better select all code (this also means renaming the arrow textures to their actual names and not js numbers)
 - stop using the dumb chroma node system
 - reorganize mod.json keybinds to reflect feature order
 - soggy and eri setting button texture
-- instead of dumb workaround for hiding setting buttons, override setvisible and do the content size and children hiding there
-- make default object options use an array of max_object_id + 1 instead of unordered map
-- random shape themes/custom color themes for settings popup (this also means properly scaling sidebar)
 - refactor whatever the fuck is going on in ruler
 - mayb some uniform system for select filters throughout the mod cuz a few features use that alrdy
 - mayb cache keybind enabled settings
 - mayb actually subnamespace shared idk
 - mayb a better system for "if key down" other than a listener + fields
 - update more stuff to properly use layout anchors
+
+# porting to 2.209
+in my hacks to make keybinds popup work, i should change cclabelbmfont to geode label cuz it will be changed in geode ui byy then

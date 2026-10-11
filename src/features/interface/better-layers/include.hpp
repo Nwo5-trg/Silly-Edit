@@ -6,7 +6,11 @@
 #include "shared.hpp"
 
 namespace BetterLayers {
-    class $feature(BetterLayers, SettingCondition::None, SettingReload::Editor) {
+    class $feature(BetterLayers) {
+        void setup() override {
+            m_data.reload = SettingReload::Editor;
+        }
+
         void onEditor() override;
         void onUIUpdated(float pScale) override;
     } feature;

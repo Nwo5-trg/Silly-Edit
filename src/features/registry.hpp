@@ -9,6 +9,7 @@
 #define SILLYEDIT_FEATURE_LIST \
     TITLE(Core) \
         FEATURE(General) \
+        FEATURE(Popup) \
     TITLE(Tools) \
         FEATURE(Ruler) \
         FEATURE(FloodFill) \

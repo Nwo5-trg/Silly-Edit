@@ -80,5 +80,26 @@ namespace SillyKeybinds {
             editor::ui()->m_playtestStopBtn->activate();
             editor::ui()->m_playtestBtn->activate();
         });
+
+        feature.registerKeybind<"activate-scale-control">([self] (bool pDown, bool) {
+            if (pDown && !selection::empty()) {
+                if (self->m_scaleControl && self->m_scaleControl->isVisible() && self->m_scaleControl->m_scaleLabel->isVisible()) {
+                    self->deactivateScaleControl();
+                }
+                else {
+                    editor::activateScaleControl(false);
+                }
+            }
+        });
+        feature.registerKeybind<"activate-scale-xy-control">([self] (bool pDown, bool) {
+            if (pDown && !selection::empty()) {
+                if (self->m_scaleControl && self->m_scaleControl->isVisible() && !self->m_scaleControl->m_scaleLabel->isVisible()) {
+                    self->deactivateScaleControl();
+                }
+                else {
+                    editor::activateScaleControl(true);
+                }
+            }
+        });
     }
 }

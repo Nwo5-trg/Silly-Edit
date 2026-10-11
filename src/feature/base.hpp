@@ -5,37 +5,41 @@
 namespace sillyedit::features {
     class FeatureBase {
     protected:
-        std::string m_id;
-        sillyedit::settings::SillySetting<bool>* m_enabled;
+        struct Data {
+            sillyedit::settings::SettingCondition condition = sillyedit::settings::SettingCondition::None;
+            sillyedit::settings::SettingReload reload = sillyedit::settings::SettingReload::None;
+            bool defaultEnabled = true;
+            std::string incompatMessage;
+            // we get a lil silly with our syntax sugar around here
+            struct IncompatibleModsList{
+                std::vector<std::string> list;
 
+                IncompatibleModsList() = default;
+                IncompatibleModsList(std::string pMod) {
+                    list.push_back(std::move(pMod));
+                }
+                IncompatibleModsList(std::initializer_list<std::string> pMods) {
+                    list = pMods;
+                }
+            }incompatMods;
+            
+            bool hasIncompats() const {
+                return incompatMods.list.size();
+            }
+        } m_data;
+
+        std::string m_id;
+        sillyedit::settings::SillySetting<bool>* m_enabled = nullptr;
         std::unordered_set<std::string> m_disabledBy;
 
-    public:
-        FeatureBase(FeatureEnum pEnum);
-
-        // lol
-        operator std::string_view() const {
-            return m_id;
-        }
-        operator const std::string&() const {
-            return m_id;
-        }
+        virtual void setup();
 
         virtual void onEditor();
-
+        virtual void onUpdate();
         /// also activates right after onEditor
         virtual void onToggled(bool pEnabled);
-
-        virtual void onUpdate();
-        virtual void onSettingChanged(std::string pName, nwo5::settings::GenericSetting* pSetting);
-
         virtual void onUIUpdated(float pScale);
-
-        geode::ZStringView id() const;
-
-        void setEnabled(bool pEnabled, geode::Mod* pMod);
-        bool enabled() const;
-        bool forceDisabled() const;
+        virtual void onSettingChanged(std::string pName, nwo5::settings::GenericSetting* pSetting);
 
         /// listen to keybind, callback doesnt activate if feature or feature keybinds disabled
         template<geode::utils::string::ConstexprString Keybind, typename Callback>
@@ -49,32 +53,36 @@ namespace sillyedit::features {
                 }
             }, pPriority);
         }
+
+        void init();
+
+        friend class FeatureManager;
+    public:
+        FeatureBase(FeatureEnum pEnum);
+        ~FeatureBase();
+
+        // lol
+        operator std::string_view() const {
+            return m_id;
+        }
+        operator const std::string&() const {
+            return m_id;
+        }
+
+        geode::ZStringView id() const;
+        geode::ZStringView keybindsEnabledKey() const;
+        const Data& data() const;
+
+        void setEnabled(bool pEnabled, geode::Mod* pMod);
+        bool enabled() const;
+        bool forceDisabled() const;
     };
 
     // macro shenanigans so instead of constructor args i just need to pass template params
-    template<FeatureEnum Enum, sillyedit::settings::SettingCondition Condition = sillyedit::settings::SettingCondition::None, sillyedit::settings::SettingReload Reload = sillyedit::settings::SettingReload::None,  bool DefaultEnabled = true>
+    template<FeatureEnum Enum>
     class FeatureTemplate : public FeatureBase {
     protected:
         FeatureTemplate()
-            : FeatureBase(Enum) 
-        {
-            // technically i could just leak the setting and do this in featurebase constuctor, but this works too !!!
-            static sillyedit::settings::SillySetting<bool> enabled{"Enabled", m_id, DefaultEnabled, Reload, Condition};
-            m_enabled = &enabled;
-
-            nwo5::settings::listenForAllSavedSettingChanges([this] (std::string_view pKey, GenericSetting* pSetting) {
-                if (!GameManager::get()->m_levelEditorLayer) {
-                    return;
-                }
-
-                const auto name = pSetting->name();
-                
-                this->onSettingChanged(name, pSetting);
-
-                if (name == "Enabled") {
-                    this->onToggled(this->enabled());
-                }
-            }, m_id).leak();
-        }
+            : FeatureBase(Enum) {}
     };
 }

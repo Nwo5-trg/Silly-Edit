@@ -4,7 +4,11 @@
 #include <feature/include.hpp>
 
 namespace ObjectTabIcons {
-    class $feature(ObjectTabIcons, SettingCondition::None, SettingReload::Editor) {
+    class $feature(ObjectTabIcons) {
+        void setup() override {
+            m_data.reload = SettingReload::Editor;
+        }
+
         void onEditor() override;
     } feature;
 

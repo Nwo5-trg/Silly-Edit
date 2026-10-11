@@ -3,7 +3,11 @@
 #include <feature/include.hpp>
 
 namespace ScrollGroups {
-    class $feature(ScrollGroups, SettingCondition::DesktopOnly) {
+    class $feature(ScrollGroups) {
+        void setup() override {
+            m_data.condition = SettingCondition::DesktopOnly;
+        }
+
         void onEditor() override;
     } feature;
 

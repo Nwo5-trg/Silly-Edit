@@ -14,7 +14,8 @@ namespace sillyedit::settings {
 
         Setup(this)
             .id("{}-setting"_spr, pSetting->key())
-            .size(SIZE);
+            .size(SIZE)
+            .anchor(Anchor::Center);
 
         m_label = ui::label(m_setting->name(), Font::Default)
             .id("label"_spr)
@@ -82,8 +83,12 @@ namespace sillyedit::settings {
     void SettingButtonBase::onReset(CCObject*) {
         this->resetSetting();
     }
-    auto SettingButtonBase::getSetting() const {
+
+    GenericSetting* SettingButtonBase::getSetting() const {
         return m_setting;
+    }
+    Label* SettingButtonBase::getLabel() const {
+        return m_label;
     }
 
     bool NumberSettingButtonBase::init(GenericSetting* pSetting) {

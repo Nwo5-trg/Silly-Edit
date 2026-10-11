@@ -1,20 +1,17 @@
-#include <utils/include.hpp>
 #include "include.hpp"
 
 using namespace geode::prelude;
 
 namespace DefaultObjectOptions {
     GameObject* LevelEditorLayer::createObject(int key, CCPoint position, bool noUndo) {
-        auto ret = GD::LevelEditorLayer::createObject(key, position, noUndo);
-
         if (!DefaultObjectOptions::enabled() || !sillyedit::utils::shouldApplyCustomPlacedObjectOptions()) {
-            return ret;
+            return GD::LevelEditorLayer::createObject(key, position, noUndo);
         }
 
         const auto& options = m_fields->options;
 
         auto objectString = fmt::format(
-            "{}{}", ret->getSaveString(this), options.getSimpleOptionsString()
+            "1,{},2,{},3,{}{}", key, position.x, position.y + editor::constants::OBJECT_STRING_POSITION_OFFSET.y, options.getSimpleOptionsString()
         );
         
         if (DefaultObjectOptions::useJSON) {
@@ -29,24 +26,27 @@ namespace DefaultObjectOptions {
         if (auto i = objectString.find(';'); i != std::string::npos) {
             objectString = objectString.substr(0, i);
         }
-        
-        // our father
-        // who art in heaven
-        // hallowed be thy name
-        // thy kingdom come
-        // thy will be done
-        // on earth as it is in heaven
-        // give us this day or daily bread
-        // and forgive us our trespasses
-        // as we forgive those who trespass against us
-        // and lead us not into temptation
-        // but deliver us from evil
-        // lord forgive me for i have sinned
-        object::remove(ret);
 
-        return static_cast<GameObject*>(
-            this->createObjectsFromString(objectString, noUndo, true)->firstObject()
-        );
+        auto obj = static_cast<GameObject*>(this->createObjectsFromString(objectString, noUndo, true)->firstObject());
+
+        if (!obj) {
+            return nullptr;
+        }
+
+        // for some reason some of the effectgameobject setup stuff that is set in init isnt being set with createobjectsfromstring
+        // (but also some other stuff in init like classtype is being set ???? im so fucking confused)
+        // meaning triggers dont get place with a default m_duration = 0.5f and stuff, so im just gonna reimplement that here
+
+        if (obj->m_classType == GameObjectClassType::Effect) {
+            auto trigger = static_cast<EffectGameObject*>(obj);
+
+            trigger->m_bUnkBool2 = false;
+            trigger->m_triggerTargetColor = ccColor3B{255, 255, 255};
+            trigger->m_duration = 0.5f;
+            trigger->m_legacyHSV = true;
+        }
+        
+        return obj;
     }
 
     

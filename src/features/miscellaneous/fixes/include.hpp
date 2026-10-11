@@ -5,9 +5,15 @@
 #include <Geode/modify/PlayerObject.hpp>
 #include <Geode/modify/EditorPauseLayer.hpp>
 #include <feature/include.hpp>
+#include <utils/include.hpp>
 
 namespace Fixes {
-    class $feature(Fixes) {} feature;
+    class $feature(Fixes) {
+        void setup() override {
+            m_data.incompatMods = TINKER_EDIT_ID;
+            m_data.incompatMessage = "some of these are also functionality in tinker but they should work fine together";
+        }
+    } feature;
 
     class $feature_modify(EditorUI) {
         void selectObject(GameObject* object, bool ignoreFilter);

@@ -67,6 +67,10 @@ namespace ContextMenu {
 
         for (auto option : pOptions) {
             if (option->type == Option::Type::Spacer) {
+                if (!m_optionsMenu->getChildrenCount() || m_optionsMenu->getChildrenExt().back()->getTag() == SPACER_TAG) {
+                    continue;
+                }
+                
                 auto spacer = *ui::nineSlice("square02b_001.png")
                     .size(ui::w(m_optionsMenu) - PADDING, SPACER_HEIGHT)
                     .color(Col::LightGray)

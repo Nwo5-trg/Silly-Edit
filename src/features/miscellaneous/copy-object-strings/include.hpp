@@ -2,9 +2,16 @@
 
 #include <Geode/modify/EditorUI.hpp>
 #include <feature/include.hpp>
+#include <utils/include.hpp>
 
 namespace CopyObjectStrings {
-    class $feature(CopyObjectStrings, SettingCondition::None, SettingReload::None, false) {
+    class $feature(CopyObjectStrings) {
+        void setup() override {
+            m_data.defaultEnabled = false;
+            m_data.incompatMods = TINKER_EDIT_ID;
+            m_data.incompatMessage = "disables tinkers hooks >w<";
+        }
+
         void onToggled(bool pEnabled) override;
     } feature;
 

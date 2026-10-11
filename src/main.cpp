@@ -1,6 +1,9 @@
 #include <Geode/modify/LevelEditorLayer.hpp>
 #include <utils/include.hpp>
+#include <feature/include.hpp>
 #include <settings/include.hpp>
+// i dont wanna have to rebuild the whole project if i change a popup setting so im js including it in what i need
+#include <settings/core/popup.hpp>
 
 using namespace geode::prelude;
 
@@ -38,3 +41,8 @@ class $modify(LevelEditorLayer) {
         return true;
     }
 };
+
+$on_mod(Loaded) {  
+    FeatureManager::get()->load();
+    SettingsManager::get()->load();
+}

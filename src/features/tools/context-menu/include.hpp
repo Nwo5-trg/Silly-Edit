@@ -5,7 +5,11 @@
 #include "utils.hpp"
 
 namespace ContextMenu {
-    class $feature(ContextMenu, SettingCondition::DesktopOnly) {
+    class $feature(ContextMenu) {
+        void setup() override {
+            m_data.condition = SettingCondition::DesktopOnly;
+        }
+
         void onEditor() override;
     } feature;
 

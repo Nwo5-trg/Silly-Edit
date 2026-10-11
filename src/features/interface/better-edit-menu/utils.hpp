@@ -58,6 +58,10 @@ namespace BetterEditMenu {
             X,
             Y
         };
+        enum ButtonScrollArrow {
+            Previous,
+            Next
+        };
 
         bool init();
 

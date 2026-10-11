@@ -123,7 +123,8 @@ namespace ZoomInput {
             .addTo(self->m_uiItems);
     }
 
-    void Feature::onUIUpdated(float pScale) {
+    void Feature::onUpdate() {
+        // just makes things easier cuz tinker forces slider postion
         editor::ui<ZoomInput::EditorUI>()->updateZoomContainer();
     }
 }
