@@ -40,7 +40,7 @@
     },
     "incompatibilities": {
         "hjfod.betteredit": {
-            "version": "*",
+            "version": ">=6.0.0",
             "breaking": false
         }
     },
