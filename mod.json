@@ -1,5 +1,5 @@
 {
-    "geode": "5.9.0",
+    "geode": "5.11.1",
     "gd": {
         "win": "2.2081",
         "android": "2.2081",
@@ -8,7 +8,7 @@
     },
     "id": "nwo5.sillyedit",
     "name": "sillyedit",
-    "version": "v0.1.0-beta.7",
+    "version": "v0.1.0-beta.8",
     "developer": "Nwo5",
     "description": "betteredits adopted little sister est. 2.209",
     "links": {

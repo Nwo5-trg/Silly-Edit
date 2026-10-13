@@ -1,3 +1,12 @@
+## v0.1.0-beta.8
+**Added**
+
+- bumped geode version
+
+**Fixed**
+
+- crash when selecting objs prolly
+
 ## v0.1.0-beta.7
 **Added**
 

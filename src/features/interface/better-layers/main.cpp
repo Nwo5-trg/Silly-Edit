@@ -115,9 +115,9 @@ namespace BetterLayers {
             return false;
         }
 
-        auto fields = m_fields.self();
+        auto settings = sillyedit::shared::getLayerSettingsPtr();
 
-        if (!fields->settings) {
+        if (!settings) {
             return true;
         }
 
@@ -125,12 +125,12 @@ namespace BetterLayers {
 
         if (BetterLayers::unselectableUnfocusedLayers || BetterLayers::unselectableHiddenLayers) {
             if (BetterLayers::unselectableUnfocusedLayers) {
-                if (auto res = fields->settings->getFocusedLayer(); res.has_value() && object->m_editorLayer != res.value() && object->m_editorLayer2 != res.value()) {
+                if (auto res = settings->getFocusedLayer(); res.has_value() && object->m_editorLayer != res.value() && object->m_editorLayer2 != res.value()) {
                     canSelect = false;
                 }
             }
             if (BetterLayers::unselectableHiddenLayers) {
-                canSelect = !fields->settings->isLayerHidden(object->m_editorLayer) && !fields->settings->isLayerHidden(object->m_editorLayer2);
+                canSelect = !settings->isLayerHidden(object->m_editorLayer) && !settings->isLayerHidden(object->m_editorLayer2);
             }
         }
 
@@ -146,9 +146,9 @@ namespace BetterLayers {
             return GD::EditorUI::selectObjects(objects, ignoreFilter);
         }
         
-        auto fields = m_fields.self();
+        auto settings = sillyedit::shared::getLayerSettingsPtr();
 
-        if (!fields->settings) {
+        if (!settings) {
             return GD::EditorUI::selectObjects(objects, ignoreFilter);
         }
 
@@ -160,12 +160,12 @@ namespace BetterLayers {
             }
             
             if (BetterLayers::unselectableUnfocusedLayers) {
-                if (auto res = fields->settings->getFocusedLayer(); res.has_value() && obj->m_editorLayer != res.value() && obj->m_editorLayer2 != res.value()) {
+                if (auto res = settings->getFocusedLayer(); res.has_value() && obj->m_editorLayer != res.value() && obj->m_editorLayer2 != res.value()) {
                     continue;
                 }
             }
             if (BetterLayers::unselectableHiddenLayers) {
-                if (fields->settings->isLayerHidden(obj->m_editorLayer) || fields->settings->isLayerHidden(obj->m_editorLayer2)) {
+                if (settings->isLayerHidden(obj->m_editorLayer) || settings->isLayerHidden(obj->m_editorLayer2)) {
                     continue;
                 }
             }
