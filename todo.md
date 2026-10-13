@@ -30,3 +30,6 @@
 
 # porting to 2.209
 - in my hacks to make keybinds popup work, i should change cclabelbmfont to geode label cuz it will be changed in geode ui byy then
+- port flood fill and ruler to new editor tab thingy ill make
+- add view tab buttons for trigger indicators
+- for editor position bar, make sure to change my code to match whatever shit robtop does with custom keybinds

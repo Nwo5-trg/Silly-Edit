@@ -78,6 +78,7 @@ namespace ZoomInput {
                 self->m_uiItems->removeObject(fields->zoomContainer);
                 fields->zoomContainer->removeMeAndCleanup();
                 fields->zoomContainer = nullptr;
+                fields->zoomInput = nullptr;
             }
 
             return;

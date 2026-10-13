@@ -241,6 +241,10 @@ namespace sillyedit::settings {
                     continue;
                 }
 
+                if (setting->name() == "Enabled") {
+                    settingButton->setZOrder(-1);
+                }
+
                 entry.buttons.push_back(settingButton);
             }
 
@@ -418,7 +422,7 @@ namespace sillyedit::settings {
 
         for (auto node : m_settingsScroll->getContentLayer()->getChildrenExt().toVector()) {
             // so i dont remove the dummy node letting me scroll further
-            if (!node->getZOrder()) {
+            if (node->getZOrder() != 1) {
                 m_settingsScroll->removeChild(node, true);
             }
         }

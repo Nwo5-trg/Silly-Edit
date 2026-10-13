@@ -1,3 +1,10 @@
+## v0.1.0-beta.9
+**Fixed**
+
+- enabled toggles on features appearing at the end of the settings list instead of the start
+- description cuz i didnt expect to actually release this in 2.2081
+- zoom input not disabling properly leading to dereffing null on editor zoom :fire:
+
 ## v0.1.0-beta.8
 **Added**
 
