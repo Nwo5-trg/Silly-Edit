@@ -78,7 +78,7 @@ namespace EasingPreview {
                 returnAction = CCMoveTo::create(0.0f, {(SPRITE_SIZE + PADDING) / 2, SIZE.height / 2});
             break; }
             case PreviewType::Rotate: {
-                m_sprite->setPosition(m_drawnode->getPosition());
+                m_sprite->setPosition(ui::pos(m_drawnode));
 
                 action = GameToolbox::getEasedAction(
                     CCRotateBy::create(EasingPreview::animationDuration, 360.0f),
@@ -86,7 +86,7 @@ namespace EasingPreview {
                 );
             break; }
             case PreviewType::Scale: {
-                m_sprite->setPosition(m_drawnode->getPosition());
+                m_sprite->setPosition(ui::pos(m_drawnode));
                 
                 action = GameToolbox::getEasedAction(
                     CCScaleTo::create(EasingPreview::animationDuration, SIZE.height / SPRITE_SIZE - PADDING),
@@ -127,7 +127,7 @@ namespace EasingPreview {
         m_drawnode->clear();
     
         std::optional<CCPoint> last;
-        for (size_t i = 0; i < EasingPreview::graphDetail + 1; i++) {
+        for (int i = 0; i < EasingPreview::graphDetail + 1; i++) {
             const auto t = static_cast<float>(i) / EasingPreview::graphDetail;
             const CCPoint pos{-ui::size(m_drawnode) / 2 + ui::size(m_drawnode) * CCPoint{t, misc::ease(m_easing, t, m_exponent)}};
 
@@ -144,10 +144,6 @@ namespace EasingPreview {
             
             last = pos;
         }
-
-        // const auto t = std::fmod(m_start.elapsed().seconds<float>() / EasingPreview::animationDuration, 1.0f);
-
-        // m_dot->setPosition(ui::pos(m_drawnode) - ui::size(m_drawnode) / 2 + ui::size(m_drawnode) * CCPoint{t, misc::ease(m_easing, t, m_exponent)});
     }
 
     void EasingButton::setGraphMode(bool pEnabled) {

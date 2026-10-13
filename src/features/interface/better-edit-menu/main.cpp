@@ -137,8 +137,10 @@ namespace BetterEditMenu {
                 .addTo(self->m_uiItems);
         }
         else if (fields->editMenu) {
+            self->m_uiItems->removeObject(fields->editMenu);
             fields->editMenu->removeMeAndCleanup();
             fields->editMenu = nullptr;
+            
             self->m_editButtonBar->setVisible(alpha::editor_tabs::getCurrentTab().unwrapOrDefault() == "edit");
         }
         

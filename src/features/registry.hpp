@@ -18,6 +18,7 @@
         FEATURE(BetterSelectAll) \
     TITLE(Interface) \
         FEATURE(BetterScale) \
+        FEATURE(EditorPositionBar) \
         FEATURE(BetterLayers) \
         FEATURE(ObjectTabIcons) \
         FEATURE(BetterEditMenu) \

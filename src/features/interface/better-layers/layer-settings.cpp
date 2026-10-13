@@ -84,7 +84,7 @@ namespace BetterLayers {
             levelObj["opacity"] = m_defaultOpacity.value();
         } 
 
-        for (size_t i = 0; i < m_layerMap.size(); i++) {
+        for (int i = 0; i < m_layerMap.size(); i++) {
             const auto& state = m_layerMap[i];
 
             if (!state.hidden && !state.opacity.has_value()) {

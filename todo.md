@@ -23,6 +23,7 @@
 - reorganize mod.json keybinds to reflect feature order
 - soggy and eri setting button texture
 - refactor whatever the fuck is going on in ruler
+- make easing buttons inheret from geode button set their id inside easing popup not in init
 - mayb some uniform system for select filters throughout the mod cuz a few features use that alrdy
 - mayb cache keybind enabled settings
 - mayb actually subnamespace shared idk

@@ -12,17 +12,6 @@ namespace ZoomInput {
         }
     }
 
-    void EditorUI::updateZoomContainer() {
-        if (auto container = m_fields->zoomContainer) {
-            Setup(container)
-                .scale(m_positionSlider->getScale() * ZoomInput::zoomInputScale)
-                .pos(
-                    ZoomInput::centered ? ui::winWidth() / 2 : ui::x(m_positionSlider),
-                    ui::y(m_positionSlider) + (ZoomInput::zoomInputOffset * m_positionSlider->getScale())
-                ); 
-        }
-    }
-
     void EditorUI::onZoomInputButton(CCObject*) {
         const auto val = utils::numFromString<float>(m_fields->zoomInput->getString()).unwrapOr(1.0f);
 
@@ -89,6 +78,7 @@ namespace ZoomInput {
             if (fields->zoomContainer) {
                 self->m_uiItems->removeObject(fields->zoomContainer);
                 fields->zoomContainer->removeMeAndCleanup();
+                fields->zoomContainer = nullptr;
             }
 
             return;
@@ -124,7 +114,26 @@ namespace ZoomInput {
     }
 
     void Feature::onUpdate() {
-        // just makes things easier cuz tinker forces slider postion
-        editor::ui<ZoomInput::EditorUI>()->updateZoomContainer();
+        if (!ZoomInput::enabled()) {
+            return;
+        }
+
+        auto self = editor::ui<ZoomInput::EditorUI>();
+        auto fields = self->m_fields.self();
+
+        if (!fields->zoomContainer) {
+            return;
+        }
+
+        auto positionBarMenu = self->getChildByID("position-bar-menu"_spr);
+
+        const auto scale = self->m_positionSlider->getScale();
+        const auto pos = (positionBarMenu && positionBarMenu->getChildrenCount())
+            ? ui::pos(positionBarMenu) - CCPoint{0.0f, ui::sh(positionBarMenu)}
+            : ui::pos(self->m_positionSlider) - CCPoint{0.0f, ui::sh(self->m_positionSlider) / 2};
+
+        Setup(fields->zoomContainer)
+            .scale(scale * ZoomInput::scale)
+            .pos(pos.x, pos.y + (ZoomInput::offset * scale)); 
     }
 }

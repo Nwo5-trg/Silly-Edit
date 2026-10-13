@@ -25,7 +25,7 @@ namespace EasingPreview {
             .layoutAnchor(Anchor::Bottom).layoutAnchorOffsetY(PADDING / 2)
             .parent(m_mainLayer);
 
-        for (size_t i = 0; i < 19 + 1; i++) {
+        for (int i = 0; i < 19 + 1; i++) {
             const auto toggleButton = i == 19;
 
             const auto str = toggleButton ? "Toggle Graph" : std::string{GameToolbox::easeToText(i)};

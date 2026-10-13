@@ -1,3 +1,12 @@
+## v0.1.0-beta.6
+**Added**
+
+- editor position bar
+
+**Fixed**
+
+- some potentially unsafe shenanigans with better edit menu/move menu
+
 ## v0.1.0-beta.5
 **Added**
 
