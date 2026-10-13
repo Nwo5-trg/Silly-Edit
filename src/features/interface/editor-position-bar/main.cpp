@@ -77,7 +77,7 @@ namespace EditorPositionBar {
             return;
         }
 
-        const std::vector savedPositions{editor::layer()->m_savedPositions};
+        const std::vector savedPositions(editor::layer()->m_savedPositions.begin(), editor::layer()->m_savedPositions.end());
 
         if (!fields->lastSavedPositions.has_value() || fields->lastSavedPositions.value() != savedPositions) {
             if (!fields->lastSavedPositions.has_value()) {
