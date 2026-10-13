@@ -77,17 +77,19 @@ namespace EditorPositionBar {
             return;
         }
 
-        if (!fields->lastSavedPositions.has_value() || fields->lastSavedPositions.value() != editor::layer()->m_savedPositions) {
+        const std::vector savedPositions{editor::layer()->m_savedPositions};
+
+        if (!fields->lastSavedPositions.has_value() || fields->lastSavedPositions.value() != savedPositions) {
             if (!fields->lastSavedPositions.has_value()) {
                 fields->lastSavedPositions = std::vector<CCPoint>{};
 
                 fields->lastSavedPositions.value().resize(
-                    editor::layer()->m_savedPositions.size(), CCPoint{std::numeric_limits<float>::max(), std::numeric_limits<float>::max()}
+                    savedPositions.size(), CCPoint{std::numeric_limits<float>::max(), std::numeric_limits<float>::max()}
                 );
             }
 
-            for (int i = 0; i < editor::layer()->m_savedPositions.size(); i++) {
-                const auto pos = editor::layer()->m_savedPositions[i];
+            for (int i = 0; i < savedPositions.size(); i++) {
+                const auto pos = savedPositions[i];
                 auto button = fields->positionBarMenu->getChildByTag(i);
 
                 if (pos == CCPointZero) {
@@ -105,7 +107,7 @@ namespace EditorPositionBar {
 
             fields->positionBarMenu->updateLayout();
 
-            fields->lastSavedPositions = editor::layer()->m_savedPositions;
+            fields->lastSavedPositions = savedPositions;
         }
 
         const auto scale = self->m_positionSlider->getScale();
