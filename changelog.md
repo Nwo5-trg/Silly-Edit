@@ -1,3 +1,14 @@
+## v0.1.0-beta.7
+**Added**
+
+- some silly settings button textures
+- editor position bar description in about
+- better incompat docs for editor position and zoom input
+
+**Fixed**
+
+- contributing.md being a bit outdated
+
 ## v0.1.0-beta.6
 **Added**
 

@@ -9,7 +9,6 @@
 - double click to edit object (shift to edit group)
 - duration and rate sliders/inputs in easing preview
 - file path settings button
-- add compat warnings in game not just in about
 - make group label shenanigans atleast support p1/p2/c for advanced follow
 - add the custom filters system in whatever way i eventually decide
 - create gradient with selection button (or if nothings selected create a square of objects)
@@ -21,7 +20,6 @@
 - clean up better select all code (this also means renaming the arrow textures to their actual names and not js numbers)
 - stop using the dumb chroma node system
 - reorganize mod.json keybinds to reflect feature order
-- soggy and eri setting button texture
 - refactor whatever the fuck is going on in ruler
 - make easing buttons inheret from geode button set their id inside easing popup not in init
 - mayb some uniform system for select filters throughout the mod cuz a few features use that alrdy
@@ -31,4 +29,4 @@
 - update more stuff to properly use layout anchors
 
 # porting to 2.209
-in my hacks to make keybinds popup work, i should change cclabelbmfont to geode label cuz it will be changed in geode ui byy then
+- in my hacks to make keybinds popup work, i should change cclabelbmfont to geode label cuz it will be changed in geode ui byy then

@@ -94,6 +94,13 @@ scale input, but also some other cool stuff like scale/positioning customization
 
 above inputs there are **scale shortcuts** that scale objects to some preset number
 
+#### Editor Position Bar
+> ![⚠️](frame:geode.loader/info-warning.png?scale=0.5) <cs>might overlap with tinker grid controls at low zoom levels</c>
+
+show thumbnails of editor positions that you can click to go to
+
+this also includes customizing create/go to editor position keybinds and notifications for when editor position is switched 
+
 #### Better Layers
 > ![⚠️](frame:geode.loader/info-warning.png?scale=0.5) <cs>overrides tinkers z layer input</c>
 

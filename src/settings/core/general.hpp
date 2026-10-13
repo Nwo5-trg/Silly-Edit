@@ -9,7 +9,7 @@ namespace sillyedit::settings {
         "Show Settings Button", "Popup", true, SettingReload::Pause, "show settings button in editor pause menu"
     };
     inline SillySetting<std::string> settingsButtonTexture{
-        "Settings Button Texture", "General", "Rainbow", {"Bi", "Enby", "Femboy", "Gay", "Genderqueer", "Intersex", "Pan", "Rainbow", "Trans"}, SettingReload::Pause
+        "Settings Button Texture", "General", "Rainbow", {"Rainbow", "Bi", "Enby", "Femboy", "Gay", "Genderqueer", "Intersex", "Pan", "Trans", "Ery", "Soggy"}, SettingReload::Pause
     };
     inline SillySetting<bool> disableModWarningPopup{
         "Disable Mod Warning Popup", "General", false, " stops showing a warning every time you start the game about the mod being in beta or wtv"

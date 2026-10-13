@@ -2,12 +2,15 @@
 
 #include <Geode/modify/EditorUI.hpp>
 #include <feature/include.hpp>
+#include <utils/include.hpp>
 #include "utils.hpp"
 
 namespace EditorPositionBar {
     class $feature(EditorPositionBar) {
         void setup() override {
             m_data.condition = SettingCondition::DesktopOnly;
+            m_data.incompatMods = TINKER_EDIT_ID;
+            m_data.incompatMessage = "might overlap with tinker grid controls at low zoom levels";
         }
 
         void onUpdate() override;

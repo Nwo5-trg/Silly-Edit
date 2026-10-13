@@ -42,7 +42,7 @@ this the core of your feature where everything is defined, heres an example one
 #include <feature/include.hpp>
 
 namespace SillyFeature {
-    class $feature(SillyFeature, /*optional*/SettingReload::Editor, /*optional*/SettingCondition::DesktopOnly) {
+    class $feature(SillyFeature) {
         void onEditor() override; // override necessary functions (check feature/base.hpp), if no functions are overriden make the enitre feature declaration one line
     } feature;
 

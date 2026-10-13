@@ -3,9 +3,15 @@
 #include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/LevelEditorLayer.hpp>
 #include <feature/include.hpp>
+#include <utils/include.hpp>
 
 namespace ZoomInput {
     class $feature(ZoomInput) {
+        void setup() override {
+            m_data.incompatMods = TINKER_EDIT_ID;
+            m_data.incompatMessage = "might overlap with tinker grid controls at low zoom levels";
+        }
+
         void onEditor() override;
         void onToggled(bool pEnabled) override;
         void onUpdate() override;
