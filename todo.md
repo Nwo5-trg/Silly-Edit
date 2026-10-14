@@ -25,6 +25,7 @@
 - mayb some uniform system for select filters throughout the mod cuz a few features use that alrdy
 - mayb cache keybind enabled settings
 - mayb actually subnamespace shared idk
+- move zoom in out keybinds to silly keybinds
 - mayb a better system for "if key down" other than a listener + fields
 - update more stuff to properly use layout anchors
 

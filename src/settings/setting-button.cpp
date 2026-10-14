@@ -414,11 +414,10 @@ namespace sillyedit::settings {
         m_inputMenu->setPosition(CCPointZero);
 
         m_input = ui::input(
-            SIZE.width - PADDING, SIZE.height / 2 - PADDING / 2, setting->getDefault()
+            SIZE.width - PADDING, SIZE.height / 2 - PADDING / 2, std::nullopt
         )
             .id("input"_spr)
             .pos(SIZE.width / 2, SIZE.height * (3.0f/4.0f))
-            .parent(m_inputMenu)
             .callback([this] (const std::string& pStr) {
                 auto setting = this->setting<T>();
 
@@ -437,7 +436,9 @@ namespace sillyedit::settings {
                 }
             })
             .filter(CommonFilter::Any)
-            .string(this->setting<T>()->get());
+            .placeholder(setting->getDefault())
+            .string(this->setting<T>()->get())
+            .parent(m_inputMenu);
 
         Setup(m_label)
             .anchor(Anchor::Center)
