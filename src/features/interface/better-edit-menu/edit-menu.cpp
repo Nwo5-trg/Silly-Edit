@@ -369,9 +369,9 @@ namespace BetterEditMenu {
                 }
             }
 
-            m_moveShortcutsMenu->addChild(
+            this->m_moveShortcutsMenu->addChild(
                 ui::circleButton(
-                    Label::create(text, Font::Default), CircleBaseColor::Green, this, menu_selector(EditMenu::onMoveShortcut)
+                    ui::label(text, Font::Default), CircleBaseColor::Green, this, menu_selector(EditMenu::onMoveShortcut)
                 )
                     .scaleToFit(MOVE_SHORTCUT_SIZE)
                     .tag(pTag)
@@ -413,9 +413,9 @@ namespace BetterEditMenu {
                 }
             }
 
-            m_rotationShortcutsMenu->addChild(
+            this->m_rotationShortcutsMenu->addChild(
                 ui::circleButton(
-                    Label::create(text, Font::Default), CircleBaseColor::Green, this, menu_selector(EditMenu::onRotationShortcut)
+                    ui::label(text, Font::Default), CircleBaseColor::Green, this, menu_selector(EditMenu::onRotationShortcut)
                 )
                     .scaleToFit(ROTATION_SHORTCUT_SIZE)
                     .tag(pTag)

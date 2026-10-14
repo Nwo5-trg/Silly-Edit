@@ -60,7 +60,7 @@ namespace GroupLabelShenanigans {
 
 
     void LevelEditorLayer::updateObjectLabel(GameObject* object) {
-        if (!GroupLabelShenanigans::enabled() || !GroupLabelShenanigans::optimize || !canHaveLabel(object)) {
+        if (!GroupLabelShenanigans::enabled() || !canHaveLabel(object)) {
             return GD::LevelEditorLayer::updateObjectLabel(object);
         }
 

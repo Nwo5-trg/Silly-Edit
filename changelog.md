@@ -1,3 +1,16 @@
+## v0.1.0-beta.10
+**Removed**
+
+- optimize setting from group label shenanigans cuz it was lowk js unused and its better to always have it set to optimize
+
+**Fixed**
+
+- mayb a crash on android ???? either way i bumped the silly api version which was needed so wtv
+
+**Internal**
+
+- a tiny bit of cleanup to make code more consistent
+
 ## v0.1.0-beta.9
 **Fixed**
 

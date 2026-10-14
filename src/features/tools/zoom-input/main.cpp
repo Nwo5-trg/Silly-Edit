@@ -22,7 +22,9 @@ namespace ZoomInput {
     void EditorUI::updateZoom(float zoom) {
         GD::EditorUI::updateZoom(zoom);
 
-        this->updateZoomInput(zoom);
+        if (ZoomInput::enabled()) {
+            this->updateZoomInput(zoom);
+        }
     };
 
     void EditorUI::constrainGameLayerPosition(float x, float y) {
@@ -44,7 +46,9 @@ namespace ZoomInput {
         }
 
         // zoom gets set after editorui init
-        editor::ui<ZoomInput::EditorUI>()->updateZoomInput();
+        if (ZoomInput::enabled()) {
+            editor::ui<ZoomInput::EditorUI>()->updateZoomInput();
+        }
 
         return true;
     }

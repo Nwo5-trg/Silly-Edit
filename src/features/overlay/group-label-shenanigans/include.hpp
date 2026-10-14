@@ -46,9 +46,6 @@ namespace GroupLabelShenanigans {
 
     class $setting_category("group-label-shenanigans-logo.png"_spr, "Data oriented group labels");
 
-    inline SillySetting<bool> optimize{
-        "Optimize", feature, true, "disable if labels dont update properly, this setting updates label for object whenever robtop updates label for object instead of every frame"
-    };
     inline SillySetting<bool> extras{
         "Extras", feature, true, "dots on the top right of some triggers if some condition is true"
     };
