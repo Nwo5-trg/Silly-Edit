@@ -79,7 +79,6 @@ namespace BetterEditMenu {
         void createRotationShortcuts();
 
         void createButtons(cocos2d::CCArray* pButtonArray);
-        void updateButtonSprite(int pTag);
         
         void position();
 

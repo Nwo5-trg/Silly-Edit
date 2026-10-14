@@ -18,9 +18,6 @@ namespace BetterEditMenu {
         struct Fields {
             EditMenu* editMenu = nullptr;
         };
-
-        void updateEditButtonColor(int tag, cocos2d::ccColor3B color);
-        void toggleSpecialEditButtons();
     };
     
     class $feature_modify(EditButtonBar) {

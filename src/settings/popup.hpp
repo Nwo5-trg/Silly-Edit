@@ -133,12 +133,16 @@ R"(tyyyy <cr>\<3</c> !
 - made tinker
 - replace obj impl
 - setting popup inspo
-- some general help with stuff
+- reverse engineering most of editor ui
+- help with their api
+- answering some dumb questions
+- some code >:3
 
 ### Ery
 - geode gremlin
 - pr for obj tab icons
-- permission to use them as assets
+- permission to use their pfp as assets
+- editor position bar logo
 - prolly accepting this mod
 
 ### HJFod
@@ -147,6 +151,8 @@ R"(tyyyy <cr>\<3</c> !
 - let me have a bunch of other stuff
 
 ## Credits
+### cheeseworks
+- testing android
 
 ### gdjayy
 - replace object suggestion
@@ -161,11 +167,15 @@ R"(tyyyy <cr>\<3</c> !
 ### like all the hosts of cornbread megacollab
 - better select all suggestion
 
+#### Talindrusk
+- answering some dumb questions
+
 ### Doranell
 - text obj utils suggestion
 
 ### DasshuDev
 - copy particle string idea
+- testing windows/better edit
 )";
     };
 }

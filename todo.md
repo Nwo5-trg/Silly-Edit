@@ -24,6 +24,7 @@
 - make easing buttons inheret from geode button set their id inside easing popup not in init
 - mayb some uniform system for select filters throughout the mod cuz a few features use that alrdy
 - mayb cache keybind enabled settings
+- optimize better edit menu createbuttons by only calling it once in init (just block it until lel valid then call onenter)
 - mayb actually subnamespace shared idk
 - move zoom in out keybinds to silly keybinds
 - mayb a better system for "if key down" other than a listener + fields

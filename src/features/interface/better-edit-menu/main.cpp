@@ -7,29 +7,6 @@ using namespace nwo5::ui::prelude;
 using namespace alpha::prelude;
 
 namespace BetterEditMenu {
-    void EditorUI::updateEditButtonColor(int tag, ccColor3B color) {
-        GD::EditorUI::updateEditButtonColor(tag, color);
-
-        if (auto editMenu = editor::ui<BetterEditMenu::EditorUI>()->m_fields->editMenu) {
-            editMenu->updateButtonSprite(tag);
-        }
-    }
-
-    void EditorUI::toggleSpecialEditButtons() {
-        GD::EditorUI::toggleSpecialEditButtons();
-
-        if (auto editMenu = editor::ui<BetterEditMenu::EditorUI>()->m_fields->editMenu) {
-            editMenu->updateButtonSprite(25);
-            editMenu->updateButtonSprite(26);
-            editMenu->updateButtonSprite(27);
-            editMenu->updateButtonSprite(28);
-        }
-    }
-
-
-
-
-    
     void EditButtonBar::loadFromItems(CCArray* objects, int rows, int columns, bool keepPage) {
         GD::EditButtonBar::loadFromItems(objects, rows, columns, keepPage);
 

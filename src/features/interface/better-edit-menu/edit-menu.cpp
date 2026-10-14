@@ -441,7 +441,7 @@ namespace BetterEditMenu {
                 continue;
             }
 
-            Setup(Button::createWithNode(MirrorNode::create(button)->captureSprite(), [sender = button, target = button->m_pListener, selector = button->m_pfnSelector] (auto) {
+            Setup(Button::createWithNode(MirrorNode::create(button), [sender = button, target = button->m_pListener, selector = button->m_pfnSelector] (auto) {
                 std::invoke(selector, target, sender);
             }))
                 .tag(button->getTag())
@@ -452,21 +452,6 @@ namespace BetterEditMenu {
         m_buttonsScroll->getContentLayer()->updateLayout();
         this->position();
         this->updateArrowButtons();
-    }
-    void EditMenu::updateButtonSprite(int pTag) {
-        auto og = static_cast<CCNode*>(editor::ui()->m_editButtonDict->objectForKey(fmt::to_string(pTag)));
-
-        if (!og) {
-            return;
-        }
-
-        auto button = static_cast<Button*>(m_buttonsScroll->getContentLayer()->getChildByTag(pTag));
-        
-        if (!button) {
-            return;
-        }
-
-        static_cast<CCSprite*>(button->getDisplayNode())->setTexture(MirrorNode::create(og)->captureTexture());
     }
 
     void EditMenu::position() {

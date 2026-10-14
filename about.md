@@ -265,7 +265,8 @@ the ***template button** is located in `level settings > level options` (the pop
 #### Ery
 - geode gremlin
 - pr for obj tab icons
-- permission to use them as assets
+- permission to use their pfp as assets
+- editor position bar logo
 - prolly accepting this mod
 
 #### HJFod
@@ -274,6 +275,8 @@ the ***template button** is located in `level settings > level options` (the pop
 - let me have a bunch of other stuff
 
 ### Credits
+#### cheeseworks
+- testing android
 
 #### gdjayy
 - replace object suggestion
@@ -288,8 +291,12 @@ the ***template button** is located in `level settings > level options` (the pop
 #### like all the hosts of cornbread megacollab
 - better select all suggestion
 
+#### Talindrusk
+- answering some dumb questions
+
 #### Doranell
 - text obj utils suggestion
 
 #### DasshuDev
 - copy particle string idea
+- testing windows/better edit

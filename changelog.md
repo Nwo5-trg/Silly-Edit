@@ -1,3 +1,12 @@
+## v0.1.0-beta.11
+**Added**
+
+- updated credits
+
+**Fixed**
+
+- memory leak with edit tab bar (i think)
+
 ## v0.1.0-beta.10
 **Removed**
 
