@@ -231,28 +231,28 @@
             "type": "keybind",
             "name": "1/4 Move Up",
             "category": "editor",
-            "default": "Alt+W",
+            "default": "Shift+Alt+W",
             "enable-if": "Silly-Keybinds-Enabled"
         },
         "Silly Keybinds-quarter-move-left": {
             "type": "keybind",
             "name": "1/4 Move Left",
             "category": "editor",
-            "default": "Alt+A",
+            "default": "Shift+Alt+A",
             "enable-if": "Silly-Keybinds-Enabled"
         },
         "Silly Keybinds-quarter-move-down": {
             "type": "keybind",
             "name": "1/4 Move Down",
             "category": "editor",
-            "default": "Alt+S",
+            "default": "Shift+Alt+S",
             "enable-if": "Silly-Keybinds-Enabled"
         },
         "Silly Keybinds-quarter-move-right": {
             "type": "keybind",
             "name": "1/4 Move Right",
             "category": "editor",
-            "default": "Alt+D",
+            "default": "Shift+Alt+D",
             "enable-if": "Silly-Keybinds-Enabled"
         }
     }
