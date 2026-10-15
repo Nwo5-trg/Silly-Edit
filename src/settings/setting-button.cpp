@@ -437,7 +437,7 @@ namespace sillyedit::settings {
             })
             .filter(CommonFilter::Any)
             .placeholder(setting->getDefault())
-            .string(this->setting<T>()->get())
+            .string(setting->get())
             .parent(m_inputMenu);
 
         Setup(m_label)

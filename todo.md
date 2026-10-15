@@ -18,7 +18,6 @@
 - port over everything to geode button lol (keep separate functions js call them in the lambda callback)
 - translations mayb ??????? (no)
 - clean up better select all code (this also means renaming the arrow textures to their actual names and not js numbers)
-- stop using the dumb chroma node system
 - reorganize mod.json keybinds to reflect feature order
 - refactor whatever the fuck is going on in ruler
 - make easing buttons inheret from geode button set their id inside easing popup not in init

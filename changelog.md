@@ -1,3 +1,8 @@
+## v0.1.0-beta.13
+**Removed**
+
+- mobile support (until 2.209 or next android launcher update due to a bug i quite literally can do nothing about)
+
 ## v0.1.0-beta.12
 **Added**
 

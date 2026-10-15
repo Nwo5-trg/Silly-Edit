@@ -6,6 +6,8 @@ this isnt a sweeping editor overhaul mod, most features are pretty small, but sh
 ## Disclaimer(s)
 > *i make* ***literally no promises as to when this mod gets updated or what gets added/removed***, *i develop this mod completely for fun and with my own needs in mind first*
 
+> *mobile support will be coming either in 2.209 or next android launcher update due to* ***reasons*** *(unfixable crash cuz of android launcher)*
+
 > ***betteredit is unsupported***, *it might still kinda work, but still keep in mind i am not trying to support betteredit at all and anything regarding that will be ignored, sillyedit already adds a few betteredit features and tinker (which is supported) adds pretty much the rest of them so*
 
 ## Features
