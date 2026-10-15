@@ -7,6 +7,8 @@
 namespace TriggerIndicators {
     class $feature(TriggerIndicators) {
         void onEditor() override;
+        void onUpdate() override;
+        void onToggled(bool pEnabled) override;
         void onSettingChanged(std::string pName, GenericSetting*) override;
     } feature;
 
@@ -14,8 +16,6 @@ namespace TriggerIndicators {
         struct Fields {
             std::unique_ptr<Drawer> m_drawer = nullptr;
         };
-
-        void updateDebugDraw();
     };
 
     class $setting_category("trigger-indicators-logo.png"_spr, "Draw lines to trigger targets");

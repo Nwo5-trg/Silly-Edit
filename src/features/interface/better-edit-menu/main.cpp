@@ -1,5 +1,4 @@
 #include <alphalaneous.editortab_api/include/EditorTabAPI.hpp>
-#include <utils/include.hpp>
 #include "include.hpp"
 
 using namespace geode::prelude;
@@ -7,6 +6,21 @@ using namespace nwo5::ui::prelude;
 using namespace alpha::prelude;
 
 namespace BetterEditMenu {
+    bool EditorUI::init(LevelEditorLayer* editorLayer) {
+        if (!BetterEditMenu::enabled()) {
+            return GD::EditorUI::init(editorLayer);
+        }
+        
+        const auto newEditMenu = sillyedit::utils::getBetterEditSetting<bool>("new-edit-menu").value_or(false);
+        sillyedit::utils::setBetterEditSetting<bool>("new-edit-menu", false);
+
+        const auto ret = GD::EditorUI::init(editorLayer);
+
+        sillyedit::utils::setBetterEditSetting<bool>("new-edit-menu", newEditMenu);
+
+        return ret;
+    }
+
     void EditButtonBar::loadFromItems(CCArray* objects, int rows, int columns, bool keepPage) {
         GD::EditButtonBar::loadFromItems(objects, rows, columns, keepPage);
 
@@ -97,7 +111,7 @@ namespace BetterEditMenu {
 
     void Feature::onUpdate() {
         if (BetterEditMenu::enabled()) {
-            editor::ui()->m_editButtonBar->setVisible(false);
+            editor::ui<BetterEditMenu::EditorUI>()->m_editButtonBar->setVisible(false);
         }
     }
 

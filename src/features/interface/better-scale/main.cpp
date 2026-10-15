@@ -323,6 +323,18 @@ namespace BetterScale {
             .parent(this);
         fields->scaleXYNodes.push_back(fields->shortcutsYMenu);
 
+        if (sillyedit::utils::isBetterEditLoaded()) {
+            for (auto node : this->getChildrenExt()) {
+                if (node->getID().view().contains(BETTER_EDIT_ID)) {
+                    node->setScale(0.0f);
+
+                    if (auto label = typeinfo_cast<TextInput*>(node)) {
+                        label->setEnabled(false);
+                    }
+                }
+            }
+        }
+
         this->updateShortcuts();
 
         return true;

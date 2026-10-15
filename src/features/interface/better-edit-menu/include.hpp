@@ -3,6 +3,7 @@
 #include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/EditButtonBar.hpp>
 #include <feature/include.hpp>
+#include <utils/include.hpp>
 #include "utils.hpp"
 
 namespace BetterEditMenu {
@@ -18,6 +19,12 @@ namespace BetterEditMenu {
         struct Fields {
             EditMenu* editMenu = nullptr;
         };
+
+        static void onModify(auto& pSelf) {
+            (void)pSelf.setHookPriorityAfterPost("EditorUI::init", BETTER_EDIT_ID);
+        }
+
+        bool init(LevelEditorLayer* editorLayer);
     };
     
     class $feature_modify(EditButtonBar) {

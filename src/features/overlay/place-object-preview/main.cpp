@@ -11,6 +11,8 @@ namespace PlaceObjectPreview {
     void EditorUI::updatePreviewObject() {
         auto fields = m_fields.self();
 
+        log::error("{}", m_selectedObjectIndex);
+
         if (!PlaceObjectPreview::enabled()) {
             return sillyedit::shared::removePreviewObject();
         }
@@ -20,7 +22,7 @@ namespace PlaceObjectPreview {
         if (m_isPaused || m_editorLayer->m_playbackMode != PlaybackMode::Not) {
             return sillyedit::shared::removePreviewObject();
         }
-        if (!m_selectedObjectIndex || m_selectedMode != 2) {
+        if (m_selectedObjectIndex <= 0 || m_selectedMode != 2) {
             return sillyedit::shared::removePreviewObject();
         }
         if (m_selectedObjectIndex == 1329 && m_editorLayer->m_coinCount.value() >= 3) {

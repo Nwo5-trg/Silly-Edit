@@ -99,6 +99,7 @@ namespace EditorPositionBar {
                 else if (pos != fields->lastSavedPositions.value()[i]) {
                     Setup(EditorPositionButton::create(i, pos))
                         .id("editor-position-{}-button"_spr, i)
+                        .tag(i)
                         .order(i)
                         .parent(fields->positionBarMenu);
                 }

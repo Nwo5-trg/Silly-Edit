@@ -1,3 +1,16 @@
+## v0.1.0-beta.12
+**Added**
+
+- made better layers togglable without editor reload
+- some very bare bones better edit compat stuff so no one can complain ***BETTEREDIT IS STILL UNSUPPORTED***
+- tweaked the ui for better layers a bit
+
+**Fixed**
+
+- some editor position bar stuff
+- custom obj crash with preview obj
+- cleanup drawing and enable/disable for trigger indicators
+
 ## v0.1.0-beta.11
 **Added**
 

@@ -53,6 +53,16 @@ namespace BetterLayers {
                 .pos(ui::x(oldLayerMenu) + ui::sw(oldLayerMenu) / 2, ui::y(oldLayerMenu))
                 .order(oldLayerMenu);
         }
+
+        if (fields->nextFreeButton) {
+            fields->nextFreeButton->setVisible(BetterLayers::nextFreeButton);
+        }
+        else if (fields->lockLayerButton) {
+            fields->lockLayerButton->setVisible(BetterLayers::lockButton);
+        }  
+        else if (fields->layerSettingsButton) {
+            fields->layerSettingsButton->setVisible(BetterLayers::layerSettingsButton);
+        }
     }
 
 
@@ -188,20 +198,70 @@ namespace BetterLayers {
 
 
     void Feature::onEditor() {
-        if (!BetterLayers::enabled()) {
-            return;
+        auto self = editor::ui<BetterLayers::EditorUI>();
+
+        self->m_editorLayer->m_currentLayer = self->m_editorLayer->m_level->m_lastBuildGroupID;
+    }
+
+    void Feature::onUpdate() {
+        // fuck you
+        if (BetterLayers::enabled() && sillyedit::utils::isBetterEditLoaded()) {
+            editor::ui<BetterLayers::EditorUI>()->m_currentLayerLabel->setVisible(false);
         }
-        
+    }
+
+    void Feature::onToggled(bool pEnabled) {
         auto self = editor::ui<BetterLayers::EditorUI>();
         auto fields = self->m_fields.self();
+
+        if (!pEnabled) {
+            self->m_uiItems->removeObject(fields->newLayerMenu);
+            fields->newLayerMenu->removeMeAndCleanup();
+            fields->newLayerMenu = nullptr;
+            fields->layerInput = nullptr;
+            fields->nextFreeButton = nullptr;
+            fields->allLayersButton = nullptr;
+            fields->layerSettingsButton = nullptr;
+            fields->lockLayerButton = nullptr;
+            fields->settings = nullptr;
+            sillyedit::shared::getLayerSettingsPtr() = nullptr;
+
+            auto oldLayerMenu = self->m_currentLayerLabel->getParent();
+
+            oldLayerMenu->setVisible(true);
+
+            self->updateGroupIDBtn2();
+
+            return;
+        }
 
         // will i make this a ccobject managed obj in the future, mayb if i remember
         fields->settings = std::make_unique<LayerSettings>();
 
-        fields->layerInput = ui::input(LAYER_INPUT_SIZE, "All")
+        fields->layerSettingsButton = ui::buttonFrame(
+            ui::frame::OPTIONS_BUTTON, self, menu_selector(BetterLayers::EditorUI::onLayerSettings)
+        )
+            .id("layer-settings-button"_spr)
+            .scaleToFit((LAYER_SHIFT_BUTTON_SIZE + LAYER_EXTRA_BUTTON_SIZE) / 2);
+
+        fields->allLayersButton = ui::buttonFrame(
+            // girl robtop, ur function names, what the fuck is this, why only name it layer here </3
+            ui::frame::BLUE_ARROW, self, menu_selector(BetterLayers::EditorUI::onGoToBaseLayer)
+        )
+            .id("next-free-layer-button"_spr)
+            .scaleToFit(LAYER_EXTRA_BUTTON_SIZE);
+
+        fields->lockLayerButton = ui::togglerSprite(
+            "lock-off.png"_spr, "lock-on.png"_spr, self, menu_selector(BetterLayers::EditorUI::onToggleLayerLocked)
+        )
+            .id("lock-layer-button"_spr);
+
+        fields->layerInput = ui::input(LAYER_INPUT_SIZE, "All");
+
+        Setup(fields->layerInput)
             .id("layer-input"_spr)
-            .filter("aA1234567890")
-            .maxCharCount(4)
+            .layout(ui::anchor())
+            .layoutNextGap(INPUT_GAP).layoutPrevGap(INPUT_GAP)
             .callback([self] (const std::string& pStr) {
                 if (pStr == "a" || pStr == "A") {
                     editor::setLayer(editor::constants::ALL_LAYERS);
@@ -214,28 +274,30 @@ namespace BetterLayers {
                         editor::setLayer(std::clamp(res.unwrap(), -1, editor::constants::MAX_LAYERS));
                     }
                 }
-            });
+            })
+            .filter("aA1234567890")
+            .maxCharCount(4)
+            .children(
+                ui::menu()
+                    .id("lock-layer-menu"_spr)
+                    .size(CCSizeZero)
+                    .layoutAnchor(Anchor::TopRight, false).layoutAnchorOffset(-4.0f, -4.0f)
+                    .children(
+                        Setup(fields->lockLayerButton)
+                            .pos(CCPointZero)
+                            .scaleToFit(LAYER_LOCK_SIZE / fields->layerInput->getScale())
+                    )
+            );
 
-        fields->allLayersButton = ui::buttonFrame(
-            // girl robtop, ur function names, what the fuck is this, why only name it layer here </3
-            "GJ_arrow_02_001.png", self, menu_selector(BetterLayers::EditorUI::onGoToBaseLayer)
+        fields->nextFreeButton = ui::buttonFrame(
+            ui::frame::PLUS_BUTTON, self, menu_selector(BetterLayers::EditorUI::onNextFreeLayer)
         )
             .id("next-free-layer-button"_spr)
             .scaleToFit(LAYER_EXTRA_BUTTON_SIZE);
 
-        fields->lockLayerButton = ui::togglerFrame(
-            "warpLockOffBtn_001.png", "warpLockOnBtn_001.png", self, menu_selector(BetterLayers::EditorUI::onToggleLayerLocked), 1.25f, 1.25f
-        )
-            .id("lock-layer-button"_spr)
-            .scaleToFit(LAYER_EXTRA_BUTTON_SIZE)
-            .visible(BetterLayers::lockButton);
-
         auto oldLayerMenu = self->m_currentLayerLabel->getParent();
-        oldLayerMenu->setVisible(false);
 
-        if (self->m_currentLayerLabel) {
-            self->m_currentLayerLabel->setPositionX(999.0f); // i give up dealing with better edits editablelabelproxy fuck that
-        }
+        oldLayerMenu->setVisible(false);
 
         fields->newLayerMenu = ui::menu(ui::row()
             .alignment(AxisAlignment::Start)
@@ -245,40 +307,33 @@ namespace BetterLayers {
         )
             .id("new-layer-menu"_spr)
             .children(
-                    ui::buttonFrame(
-                        "GJ_optionsBtn_001.png", self, menu_selector(BetterLayers::EditorUI::onLayerSettings)
-                    )
-                        .id("layer-settings-button"_spr)
-                        .scaleToFit((LAYER_SHIFT_BUTTON_SIZE + LAYER_EXTRA_BUTTON_SIZE) / 2)
-                        .visible(BetterLayers::layerSettingsButton),
-                    fields->lockLayerButton,
+                    fields->layerSettingsButton,
                     fields->allLayersButton,
                     ui::buttonFrame(
-                        "GJ_arrow_03_001.png", self, menu_selector(BetterLayers::EditorUI::onGroupDown)
+                        ui::frame::PINK_ARROW, self, menu_selector(BetterLayers::EditorUI::onGroupDown)
                     )
                         .id("prev-layer-button"_spr)
                         .scaleToFit(LAYER_SHIFT_BUTTON_SIZE),
                     fields->layerInput,
                     ui::buttonFrame(
-                        "GJ_arrow_03_001.png", self, menu_selector(BetterLayers::EditorUI::onGroupUp)
+                        ui::frame::PINK_ARROW, self, menu_selector(BetterLayers::EditorUI::onGroupUp)
                     )
                         .id("next-layer-button"_spr)
                         .scaleToFit(LAYER_SHIFT_BUTTON_SIZE)
                         .flipX(),
-                    ui::buttonFrame(
-                        "GJ_plusBtn_001.png", self, menu_selector(BetterLayers::EditorUI::onNextFreeLayer)
-                    )
-                        .id("next-free-layer-button"_spr)
-                        .scaleToFit(LAYER_EXTRA_BUTTON_SIZE)
-                        .visible(BetterLayers::nextFreeButton)
+                    fields->nextFreeButton
                 )
             .parent(self)
             .addTo(self->m_uiItems);
 
-        self->m_editorLayer->m_currentLayer = self->m_editorLayer->m_level->m_lastBuildGroupID;
+        self->updateLayerMenu();
     }
 
     void Feature::onUIUpdated(float pScale) {
+        editor::ui<BetterLayers::EditorUI>()->updateLayerMenu();
+    }
+
+    void Feature::onSettingChanged(std::string pName, GenericSetting*) {
         editor::ui<BetterLayers::EditorUI>()->updateLayerMenu();
     }
 }
