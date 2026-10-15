@@ -57,22 +57,6 @@ namespace ZoomInput {
 
 
 
-    void Feature::onEditor() {
-        auto self = editor::ui<ZoomInput::EditorUI>();
-        
-        feature.registerKeybind<"zoom-in">([self] (bool pDown, bool) {
-            if (pDown) {
-                self->updateZoom(editor::zoom() / 0.9f);
-            }
-        });
-
-        feature.registerKeybind<"zoom-out">([self] (bool pDown, bool) {
-            if (pDown) {
-                self->updateZoom(editor::zoom() * 0.9f);
-            }
-        });
-    }
-
     void Feature::onToggled(bool pEnabled) {
         auto self = editor::ui<ZoomInput::EditorUI>();
         auto fields = self->m_fields.self();

@@ -12,7 +12,6 @@ namespace ZoomInput {
             m_data.incompatMessage = "might overlap with tinker grid controls at low zoom levels";
         }
 
-        void onEditor() override;
         void onToggled(bool pEnabled) override;
         void onUpdate() override;
     } feature;

@@ -109,29 +109,6 @@
             "default": "L",
             "enable-if": "Selection-Utils-Enabled"
         },
-        "Zoom Input": {
-            "type": "title",
-            "name": "Zoom Input"
-        },
-        "Zoom-Input-Enabled": {
-            "type": "bool",
-            "name": "Enabled",
-            "default": true
-        },
-        "Zoom Input-zoom-in": {
-            "type": "keybind",
-            "name": "Zoom In",
-            "category": "editor",
-            "default": "Ctrl+=",
-            "enable-if": "Zoom-Input-Enabled"
-        },
-        "Zoom Input-zoom-out": {
-            "type": "keybind",
-            "name": "Zoom Out",
-            "category": "editor",
-            "default": "Ctrl+Subtract",
-            "enable-if": "Zoom-Input-Enabled"
-        },
         "Better Select All": {
             "type": "title",
             "name": "Better Select All"
@@ -234,6 +211,48 @@
             "name": "Activate Scale XY Control",
             "category": "editor",
             "default": "X",
+            "enable-if": "Silly-Keybinds-Enabled"
+        },
+        "Silly Keybinds-zoom-in": {
+            "type": "keybind",
+            "name": "Zoom In",
+            "category": "editor",
+            "default": "Ctrl+=",
+            "enable-if": "Silly-Keybinds-Enabled"
+        },
+        "Silly Keybinds-zoom-out": {
+            "type": "keybind",
+            "name": "Zoom Out",
+            "category": "editor",
+            "default": "Ctrl+Subtract",
+            "enable-if": "Silly-Keybinds-Enabled"
+        },
+        "Silly Keybinds-quarter-move-up": {
+            "type": "keybind",
+            "name": "1/4 Move Up",
+            "category": "editor",
+            "default": "Alt+W",
+            "enable-if": "Silly-Keybinds-Enabled"
+        },
+        "Silly Keybinds-quarter-move-left": {
+            "type": "keybind",
+            "name": "1/4 Move Left",
+            "category": "editor",
+            "default": "Alt+A",
+            "enable-if": "Silly-Keybinds-Enabled"
+        },
+        "Silly Keybinds-quarter-move-down": {
+            "type": "keybind",
+            "name": "1/4 Move Down",
+            "category": "editor",
+            "default": "Alt+S",
+            "enable-if": "Silly-Keybinds-Enabled"
+        },
+        "Silly Keybinds-quarter-move-right": {
+            "type": "keybind",
+            "name": "1/4 Move Right",
+            "category": "editor",
+            "default": "Alt+D",
             "enable-if": "Silly-Keybinds-Enabled"
         }
     }

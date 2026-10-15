@@ -101,5 +101,73 @@ namespace SillyKeybinds {
                 }
             }
         });
+        
+        feature.registerKeybind<"zoom-in">([self] (bool pDown, bool) {
+            if (pDown) {
+                self->updateZoom(editor::zoom() / 0.9f);
+            }
+        });
+        feature.registerKeybind<"zoom-out">([self] (bool pDown, bool) {
+            if (pDown) {
+                self->updateZoom(editor::zoom() * 0.9f);
+            }
+        });
+
+        feature.registerKeybind<"quarter-move-up">([self] (bool pDown, bool) {
+            if (!pDown || selection::empty()) {
+                return;
+            }
+
+            auto objs = editor::ui()->m_selectedObjects;
+
+            if (auto selectedObj = editor::ui()->m_selectedObject) {
+                objs = CCArray::createWithObject(selectedObj);
+            }
+
+            object::moveBy(objs, {0.0f, 7.5f});
+            editor::update();
+        });
+        feature.registerKeybind<"quarter-move-left">([self] (bool pDown, bool) {
+            if (!pDown || selection::empty()) {
+                return;
+            }
+
+            auto objs = editor::ui()->m_selectedObjects;
+
+            if (auto selectedObj = editor::ui()->m_selectedObject) {
+                objs = CCArray::createWithObject(selectedObj);
+            }
+
+            object::moveBy(objs, {-7.5f, 0.0f});
+            editor::update();
+        });
+        feature.registerKeybind<"quarter-move-down">([self] (bool pDown, bool) {
+            if (!pDown || selection::empty()) {
+                return;
+            }
+
+            auto objs = editor::ui()->m_selectedObjects;
+
+            if (auto selectedObj = editor::ui()->m_selectedObject) {
+                objs = CCArray::createWithObject(selectedObj);
+            }
+
+            object::moveBy(objs, {0.0f, -7.5f});
+            editor::update();
+        });
+        feature.registerKeybind<"quarter-move-right">([self] (bool pDown, bool) {
+            if (!pDown || selection::empty()) {
+                return;
+            }
+
+            auto objs = editor::ui()->m_selectedObjects;
+
+            if (auto selectedObj = editor::ui()->m_selectedObject) {
+                objs = CCArray::createWithObject(selectedObj);
+            }
+
+            object::moveBy(objs, {7.5f, 0.0f});
+            editor::update();
+        });
     }
 }

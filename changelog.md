@@ -1,4 +1,9 @@
 ## v0.1.0-beta.13
+**Added**
+
+- 1/4 move keybinds
+- moved zoom keybinds into silly keybinds instead of zoom input
+
 **Removed**
 
 - mobile support (until 2.209 or next android launcher update due to a bug i quite literally can do nothing about)
