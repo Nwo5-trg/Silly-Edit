@@ -10,9 +10,7 @@ static constexpr int PREVIEW_OBJECT_TAG = 8373767689;
 namespace PlaceObjectPreview {
     void EditorUI::updatePreviewObject() {
         auto fields = m_fields.self();
-
-        log::error("{}", m_selectedObjectIndex);
-
+        
         if (!PlaceObjectPreview::enabled()) {
             return sillyedit::shared::removePreviewObject();
         }
