@@ -30,11 +30,11 @@ namespace TriggerIndicators {
         }
     }
 
-    void Feature::onToggled(bool pEnabled) {
+    void Feature::onToggled(bool enabled) {
         auto self = editor::layer<TriggerIndicators::LevelEditorLayer>();
         auto fields = self->m_fields.self();
         
-        if (!pEnabled) {
+        if (!enabled) {
             fields->m_drawer = nullptr;
 
             return;
@@ -45,7 +45,7 @@ namespace TriggerIndicators {
         fields->m_drawer->updateTriggerList();
     }
 
-    void Feature::onSettingChanged(std::string pName, GenericSetting*) {
+    void Feature::onSettingChanged(std::string name, GenericSetting*) {
         auto self = editor::layer<TriggerIndicators::LevelEditorLayer>();
         auto fields = self->m_fields.self();
 

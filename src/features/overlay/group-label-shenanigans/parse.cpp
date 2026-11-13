@@ -13,7 +13,7 @@ static std::filesystem::path getPath() {
     return Mod::get()->getConfigDir() / GroupLabelShenanigans::customPath.get();
 }
 
-static std::optional<GroupLabelShenanigans::Label> toLabel(std::string_view pStr) {
+static std::optional<GroupLabelShenanigans::Label> toLabel(std::string_view str) {
     static StringMap<GroupLabelShenanigans::Label> map{
         {"primary", GroupLabelShenanigans::Label::Primary},
         {"secondary", GroupLabelShenanigans::Label::Secondary},
@@ -21,12 +21,12 @@ static std::optional<GroupLabelShenanigans::Label> toLabel(std::string_view pStr
         {"secondary-input", GroupLabelShenanigans::Label::SecondaryInput}
     };
 
-    const auto it = map.find(pStr);
+    const auto it = map.find(str);
 
     return it == map.end() ? std::nullopt : std::optional<GroupLabelShenanigans::Label>((*it).second);
 }
 
-static std::optional<GroupLabelShenanigans::Extra> toExtra(std::string_view pStr) {
+static std::optional<GroupLabelShenanigans::Extra> toExtra(std::string_view str) {
     static StringMap<GroupLabelShenanigans::Extra> map{
         {"activate-group", GroupLabelShenanigans::Extra::ActivateGroup},
         {"control-id", GroupLabelShenanigans::Extra::ControlID},
@@ -35,14 +35,14 @@ static std::optional<GroupLabelShenanigans::Extra> toExtra(std::string_view pStr
         {"follow", GroupLabelShenanigans::Extra::Follow}
     };
 
-    const auto it = map.find(pStr);
+    const auto it = map.find(str);
 
     return it == map.end() ? std::nullopt : std::optional<GroupLabelShenanigans::Extra>((*it).second);
 }
 
 namespace GroupLabelShenanigans {
-    void parseLabels(LabelOptions& pLabelOptions) {
-        pLabelOptions.reset();
+    void parseLabels(LabelOptions& labelOptions) {
+        labelOptions.reset();
 
         const auto path = string::pathToString(getPath()); 
 
@@ -76,7 +76,7 @@ namespace GroupLabelShenanigans {
                         const auto num = id.asInt().unwrap();
 
                         if (num) {
-                            pLabelOptions.blacklist(num);
+                            labelOptions.blacklist(num);
                         }
                     }
                 }
@@ -141,7 +141,7 @@ namespace GroupLabelShenanigans {
                     }
 
                     for (const auto id : ids) {
-                        pLabelOptions.addExtra(id, config);
+                        labelOptions.addExtra(id, config);
                     }
                 }
 
@@ -164,7 +164,7 @@ namespace GroupLabelShenanigans {
                 if (res.has_value()) {
                     config.firstRow.push_back(res.value());
 
-                    pLabelOptions.addConfig(id, std::move(config));
+                    labelOptions.addConfig(id, std::move(config));
                 }
             }
             else if (obj.isArray()) {
@@ -208,7 +208,7 @@ namespace GroupLabelShenanigans {
                     continue;
                 }
 
-                pLabelOptions.addConfig(id, std::move(config));
+                labelOptions.addConfig(id, std::move(config));
             }
         }
     }

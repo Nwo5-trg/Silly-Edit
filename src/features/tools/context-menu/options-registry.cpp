@@ -8,12 +8,12 @@ namespace ContextMenu {
         Option::registerOptions(m_options);
     }
 
-    std::vector<const Option*> OptionsRegistry::forObjects(CCArray* pObjects) const {
+    std::vector<const Option*> OptionsRegistry::forObjects(CCArray* objects) const {
         auto ui = editor::ui();
 
         std::vector<const Option*> out;
 
-        const auto count = pObjects->count();
+        const auto count = objects->count();
 
         for (const auto& option : m_options) {
             if (option.type == Option::Type::Spacer) {

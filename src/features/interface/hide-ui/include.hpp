@@ -20,7 +20,7 @@ namespace HideUI {
             CCMenuItemToggler* hideUIToggle = nullptr;
         };
 
-        void onHideUI(CCObject* pSender);
+        void onHideUI(CCObject* sender);
 
         void showUI(bool show);
         void onPause(CCObject* sender);

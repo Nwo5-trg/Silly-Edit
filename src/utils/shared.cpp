@@ -12,8 +12,8 @@ namespace sillyedit::utils {
             bool blockScrolling = false;
         };
 
-        static void onModify(auto& pSelf) {
-            (void)pSelf.setHookPriorityBeforePre("EditorUI::scrollWheel", TINKER_EDIT_ID);
+        static void onModify(auto& self) {
+            (void)self.setHookPriorityBeforePre("EditorUI::scrollWheel", TINKER_EDIT_ID);
         }
 
         bool init(LevelEditorLayer* editorLayer) {
@@ -67,18 +67,18 @@ namespace sillyedit::utils {
             CCLayer* hiddenLayer = nullptr;
         };
 
-        CCLayer* createLayer(std::string_view pID, int pZ) {
+        CCLayer* createLayer(std::string_view iD, int z) {
             return Setup(CCLayer::create())
-                .id(pID)
+                .id(iD)
                 .pos(CCPointZero)
-                .order(pZ)
+                .order(z)
                 .parent(m_objectLayer);
         }
-        SillyDrawNode* createDrawNode(std::string_view pID, CCNode* pParent) {
+        SillyDrawNode* createDrawNode(std::string_view iD, CCNode* parent) {
             return Setup(SillyDrawNode::create())
-                .id(pID)
+                .id(iD)
                 .pos(CCPointZero)
-                .parent(pParent);
+                .parent(parent);
         }
 
         bool init(GJGameLevel* level, bool noUI) {
@@ -115,9 +115,9 @@ namespace sillyedit::utils {
         }
     };
 
-    SillyDrawNode* getGridDraw(DrawNode pNode) {
+    SillyDrawNode* getGridDraw(DrawNode node) {
         if (auto layer = editor::layer<SharedLevelEditorLayer>()) {
-            return layer->m_fields->gridDraw[pNode];
+            return layer->m_fields->gridDraw[node];
         }
 
         return nullptr;
@@ -129,9 +129,9 @@ namespace sillyedit::utils {
         
         return nullptr;
     }
-    SillyDrawNode* getOverlayDraw(DrawNode pNode) {
+    SillyDrawNode* getOverlayDraw(DrawNode node) {
         if (auto layer = editor::layer<SharedLevelEditorLayer>()) {
-            return layer->m_fields->overlayDraw[pNode];
+            return layer->m_fields->overlayDraw[node];
         }
 
         return nullptr;

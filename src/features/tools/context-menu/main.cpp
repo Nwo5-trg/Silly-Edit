@@ -48,8 +48,8 @@ namespace ContextMenu {
             .order(15)
             .parent(self);
 
-        self->addEventListener(MouseInputEvent(), [self, menu] (const MouseInputData& pData) {
-            const auto data = misc::dataInfo(pData);
+        self->addEventListener(MouseInputEvent(), [self, menu] (const MouseInputData& data) {
+            const auto data = misc::dataInfo(data);
             
             if (!ContextMenu::enabled() || !menu) {
                 if (menu) {

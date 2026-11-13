@@ -3,21 +3,21 @@
 using namespace geode::prelude;
 
 namespace DefaultObjectOptions {
-    void ObjectOptions::addOption(int pID, std::string_view pCustomString) {
-        m_options[pID].append(fmt::format(",{}", pCustomString));
+    void ObjectOptions::addOption(int iD, std::string_view customString) {
+        m_options[iD].append(fmt::format(",{}", customString));
 
-        if (!pID) {
+        if (!iD) {
             m_defaultOption = true;
         }
     }
 
-    bool ObjectOptions::idHasOptions(int pID) const {
-        return pID >= 0 && pID < m_options.size() && m_options[pID].size();
+    bool ObjectOptions::idHasOptions(int iD) const {
+        return iD >= 0 && iD < m_options.size() && m_options[iD].size();
     }
     // starts with ,
-    std::string ObjectOptions::getOptionsStringForID(int pID) const {
-        if (pID >= 0 && pID < m_options.size()) {
-            return m_options[pID];
+    std::string ObjectOptions::getOptionsStringForID(int iD) const {
+        if (iD >= 0 && iD < m_options.size()) {
+            return m_options[iD];
         }
 
         return "";
@@ -30,13 +30,13 @@ namespace DefaultObjectOptions {
         return getOptionsStringForID(DEFAULT_OPTION_ID);
     }
 
-    void ObjectOptions::updateSimpleOptionsString(bool pDontFade, bool pDontEnter, bool pNoGlow) {
+    void ObjectOptions::updateSimpleOptionsString(bool dontFade, bool dontEnter, bool noGlow) {
         // 64 == dont fade prop, 67 == dont enter prop, 96 == no glow prop
         m_simpleOptionsString =  fmt::format(
             ",64,{},67,{},96,{}", 
-            static_cast<int>(pDontFade), 
-            static_cast<int>(pDontEnter), 
-            static_cast<int>(pNoGlow)
+            static_cast<int>(dontFade), 
+            static_cast<int>(dontEnter), 
+            static_cast<int>(noGlow)
         );
     }
     std::string ObjectOptions::getSimpleOptionsString() const {

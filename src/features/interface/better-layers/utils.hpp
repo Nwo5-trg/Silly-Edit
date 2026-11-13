@@ -22,23 +22,23 @@ namespace BetterLayers {
 
         void exportSettings();
 
-        bool layerHasState(short pLayer) const;
+        bool layerHasState(short layer) const;
 
-        void setFocusedLayer(short pLayer);
+        void setFocusedLayer(short layer);
         void unsetFocusedLayer();
         std::optional<short> getFocusedLayer() const;
 
-        void setDefaultOpacity(unsigned char pOpacity);
+        void setDefaultOpacity(unsigned char opacity);
         void unsetDefaultOpacity();
         std::optional<unsigned char> getDefaultOpacity();
 
-        void setLayerHidden(int pLayer, bool pHidden);
-        bool isLayerHidden(int pLayer) const;
-        void setLayerOpacity(int pLayer, unsigned char pOpacity);
-        void unsetLayerOpacity(int pLayer);
-        std::optional<unsigned char> getLayerOpacity(int pLayer) const;
+        void setLayerHidden(int layer, bool hidden);
+        bool isLayerHidden(int layer) const;
+        void setLayerOpacity(int layer, unsigned char opacity);
+        void unsetLayerOpacity(int layer);
+        std::optional<unsigned char> getLayerOpacity(int layer) const;
 
-        unsigned char opacityForObject(unsigned char pUnmodifiedOpacity, GameObject* pObj);
+        unsigned char opacityForObject(unsigned char unmodifiedOpacity, GameObject* obj);
     };
 
     class EditLayerPopup final : public geode::Popup {
@@ -57,14 +57,14 @@ namespace BetterLayers {
         static constexpr float WIDTH = 375.0f;
         static constexpr float HEIGHT = 120.0f;
 
-        bool init(LayerSettings* pSettings);
+        bool init(LayerSettings* settings);
 
         void onClearOpacity(cocos2d::CCObject*);
         void onToggleHidden(cocos2d::CCObject*);
         void onToggleFocused(cocos2d::CCObject*);
 
     public:
-        static EditLayerPopup* create(LayerSettings* pSettings);
+        static EditLayerPopup* create(LayerSettings* settings);
     };
 
     class EditAllLayersPopup final : public geode::Popup {
@@ -82,12 +82,12 @@ namespace BetterLayers {
         static constexpr float WIDTH = 375.0f;
         static constexpr float HEIGHT = 200.0f;
 
-        bool init(LayerSettings* pSettings);
+        bool init(LayerSettings* settings);
 
         void onClearDefaultOpacity(cocos2d::CCObject*);
         void onUnfocusLayer(cocos2d::CCObject*);
 
     public:
-        static EditAllLayersPopup* create(LayerSettings* pSettings);
+        static EditAllLayersPopup* create(LayerSettings* settings);
     };
 }

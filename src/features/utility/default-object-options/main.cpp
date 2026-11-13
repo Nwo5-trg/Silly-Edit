@@ -66,17 +66,17 @@ namespace DefaultObjectOptions {
         );
     }
 
-    void Feature::onSettingChanged(std::string pName, GenericSetting*) {
+    void Feature::onSettingChanged(std::string name, GenericSetting*) {
         auto self = editor::layer<DefaultObjectOptions::LevelEditorLayer>();
 
-        if (pName == "Dont Fade" || pName == "Dont Enter" || pName == "No Glow") {
+        if (name == "Dont Fade" || name == "Dont Enter" || name == "No Glow") {
             self->m_fields->options.updateSimpleOptionsString(
                 DefaultObjectOptions::dontFade,
                 DefaultObjectOptions::dontEnter,
                 DefaultObjectOptions::noGlow
             );
         }
-        else if (pName == "Use JSON") {
+        else if (name == "Use JSON") {
             DefaultObjectOptions::parseOptions(self->m_fields->options);
         }
     }

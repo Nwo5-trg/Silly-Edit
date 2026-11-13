@@ -74,8 +74,14 @@ namespace sillyedit::settings {
     };
 
     template<typename T>
-    requires std::same_as<T, int> || std::same_as<T, float>
+    requires std::is_arithmetic_v<T> && (!std::same_as<T, bool>)
     class Setting<T> : public SettingBase<T> {
+    protected:
+        struct Range {
+            std::optional<T> min;
+            std::optional<T> max;
+        } m_range; 
+        
     public:
         Setting(std::string name, std::string category, T defaultValue, std::optional<std::string> description = std::nullopt)
             : SettingBase<T>(std::move(name), std::move(description), SettingReload::None, SettingCondition::None, (std::same_as<T, int> ? SettingType::Int : SettingType::Float), std::move(category), defaultValue) {}
@@ -85,19 +91,27 @@ namespace sillyedit::settings {
             : SettingBase<T>(std::move(name), std::move(description), SettingReload::None, SettingCondition::None, (std::same_as<T, int> ? SettingType::Int : SettingType::Float), std::move(category), defaultValue) {}
         Setting(std::string name, std::string category, T defaultValue, SettingReload reloadRequired, SettingCondition condition, std::optional<std::string> description = std::nullopt)
             : SettingBase<T>(std::move(name), std::move(description), SettingReload::None, SettingCondition::None, (std::same_as<T, int> ? SettingType::Int : SettingType::Float), std::move(category), defaultValue) {}
-    };
+        Setting(std::string name, std::string category, T defaultValue, Range range, std::optional<std::string> description = std::nullopt)
+            : SettingBase<T>(std::move(name), std::move(description), SettingReload::None, SettingCondition::None, (std::same_as<T, int> ? SettingType::Int : SettingType::Float), std::move(category), defaultValue), m_range(std::move(range)) {}
+        Setting(std::string name, std::string category, T defaultValue, Range range, SettingReload reloadRequired, std::optional<std::string> description = std::nullopt)
+            : SettingBase<T>(std::move(name), std::move(description), SettingReload::None, SettingCondition::None, (std::same_as<T, int> ? SettingType::Int : SettingType::Float), std::move(category), defaultValue), m_range(std::move(range)) {}
+        Setting(std::string name, std::string category, T defaultValue, Range range, SettingCondition condition, std::optional<std::string> description = std::nullopt)
+            : SettingBase<T>(std::move(name), std::move(description), SettingReload::None, SettingCondition::None, (std::same_as<T, int> ? SettingType::Int : SettingType::Float), std::move(category), defaultValue), m_range(std::move(range)) {}
+        Setting(std::string name, std::string category, T defaultValue, Range range, SettingReload reloadRequired, SettingCondition condition, std::optional<std::string> description = std::nullopt)
+            : SettingBase<T>(std::move(name), std::move(description), SettingReload::None, SettingCondition::None, (std::same_as<T, int> ? SettingType::Int : SettingType::Float), std::move(category), defaultValue), m_range(std::move(range)) {}
 
-    template<>
-    class Setting<float> : public SettingBase<float> {
-    public:
-        Setting(std::string name, std::string category, float defaultValue, std::optional<std::string> description = std::nullopt)
-            : SettingBase(std::move(name), std::move(description), SettingReload::None, SettingCondition::None, SettingType::Float, std::move(category), defaultValue) {}
-        Setting(std::string name, std::string category, float defaultValue, SettingReload reloadRequired, std::optional<std::string> description = std::nullopt)
-            : SettingBase(std::move(name), std::move(description), SettingReload::None, SettingCondition::None, SettingType::Float, std::move(category), defaultValue) {}
-        Setting(std::string name, std::string category, float defaultValue, SettingCondition condition, std::optional<std::string> description = std::nullopt)
-            : SettingBase(std::move(name), std::move(description), SettingReload::None, SettingCondition::None, SettingType::Float, std::move(category), defaultValue) {}
-        Setting(std::string name, std::string category, float defaultValue, SettingReload reloadRequired, SettingCondition condition, std::optional<std::string> description = std::nullopt)
-            : SettingBase(std::move(name), std::move(description), SettingReload::None, SettingCondition::None, SettingType::Float, std::move(category), defaultValue) {}
+        T min() {
+            return m_range.min.value_or(std::numeric_limits<T>::lowest());
+        }
+        bool hasMin() {
+            return m_range.min.has_value();
+        }
+        T max() {
+            return m_range.max.value_or(std::numeric_limits<T>::max());
+        }
+        bool hasMax() {
+            return m_range.max.has_value();
+        }
     };
 
     template<>
@@ -170,16 +184,16 @@ namespace sillyedit::settings {
             : Setting<std::string>(std::move(name), std::move(category), modiferTypeToString(defaultValue), {"Shift", "Ctrl+Command", "Alt", "Ctrl", "Command", "None"}, reloadRequired, condition, std::move(description)) {}
     };
 
-    // template<>
-    // class Setting<OpacityType> : public Setting<int> {
-    // public:
-    //     Setting(std::string name, std::string category, unsigned char defaultValue, std::optional<std::string> description = std::nullopt)
-    //         : Setting<int>(std::move(name), std::move(category), defaultValue, {0, 255}, std::move(description)) {}
-    //     Setting(std::string name, std::string category, unsigned char defaultValue, SettingReload reloadRequired, std::optional<std::string> description = std::nullopt)
-    //         : Setting<int>(std::move(name), std::move(category), defaultValue, {0, 255}, reloadRequired, std::move(description)) {}
-    //     Setting(std::string name, std::string category, unsigned char defaultValue, SettingCondition condition, std::optional<std::string> description = std::nullopt)
-    //         : Setting<int>(std::move(name), std::move(category), defaultValue, {0, 255}, condition, std::move(description)) {}
-    //     Setting(std::string name, std::string category, unsigned char defaultValue, SettingReload reloadRequired, SettingCondition condition, std::optional<std::string> description = std::nullopt)
-    //         : Setting<int>(std::move(name), std::move(category),defaultValue, {0, 255}, reloadRequired, condition, std::move(description)) {}
-    // };
+    template<>
+    class Setting<OpacityType> : public Setting<int> {
+    public:
+        Setting(std::string name, std::string category, unsigned char defaultValue, std::optional<std::string> description = std::nullopt)
+            : Setting<int>(std::move(name), std::move(category), defaultValue, {0, 255}, std::move(description)) {}
+        Setting(std::string name, std::string category, unsigned char defaultValue, SettingReload reloadRequired, std::optional<std::string> description = std::nullopt)
+            : Setting<int>(std::move(name), std::move(category), defaultValue, {0, 255}, reloadRequired, std::move(description)) {}
+        Setting(std::string name, std::string category, unsigned char defaultValue, SettingCondition condition, std::optional<std::string> description = std::nullopt)
+            : Setting<int>(std::move(name), std::move(category), defaultValue, {0, 255}, condition, std::move(description)) {}
+        Setting(std::string name, std::string category, unsigned char defaultValue, SettingReload reloadRequired, SettingCondition condition, std::optional<std::string> description = std::nullopt)
+            : Setting<int>(std::move(name), std::move(category),defaultValue, {0, 255}, reloadRequired, condition, std::move(description)) {}
+    };
 }

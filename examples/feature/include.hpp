@@ -19,7 +19,7 @@ namespace NAME {
 
     class $setting_category("NAME-logo.png"_spr, "");
 
-    inline SillySetting<bool> rawr{
+    inline Setting<bool> rawr{
         "", feature, true
     };
 }

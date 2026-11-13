@@ -41,15 +41,15 @@ namespace GroupLabelShenanigans {
 
         LabelOptions();
         
-        void addConfig(int pID, const ObjectConfig& pConfig);
-        void addExtra(int pId, const ExtraConfig& pConfig);
-        void blacklist(int pID);
+        void addConfig(int iD, const ObjectConfig& config);
+        void addExtra(int id, const ExtraConfig& config);
+        void blacklist(int iD);
 
-        void stringForObject(char* pBuf, GameObject* pObj);
-        std::optional<cocos2d::ccColor4B> extraForObject(GameObject* pObj);
+        void stringForObject(char* buf, GameObject* obj);
+        std::optional<cocos2d::ccColor4B> extraForObject(GameObject* obj);
 
         void reset();
     };
 
-    void parseLabels(LabelOptions& pLabelOptions);
+    void parseLabels(LabelOptions& labelOptions);
 }

@@ -13,7 +13,7 @@ namespace BetterSelectAll {
         SouthEast
     };
 
-    cocos2d::CCArray* getObjectsWithDirection(SelectDirection pDirection, bool pSelectedObjectsCenter);
+    cocos2d::CCArray* getObjectsWithDirection(SelectDirection direction, bool selectedObjectsCenter);
 
     class BetterSelectAllPopup final : public geode::Popup {
     private:
@@ -32,9 +32,9 @@ namespace BetterSelectAll {
 
         bool init();
 
-        void onSelectButton(cocos2d::CCObject* pSender);
-        void onToggleBypassAll(cocos2d::CCObject* pSender);
-        void onToggleSelectedObjectMode(cocos2d::CCObject* pSender);
+        void onSelectButton(cocos2d::CCObject* sender);
+        void onToggleBypassAll(cocos2d::CCObject* sender);
+        void onToggleSelectedObjectMode(cocos2d::CCObject* sender);
 
     public:
         static BetterSelectAllPopup* create();

@@ -5,20 +5,20 @@ using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
 
 namespace TriggerIndicators {
-    void Drawer::drawTargets(CCPoint pStart, bool pTargetingTrigger) {
-        const auto& objs = pTargetingTrigger ? m_state.triggerTargets : m_state.objectTargets;
-        const auto shouldCluster = pTargetingTrigger ? TriggerIndicators::clusterTriggers.get() : TriggerIndicators::clusterObjects;
-        const auto shouldFallback = objs.size() > (pTargetingTrigger ? TriggerIndicators::triggerClustersMaxThreshold : TriggerIndicators::objectClustersMaxThreshold);
-        const auto shouldRectFallback = !(pTargetingTrigger ? TriggerIndicators::triggerClusterLineFallback : TriggerIndicators::objectClusterLineFallback);
+    void Drawer::drawTargets(CCPoint start, bool targetingTrigger) {
+        const auto& objs = targetingTrigger ? m_state.triggerTargets : m_state.objectTargets;
+        const auto shouldCluster = targetingTrigger ? TriggerIndicators::clusterTriggers.get() : TriggerIndicators::clusterObjects;
+        const auto shouldFallback = objs.size() > (targetingTrigger ? TriggerIndicators::triggerClustersMaxThreshold : TriggerIndicators::objectClustersMaxThreshold);
+        const auto shouldRectFallback = !(targetingTrigger ? TriggerIndicators::triggerClusterLineFallback : TriggerIndicators::objectClusterLineFallback);
 
         if (!shouldCluster || (shouldFallback && !shouldRectFallback)) {
             for (auto obj : objs) {
 
-                const auto end = pTargetingTrigger ? this->inputExtraPosFor(obj) : obj->getRealPosition();
+                const auto end = targetingTrigger ? this->inputExtraPosFor(obj) : obj->getRealPosition();
 
-                this->drawLine(pStart, end);
+                this->drawLine(start, end);
 
-                if (!TriggerIndicators::alwaysDrawExtras && pTargetingTrigger) {
+                if (!TriggerIndicators::alwaysDrawExtras && targetingTrigger) {
                     this->drawInputExtra(end, {ui::sx(obj), ui::sy(obj)}, obj->getOpacity() / 255.0f);
                 }
             }
@@ -26,117 +26,117 @@ namespace TriggerIndicators {
             return;
         }
         else if (shouldFallback && shouldRectFallback) {
-            this->drawToRect(pStart, getObjectBounds(objs, true));
+            this->drawToRect(start, getObjectBounds(objs, true));
 
             return;
         }
 
         m_state.clusterResult.clear();
-        clusterObjects(m_state.clusterResult, objs, pTargetingTrigger ? TriggerIndicators::maxTriggerClusterDistance : TriggerIndicators::maxObjectClusterDistance);
+        clusterObjects(m_state.clusterResult, objs, targetingTrigger ? TriggerIndicators::maxTriggerClusterDistance : TriggerIndicators::maxObjectClusterDistance);
 
         for (const auto& cluster : m_state.clusterResult) {
             if (cluster.size() == 1) {
                 const auto obj = cluster.front();
-                const auto end = pTargetingTrigger ? this->inputExtraPosFor(obj) : obj->getRealPosition();
+                const auto end = targetingTrigger ? this->inputExtraPosFor(obj) : obj->getRealPosition();
 
-                this->drawLine(pStart, end);
+                this->drawLine(start, end);
 
-                if (!TriggerIndicators::alwaysDrawExtras && pTargetingTrigger) {
+                if (!TriggerIndicators::alwaysDrawExtras && targetingTrigger) {
                     this->drawInputExtra(end, {ui::sx(obj), ui::sy(obj)}, obj->getOpacity() / 255.0f);
                 }
             }
             else {
-                this->drawToRect(pStart, getObjectBounds(cluster, true));
+                this->drawToRect(start, getObjectBounds(cluster, true));
             }
         }
     }
 
-    void Drawer::drawToRect(cocos2d::CCPoint pStart, cocos2d::CCRect pRect) {
-        pRect.origin = ccSub(pRect.origin, m_state.thickness);
-        pRect.size = ccAdd(pRect.size, m_state.thickness * 2);
+    void Drawer::drawToRect(cocos2d::CCPoint start, cocos2d::CCRect rect) {
+        rect.origin = ccSub(rect.origin, m_state.thickness);
+        rect.size = ccAdd(rect.size, m_state.thickness * 2);
 
-        this->drawLine(pStart, sillyedit::utils::getLineCut(pStart, pRect));
+        this->drawLine(start, sillyedit::utils::getLineCut(start, rect));
         
         if (m_state.isCenter && TriggerIndicators::dottedCenterLines) {
             sillyedit::utils::getGridDraw()->drawDashedLine(
-                pRect.origin, {pRect.origin.x, pRect.getMaxY()}, m_state.thickness, m_state.color, TriggerIndicators::dottedSegmentSize, TriggerIndicators::dottedDotSize
+                rect.origin, {rect.origin.x, rect.getMaxY()}, m_state.thickness, m_state.color, TriggerIndicators::dottedSegmentSize, TriggerIndicators::dottedDotSize
             );
             sillyedit::utils::getGridDraw()->drawDashedLine(
-                {pRect.origin.x, pRect.getMaxY()}, pRect.origin + pRect.size, m_state.thickness, m_state.color, TriggerIndicators::dottedSegmentSize, TriggerIndicators::dottedDotSize
+                {rect.origin.x, rect.getMaxY()}, rect.origin + rect.size, m_state.thickness, m_state.color, TriggerIndicators::dottedSegmentSize, TriggerIndicators::dottedDotSize
             );
             sillyedit::utils::getGridDraw()->drawDashedLine(
-                pRect.origin + pRect.size, {pRect.getMaxX(), pRect.origin.y}, m_state.thickness, m_state.color, TriggerIndicators::dottedSegmentSize, TriggerIndicators::dottedDotSize
+                rect.origin + rect.size, {rect.getMaxX(), rect.origin.y}, m_state.thickness, m_state.color, TriggerIndicators::dottedSegmentSize, TriggerIndicators::dottedDotSize
             );
             sillyedit::utils::getGridDraw()->drawDashedLine(
-                {pRect.getMaxX(), pRect.origin.y}, pRect.origin, m_state.thickness, m_state.color, TriggerIndicators::dottedSegmentSize, TriggerIndicators::dottedDotSize
+                {rect.getMaxX(), rect.origin.y}, rect.origin, m_state.thickness, m_state.color, TriggerIndicators::dottedSegmentSize, TriggerIndicators::dottedDotSize
             );
         }
         else {
             sillyedit::utils::getGridDraw()->drawRect(
-                pRect, Col::Clear, m_state.thickness, m_state.color
+                rect, Col::Clear, m_state.thickness, m_state.color
             );
         }
     }
-    void Drawer::drawLine(cocos2d::CCPoint pStart, cocos2d::CCPoint pEnd) {
+    void Drawer::drawLine(cocos2d::CCPoint start, cocos2d::CCPoint end) {
         if (m_state.isCenter && TriggerIndicators::dottedCenterLines) {
             sillyedit::utils::getGridDraw()->drawDashedLine(
-                pStart, pEnd, m_state.thickness, m_state.color, TriggerIndicators::dottedSegmentSize, TriggerIndicators::dottedDotSize
+                start, end, m_state.thickness, m_state.color, TriggerIndicators::dottedSegmentSize, TriggerIndicators::dottedDotSize
             );
         }
         else {
             if (TriggerIndicators::drawLines) {
                 sillyedit::utils::getGridDraw()->drawLine(
-                    pStart, pEnd, m_state.thickness, m_state.color
+                    start, end, m_state.thickness, m_state.color
                 );
             }
             else {
                 sillyedit::utils::getGridDraw()->drawSegment(
-                    pStart, pEnd, m_state.thickness, m_state.color
+                    start, end, m_state.thickness, m_state.color
                 );
             }
         }
     }
 
-    void Drawer::drawInputExtra(CCPoint pPos, CCSize pScale, float pOpacity) {
+    void Drawer::drawInputExtra(CCPoint pos, CCSize scale, float opacity) {
         auto drawnode = TriggerIndicators::drawExtrasBehind ? sillyedit::utils::getGridDraw() : sillyedit::utils::getOverlayDraw();
 
-        const auto thickness = TriggerIndicators::thickness * ccMin(pScale) * 0.5f;
+        const auto thickness = TriggerIndicators::thickness * ccMin(scale) * 0.5f;
 
-        pScale *= 3.5f * TriggerIndicators::extrasScale;
+        scale *= 3.5f * TriggerIndicators::extrasScale;
 
         drawnode->drawEllipse(
-            pPos, pScale, misc::setOpacity(color_cast<ccColor4F>(TriggerIndicators::extrasFillCol.get()), pOpacity), 16,
-            thickness, misc::setOpacity(color_cast<ccColor4F>(TriggerIndicators::extrasOutlineCol.get()), pOpacity)
+            pos, scale, misc::setOpacity(color_cast<ccColor4F>(TriggerIndicators::extrasFillCol.get()), opacity), 16,
+            thickness, misc::setOpacity(color_cast<ccColor4F>(TriggerIndicators::extrasOutlineCol.get()), opacity)
         );
     }
-    void Drawer::drawOutputExtra(CCPoint pPos, CCSize pScale, float pOpacity) {
+    void Drawer::drawOutputExtra(CCPoint pos, CCSize scale, float opacity) {
         // lol
         if (TriggerIndicators::circleOutputExtras) {
-            return drawInputExtra(pPos, pScale, pOpacity);
+            return drawInputExtra(pos, scale, opacity);
         }
 
         auto drawnode = TriggerIndicators::drawExtrasBehind ? sillyedit::utils::getGridDraw() : sillyedit::utils::getOverlayDraw();
 
-        const auto thickness = TriggerIndicators::thickness * ccMin(pScale) * 0.5f;
+        const auto thickness = TriggerIndicators::thickness * ccMin(scale) * 0.5f;
 
-        pScale.width *= 3.0f * TriggerIndicators::extrasScale;
-        pScale.height *= 4.0f * TriggerIndicators::extrasScale;
+        scale.width *= 3.0f * TriggerIndicators::extrasScale;
+        scale.height *= 4.0f * TriggerIndicators::extrasScale;
 
         drawnode->drawPolygon(
-            std::array{CCPoint{pPos.x - pScale.width, pPos.y - pScale.height}, CCPoint{pPos.x - pScale.width, pPos.y + pScale.height}, CCPoint{pPos.x + pScale.width, pPos.y}},
-            misc::setOpacity(color_cast<ccColor4F>(TriggerIndicators::extrasFillCol.get()), pOpacity), thickness,
-            misc::setOpacity(color_cast<ccColor4F>(TriggerIndicators::extrasOutlineCol.get()), pOpacity)
+            std::array{CCPoint{pos.x - scale.width, pos.y - scale.height}, CCPoint{pos.x - scale.width, pos.y + scale.height}, CCPoint{pos.x + scale.width, pos.y}},
+            misc::setOpacity(color_cast<ccColor4F>(TriggerIndicators::extrasFillCol.get()), opacity), thickness,
+            misc::setOpacity(color_cast<ccColor4F>(TriggerIndicators::extrasOutlineCol.get()), opacity)
         );
     }
 
-    cocos2d::CCPoint Drawer::inputExtraPosFor(GameObject* pObj) {
-        return pObj->getRealPosition() + (sillyedit::utils::triggerHasBodyOffset(pObj->m_objectID) ? sillyedit::utils::TRIGGER_BODY_OFFSET : CCPointZero) - CCPoint{TriggerIndicators::extrasOffset * pObj->getScaleX(), 0.0f};
+    cocos2d::CCPoint Drawer::inputExtraPosFor(GameObject* obj) {
+        return obj->getRealPosition() + (sillyedit::utils::triggerHasBodyOffset(obj->m_objectID) ? sillyedit::utils::TRIGGER_BODY_OFFSET : CCPointZero) - CCPoint{TriggerIndicators::extrasOffset * obj->getScaleX(), 0.0f};
     }
-    std::pair<cocos2d::CCPoint, cocos2d::CCPoint> Drawer::outputExtraPosFor(GameObject* pObj, bool pHasCenter) {
-        const auto pos = pObj->getRealPosition() + (sillyedit::utils::triggerHasBodyOffset(pObj->m_objectID) ? sillyedit::utils::TRIGGER_BODY_OFFSET : CCPointZero);
-        const auto hw = TriggerIndicators::extrasOffset * pObj->getScaleX();
+    std::pair<cocos2d::CCPoint, cocos2d::CCPoint> Drawer::outputExtraPosFor(GameObject* obj, bool hasCenter) {
+        const auto pos = obj->getRealPosition() + (sillyedit::utils::triggerHasBodyOffset(obj->m_objectID) ? sillyedit::utils::TRIGGER_BODY_OFFSET : CCPointZero);
+        const auto hw = TriggerIndicators::extrasOffset * obj->getScaleX();
 
-        if (pHasCenter) {
+        if (hasCenter) {
             return {{pos.x + hw, pos.y + 5.0f}, {pos.x + hw, pos.y - 5.0f}};
         }
         else {
@@ -144,8 +144,8 @@ namespace TriggerIndicators {
         }
     }
 
-    void Drawer::updateTargets(int pGroup) {
-        auto objs = editor::objectsWithGroup(pGroup);
+    void Drawer::updateTargets(int group) {
+        auto objs = editor::objectsWithGroup(group);
 
         const auto triggerPos = m_state.trigger->getRealPosition();
         const auto triggerSelected = m_state.trigger->m_isSelected;
@@ -201,21 +201,21 @@ namespace TriggerIndicators {
         }
     }
 
-    void Drawer::clusterObjects(std::vector<std::vector<GameObject*>>& pOut, std::span<GameObject* const> pObjs, float pClusterSize) {
+    void Drawer::clusterObjects(std::vector<std::vector<GameObject*>>& out, std::span<GameObject* const> objs, float clusterSize) {
         static std::vector<GameObject*> queue;
         static std::unordered_map<GameObject*, int> map;
         
         queue.clear();
         map.clear();
 
-        for (auto obj : pObjs) {
+        for (auto obj : objs) {
             if (map.contains(obj)) {
                 continue;
             }
 
-            const int currentClusterIndex = pOut.size();
-            pOut.emplace_back();
-            auto& currentCluster = pOut.back();
+            const int currentClusterIndex = out.size();
+            out.emplace_back();
+            auto& currentCluster = out.back();
 
             queue.clear();
             queue.push_back(obj);
@@ -228,12 +228,12 @@ namespace TriggerIndicators {
                 queue.pop_back();
                 currentCluster.push_back(currentObj);
 
-                for (auto neighbour : pObjs) {
+                for (auto neighbour : objs) {
                     if (map.find(neighbour) != map.end()) {
                         continue;
                     }
 
-                    if (std::abs(x - neighbour->m_positionX) <= pClusterSize && std::abs(y - neighbour->m_positionY) <= pClusterSize) {
+                    if (std::abs(x - neighbour->m_positionX) <= clusterSize && std::abs(y - neighbour->m_positionY) <= clusterSize) {
                         map[neighbour] = currentClusterIndex;
                         queue.push_back(neighbour);
                     }
@@ -241,14 +241,14 @@ namespace TriggerIndicators {
             }
         }
     }
-    CCRect Drawer::getObjectBounds(std::span<GameObject* const> pObjs, bool pAddSize) {
+    CCRect Drawer::getObjectBounds(std::span<GameObject* const> objs, bool addSize) {
         CCPoint min = {std::numeric_limits<float>::max(), std::numeric_limits<float>::max()};
         CCPoint max = {std::numeric_limits<float>::lowest(), std::numeric_limits<float>::lowest()};
 
-        for (auto obj : pObjs) {
+        for (auto obj : objs) {
             const float x = obj->m_positionX;
             const float y = obj->m_positionY;
-            const auto size = pAddSize ? ui::ssize(obj) / 2 : CCSizeZero;
+            const auto size = addSize ? ui::ssize(obj) / 2 : CCSizeZero;
 
             min.x = std::min(min.x, x - size.width);
             min.y = std::min(min.y, y - size.height);
@@ -260,8 +260,8 @@ namespace TriggerIndicators {
     }
     
     void Drawer::draw() {
-        const auto shouldSelectionCull = !selection::empty() && std::ranges::any_of(selection::getExt(), [] (GameObject* pObj) {
-            return object::hasGroups(pObj);
+        const auto shouldSelectionCull = !selection::empty() && std::ranges::any_of(selection::getExt(), [] (GameObject* obj) {
+            return object::hasGroups(obj);
         });
         const auto cullDistance = std::max(
             ccMax(editor::size(false) / 2) * (shouldSelectionCull ? TriggerIndicators::cullMultiplierSelectionMod.get() : TriggerIndicators::cullMultiplier.get()),

@@ -7,8 +7,8 @@ namespace SillyKeybinds {
     void Feature::onEditor() {
         auto self = editor::ui();
 
-        feature.registerKeybind<"make-object-invisible">([self] (bool pDown, bool) {
-            if (!pDown || selection::empty()) {
+        feature.registerKeybind<"make-object-invisible">([self] (bool down, bool) {
+            if (!down || selection::empty()) {
                 return;
             }
 
@@ -47,8 +47,8 @@ namespace SillyKeybinds {
             }
         });
 
-        feature.registerKeybind<"restart-playtest">([self] (bool pDown, bool pRepeat) {
-            if (!pDown || pRepeat || !editor::isPlaytesting()) {
+        feature.registerKeybind<"restart-playtest">([self] (bool down, bool repeat) {
+            if (!down || repeat || !editor::isPlaytesting()) {
                 return;
             }
 

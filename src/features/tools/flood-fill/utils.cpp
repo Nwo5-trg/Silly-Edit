@@ -4,12 +4,12 @@
 using namespace geode::prelude;
 
 namespace FF {
-    std::vector<Rect> gridFloodFill(std::vector<Rect> pShape, const Rect& pCenter, bool p8Direction) {
-        const auto bounds = Rect::bounds(pShape);
+    std::vector<Rect> gridFloodFill(std::vector<Rect> shape, const Rect& center, bool p8Direction) {
+        const auto bounds = Rect::bounds(shape);
 
         std::vector<Rect> out;
 
-        std::vector<Rect> stack = {pCenter};
+        std::vector<Rect> stack = {center};
         
         while (!stack.empty()) {
             const auto rect = stack.back();
@@ -20,14 +20,14 @@ namespace FF {
             }
 
             // i love std::ranges algs, gotta be one of my favorite genders
-            if (std::ranges::any_of(pShape, [&] (const auto& pBoundry) {
-                return pBoundry.contains(rect.center());
+            if (std::ranges::any_of(shape, [&] (const auto& boundry) {
+                return boundry.contains(rect.center());
             })) {
                 continue;
             }
 
-            pShape.push_back(rect);
-            if (rect != pCenter) {
+            shape.push_back(rect);
+            if (rect != center) {
                 out.push_back(rect);
             }
 
@@ -47,16 +47,16 @@ namespace FF {
         return out;
     }
 
-    Rect rectFromObject(GameObject* pObj, std::optional<CCPoint> pCenter) {
+    Rect rectFromObject(GameObject* obj, std::optional<CCPoint> center) {
         return {
-            pCenter.has_value() ? pCenter.value() : pObj->getRealPosition(), 
-            CCSize{pObj->m_scaleX, pObj->m_scaleY} * object::size(pObj)
+            center.has_value() ? center.value() : obj->getRealPosition(), 
+            CCSize{obj->m_scaleX, obj->m_scaleY} * object::size(obj)
         };
     }
-    std::vector<Rect> rectsFromObjects(CCArray* pObjs) {
+    std::vector<Rect> rectsFromObjects(CCArray* objs) {
         std::vector<Rect> out;
 
-        for (auto obj : CCArrayExt<GameObject*>(pObjs)) {
+        for (auto obj : CCArrayExt<GameObject*>(objs)) {
             out.emplace_back(obj->getRealPosition(), CCSize{obj->m_scaleX, obj->m_scaleY} * object::size(obj));
         }
 

@@ -11,20 +11,20 @@ namespace sillyedit::utils {
         return {sillyedit::settings::sayoDeviceSensitivity, sillyedit::settings::sayoDeviceScreenBrightness};
     }
 
-    bool isProbablierObjectString(std::string_view pStr) {
-        if (pStr.find_first_of("1234567890") != 0) {
+    bool isProbablierObjectString(std::string_view str) {
+        if (str.find_first_of("1234567890") != 0) {
             return false;
         }
 
-        if (pStr.ends_with(',') || pStr.ends_with('.') || misc::stringCount(pStr, ',') < 5) {
+        if (str.ends_with(',') || str.ends_with('.') || misc::stringCount(str, ',') < 5) {
             return false;
         }
 
         return true;
     }
 
-    bool triggerHasBodyOffset(int pID) {
-        switch (pID) {
+    bool triggerHasBodyOffset(int iD) {
+        switch (iD) {
             case 22: [[fallthrough]];
             case 24: [[fallthrough]];
             case 23: [[fallthrough]];
@@ -46,14 +46,14 @@ namespace sillyedit::utils {
             default: {};
         }
 
-        return trigger::is(pID);
+        return trigger::is(iD);
     }
 
-    bool weightedFuzzyMatch(geode::ZStringView pStr, geode::ZStringView pQuery, double pWight, double& pOut) {
+    bool weightedFuzzyMatch(geode::ZStringView str, geode::ZStringView query, double wight, double& out) {
         int score;
 
-        if (fts::fuzzy_match(pQuery.c_str(), pStr.c_str(), score)) {
-            pOut = std::max(pOut, score * pWight);
+        if (fts::fuzzy_match(query.c_str(), str.c_str(), score)) {
+            out = std::max(out, score * wight);
             
             return true;
         }
@@ -61,9 +61,9 @@ namespace sillyedit::utils {
         return false;
     } 
 
-    bool modifierDown(const settings::SillySetting<std::string>& pStr) {
+    bool modifierDown(const settings::Setting<std::string>& str) {
         // lollllll
-        switch (pStr.get().length()) {
+        switch (str.get().length()) {
             case 3: return CCKeyboardDispatcher::get()->getAltKeyPressed();
             case 4: return CCKeyboardDispatcher::get()->getControlKeyPressed();
             case 5: return CCKeyboardDispatcher::get()->getShiftKeyPressed();
@@ -73,11 +73,11 @@ namespace sillyedit::utils {
         }
     }
 
-    CCTextInputNode* findUITextInputs(cocos2d::CCPoint pPos) {
+    CCTextInputNode* findUITextInputs(cocos2d::CCPoint pos) {
         std::vector<CCTextInputNode*> inputs;
 
-        auto find = [&] (this auto&& pSelf, CCNode* pNode) -> void {
-            for (auto node : pNode->getChildrenExt()) {
+        auto find = [&] (this auto&& self, CCNode* node) -> void {
+            for (auto node : node->getChildrenExt()) {
                 if (!node->isVisible()) {
                     continue;
                 }
@@ -86,7 +86,7 @@ namespace sillyedit::utils {
                     inputs.push_back(static_cast<CCTextInputNode*>(node));
                 }
                 else {
-                    pSelf(node);
+                    self(node);
                 }
             }
         };
@@ -98,7 +98,7 @@ namespace sillyedit::utils {
                 const auto rect = input->boundingBox();
 
                 if (CCRect{rect.origin - rect.size / 2, rect.size}.containsPoint(
-                    input->getParent()->convertToNodeSpace(pPos)
+                    input->getParent()->convertToNodeSpace(pos)
                 )) {
                     return input;
                 }

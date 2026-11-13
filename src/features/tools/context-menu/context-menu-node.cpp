@@ -35,11 +35,11 @@ namespace ContextMenu {
 
         return true;
     }
-    void ContextMenuNode::update(float pForceUpdate) {
+    void ContextMenuNode::update(float forceUpdate) {
         const auto down = sillyedit::utils::modifierDown(ContextMenu::specialModifier);
 
         // we abusing implicit conversions with this one
-        if (this->m_specialDown == down || pForceUpdate == true) {
+        if (this->m_specialDown == down || forceUpdate == true) {
             return;
         }
         
@@ -59,13 +59,13 @@ namespace ContextMenu {
         }
     }
 
-    void ContextMenuNode::setup(std::vector<const Option*> pOptions) {
+    void ContextMenuNode::setup(std::vector<const Option*> options) {
         m_labels.clear();
 
         m_optionsMenu->removeAllChildren();
         m_optionsMenu->setContentSize({ICON_SIZE + OPTION_GAP + LABEL_WIDTH + PADDING, 0.0f});
 
-        for (auto option : pOptions) {
+        for (auto option : options) {
             if (option->type == Option::Type::Spacer) {
                 if (!m_optionsMenu->getChildrenCount() || m_optionsMenu->getChildrenExt().back()->getTag() == SPACER_TAG) {
                     continue;
@@ -132,14 +132,14 @@ namespace ContextMenu {
         this->setContentSize(ui::size(m_optionsMenu));
     }
 
-    void ContextMenuNode::show(cocos2d::CCPoint pPos, cocos2d::CCArray* pObjects) {
-        this->setup(OptionsRegistry::get()->forObjects(pObjects));
+    void ContextMenuNode::show(cocos2d::CCPoint pos, cocos2d::CCArray* objects) {
+        this->setup(OptionsRegistry::get()->forObjects(objects));
 
         const CCPoint anchor{
-            pPos.x + ui::sw(this) + PADDING > ui::winWidth() ? 1.0f : 0.0f, 1.0f
+            pos.x + ui::sw(this) + PADDING > ui::winWidth() ? 1.0f : 0.0f, 1.0f
         };
 
-        float y = pPos.y;
+        float y = pos.y;
 
         if (const float minY = editor::ui()->m_toolbarHeight + PADDING; y - ui::sh(this) < minY) {
             y = minY + ui::sh(this);
@@ -150,8 +150,8 @@ namespace ContextMenu {
         }
 
         Setup(this)
-            .anchor(pPos.x + ui::sw(this) + PADDING > ui::winWidth() ? 1.0f : 0.0f, 1.0f)
-            .pos(pPos.x, y)
+            .anchor(pos.x + ui::sw(this) + PADDING > ui::winWidth() ? 1.0f : 0.0f, 1.0f)
+            .pos(pos.x, y)
             .scale(ContextMenu::scaleMultiplier)
             .visible(true);
 

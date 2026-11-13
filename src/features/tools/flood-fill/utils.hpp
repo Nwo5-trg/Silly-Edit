@@ -5,20 +5,20 @@ namespace FF {
         cocos2d::CCPoint start;
         cocos2d::CCPoint end;
 
-        Rect(cocos2d::CCPoint pCenter, cocos2d::CCSize pSize)
-            : start(pCenter - pSize / 2), end(pCenter + pSize / 2) {}
-        Rect(cocos2d::CCPoint pStart, cocos2d::CCPoint pEnd)
-            : start(pStart), end(pEnd) {}
-        Rect(float pTop, float pLeft, float pBottom, float pRight)
-            : start(pLeft, pBottom), end(pRight, pTop) {}
+        Rect(cocos2d::CCPoint center, cocos2d::CCSize size)
+            : start(center - size / 2), end(center + size / 2) {}
+        Rect(cocos2d::CCPoint start, cocos2d::CCPoint end)
+            : start(start), end(end) {}
+        Rect(float top, float left, float bottom, float right)
+            : start(left, bottom), end(right, top) {}
 
-        static Rect bounds(std::span<const Rect> pRects) {
+        static Rect bounds(std::span<const Rect> rects) {
             Rect out {
                 cocos2d::CCPoint{std::numeric_limits<float>::max(), std::numeric_limits<float>::max()},
                 cocos2d::CCPoint{std::numeric_limits<float>::lowest(), std::numeric_limits<float>::lowest()}
             };
 
-            for (const auto& rect : pRects) {
+            for (const auto& rect : rects) {
                 out.start.x = std::min(rect.start.x, out.start.x);
                 out.start.y = std::min(rect.start.y, out.start.y);
                 out.end.x = std::max(rect.end.x, out.end.x);
@@ -28,22 +28,22 @@ namespace FF {
             return out;
         }
         
-        Rect operator+(cocos2d::CCPoint pOffset) const {
-            return {start + pOffset, end + pOffset};
+        Rect operator+(cocos2d::CCPoint offset) const {
+            return {start + offset, end + offset};
         }
-        bool operator==(const Rect& pOther) const {
-            return start == pOther.start && end == pOther.end;
+        bool operator==(const Rect& other) const {
+            return start == other.start && end == other.end;
         }
 
-        bool contains(cocos2d::CCPoint pPoint) const {
-            return pPoint.x >= start.x 
-                && pPoint.x <= end.x 
-                && pPoint.y >= start.y 
-                && pPoint.y <= end.y;
+        bool contains(cocos2d::CCPoint point) const {
+            return point.x >= start.x 
+                && point.x <= end.x 
+                && point.y >= start.y 
+                && point.y <= end.y;
         }
-        bool touches(const Rect& pOther) const {
-            return (start.x <= pOther.end.x && end.x >= pOther.start.x) 
-                && (start.y <= pOther.end.y && end.y >= pOther.start.y);
+        bool touches(const Rect& other) const {
+            return (start.x <= other.end.x && end.x >= other.start.x) 
+                && (start.y <= other.end.y && end.y >= other.start.y);
         }
 
         float top() const {
@@ -82,7 +82,7 @@ namespace FF {
     };
     
     // doesnt include center
-    std::vector<Rect> gridFloodFill(std::vector<Rect> pShape, const Rect& pCenter, bool p8Direction);
-    Rect rectFromObject(GameObject* pObj, std::optional<cocos2d::CCPoint> pCenter = std::nullopt);
-    std::vector<Rect> rectsFromObjects(cocos2d::CCArray* pObjs);
+    std::vector<Rect> gridFloodFill(std::vector<Rect> shape, const Rect& center, bool p8Direction);
+    Rect rectFromObject(GameObject* obj, std::optional<cocos2d::CCPoint> center = std::nullopt);
+    std::vector<Rect> rectsFromObjects(cocos2d::CCArray* objs);
 }

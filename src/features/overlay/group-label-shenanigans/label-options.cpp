@@ -7,44 +7,44 @@ namespace GroupLabelShenanigans {
         this->reset();
     }
 
-    void LabelOptions::addConfig(int pID, const ObjectConfig& pConfig) {
-        if (pID < m_objectConfigs.size() && pID > 0) {
-            m_objectConfigs[pID] = pConfig;
+    void LabelOptions::addConfig(int iD, const ObjectConfig& config) {
+        if (iD < m_objectConfigs.size() && iD > 0) {
+            m_objectConfigs[iD] = config;
         }
     }
-    void LabelOptions::addExtra(int pID, const ExtraConfig& pConfig) {
-        if (pID < m_extraConfigs.size() && pID > 0) {
-            m_extraConfigs[pID] = pConfig;
+    void LabelOptions::addExtra(int iD, const ExtraConfig& config) {
+        if (iD < m_extraConfigs.size() && iD > 0) {
+            m_extraConfigs[iD] = config;
         }
     }
-    void LabelOptions::blacklist(int pID) {
-        if (pID < m_blacklist.size() && pID > 0) {
-            m_blacklist[pID] = true;
+    void LabelOptions::blacklist(int iD) {
+        if (iD < m_blacklist.size() && iD > 0) {
+            m_blacklist[iD] = true;
         }
     }
 
-    void LabelOptions::stringForObject(char* pBuf, GameObject* pObj) {
-        const auto id = pObj->m_objectID;
+    void LabelOptions::stringForObject(char* buf, GameObject* obj) {
+        const auto id = obj->m_objectID;
 
         if (id > editor::constants::OBJECT_IDS || id <= 0) {
             return;
         }
 
         if (m_blacklist[id]) {
-            *pBuf = '\0';
+            *buf = '\0';
 
             return;
         }
 
         const auto& config = m_objectConfigs[id];
 
-        auto ptr = pBuf;
+        auto ptr = buf;
 
-        auto pushVal = [&] (int pVal, bool pTryColorLabels, bool pTrySpecial) {
-            if (pTryColorLabels && pVal >= 1000 && pVal <= 1014 && trigger::primaryTargetType(pObj) == trigger::InputType::Color) {
+        auto pushVal = [&] (int val, bool tryColorLabels, bool trySpecial) {
+            if (tryColorLabels && val >= 1000 && val <= 1014 && trigger::primaryTargetType(obj) == trigger::InputType::Color) {
                 const char* str = nullptr;
 
-                switch (pVal) {
+                switch (val) {
                     case editor::constants::BACKGROUND_COLOR: str = "BG"; break;
                     case editor::constants::GROUND_COLOR: str = "G1"; break;
                     case editor::constants::LINE_COLOR: str = "LINE"; break;
@@ -71,10 +71,10 @@ namespace GroupLabelShenanigans {
                 }
             }
 
-            if (pTrySpecial && pVal >= -11 && pVal <= -1) {
+            if (trySpecial && val >= -11 && val <= -1) {
                 const char* str = nullptr;
 
-                switch (pVal) {
+                switch (val) {
                     case editor::constants::P1_AREA_SPECIAL_TARGET: str = "P1"; break;
                     case editor::constants::P2_AREA_SPECIAL_TARGET: str = "P2"; break;
                     case editor::constants::CAMERA_AREA_SPECIAL_TARGET: str = "C"; break;
@@ -98,14 +98,14 @@ namespace GroupLabelShenanigans {
                 }
             }
 
-            if (const auto [out, ec] = std::to_chars(ptr, pBuf + (LabelOptions::BUF_SIZE - 1), pVal); ec == std::errc{}) {
+            if (const auto [out, ec] = std::to_chars(ptr, buf + (LabelOptions::BUF_SIZE - 1), val); ec == std::errc{}) {
                 ptr = out;
             }
         };
 
-        auto pushRow = [&] (const auto& pVec) {
+        auto pushRow = [&] (const auto& vec) {
             bool first = true;
-            for (const auto label : pVec) {
+            for (const auto label : vec) {
                 if (!first) {
                     *(ptr++) = '/';
                 }
@@ -116,16 +116,16 @@ namespace GroupLabelShenanigans {
                 int val = 0;
                 switch (label) {
                     case Label::Primary: {
-                        val = trigger::primaryTarget(pObj);
+                        val = trigger::primaryTarget(obj);
                     break; }
                     case Label::Secondary: {
-                        val = trigger::secondaryTarget(pObj);
+                        val = trigger::secondaryTarget(obj);
                     break; }
                     case Label::PrimaryInput: {
-                        val = trigger::primaryInput(pObj);
+                        val = trigger::primaryInput(obj);
                     break; }
                     case Label::SecondaryInput: {
-                        val = trigger::secondaryInput(pObj);
+                        val = trigger::secondaryInput(obj);
                     break; }
                 }
 
@@ -142,13 +142,13 @@ namespace GroupLabelShenanigans {
             }
         }
         else {
-            pushVal(trigger::primaryTarget(pObj), true, true);
+            pushVal(trigger::primaryTarget(obj), true, true);
         }
 
         *ptr = '\0';
     }
-    std::optional<cocos2d::ccColor4B> LabelOptions::extraForObject(GameObject* pObj) {
-        const auto id = pObj->m_objectID;
+    std::optional<cocos2d::ccColor4B> LabelOptions::extraForObject(GameObject* obj) {
+        const auto id = obj->m_objectID;
 
         if (id > editor::constants::OBJECT_IDS || id <= 0) {
             return std::nullopt;
@@ -158,21 +158,21 @@ namespace GroupLabelShenanigans {
 
         switch (config.type) {
             case Extra::ActivateGroup: {
-                return trigger::activateGroup(pObj) ? config.color : config.offColor;
+                return trigger::activateGroup(obj) ? config.color : config.offColor;
             }
             case Extra::ControlID: {
-                return static_cast<EffectGameObject*>(pObj)->m_targetControlID ? config.color : config.offColor;
+                return static_cast<EffectGameObject*>(obj)->m_targetControlID ? config.color : config.offColor;
             }
             case Extra::PulseTarget: {
-                return static_cast<EffectGameObject*>(pObj)->m_pulseTargetType == 1 ? config.color : config.offColor;
+                return static_cast<EffectGameObject*>(obj)->m_pulseTargetType == 1 ? config.color : config.offColor;
             }
             case Extra::Override: {
-                return pObj->m_objectID == trigger::PICKUP_TRIGGER 
-                    ? (static_cast<CountTriggerGameObject*>(pObj)->m_isOverride ? config.color : config.offColor)
+                return obj->m_objectID == trigger::PICKUP_TRIGGER 
+                    ? (static_cast<CountTriggerGameObject*>(obj)->m_isOverride ? config.color : config.offColor)
                     : config.offColor;
             }
             case Extra::Follow: {
-                return trigger::targetModeEnabled(pObj) ? config.color : config.offColor;
+                return trigger::targetModeEnabled(obj) ? config.color : config.offColor;
             }
             default: {
                 return std::nullopt;

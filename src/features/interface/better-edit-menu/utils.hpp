@@ -67,22 +67,22 @@ namespace BetterEditMenu {
 
         void updateArrowButtons();
         
-        void onMoveArrow(cocos2d::CCObject* pSender);
-        void onMoveShortcut(cocos2d::CCObject* pSender);
-        void onRotationArrow(cocos2d::CCObject* pSender);
-        void onRotationShortcut(cocos2d::CCObject* pSender);
-        void onFlip(cocos2d::CCObject* pSender);
-        void onButtonArrow(cocos2d::CCObject* pSender);
+        void onMoveArrow(cocos2d::CCObject* sender);
+        void onMoveShortcut(cocos2d::CCObject* sender);
+        void onRotationArrow(cocos2d::CCObject* sender);
+        void onRotationShortcut(cocos2d::CCObject* sender);
+        void onFlip(cocos2d::CCObject* sender);
+        void onButtonArrow(cocos2d::CCObject* sender);
 
     public:
         void createMoveShortcuts();
         void createRotationShortcuts();
 
-        void createButtons(cocos2d::CCArray* pButtonArray);
+        void createButtons(cocos2d::CCArray* buttonArray);
         
         void position();
 
-        void setVisible(bool pVisible);
+        void setVisible(bool visible);
 
         static EditMenu* create();
     };

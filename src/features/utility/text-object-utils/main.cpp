@@ -109,12 +109,12 @@ namespace TextObjectUtils {
         fields->kerningInput = ui::input(45.0f, "0")
             .id("kerning-input"_spr)
             .filter(CommonFilter::Int)
-            .callback([this] (const std::string& pStr) {
-                if (pStr.empty()) {
+            .callback([this] (const std::string& str) {
+                if (str.empty()) {
                     return;
                 }
 
-                const auto kerning = utils::numFromString<int>(pStr).unwrapOrDefault();
+                const auto kerning = utils::numFromString<int>(str).unwrapOrDefault();
                 this->m_kerningAmount = kerning;
                 this->m_kerningSlider->setValue(std::clamp(kerning + 10.0f, 0.0f, 30.0f) / 30);
 

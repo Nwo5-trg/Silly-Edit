@@ -35,10 +35,10 @@ namespace Ruler {
         return {main, chroma};
     }
 
-    std::string EditorUI::getMeasurementString(float pMeasure) {
+    std::string EditorUI::getMeasurementString(float measure) {
         if (Ruler::useGDUnits) {
             // i think the correct way to do the math is slightly different but this works so
-            const auto measure = pMeasure / (Ruler::useGDUnits ? editor::constants::GRID_SIZE : 1);
+            const auto measure = measure / (Ruler::useGDUnits ? editor::constants::GRID_SIZE : 1);
             const auto units = std::floor(measure);
 
             const auto str =  misc::numToString(units);
@@ -51,12 +51,12 @@ namespace Ruler {
             return str;
         }
         else {
-            return misc::numToString(pMeasure);
+            return misc::numToString(measure);
         }
     }
 
-    Label* EditorUI::createMeasurementLabel(float pMeasure) {
-        auto label = ui::label(this->getMeasurementString(pMeasure), Font::Chat);
+    Label* EditorUI::createMeasurementLabel(float measure) {
+        auto label = ui::label(this->getMeasurementString(measure), Font::Chat);
 
         sillyedit::utils::getOverlayLayer()->addChild(label);
 
@@ -69,8 +69,8 @@ namespace Ruler {
 
         auto& measurements = m_fields->measurements;
 
-        if (const auto it = std::ranges::find_if(measurements, [bounds] (const Measurement& pMeasurement) {
-            return pMeasurement.start == bounds.origin && pMeasurement.end == bounds.origin + bounds.size;
+        if (const auto it = std::ranges::find_if(measurements, [bounds] (const Measurement& measurement) {
+            return measurement.start == bounds.origin && measurement.end == bounds.origin + bounds.size;
         }); it != measurements.end()) {
             it->cleanup();
             measurements.erase(it);
@@ -87,7 +87,7 @@ namespace Ruler {
         measurements.push_back(std::move(measurement));
     }
 
-    void EditorUI::deleteMeasurement(bool pDeleteAll) {
+    void EditorUI::deleteMeasurement(bool deleteAll) {
         auto& measurements = m_fields->measurements;
 
         if (measurements.empty()) {
@@ -97,7 +97,7 @@ namespace Ruler {
         measurements.back().cleanup();
         measurements.pop_back();
 
-        if (pDeleteAll) {
+        if (deleteAll) {
             for (auto& measurement : measurements) {
                 measurement.cleanup();
             }
@@ -116,23 +116,23 @@ namespace Ruler {
         // i dont want the same colors in the same order every time (or mayb it doesnt do that and i js got *very* lucky in my testing idk)
         random::_getGenerator().seed(asp::SystemTime::now().timeSinceEpoch().seconds());
 
-        feature.registerKeybind<"create-measurement-key">([self] (bool pDown, bool) {
-            if (pDown) {
+        feature.registerKeybind<"create-measurement-key">([self] (bool down, bool) {
+            if (down) {
                 self->createMeasurement();
             }
         });
-        feature.registerKeybind<"delete-last-measurement-key">([self] (bool pDown, bool pRepeat) {
-            if (pDown) {
-                self->deleteMeasurement(pRepeat);
+        feature.registerKeybind<"delete-last-measurement-key">([self] (bool down, bool repeat) {
+            if (down) {
+                self->deleteMeasurement(repeat);
             }
         });
     }
 
-    void Feature::onToggled(bool pEnabled) {
+    void Feature::onToggled(bool enabled) {
         auto self = editor::ui<Ruler::EditorUI>();
 
         editor::conditionallyRegisterEditTabButtonFrame(
-            pEnabled && Ruler::editorTabButton,
+            enabled && Ruler::editorTabButton,
             "ruler.png"_spr, "create-measurement-button"_spr, 1, [self] (auto) {
                 if (selection::empty()) {
                     self->deleteMeasurement(false);

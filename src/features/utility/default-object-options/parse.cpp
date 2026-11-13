@@ -2,7 +2,7 @@
 
 using namespace geode::prelude;
 
-static int stringToPropKey(const std::string& pString) {
+static int stringToPropKey(const std::string& string) {
     static std::unordered_map<std::string, int> map {
         {"x", 2}, {"y", 3}, {"rotation", 6}, {"scale", 32}, {"scale_x", 128}, 
         {"scale_y", 129}, {"flip_horiz", 4}, {"flip_vert", 5}, {"warp_x_angle", 132}, 
@@ -23,12 +23,12 @@ static int stringToPropKey(const std::string& pString) {
         {"no_audio_scale", 372}, {"preview", 13}, {"orange_tp_portal_distance", 54},
         {"custom_string", -1}
     };
-    return map[pString];
+    return map[string];
 }
 
 namespace DefaultObjectOptions {
-    void parseOptions(ObjectOptions& pObjectOptions) {
-        pObjectOptions.reset();
+    void parseOptions(ObjectOptions& objectOptions) {
+        objectOptions.reset();
 
         const auto path = string::pathToString(
             Mod::get()->getConfigDir() / DefaultObjectOptions::path.get()
@@ -100,7 +100,7 @@ namespace DefaultObjectOptions {
                     case 99: [[fallthrough]];
                     case 444: {
                         if (value.isBool()) {
-                            pObjectOptions.addOption(id, key, value.asBool().unwrap());
+                            objectOptions.addOption(id, key, value.asBool().unwrap());
                         }
                     break; }
                     case 21: [[fallthrough]];
@@ -119,7 +119,7 @@ namespace DefaultObjectOptions {
                     case 343: [[fallthrough]];
                     case 446: {
                         if (value.isNumber()) {
-                            pObjectOptions.addOption(id, key, value.asInt().unwrap());
+                            objectOptions.addOption(id, key, value.asInt().unwrap());
                         }
                     break; }
                     case 2: [[fallthrough]];
@@ -132,7 +132,7 @@ namespace DefaultObjectOptions {
                     case 132: [[fallthrough]];
                     case 54: {
                         if (value.isNumber()) {
-                            pObjectOptions.addOption(id, key, value.asDouble().unwrap());
+                            objectOptions.addOption(id, key, value.asDouble().unwrap());
                         }
                     break; }
                     case 19: [[fallthrough]];
@@ -142,12 +142,12 @@ namespace DefaultObjectOptions {
                     case 274: [[fallthrough]];
                     case 534: {
                         if (value.isString()) {
-                            pObjectOptions.addOption(id, key, value.asString().unwrap());
+                            objectOptions.addOption(id, key, value.asString().unwrap());
                         }
                     break; }
                     default: {
                         if (value.isString()) {
-                            pObjectOptions.addOption(id, value.asString().unwrap());
+                            objectOptions.addOption(id, value.asString().unwrap());
                         }
                     break; }
                 }

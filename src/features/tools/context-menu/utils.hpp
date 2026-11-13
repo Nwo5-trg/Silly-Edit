@@ -26,12 +26,12 @@ namespace ContextMenu {
         static constexpr int SPACER_TAG = 1;
 
         bool init();
-        void update(float pForceUpdate);
+        void update(float forceUpdate);
 
-        void setup(std::vector<const Option*> pOptions);
+        void setup(std::vector<const Option*> options);
 
     public:
-        void show(cocos2d::CCPoint pPos, cocos2d::CCArray* pObjects);
+        void show(cocos2d::CCPoint pos, cocos2d::CCArray* objects);
         void hide();
 
         static ContextMenuNode* create();
@@ -49,15 +49,15 @@ namespace ContextMenu {
             Spacer
         };
 
-        using Callback = geode::CopyableFunction<void(bool pSpecialDown)>;
+        using Callback = geode::CopyableFunction<void(bool specialDown)>;
 
         struct NameType {
             std::string label;
             std::optional<std::string> special = std::nullopt;
 
             NameType() = default;
-            NameType(const char* pLabel, std::optional<std::string> pSpecial = std::nullopt)
-                : label(pLabel), special(std::move(pSpecial)) {}
+            NameType(const char* label, std::optional<std::string> special = std::nullopt)
+                : label(label), special(std::move(special)) {}
         } name;
         cocos2d::ccColor3B color{255, 255, 255};
         struct ConditionType {
@@ -65,27 +65,27 @@ namespace ContextMenu {
             geode::CopyableFunction<bool()> predicate = nullptr;
 
             ConditionType() = default;
-            ConditionType(Condition pType, geode::CopyableFunction<bool()> pPredicate = nullptr)
-                : type(pType), predicate(std::move(pPredicate)) {}
+            ConditionType(Condition type, geode::CopyableFunction<bool()> predicate = nullptr)
+                : type(type), predicate(std::move(predicate)) {}
         } condition;
         Type type = Type::Default;
         Callback callback = nullptr;
 
-        Option(NameType pName, cocos2d::ccColor3B pColor, ConditionType pCondition, Callback pCallback)
-            : name(std::move(pName)), color(pColor), condition(std::move(pCondition)), callback(std::move(pCallback)) {}
-        Option(NameType pName, cocos2d::ccColor3B pColor, Callback pCallback)
-            : name(std::move(pName)), color(pColor), callback(std::move(pCallback)) {}
-        Option(Type pType)
-            : type(pType) {}
+        Option(NameType name, cocos2d::ccColor3B color, ConditionType condition, Callback callback)
+            : name(std::move(name)), color(color), condition(std::move(condition)), callback(std::move(callback)) {}
+        Option(NameType name, cocos2d::ccColor3B color, Callback callback)
+            : name(std::move(name)), color(color), callback(std::move(callback)) {}
+        Option(Type type)
+            : type(type) {}
 
         bool enabled() const;
 
     protected: 
         // this is just so i dont have to type Options:: lol
-        static void registerOptions(std::deque<Option>& pOptions);
+        static void registerOptions(std::deque<Option>& options);
 
-        SillySetting<bool>* setupSetting();
-        SillySetting<bool>* m_setting = setupSetting();
+        Setting<bool>* setupSetting();
+        Setting<bool>* m_setting = setupSetting();
 
         friend class OptionsRegistry;
     };
@@ -102,6 +102,6 @@ namespace ContextMenu {
             return &inst;
         }
 
-        std::vector<const Option*> forObjects(cocos2d::CCArray* pObjects) const;
+        std::vector<const Option*> forObjects(cocos2d::CCArray* objects) const;
     };
 }

@@ -5,7 +5,7 @@ using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
 
 namespace EasingPreview {
-    bool EasingButton::init(EasingType pEasing, PreviewType pType, float pExponent, geode::CopyableFunction<void(EasingType)> pCallback) {
+    bool EasingButton::init(EasingType easing, PreviewType type, float exponent, geode::CopyableFunction<void(EasingType)> callback) {
         auto bg = ui::node(Setup(NineSlice::create(ui::sprite::SQUARE))
             .id("background"_spr)
             .size(SIZE)
@@ -18,11 +18,11 @@ namespace EasingPreview {
 
         this->scheduleUpdate();
 
-        m_easing = pEasing;
-        m_exponent = pExponent;
+        m_easing = easing;
+        m_exponent = exponent;
 
         Setup(this)
-            .callback([easing = pEasing, callback = std::move(pCallback)] (EasingButton*) {
+            .callback([easing = easing, callback = std::move(callback)] (EasingButton*) {
                 callback(easing);
             })
             .id("select-easing-button"_spr);
@@ -54,7 +54,7 @@ namespace EasingPreview {
             nullptr
         )));
 
-        if (pType == PreviewType::None) {
+        if (type == PreviewType::None) {
             return true;
         }
 
@@ -67,7 +67,7 @@ namespace EasingPreview {
         CCActionInterval* action = nullptr;
         CCActionInterval* returnAction = nullptr;
 
-        switch (pType) {
+        switch (type) {
             case PreviewType::Move: {
                 m_sprite->setPosition({(SPRITE_SIZE + PADDING) / 2, SIZE.height / 2});
 
@@ -146,20 +146,20 @@ namespace EasingPreview {
         }
     }
 
-    void EasingButton::setGraphMode(bool pEnabled) {
+    void EasingButton::setGraphMode(bool enabled) {
         if (m_drawnode && m_dot) {
-            m_drawnode->setVisible(pEnabled);
-            m_dot->setVisible(pEnabled);
+            m_drawnode->setVisible(enabled);
+            m_dot->setVisible(enabled);
         }
         if (m_sprite) {
-            m_sprite->setVisible(!pEnabled);
+            m_sprite->setVisible(!enabled);
         }
     }
 
-    EasingButton* EasingButton::create(EasingType pEasing, PreviewType pType, float pExponent, geode::CopyableFunction<void(EasingType)> pCallback) {
+    EasingButton* EasingButton::create(EasingType easing, PreviewType type, float exponent, geode::CopyableFunction<void(EasingType)> callback) {
         auto ret = new EasingButton;
 
-        if (!ret->init(pEasing, pType, pExponent, std::move(pCallback))) {
+        if (!ret->init(easing, type, exponent, std::move(callback))) {
             delete ret;
 
             return nullptr;

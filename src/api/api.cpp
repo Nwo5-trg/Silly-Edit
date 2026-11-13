@@ -4,21 +4,21 @@
 using namespace geode::prelude;
 
 namespace nwo5::sillyedit {
-    void toggleFeature(geode::ZStringView pFeature, bool pEnable, Mod* pMod) {
-        if (auto feature = FeatureManager::get()->getFeature(pFeature)) {
-            feature->setEnabled(pEnable, pMod);
+    void toggleFeature(geode::ZStringView feature, bool enable, Mod* mod) {
+        if (auto feature = FeatureManager::get()->getFeature(feature)) {
+            feature->setEnabled(enable, mod);
         }
     }
 
-    bool featureEnabled(geode::ZStringView pFeature) {
-        if (auto feature = FeatureManager::get()->getFeature(pFeature)) {
+    bool featureEnabled(geode::ZStringView feature) {
+        if (auto feature = FeatureManager::get()->getFeature(feature)) {
             return feature->enabled();
         }
 
         return false;
     }
-    bool featureForceDisabled(geode::ZStringView pFeature) {
-        if (auto feature = FeatureManager::get()->getFeature(pFeature)) {
+    bool featureForceDisabled(geode::ZStringView feature) {
+        if (auto feature = FeatureManager::get()->getFeature(feature)) {
             return feature->forceDisabled();
         }
 

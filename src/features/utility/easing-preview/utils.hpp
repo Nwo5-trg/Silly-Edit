@@ -26,12 +26,12 @@ namespace EasingPreview {
         static constexpr float DOT_SIZE = 2.5f;
         static constexpr float PADDING = 10.0f;
 
-        bool init(EasingType pEasing, PreviewType pType, float pExponent, geode::CopyableFunction<void(EasingType)> pCallback);
+        bool init(EasingType easing, PreviewType type, float exponent, geode::CopyableFunction<void(EasingType)> callback);
         void update(float);
     public:
-        void setGraphMode(bool pEnabled);
+        void setGraphMode(bool enabled);
 
-        static EasingButton* create(EasingType pEasing, PreviewType pType, float pExponent, geode::CopyableFunction<void(EasingType)> pCallback);
+        static EasingButton* create(EasingType easing, PreviewType type, float exponent, geode::CopyableFunction<void(EasingType)> callback);
     };
 
     class SelectEasingPopup final : public geode::Popup {
@@ -51,12 +51,12 @@ namespace EasingPreview {
 
         static constexpr cocos2d::CCSize SIZE = MENU_SIZE + cocos2d::CCSize{PADDING, PADDING + 30.0F};
 
-        bool init(SetupTriggerPopup* pPopup, PreviewType pType, int pProp);
+        bool init(SetupTriggerPopup* popup, PreviewType type, int prop);
 
-        void onGraphModeToggle(cocos2d::CCObject* pSender);
+        void onGraphModeToggle(cocos2d::CCObject* sender);
     public:
-        static SelectEasingPopup* create(SetupTriggerPopup* pPopup, PreviewType pType, int pProp);
+        static SelectEasingPopup* create(SetupTriggerPopup* popup, PreviewType type, int prop);
 
-        void onClose(cocos2d::CCObject* pSender);
+        void onClose(cocos2d::CCObject* sender);
     };
 }

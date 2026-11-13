@@ -6,8 +6,8 @@ namespace sillyedit::features {
     class FeatureBase {
     protected:
         struct Data {
-            sillyedit::settings::SettingCondition condition = sillyedit::settings::SettingCondition::None;
-            sillyedit::settings::SettingReload reload = sillyedit::settings::SettingReload::None;
+            settings::SettingCondition condition = settings::SettingCondition::None;
+            settings::SettingReload reload = settings::SettingReload::None;
             bool defaultEnabled = true;
             std::string incompatMessage;
             // we get a lil silly with our syntax sugar around here
@@ -15,11 +15,11 @@ namespace sillyedit::features {
                 std::vector<std::string> list;
 
                 IncompatibleModsList() = default;
-                IncompatibleModsList(std::string pMod) {
-                    list.push_back(std::move(pMod));
+                IncompatibleModsList(std::string mod) {
+                    list.push_back(std::move(mod));
                 }
-                IncompatibleModsList(std::initializer_list<std::string> pMods) {
-                    list = pMods;
+                IncompatibleModsList(std::initializer_list<std::string> mods) {
+                    list = mods;
                 }
             }incompatMods;
             
@@ -29,36 +29,38 @@ namespace sillyedit::features {
         } m_data;
 
         std::string m_id;
-        sillyedit::settings::SillySetting<bool>* m_enabled = nullptr;
+        std::unique_ptr<settings::Setting<bool>> m_enabled;
         std::unordered_set<std::string> m_disabledBy;
+        geode::ListenerHandle m_settingListener;
+        geode::ListenerHandle m_enabledListener;
 
         virtual void setup();
 
         virtual void onEditor();
         virtual void onUpdate();
         /// also activates right after onEditor
-        virtual void onToggled(bool pEnabled);
-        virtual void onUIUpdated(float pScale);
-        virtual void onSettingChanged(std::string pName, nwo5::settings::GenericSetting* pSetting);
+        virtual void onToggled(bool enabled);
+        virtual void onUIUpdated(float scale);
+        virtual void onSettingChanged(std::string name, settings::GenericSetting* setting);
 
         /// listen to keybind, callback doesnt activate if feature or feature keybinds disabled
         template<geode::utils::string::ConstexprString Keybind, typename Callback>
-        void registerKeybind(Callback&& pCallback, cocos2d::CCNode* pNode = LevelEditorLayer::get(), int pPriority = geode::Priority::Normal) {
+        void registerKeybind(Callback&& callback, cocos2d::CCNode* node = LevelEditorLayer::get(), int priority = geode::Priority::Normal) {
             const static auto enabledkey = fmt::format("{}-Enabled", geode::utils::string::replace(m_id, " ", "-"));
 
-            pNode->addEventListener(geode::KeybindSettingPressedEvent(geode::Mod::get(), fmt::format("{}-{}", m_id, std::string{Keybind.data()})), 
-            [this, callback = std::move(pCallback)] (const geode::Keybind&, bool pDown, bool pRepeat, double) {
+            node->addEventListener(geode::KeybindSettingPressedEvent(geode::Mod::get(), fmt::format("{}-{}", m_id, std::string{Keybind.data()})), 
+            [this, callback = std::move(callback)] (const geode::Keybind&, bool down, bool repeat, double) {
                 if (this->enabled() && geode::Mod::get()->getSettingValue<bool>(enabledkey)) {
-                    callback(pDown, pRepeat);
+                    callback(down, repeat);
                 }
-            }, pPriority);
+            }, priority);
         }
 
         void init();
 
         friend class FeatureManager;
     public:
-        FeatureBase(FeatureEnum pEnum);
+        FeatureBase(FeatureEnum enum);
         ~FeatureBase();
 
         // lol
@@ -73,7 +75,7 @@ namespace sillyedit::features {
         geode::ZStringView keybindsEnabledKey() const;
         const Data& data() const;
 
-        void setEnabled(bool pEnabled, geode::Mod* pMod);
+        void setEnabled(bool enabled, geode::Mod* mod);
         bool enabled() const;
         bool forceDisabled() const;
     };

@@ -5,11 +5,11 @@ using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
 
 namespace EditorTime {
-    void Feature::onToggled(bool pEnabled) {
+    void Feature::onToggled(bool enabled) {
         auto self = editor::ui<EditorTime::EditorUI>();
         auto fields = self->m_fields.self();
 
-        if (!pEnabled) {
+        if (!enabled) {
             if (fields->timeLabel) {
                 fields->timeLabel->removeMeAndCleanup();
             }

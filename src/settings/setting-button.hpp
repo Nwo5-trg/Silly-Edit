@@ -27,7 +27,7 @@ namespace sillyedit::settings {
         static constexpr float HELP_BUTTON_SIZE = 7.5f;
         static constexpr float HELP_GAP = 5.0f;
 
-        bool init(GenericSetting* pSettingpSetting);
+        bool init(GenericSetting* settingpSetting);
         
         void onHelp(cocos2d::CCObject*);
         void onReset(cocos2d::CCObject*);
@@ -94,17 +94,17 @@ namespace sillyedit::settings {
         }
 
         template<typename T>
-        void set(const T& pVal) {
-            auto cast = static_cast<SillySetting<T>*>(m_setting);
+        void set(const T& val) {
+            auto cast = static_cast<Setting<T>*>(m_setting);
 
-            cast->set(pVal);
-            m_resetButton->setVisible(pVal != cast->getDefault());
+            cast->set(val);
+            m_resetButton->setVisible(val != cast->getDefault());
             m_helpMenu->updateLayout();
         }
 
         template<typename T>
-        SillySetting<T>* setting() const {
-            return static_cast<SillySetting<T>*>(m_setting);
+        Setting<T>* setting() const {
+            return static_cast<Setting<T>*>(m_setting);
         }
     
     public:
@@ -117,17 +117,17 @@ namespace sillyedit::settings {
     protected:
         geode::TextInput* m_input;
 
-        bool init(GenericSetting* pSetting);
+        bool init(GenericSetting* setting);
         virtual void resetSetting() = 0;
     };
     class ColorSettingButtonBase : public SettingButtonBase {
     protected:
         cocos2d::CCSprite* m_colorFill;
 
-        bool init(GenericSetting* pSetting);
+        bool init(GenericSetting* setting);
         virtual void resetSetting() = 0;
 
-        void onColorPick(cocos2d::CCObject* pSender);
+        void onColorPick(cocos2d::CCObject* sender);
         virtual void setupColorPicker() = 0;
     };
 
@@ -137,32 +137,32 @@ namespace sillyedit::settings {
 
         using T = bool;
 
-        bool init(GenericSetting* pSetting);
+        bool init(GenericSetting* setting);
         void resetSetting() override;
 
-        void onToggle(cocos2d::CCObject* pSender);
+        void onToggle(cocos2d::CCObject* sender);
     public:
-        static BoolSettingButton* create(GenericSetting* pSetting);
+        static BoolSettingButton* create(GenericSetting* setting);
     };
     class IntSettingButton final : public NumberSettingButtonBase {
     private:
         using T = int;
 
-        bool init(GenericSetting* pSetting);
+        bool init(GenericSetting* setting);
         void resetSetting() override;
 
     public:
-        static IntSettingButton* create(GenericSetting* pSetting);
+        static IntSettingButton* create(GenericSetting* setting);
     };
     class FloatSettingButton final : public NumberSettingButtonBase {
     private:
         using T = float;
 
-        bool init(GenericSetting* pSetting);
+        bool init(GenericSetting* setting);
         void resetSetting() override;
         
     public:
-        static FloatSettingButton* create(GenericSetting* pSetting);
+        static FloatSettingButton* create(GenericSetting* setting);
     };
     class OpacitySettingButton final : public SettingButtonBase {
     private:
@@ -174,13 +174,13 @@ namespace sillyedit::settings {
         
         using T = int;
 
-        bool init(GenericSetting* pSetting);
+        bool init(GenericSetting* setting);
         void resetSetting() override;
 
         void updateVisuals();
         
     public:
-        static OpacitySettingButton* create(GenericSetting* pSetting);
+        static OpacitySettingButton* create(GenericSetting* setting);
     };
     class StringSettingButton final : public SettingButtonBase {
     private:
@@ -190,11 +190,11 @@ namespace sillyedit::settings {
         
         using T = std::string;
 
-        bool init(GenericSetting* pSetting);
+        bool init(GenericSetting* setting);
         void resetSetting() override;
         
     public:
-        static StringSettingButton* create(GenericSetting* pSetting);
+        static StringSettingButton* create(GenericSetting* setting);
     };
     class StrenumSettingButton final : public SettingButtonBase {
     private:
@@ -210,39 +210,39 @@ namespace sillyedit::settings {
 
         using T = std::string;
 
-        bool init(GenericSetting* pSetting);
+        bool init(GenericSetting* setting);
         void resetSetting() override;
 
-        void setOption(int pOption, bool pSet);
+        void setOption(int option, bool set);
         
         void onNext(cocos2d::CCObject*);
         void onPrevious(cocos2d::CCObject*);
         
     public:
-        static StrenumSettingButton* create(GenericSetting* pSetting);
+        static StrenumSettingButton* create(GenericSetting* setting);
     };
     class RGBSettingButton final : public ColorSettingButtonBase {
     private:
         using T = cocos2d::ccColor3B;
 
-        bool init(GenericSetting* pSetting);
+        bool init(GenericSetting* setting);
         void resetSetting() override;
 
         virtual void setupColorPicker() override;
     public:
-        static RGBSettingButton* create(GenericSetting* pSetting);
+        static RGBSettingButton* create(GenericSetting* setting);
     };
     class RGBASettingButton final : public ColorSettingButtonBase {
     private:
         using T = cocos2d::ccColor4B;
 
-        bool init(GenericSetting* pSetting);
+        bool init(GenericSetting* setting);
         void resetSetting() override;
 
         virtual void setupColorPicker() override;
     public:
-        static RGBASettingButton* create(GenericSetting* pSetting);
+        static RGBASettingButton* create(GenericSetting* setting);
     };
 
-    SettingButtonBase* createSettingButton(GenericSetting* pSetting);
+    SettingButtonBase* createSettingButton(GenericSetting* setting);
 }

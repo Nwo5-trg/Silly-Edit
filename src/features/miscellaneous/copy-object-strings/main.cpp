@@ -66,18 +66,18 @@ namespace CopyObjectStrings {
 
 
 
-    void Feature::onToggled(bool pEnabled) {
+    void Feature::onToggled(bool enabled) {
         sillyedit::utils::conditionallyEnableHook(
-            !pEnabled, sillyedit::utils::getTinker(), "EditorUI::doCopyObjects"
+            !enabled, sillyedit::utils::getTinker(), "EditorUI::doCopyObjects"
         );
         sillyedit::utils::conditionallyEnableHook(
-            !pEnabled, sillyedit::utils::getTinker(), "EditorUI::doPasteObjects"
+            !enabled, sillyedit::utils::getTinker(), "EditorUI::doPasteObjects"
         );
         sillyedit::utils::conditionallyEnableHook(
-            !pEnabled, sillyedit::utils::getBetterEdit(), "EditorUI::doCopyObjects"
+            !enabled, sillyedit::utils::getBetterEdit(), "EditorUI::doCopyObjects"
         );
         sillyedit::utils::conditionallyEnableHook(
-            !pEnabled, sillyedit::utils::getBetterEdit(), "EditorUI::doPasteObjects"
+            !enabled, sillyedit::utils::getBetterEdit(), "EditorUI::doPasteObjects"
         );
     }
 }

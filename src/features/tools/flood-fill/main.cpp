@@ -4,22 +4,22 @@
 
 using namespace geode::prelude;
 
-static void showNotification(ZStringView pStr, NotificationIcon pIcon) {
+static void showNotification(ZStringView str, NotificationIcon icon) {
     if (FF::notifications) {
-        geode::Notification::create(pStr, pIcon)->show();
+        geode::Notification::create(str, icon)->show();
     }
 }
 
 namespace FF {
-    void EditorUI::rectFill(CCArray* pObjs) {
-        const auto aPos = static_cast<GameObject*>(pObjs->firstObject())->getRealPosition();
-        const auto bPos = static_cast<GameObject*>(pObjs->lastObject())->getRealPosition();
+    void EditorUI::rectFill(CCArray* objs) {
+        const auto aPos = static_cast<GameObject*>(objs->firstObject())->getRealPosition();
+        const auto bPos = static_cast<GameObject*>(objs->lastObject())->getRealPosition();
 
         if (aPos == bPos) {
             return showNotification("objects overlapped", NotificationIcon::Warning);
         }
 
-        auto base = static_cast<GameObject*>(pObjs->firstObject());
+        auto base = static_cast<GameObject*>(objs->firstObject());
 
         const std::string str{base->getSaveString(m_editorLayer)};
 
@@ -45,7 +45,7 @@ namespace FF {
             }
         }
 
-        object::remove(pObjs, true);
+        object::remove(objs, true);
 
         if (FF::selectFill) {
             selection::set(placedObjs, false, true);
@@ -60,13 +60,13 @@ namespace FF {
         showNotification("successfully rect filled !", NotificationIcon::Info);
     }
 
-    void EditorUI::createFromRects(const std::vector<FF::Rect>& pRects, CCArray* pBoundry, GameObject* pBase, bool pDontSelectCenter) {
+    void EditorUI::createFromRects(const std::vector<FF::Rect>& rects, CCArray* boundry, GameObject* base, bool dontSelectCenter) {
         auto placedObjs = CCArray::create();
 
-        const std::string str{pBase->getSaveString(m_editorLayer)};
-        const auto size = object::size(pBase);
+        const std::string str{base->getSaveString(m_editorLayer)};
+        const auto size = object::size(base);
 
-        for (const auto& rect : pRects) {
+        for (const auto& rect : rects) {
             if (auto res = m_editorLayer->createObjectsFromString(str, true, true); res && res->count()) {
                 auto obj = static_cast<GameObject*>(res->firstObject());
                 
@@ -81,13 +81,13 @@ namespace FF {
             selection::clear();
 
             if (FF::selectFill) {
-                if (!pDontSelectCenter) {
-                    selection::add(pBase, false, true);
+                if (!dontSelectCenter) {
+                    selection::add(base, false, true);
                 }
                 selection::add(placedObjs, false, true);
             }
             if (FF::selectBoundry) {
-                selection::add(pBoundry, false, true);
+                selection::add(boundry, false, true);
             }
 
             m_editorLayer->m_undoObjects->addObject(
@@ -160,18 +160,18 @@ namespace FF {
     void Feature::onEditor() {
         auto self = editor::ui<FF::EditorUI>();
 
-        feature.registerKeybind<"quick-fill">([self] (bool pDown, bool pRepeat) {
-            if (pDown && !pRepeat) {
+        feature.registerKeybind<"quick-fill">([self] (bool down, bool repeat) {
+            if (down && !repeat) {
                 self->quickFill();
             }
         });
     }
 
-    void Feature::onToggled(bool pEnabled) {
+    void Feature::onToggled(bool enabled) {
         auto self = editor::ui<FF::EditorUI>();
 
         editor::conditionallyRegisterEditTabButtonFrame(
-            pEnabled && FF::quickFillButton,
+            enabled && FF::quickFillButton,
             "quickfill.png"_spr, "quick-fill-button"_spr, 2, [self] (auto) {
                 self->quickFill();
             }

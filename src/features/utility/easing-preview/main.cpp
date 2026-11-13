@@ -4,28 +4,28 @@
 using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
 
-static Button* setupEasingPopupButton(CCLabelBMFont* pLabel, SetupTriggerPopup* pPopup, EasingPreview::PreviewType pType, int pProp) {
+static Button* setupEasingPopupButton(CCLabelBMFont* label, SetupTriggerPopup* popup, EasingPreview::PreviewType type, int prop) {
     return Setup(Button::create())
-        .size(cocos::getLabelSize("Exponential In Out", Font::Default) * pLabel->getScale())
-        .pos(pLabel)
-        .callback([pLabel, pPopup, pType, pProp] (Button*) {
-            if (pLabel->isVisible()) {
-                EasingPreview::SelectEasingPopup::create(pPopup, pType, pProp)->show();
+        .size(cocos::getLabelSize("Exponential In Out", Font::Default) * label->getScale())
+        .pos(label)
+        .callback([label, popup, type, prop] (Button*) {
+            if (label->isVisible()) {
+                EasingPreview::SelectEasingPopup::create(popup, type, prop)->show();
             }
         })
-        .callbackSelect([pLabel, scale = pLabel->getScale()] (Button*) {
-            pLabel->stopAllActions();
-            pLabel->runAction(CCEaseBounceOut::create(
+        .callbackSelect([label, scale = label->getScale()] (Button*) {
+            label->stopAllActions();
+            label->runAction(CCEaseBounceOut::create(
                 CCScaleTo::create(0.4f, scale * 1.26f)
             ));
         })
-        .callbackUnselect([pLabel, scale = pLabel->getScale()] (Button*) {
-            pLabel->stopAllActions();
-            pLabel->runAction(CCEaseBounceOut::create(
+        .callbackUnselect([label, scale = label->getScale()] (Button*) {
+            label->stopAllActions();
+            label->runAction(CCEaseBounceOut::create(
                 CCScaleTo::create(0.4f, scale)
             ));
         })
-        .parent(pPopup->m_mainLayer);
+        .parent(popup->m_mainLayer);
 }
 
 namespace EasingPreview {

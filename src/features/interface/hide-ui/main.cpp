@@ -4,8 +4,8 @@ using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
 
 namespace HideUI {
-    void EditorUI::onHideUI(CCObject* pSender) {
-        this->showUI(!misc::isToggled(pSender));
+    void EditorUI::onHideUI(CCObject* sender) {
+        this->showUI(!misc::isToggled(sender));
     }
 
 

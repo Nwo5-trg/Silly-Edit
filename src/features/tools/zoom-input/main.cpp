@@ -5,9 +5,9 @@ using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
 
 namespace ZoomInput {
-    void EditorUI::updateZoomInput(float pZoom = editor::zoom()) {
+    void EditorUI::updateZoomInput(float zoom = editor::zoom()) {
         if (auto input = m_fields->zoomInput) {
-            input->setString(misc::numToString(pZoom));
+            input->setString(misc::numToString(zoom));
         }
     }
 
@@ -57,11 +57,11 @@ namespace ZoomInput {
 
 
 
-    void Feature::onToggled(bool pEnabled) {
+    void Feature::onToggled(bool enabled) {
         auto self = editor::ui<ZoomInput::EditorUI>();
         auto fields = self->m_fields.self();
 
-        if (!pEnabled) {
+        if (!enabled) {
             if (fields->zoomContainer) {
                 self->m_uiItems->removeObject(fields->zoomContainer);
                 fields->zoomContainer->removeMeAndCleanup();

@@ -5,15 +5,15 @@ using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
 
 namespace sillyedit::settings {
-    bool SettingButtonBase::init(GenericSetting* pSetting) {
+    bool SettingButtonBase::init(GenericSetting* setting) {
         if (!CCNode::init()) {
             return false;
         }
 
-        m_setting = pSetting;
+        m_setting = setting;
 
         Setup(this)
-            .id("{}-setting"_spr, pSetting->key())
+            .id("{}-setting"_spr, setting->key())
             .size(SIZE)
             .anchor(Anchor::Center);
 
@@ -91,8 +91,8 @@ namespace sillyedit::settings {
         return m_label;
     }
 
-    bool NumberSettingButtonBase::init(GenericSetting* pSetting) {
-        if (!SettingButtonBase::init(pSetting)) {
+    bool NumberSettingButtonBase::init(GenericSetting* setting) {
+        if (!SettingButtonBase::init(setting)) {
             return false;
         }
 
@@ -108,8 +108,8 @@ namespace sillyedit::settings {
         return true;
     }
 
-    bool ColorSettingButtonBase::init(GenericSetting* pSetting) {
-        if (!SettingButtonBase::init(pSetting)) {
+    bool ColorSettingButtonBase::init(GenericSetting* setting) {
+        if (!SettingButtonBase::init(setting)) {
             return false;
         }
 
@@ -129,15 +129,15 @@ namespace sillyedit::settings {
 
         return true;
     }
-    void ColorSettingButtonBase::onColorPick(CCObject* pSender) {
+    void ColorSettingButtonBase::onColorPick(CCObject* sender) {
         this->setupColorPicker();
     }
 
-    #define SE_SETUP_SETTING_BUTTON_CREATE(pName) \
-    pName * pName ::create(GenericSetting* pSetting) { \
-        auto ret = new pName ; \
+    #define SE_SETUP_SETTING_BUTTON_CREATE(name) \
+    name * name ::create(GenericSetting* setting) { \
+        auto ret = new name ; \
     \
-        if (!ret->init(pSetting)) { \
+        if (!ret->init(setting)) { \
             delete ret; \
     \
             return nullptr; \
@@ -148,8 +148,8 @@ namespace sillyedit::settings {
         return ret; \
     }
 
-    bool BoolSettingButton::init(GenericSetting* pSetting) {
-        if (!SettingButtonBase::init(pSetting)) {
+    bool BoolSettingButton::init(GenericSetting* setting) {
+        if (!SettingButtonBase::init(setting)) {
             return false;
         }
 
@@ -183,18 +183,18 @@ namespace sillyedit::settings {
 
         m_toggler->activate();
     }
-    void BoolSettingButton::onToggle(cocos2d::CCObject* pSender) {
+    void BoolSettingButton::onToggle(cocos2d::CCObject* sender) {
         auto setting = this->setting<T>();
 
-        this->set<T>(misc::isToggled(pSender));
+        this->set<T>(misc::isToggled(sender));
         if (setting->reloadRequired()) {
             SettingWithReloadChanged().send(setting->key(), setting->reloadType());
         }
     }
     SE_SETUP_SETTING_BUTTON_CREATE(BoolSettingButton)
 
-    bool IntSettingButton::init(GenericSetting* pSetting) {
-        if (!NumberSettingButtonBase::init(pSetting)) {
+    bool IntSettingButton::init(GenericSetting* setting) {
+        if (!NumberSettingButtonBase::init(setting)) {
             return false;
         }
 
@@ -220,16 +220,16 @@ namespace sillyedit::settings {
             .placeholder(placeholder)
             .filter(CommonFilter::Int)
             .string(misc::numToString(setting->get()))
-            .callback([this] (const std::string& pStr) {
+            .callback([this] (const std::string& str) {
                 auto setting = this->setting<T>();
 
-                if (pStr.empty()) {
+                if (str.empty()) {
                     this->set<T>(setting->getDefault());
                 }
                 else {
-                    this->set<T>(std::clamp(geode::utils::numFromString<T>(pStr).unwrapOrDefault(), setting->min(), setting->max()));
+                    this->set<T>(std::clamp(geode::utils::numFromString<T>(str).unwrapOrDefault(), setting->min(), setting->max()));
                     
-                    if (pStr != "0") {
+                    if (str != "0") {
                         this->m_input->setString(misc::numToString(setting->get()));
                     }
                 }
@@ -256,8 +256,8 @@ namespace sillyedit::settings {
     }
     SE_SETUP_SETTING_BUTTON_CREATE(IntSettingButton)
 
-    bool FloatSettingButton::init(GenericSetting* pSetting) {
-        if (!NumberSettingButtonBase::init(pSetting)) {
+    bool FloatSettingButton::init(GenericSetting* setting) {
+        if (!NumberSettingButtonBase::init(setting)) {
             return false;
         }
 
@@ -283,16 +283,16 @@ namespace sillyedit::settings {
             .placeholder(placeholder)
             .filter(CommonFilter::Float)
             .string(misc::numToString(setting->get()))
-            .callback([this] (const std::string& pStr) {
+            .callback([this] (const std::string& str) {
                 auto setting = this->setting<T>();
 
-                if (pStr.empty()) {
+                if (str.empty()) {
                     this->set<T>(setting->getDefault());
                 }
                 else {
-                    this->set<T>(std::clamp(geode::utils::numFromString<T>(pStr).unwrapOrDefault(), setting->min(), setting->max()));
+                    this->set<T>(std::clamp(geode::utils::numFromString<T>(str).unwrapOrDefault(), setting->min(), setting->max()));
 
-                    if (!pStr.ends_with('.') && !pStr.ends_with('-') && pStr != "0") {
+                    if (!str.ends_with('.') && !str.ends_with('-') && str != "0") {
                         this->m_input->setString(misc::numToString(setting->get()));
                     }
                 }
@@ -319,8 +319,8 @@ namespace sillyedit::settings {
     }
     SE_SETUP_SETTING_BUTTON_CREATE(FloatSettingButton)
 
-    bool OpacitySettingButton::init(GenericSetting* pSetting) {
-        if (!SettingButtonBase::init(pSetting)) {
+    bool OpacitySettingButton::init(GenericSetting* setting) {
+        if (!SettingButtonBase::init(setting)) {
             return false;
         }
 
@@ -398,8 +398,8 @@ namespace sillyedit::settings {
     }
     SE_SETUP_SETTING_BUTTON_CREATE(OpacitySettingButton)
 
-    bool StringSettingButton::init(GenericSetting* pSetting) {
-        if (!SettingButtonBase::init(pSetting)) {
+    bool StringSettingButton::init(GenericSetting* setting) {
+        if (!SettingButtonBase::init(setting)) {
             return false;
         }
 
@@ -418,17 +418,17 @@ namespace sillyedit::settings {
         )
             .id("input"_spr)
             .pos(SIZE.width / 2, SIZE.height * (3.0f/4.0f))
-            .callback([this] (const std::string& pStr) {
+            .callback([this] (const std::string& str) {
                 auto setting = this->setting<T>();
 
-                if (pStr.empty()) {
+                if (str.empty()) {
                     this->set<T>(setting->getDefault());
                 }
-                else if (pStr == "\\0") {
+                else if (str == "\\0") {
                     this->set<T>("");
                 }
                 else {
-                    this->set<T>(pStr);
+                    this->set<T>(str);
                 }
 
                 if (setting->reloadRequired()) {
@@ -459,8 +459,8 @@ namespace sillyedit::settings {
     }
     SE_SETUP_SETTING_BUTTON_CREATE(StringSettingButton)
 
-    bool StrenumSettingButton::init(GenericSetting* pSetting) {
-        if (!SettingButtonBase::init(pSetting)) {
+    bool StrenumSettingButton::init(GenericSetting* setting) {
+        if (!SettingButtonBase::init(setting)) {
             return false;
         }
 
@@ -527,17 +527,17 @@ namespace sillyedit::settings {
             std::ranges::find(setting->enumOptions(), setting->getDefault()) - setting->enumOptions().begin(), true
         );
     }
-    void StrenumSettingButton::setOption(int pOption, bool pSet) {
+    void StrenumSettingButton::setOption(int option, bool set) {
         auto setting = this->setting<T>();
 
-        const auto& str = setting->enumOptions()[pOption];
+        const auto& str = setting->enumOptions()[option];
 
         Setup(m_currentLabel)
             .string(str)
             .scaleHeightToFit(SIZE.height * (2.0f/5.0f) - PADDING / 2)
             .limitScaleWidthToFit(SIZE.width * (3.0f/4.0f) - PADDING);
 
-        if (pSet) {
+        if (set) {
             this->set<T>(str);
 
             if (setting->reloadRequired()) {
@@ -545,7 +545,7 @@ namespace sillyedit::settings {
             }
         }
 
-        m_currentOption = pOption;
+        m_currentOption = option;
     }
     void StrenumSettingButton::onNext(CCObject*) {
         this->setOption((m_currentOption + 1) % this->setting<T>()->enumOptions().size(), true);
@@ -555,8 +555,8 @@ namespace sillyedit::settings {
     }
     SE_SETUP_SETTING_BUTTON_CREATE(StrenumSettingButton)
 
-    bool RGBSettingButton::init(GenericSetting* pSetting) {
-        if (!ColorSettingButtonBase::init(pSetting)) {
+    bool RGBSettingButton::init(GenericSetting* setting) {
+        if (!ColorSettingButtonBase::init(setting)) {
             return false;
         }
 
@@ -590,8 +590,8 @@ namespace sillyedit::settings {
     void RGBSettingButton::setupColorPicker() {
         auto popup = ColorPickPopup::create(this->setting<T>()->get());
 
-        popup->setCallback([this] (const ccColor4B& pCol) {
-            const auto col = to3B(pCol);
+        popup->setCallback([this] (const ccColor4B& col) {
+            const auto col = to3B(col);
 
             m_colorFill->setColor(col);
         
@@ -608,8 +608,8 @@ namespace sillyedit::settings {
     }
     SE_SETUP_SETTING_BUTTON_CREATE(RGBSettingButton)
 
-    bool RGBASettingButton::init(GenericSetting* pSetting) {
-        if (!ColorSettingButtonBase::init(pSetting)) {
+    bool RGBASettingButton::init(GenericSetting* setting) {
+        if (!ColorSettingButtonBase::init(setting)) {
             return false;
         }
 
@@ -645,13 +645,13 @@ namespace sillyedit::settings {
     void RGBASettingButton::setupColorPicker() {
         auto popup = ColorPickPopup::create(this->setting<T>()->get());
 
-        popup->setCallback([this] (const ccColor4B& pCol) {
-            m_colorFill->setColor(to3B(pCol));
-            m_colorFill->setOpacity(pCol.a);
+        popup->setCallback([this] (const ccColor4B& col) {
+            m_colorFill->setColor(to3B(col));
+            m_colorFill->setOpacity(col.a);
 
             auto setting = this->setting<T>();
 
-            this->set<T>(pCol);
+            this->set<T>(col);
 
             if (setting->reloadRequired()) {
                 SettingWithReloadChanged().send(setting->key(), setting->reloadType());
@@ -661,28 +661,28 @@ namespace sillyedit::settings {
     }
     SE_SETUP_SETTING_BUTTON_CREATE(RGBASettingButton)
 
-    SettingButtonBase* createSettingButton(GenericSetting* pSetting) {
-        switch (pSetting->type()) {
-            case SettingType::Bool: return BoolSettingButton::create(pSetting);
+    SettingButtonBase* createSettingButton(GenericSetting* setting) {
+        switch (setting->type()) {
+            case SettingType::Bool: return BoolSettingButton::create(setting);
             case SettingType::Int: {
-                if (auto setting = static_cast<SillySetting<int>*>(pSetting); setting->min() == 0 && setting->max() == 255) {
-                    return OpacitySettingButton::create(pSetting);
+                if (auto setting = static_cast<Setting<int>*>(setting); setting->min() == 0 && setting->max() == 255) {
+                    return OpacitySettingButton::create(setting);
                 }
                 else {
-                    return IntSettingButton::create(pSetting);
+                    return IntSettingButton::create(setting);
                 }
             }
-            case SettingType::Float: return FloatSettingButton::create(pSetting);
+            case SettingType::Float: return FloatSettingButton::create(setting);
             case SettingType::String: {
-                if (static_cast<SillySetting<std::string>*>(pSetting)->isEnum()) {
-                    return StrenumSettingButton::create(pSetting);
+                if (static_cast<Setting<std::string>*>(setting)->isEnum()) {
+                    return StrenumSettingButton::create(setting);
                 }
                 else {
-                    return StringSettingButton::create(pSetting);
+                    return StringSettingButton::create(setting);
                 }
             }
-            case SettingType::RGB: return RGBSettingButton::create(pSetting);
-            case SettingType::RGBA: return RGBASettingButton::create(pSetting);
+            case SettingType::RGB: return RGBSettingButton::create(setting);
+            case SettingType::RGBA: return RGBASettingButton::create(setting);
             default: return nullptr;
         }
     }

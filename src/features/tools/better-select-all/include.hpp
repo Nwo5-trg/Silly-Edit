@@ -16,10 +16,10 @@ namespace BetterSelectAll {
 
     class $setting_category("better-select-all-logo.png"_spr, "Select all with/without filters, select all in a certain direction, or select none if thats what you prefer");
 
-    inline SillySetting<bool> saveState{
+    inline Setting<bool> saveState{
         "Save State", feature, true, "save toggles for the next time u open the popup"
     };
-    inline SillySetting<bool> openPopup{
+    inline Setting<bool> openPopup{
         "Open Popup", feature, true, SettingReload::Pause, "if false doesnt override select all button as u can only use the keybinds for this feature"
     };
 }

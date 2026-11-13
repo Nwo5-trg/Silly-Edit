@@ -36,10 +36,10 @@ namespace TextObjectUtils {
 
     class $setting_category("text-object-utils-logo.png"_spr, "Newlines in your text and some other stuff");
 
-    inline SillySetting<std::string> newlineShortcut{
+    inline Setting<std::string> newlineShortcut{
         "Newline Shortcut", "Text Object Utils", "\\n"
     };
-    inline SillySetting<bool> swapCopyPaste{
+    inline Setting<bool> swapCopyPaste{
         "Swap Copy Paste", "Text Object Utils", false
     };
 }

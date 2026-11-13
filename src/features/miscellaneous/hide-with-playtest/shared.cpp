@@ -20,19 +20,19 @@ static constexpr auto createTypeArray() {
 }
 
 namespace sillyedit::shared {
-    unsigned char hideWithPlaytestOpacityForObject(unsigned char pOpacity, GameObject* pObj) {
+    unsigned char hideWithPlaytestOpacityForObject(unsigned char opacity, GameObject* obj) {
         static auto arr = createTypeArray();
 
-        if (HideWithPlaytest::hideTriggers.get() && sillyedit::utils::isTriggerFast(pObj)) {
-            return sillyedit::utils::modifyOpacity(pOpacity, HideWithPlaytest::triggerOpacity.get());
+        if (HideWithPlaytest::hideTriggers.get() && sillyedit::utils::isTriggerFast(obj)) {
+            return sillyedit::utils::modifyOpacity(opacity, HideWithPlaytest::triggerOpacity.get());
         }
         
-        switch (arr[pObj->m_objectID]) {
+        switch (arr[obj->m_objectID]) {
             case HideWithPlaytestType::Default: {
-                return pOpacity;
+                return opacity;
             }
             case HideWithPlaytestType::DBlock: {
-                return sillyedit::utils::modifyOpacity(pOpacity, HideWithPlaytest::specialBlockOpacity.get());
+                return sillyedit::utils::modifyOpacity(opacity, HideWithPlaytest::specialBlockOpacity.get());
             }
         }
     }

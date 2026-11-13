@@ -5,7 +5,7 @@ using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
 
 namespace EasingPreview {
-    bool SelectEasingPopup::init(GD::SetupTriggerPopup* pPopup, PreviewType pType, int pProp) {
+    bool SelectEasingPopup::init(GD::SetupTriggerPopup* popup, PreviewType type, int prop) {
         if (!Popup::init(SIZE)) {
             return false;
         }
@@ -32,7 +32,7 @@ namespace EasingPreview {
 
             CCNode* button = nullptr;
             if (toggleButton) {
-                if (pType == PreviewType::None) {
+                if (type == PreviewType::None) {
                     return true;
                 }
 
@@ -48,9 +48,9 @@ namespace EasingPreview {
                 }
             }
             else {
-                const auto rate = pProp == 30 ? pPopup->m_easingRate : pPopup->getValue(pProp == 242 ? 243 : 249);
+                const auto rate = prop == 30 ? popup->m_easingRate : popup->getValue(prop == 242 ? 243 : 249);
                 
-                button = Setup(EasingButton::create(enum_cast<EasingType>(i), pType, rate, [this, type = i, prop = pProp, popup = pPopup] (EasingType pType) {
+                button = Setup(EasingButton::create(enum_cast<EasingType>(i), type, rate, [this, type = i, prop = prop, popup = popup] (EasingType type) {
                     popup->valueChanged(prop, type);
 
                     if (prop == 30) {
@@ -97,16 +97,16 @@ namespace EasingPreview {
         return true;
     }
 
-    void SelectEasingPopup::onGraphModeToggle(CCObject* pSender) {
+    void SelectEasingPopup::onGraphModeToggle(CCObject* sender) {
         for (auto button : m_buttons) {
-            button->setGraphMode(misc::isToggled(pSender));
+            button->setGraphMode(misc::isToggled(sender));
         }
     }
 
-    SelectEasingPopup* SelectEasingPopup::create(GD::SetupTriggerPopup* pPopup, PreviewType pType, int pProp) {
+    SelectEasingPopup* SelectEasingPopup::create(GD::SetupTriggerPopup* popup, PreviewType type, int prop) {
         auto ret = new SelectEasingPopup;
 
-        if (!ret->init(pPopup, pType, pProp)) {
+        if (!ret->init(popup, type, prop)) {
             delete ret;
 
             return nullptr;
@@ -117,7 +117,7 @@ namespace EasingPreview {
         return ret;
     }
 
-    void SelectEasingPopup::onClose(cocos2d::CCObject* pSender) {
-        Popup::onClose(pSender);
+    void SelectEasingPopup::onClose(cocos2d::CCObject* sender) {
+        Popup::onClose(sender);
     }
 };

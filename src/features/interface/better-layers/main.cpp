@@ -210,11 +210,11 @@ namespace BetterLayers {
         }
     }
 
-    void Feature::onToggled(bool pEnabled) {
+    void Feature::onToggled(bool enabled) {
         auto self = editor::ui<BetterLayers::EditorUI>();
         auto fields = self->m_fields.self();
 
-        if (!pEnabled) {
+        if (!enabled) {
             self->m_uiItems->removeObject(fields->newLayerMenu);
             fields->newLayerMenu->removeMeAndCleanup();
             fields->newLayerMenu = nullptr;
@@ -262,15 +262,15 @@ namespace BetterLayers {
             .id("layer-input"_spr)
             .layout(ui::anchor())
             .layoutNextGap(INPUT_GAP).layoutPrevGap(INPUT_GAP)
-            .callback([self] (const std::string& pStr) {
-                if (pStr == "a" || pStr == "A") {
+            .callback([self] (const std::string& str) {
+                if (str == "a" || str == "A") {
                     editor::setLayer(editor::constants::ALL_LAYERS);
                 }
-                else if (pStr.contains('A') || pStr.contains('l')) {
-                    self->m_fields->layerInput->setString(string::remove(pStr, "Al"));
+                else if (str.contains('A') || str.contains('l')) {
+                    self->m_fields->layerInput->setString(string::remove(str, "Al"));
                 }
-                else if (!pStr.empty()) {
-                    if (auto res = utils::numFromString<int>(pStr); res.isOk()) {
+                else if (!str.empty()) {
+                    if (auto res = utils::numFromString<int>(str); res.isOk()) {
                         editor::setLayer(std::clamp(res.unwrap(), -1, editor::constants::MAX_LAYERS));
                     }
                 }
@@ -329,11 +329,11 @@ namespace BetterLayers {
         self->updateLayerMenu();
     }
 
-    void Feature::onUIUpdated(float pScale) {
+    void Feature::onUIUpdated(float scale) {
         editor::ui<BetterLayers::EditorUI>()->updateLayerMenu();
     }
 
-    void Feature::onSettingChanged(std::string pName, GenericSetting*) {
+    void Feature::onSettingChanged(std::string name, GenericSetting*) {
         editor::ui<BetterLayers::EditorUI>()->updateLayerMenu();
     }
 }

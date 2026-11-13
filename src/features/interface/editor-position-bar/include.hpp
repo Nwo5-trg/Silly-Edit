@@ -14,8 +14,8 @@ namespace EditorPositionBar {
         }
 
         void onUpdate() override;
-        void onToggled(bool pEnabled) override;
-        void onSettingChanged(std::string pName, GenericSetting*) override;
+        void onToggled(bool enabled) override;
+        void onSettingChanged(std::string name, GenericSetting*) override;
     } feature;
 
     static constexpr float BAR_GAP = 5.0f;
@@ -26,33 +26,33 @@ namespace EditorPositionBar {
             cocos2d::CCMenu* positionBarMenu = nullptr;
         };
 
-        void showPositonText(int pIndex);
-        void moveEditorToSavedPos(cocos2d::CCPoint pPos);
+        void showPositonText(int index);
+        void moveEditorToSavedPos(cocos2d::CCPoint pos);
 
         void keyDown(cocos2d::enumKeyCodes key, double timestamp);
     };
 
     class $setting_category("editor-position-bar-logo.png"_spr, "Show thumbnails of editor positions but also some other cool things");
 
-    inline SillySetting<bool> showBar{
+    inline Setting<bool> showBar{
         "Show Bar", feature, true
     };
-    inline SillySetting<float> scale{
+    inline Setting<float> scale{
         "Scale", feature, 1.0f, {0.0f, std::nullopt}
     };
-    inline SillySetting<float> offset{
+    inline Setting<float> offset{
         "Offset", feature, -7.5f
     };
-    inline SillySetting<bool> showGoToText{
+    inline Setting<bool> showGoToText{
         "Show Go To Text", feature, true
     };
-    inline SillySetting<float> snapshotSize{
+    inline Setting<float> snapshotSize{
         "Snapshot Size", feature, 512.0f, {50.0f, 10000.0f}, "30 = one block"
     };
-    inline SillySetting<sillyedit::settings::Modifier> createPositionModifier{
+    inline Setting<sillyedit::settings::Modifier> createPositionModifier{
         "Create Position Modifier", feature, "Alt", sillyedit::settings::modifierSettingOptions()
     };
-    inline SillySetting<sillyedit::settings::Modifier> goToPositionModifier{
+    inline Setting<sillyedit::settings::Modifier> goToPositionModifier{
         "Go To Position Modifier", feature, "Ctrl", sillyedit::settings::modifierSettingOptions()
     };
 }

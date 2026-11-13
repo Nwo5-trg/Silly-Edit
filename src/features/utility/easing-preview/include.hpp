@@ -13,22 +13,22 @@ namespace EasingPreview {
 
     class $setting_category("easing-preview-logo.png"_spr, "Click easing label");
 
-    inline SillySetting<bool> graphByDefault{
+    inline Setting<bool> graphByDefault{
         "Graph By Default", feature, false, "show graph view by default"
     };
-    inline SillySetting<float> animationDuration{
+    inline Setting<float> animationDuration{
         "Animation Duration", feature, 1.5f, {0.1f, 10.0f}
     };
-    inline SillySetting<float> animationResetTime{
+    inline Setting<float> animationResetTime{
         "Animation Reset Time", feature, 0.5f, {0.0f, 10.0f}
     };
-    inline SillySetting<int> graphDetail{
+    inline Setting<int> graphDetail{
         "Graph Detail", feature, 50, {5, 200}
     };
-    inline SillySetting<float> graphThickness{
+    inline Setting<float> graphThickness{
         "Graph Thickess", feature, 0.75f, {0.1f, 10.0f}
     };
-    inline SillySetting<bool> chroma{
+    inline Setting<bool> chroma{
         "Chroma", feature, false
     };
 }

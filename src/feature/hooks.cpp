@@ -1,3 +1,4 @@
+#include <utils/include.hpp>
 #include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/LevelEditorLayer.hpp>
 #include "feature-manager.hpp"
@@ -5,8 +6,8 @@
 using namespace geode::prelude;
 
 class $modify(EditorUI) {
-    static void onModify(auto& pSelf) {
-        (void)pSelf.setHookPriorityBeforePost("EditorUI::init", "nwo5.ui-scaling");
+    static void onModify(auto& self) {
+        (void)self.setHookPriorityAfterPost("EditorUI::init", TINKER_EDIT_ID);
     }
 
     bool init(LevelEditorLayer* editorLayer) {

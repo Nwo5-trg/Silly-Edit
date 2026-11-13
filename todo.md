@@ -13,6 +13,7 @@
 - add the custom filters system in whatever way i eventually decide
 - create gradient with selection button (or if nothings selected create a square of objects)
 - multiline text thingy with like justify and stuff
+- make keybind stuff use my new sillyapi settingcache system
 
 # things i can do whenever
 - popup to show all z layers (or editor layers) in selection and let you change them individually (refer to shadys dms)
@@ -42,3 +43,4 @@
 - remove like all the keybinds from silly keybinds other than toggle invisible and that other one, also dont remove ignore damage toggle cuz robtops doesnt let u toggle it in the middle of playtesting
 - add some recommended dependencies (my editorwindowpopup mod, idk wat else but i wanna add a couple more)
 - rename object tab icons to icon tweaks and change the ugly view tab icons and the ui eye with the be ui eye and mayb some other stuff
+- tinker ui scale listener

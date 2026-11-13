@@ -1,27 +1,22 @@
+#include <utils/include.hpp>
 #include "feature-manager.hpp"
 
 using namespace geode::prelude;
 
 namespace sillyedit::features {
-    FeatureBase::FeatureBase(FeatureEnum pEnum) {
-        m_id = getID(pEnum);
+    FeatureBase::FeatureBase(FeatureEnum enum) {
+        m_id = enum;
         
         FeatureManager::get()->registerFeature(this);
-    }
-    FeatureBase::~FeatureBase() {
-        // see im a good girl i dont leak the settings even tho features only get destroyed on game close
-        if (m_enabled) {
-            delete m_enabled;
-        }
     }
 
     void FeatureBase::setup() {}
 
     void FeatureBase::onEditor() {}
     void FeatureBase::onUpdate() {}
-    void FeatureBase::onToggled(bool pEnabled) {}
-    void FeatureBase::onUIUpdated(float pScale) {}
-    void FeatureBase::onSettingChanged(std::string pName, nwo5::settings::GenericSetting* pSetting) {}
+    void FeatureBase::onToggled(bool enabled) {}
+    void FeatureBase::onUIUpdated(float scale) {}
+    void FeatureBase::onSettingChanged(std::string name, settings::GenericSetting* setting) {}
 
     geode::ZStringView FeatureBase::id() const {
         return m_id;
@@ -35,12 +30,12 @@ namespace sillyedit::features {
         return m_data;
     }
 
-    void FeatureBase::setEnabled(bool pEnabled, geode::Mod* pMod) {
-        if (pEnabled) {
-            m_disabledBy.erase(pMod->getID());
+    void FeatureBase::setEnabled(bool enabled, geode::Mod* mod) {
+        if (enabled) {
+            m_disabledBy.erase(mod->getID());
         }
         else {
-            m_disabledBy.insert(pMod->getID());
+            m_disabledBy.insert(mod->getID());
         }
 
         this->onToggled(this->enabled());
@@ -59,20 +54,22 @@ namespace sillyedit::features {
 
         this->setup();
 
-        m_enabled = new sillyedit::settings::SillySetting<bool>{"Enabled", m_id, m_data.defaultEnabled, m_data.reload, m_data.condition};
-
-        nwo5::settings::listenForAllSavedSettingChanges([this] (std::string_view pKey, GenericSetting* pSetting) {
-            if (!GameManager::get()->m_levelEditorLayer) {
+        m_settingListener = nwo5::cache::ValueCacheChanged().listen([this] (Mod* mod, std::string key, void* ptr) {
+            if (mod != Mod::get() || editor::notLoaded()) {
                 return;
             }
 
-            const auto name = pSetting->name();
-            
-            this->onSettingChanged(name, pSetting);
+            auto setting = static_cast<settings::GenericSetting*>(ptr);
 
-            if (name == "Enabled") {
-                this->onToggled(this->enabled());
-            }
-        }, m_id).leak();
+            this->onSettingChanged(setting->name(), setting);
+        });
+
+        m_enabled = std::make_unique<settings::Setting<bool>>(
+            "Enabled", m_id, m_data.defaultEnabled, m_data.reload, m_data.condition
+        );
+        // just to make sure onsettingchanged gets activated first
+        m_enabledListener = m_enabled->listen([this] (nwo5::cache::ValueCache<bool>*) {
+            this->onToggled(this->enabled());
+        }, Priority::Normal + 1);
     }
 }

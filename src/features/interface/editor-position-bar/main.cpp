@@ -4,18 +4,18 @@ using namespace nwo5::ui::prelude;
 using namespace geode::prelude;
 
 namespace EditorPositionBar {
-    void EditorUI::showPositonText(int pIndex) {
+    void EditorUI::showPositonText(int index) {
         if (!EditorPositionBar::showGoToText) {
             return;
         }
 
         this->addChild(
-            TextAlertPopup::create(fmt::format("Position {} loaded.", pIndex), 0.5f, 0.6f, 150, Font::Default), 100, 150
+            TextAlertPopup::create(fmt::format("Position {} loaded.", index), 0.5f, 0.6f, 150, Font::Default), 100, 150
         );
     }
-    void EditorUI::moveEditorToSavedPos(CCPoint pPos) {
+    void EditorUI::moveEditorToSavedPos(CCPoint pos) {
         editor::layer()->m_objectLayer->setPosition(
-            ui::winSize() / 2 + CCPoint{0.0f, m_toolbarHeight / 2} - pPos * editor::zoom()
+            ui::winSize() / 2 + CCPoint{0.0f, m_toolbarHeight / 2} - pos * editor::zoom()
         );
     }
 
@@ -118,11 +118,11 @@ namespace EditorPositionBar {
             ); 
     }
 
-    void Feature::onToggled(bool pEnabled) {
+    void Feature::onToggled(bool enabled) {
         auto self = editor::ui<EditorPositionBar::EditorUI>();
         auto fields = self->m_fields.self();
 
-        if (!pEnabled) {
+        if (!enabled) {
             if (fields->positionBarMenu) {
                 self->m_uiItems->removeObject(fields->positionBarMenu);
                 fields->positionBarMenu->removeMeAndCleanup();
@@ -146,8 +146,8 @@ namespace EditorPositionBar {
         fields->lastSavedPositions = std::nullopt;
     }
 
-    void Feature::onSettingChanged(std::string pName, GenericSetting*) {
-        if (pName == "showBar") {
+    void Feature::onSettingChanged(std::string name, GenericSetting*) {
+        if (name == "showBar") {
             // lol
             Feature::onToggled(EditorPositionBar::showBar);
         }

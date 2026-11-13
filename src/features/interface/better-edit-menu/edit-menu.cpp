@@ -245,7 +245,7 @@ namespace BetterEditMenu {
         m_rightArrow->setVisible(!BetterEditMenu::hideArrowsIfUnused || !hide);
     }
 
-    void EditMenu::onMoveArrow(cocos2d::CCObject* pSender) {
+    void EditMenu::onMoveArrow(cocos2d::CCObject* sender) {
         if (selection::empty()) {
             return;
         }
@@ -266,7 +266,7 @@ namespace BetterEditMenu {
             objs = CCArray::createWithObject(selectedObj);
         }
 
-        switch (pSender->getTag()) {
+        switch (sender->getTag()) {
             case MoveButton::Left: {
                 object::moveBy(objs, {-val, 0.0f}, true);
             break; }
@@ -284,11 +284,11 @@ namespace BetterEditMenu {
 
         editor::update();
     }
-    void EditMenu::onMoveShortcut(cocos2d::CCObject* pSender) {
-        const auto value = static_cast<ObjWrapper<float>*>(static_cast<CCNode*>(pSender)->getUserObject("value"_spr));
+    void EditMenu::onMoveShortcut(cocos2d::CCObject* sender) {
+        const auto value = static_cast<ObjWrapper<float>*>(static_cast<CCNode*>(sender)->getUserObject("value"_spr));
         m_moveAmountInput->setString(misc::numToString(value->getValue()));
     }
-    void EditMenu::onRotationArrow(cocos2d::CCObject* pSender) {
+    void EditMenu::onRotationArrow(cocos2d::CCObject* sender) {
         if (selection::empty()) {
             return;
         }
@@ -307,7 +307,7 @@ namespace BetterEditMenu {
             objs = CCArray::createWithObject(selectedObj);
         }
 
-        switch (pSender->getTag()) {
+        switch (sender->getTag()) {
             case RotationButton::CW: {
                 object::rotateBy(objs, val, true, AUTO_CENTER, !m_rotationLock->isToggled());
             break; }
@@ -319,12 +319,12 @@ namespace BetterEditMenu {
 
         editor::update();
     }
-    void EditMenu::onRotationShortcut(cocos2d::CCObject* pSender) {
-        const auto value = static_cast<ObjWrapper<float>*>(static_cast<CCNode*>(pSender)->getUserObject("value"_spr));
+    void EditMenu::onRotationShortcut(cocos2d::CCObject* sender) {
+        const auto value = static_cast<ObjWrapper<float>*>(static_cast<CCNode*>(sender)->getUserObject("value"_spr));
         m_rotationAmountInput->setString(misc::numToString(value->getValue()));
     }
-    void EditMenu::onFlip(cocos2d::CCObject* pSender) {
-        switch (pSender->getTag()) {
+    void EditMenu::onFlip(cocos2d::CCObject* sender) {
+        switch (sender->getTag()) {
             case FlipButton::X: {
                 editor::ui()->transformObjectCall(EditCommand::FlipX);
             break; }
@@ -336,10 +336,10 @@ namespace BetterEditMenu {
 
         editor::update();
     }
-    void EditMenu::onButtonArrow(CCObject* pSender) {
+    void EditMenu::onButtonArrow(CCObject* sender) {
         const auto scrollX = m_buttonsScroll->getScrollPoint().x;
 
-        if (pSender->getTag() == ButtonScrollArrow::Next) {
+        if (sender->getTag() == ButtonScrollArrow::Next) {
             m_buttonsScroll->setScrollX(scrollX + ui::w(m_buttonsScroll), true);
         }
         else {
@@ -352,8 +352,8 @@ namespace BetterEditMenu {
     void EditMenu::createMoveShortcuts() {
         m_moveShortcutsMenu->removeAllChildrenWithCleanup(true);
 
-        auto createButton = [this] (std::string_view pStr, int pTag) {
-            auto split = string::splitView(pStr, ";");
+        auto createButton = [this] (std::string_view str, int tag) {
+            auto split = string::splitView(str, ";");
             float value = 0.0f;
             std::string text;
 
@@ -373,7 +373,7 @@ namespace BetterEditMenu {
                     ui::label(text, Font::Default), CircleBaseColor::Green, this, menu_selector(EditMenu::onMoveShortcut)
                 )
                     .scaleToFit(MOVE_SHORTCUT_SIZE)
-                    .tag(pTag)
+                    .tag(tag)
                     .userObject("value"_spr, ObjWrapper<float>::create(value))
             );
         };
@@ -396,8 +396,8 @@ namespace BetterEditMenu {
             }
         }
 
-        auto createButton = [this] (std::string_view pStr, int pTag) {
-            auto split = string::splitView(pStr, ";");
+        auto createButton = [this] (std::string_view str, int tag) {
+            auto split = string::splitView(str, ";");
             float value = 0.0f;
             std::string text;
 
@@ -417,7 +417,7 @@ namespace BetterEditMenu {
                     ui::label(text, Font::Default), CircleBaseColor::Green, this, menu_selector(EditMenu::onRotationShortcut)
                 )
                     .scaleToFit(ROTATION_SHORTCUT_SIZE)
-                    .tag(pTag)
+                    .tag(tag)
                     .userObject("value"_spr, ObjWrapper<float>::create(value))
             );
         };
@@ -430,10 +430,10 @@ namespace BetterEditMenu {
         m_rotationMenu->updateLayout();
     }
 
-    void EditMenu::createButtons(CCArray* pButtonArray) {
+    void EditMenu::createButtons(CCArray* buttonArray) {
         m_buttonsScroll->removeAllChildrenWithCleanup(true);
 
-        for (auto node : CCArrayExt(pButtonArray)) {
+        for (auto node : CCArrayExt(buttonArray)) {
             auto button = typeinfo_cast<CCMenuItemSpriteExtra*>(node);
 
             if (!button) {
@@ -494,8 +494,8 @@ namespace BetterEditMenu {
     }
 
     // i was getting a weird bug where it would just show whenever i paused the game no matter what tab i was on so wtv, its dumb but it works
-    void EditMenu::setVisible(bool pVisible) {
-        CCNode::setVisible(pVisible && alpha::editor_tabs::getCurrentTab().unwrapOrDefault() == "edit");
+    void EditMenu::setVisible(bool visible) {
+        CCNode::setVisible(visible && alpha::editor_tabs::getCurrentTab().unwrapOrDefault() == "edit");
     }
 
     EditMenu* EditMenu::create() {

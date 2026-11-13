@@ -48,64 +48,96 @@
 // actual stuff
 
 namespace sillyedit::features {
-    enum class FeatureEnum {
-        #define FEATURE(pFeature) pFeature ,
-        #define TITLE(pTitle) GEODE_CONCAT(pTitle , Title),
-            SILLYEDIT_FEATURE_LIST
-        #undef TITLE
-        #undef FEATURE
-    };
-    
-    inline std::string formatID(std::string_view pStr) {
-        if (pStr.empty()) {
-            return {};
-        }
-
-        std::string out{pStr.front()};
-
-        for (const auto c : pStr.substr(1)) {
-            if (std::isupper(c) && !std::isupper(out.back())) {
-                out.push_back(' ');
+    struct FeatureEnum {
+    protected:
+        static std::string formatID(std::string_view str) {
+            if (str.empty()) {
+                return "";
             }
-            
-            out.push_back(c);
+
+            std::string out{str.front()};
+
+            for (const auto c : str.substr(1)) {
+                if (std::isupper(c) && !std::isupper(out.back())) {
+                    out.push_back(' ');
+                }
+                
+                out.push_back(c);
+            }
+
+            return out;
         }
 
-        return out;
-    }
-
-    inline geode::ZStringView getID(FeatureEnum pEnum) {
-        static const std::string array[] = {
-            #define FEATURE(pFeature) formatID(#pFeature) ,
-            #define TITLE(pTitle) fmt::format("{}Title", formatID ( #pTitle )),
+        
+    public:
+        enum class Order : size_t {
+            #define FEATURE(feature) feature ,
+            #define TITLE(title) GEODE_CONCAT(title , Title),
                 SILLYEDIT_FEATURE_LIST
             #undef TITLE
             #undef FEATURE
         };
 
-        return array[static_cast<size_t>(pEnum)];
-    }
-    inline std::optional<FeatureEnum> getEnum(std::string_view pID) {
-        #define FEATURE(pFeature) static const auto pFeature = formatID(#pFeature);
-        #define TITLE(pTitle) static const auto GEODE_CONCAT( pTitle , Title) = fmt::format("{}Title", formatID( #pTitle ));
+        int order;
+
+        constexpr FeatureEnum(Order val)
+            : order(std::to_underlying(val)) {}
+
+        #define FEATURE(feature) static const FeatureEnum feature;
+        #define TITLE(title) static const FeatureEnum GEODE_CONCAT(title , Title);
             SILLYEDIT_FEATURE_LIST
         #undef TITLE
         #undef FEATURE
 
-        #define FEATURE(pFeature) if (pID == pFeature ) return FeatureEnum:: pFeature ;
-        #define TITLE(pTitle) if (pID == GEODE_CONCAT( pTitle , Title) ) return FeatureEnum:: GEODE_CONCAT( pTitle , Title) ;
-            SILLYEDIT_FEATURE_LIST
-        #undef TITLE
-        #undef FEATURE
-        
-        return std::nullopt;
-    }
+        static const std::string& toString(FeatureEnum val) {
+            static const std::string array[] = {
+                #define FEATURE(feature) formatID(#feature) ,
+                #define TITLE(title) fmt::format("{}Title", formatID ( #title )),
+                    SILLYEDIT_FEATURE_LIST
+                #undef TITLE
+                #undef FEATURE
+            };
 
-    #define FEATURE(pFeature)
-    #define TITLE(pTitle) SILLY_API_INLINE_CATEGORY(fmt::format("{}Title", formatID( #pTitle )), std::nullopt, "", FeatureEnum :: GEODE_CONCAT( pTitle , Title));
+            return array[val.order];
+        }
+        const std::string& toString() const {
+            return toString(*this);
+        }
+
+        static std::optional<FeatureEnum> fromString(std::string_view iD) {
+            #define FEATURE(feature) if (iD == feature ) return FeatureEnum:: feature ;
+            #define TITLE(title) if (iD == GEODE_CONCAT( title , Title) ) return FeatureEnum:: GEODE_CONCAT( title , Title) ;
+                SILLYEDIT_FEATURE_LIST
+            #undef TITLE
+            #undef FEATURE
+            
+            return std::nullopt;
+        }
+
+        operator int() const {
+            return order;
+        }
+        operator std::string_view() const {
+            return toString();
+        }
+        operator const std::string&() const {
+            return toString();
+        }
+    };
+
+    #define FEATURE(feature) inline constexpr FeatureEnum feature = FeatureEnum::Order:: feature ;
+    #define TITLE(title) inline constexpr FeatureEnum GEODE_CONCAT(title , Title) = FeatureEnum::Order:: GEODE_CONCAT(title , Title);
         SILLYEDIT_FEATURE_LIST
     #undef TITLE
     #undef FEATURE
+
+    $execute {
+        #define FEATURE(feature)
+        #define TITLE(title) settings::SettingsManager::get()->registerCategory(FeatureEnum:: GEODE_CONCAT( title , Title), "", "");
+            SILLYEDIT_FEATURE_LIST
+        #undef TITLE
+        #undef FEATURE
+    }
 };
 
 #undef SILLYEDIT_FEATURE_LIST

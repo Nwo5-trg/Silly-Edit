@@ -7,19 +7,19 @@ using namespace nwo5::ui::prelude;
 static constexpr float DEFAULT_SCROLL_DISTANCE = 2.5f;
 
 namespace ScrollGroups {
-    void EditorUI::scrollGroup(GameObject* pObj, bool pUp, bool pSecondaryGroup) {
-        if (pSecondaryGroup) {
-            const auto target = trigger::center(pObj) + (pUp ? 1 : -1);
+    void EditorUI::scrollGroup(GameObject* obj, bool up, bool secondaryGroup) {
+        if (secondaryGroup) {
+            const auto target = trigger::center(obj) + (up ? 1 : -1);
 
             if (target >= 0 && target <= nwo5::editor::constants::MAX_GROUPS) {
-                trigger::setCenter(pObj, target);
+                trigger::setCenter(obj, target);
             }
             }
         else {
-            const auto target = trigger::target(pObj) + (pUp ? 1 : -1);
+            const auto target = trigger::target(obj) + (up ? 1 : -1);
 
             if (target >= 0 && target <= nwo5::editor::constants::MAX_GROUPS) {
-                trigger::setTarget(pObj, target);
+                trigger::setTarget(obj, target);
             }
         }
     }
@@ -27,7 +27,7 @@ namespace ScrollGroups {
     void Feature::onEditor() {
         auto self = editor::ui<ScrollGroups::EditorUI>();
 
-        self->addEventListener(ScrollWheelEvent(), [self] (double pX, double pY) {
+        self->addEventListener(ScrollWheelEvent(), [self] (double x, double y) {
             auto fields = self->m_fields.self();
 
             if (!ScrollGroups::enabled() || !sillyedit::utils::modifierDown(ScrollGroups::modifier) || sillyedit::utils::shouldBlockScrolling()) {
@@ -56,7 +56,7 @@ namespace ScrollGroups {
 
             fields->lastScroll = asp::Instant::now();
 
-            fields->scrollingDistance += ScrollGroups::reverseScroll ? -pY : pY;
+            fields->scrollingDistance += ScrollGroups::reverseScroll ? -y : y;
 
             if (std::abs(fields->scrollingDistance) > DEFAULT_SCROLL_DISTANCE / ScrollGroups::scrollSensitivity) {
                 auto dispatcher = CCKeyboardDispatcher::get();

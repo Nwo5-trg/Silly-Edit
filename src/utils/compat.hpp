@@ -7,24 +7,24 @@ namespace sillyedit::utils {
     bool isBetterEditLoaded();
     geode::Mod* getBetterEdit();
     template<typename T>
-    std::optional<T> getBetterEditSetting(std::string_view pKey) {
+    std::optional<T> getBetterEditSetting(std::string_view key) {
         auto be = getBetterEdit();
 
         if (!be) {
             return std::nullopt;
         }
 
-        return be->getSettingValue<T>(pKey);
+        return be->getSettingValue<T>(key);
     }
     template<typename T>
-    bool setBetterEditSetting(std::string_view pKey, T pVal) {
+    bool setBetterEditSetting(std::string_view key, T val) {
         auto be = getBetterEdit();
 
         if (!be) {
             return false;
         }
 
-        be->setSettingValue<T>(pKey, pVal);
+        be->setSettingValue<T>(key, val);
 
         return true;
     }
@@ -33,29 +33,29 @@ namespace sillyedit::utils {
     bool isTinkerLoaded();
     geode::Mod* getTinker();
     template<typename T>
-    std::optional<T> getTinkerSetting(std::string_view pKey) {
+    std::optional<T> getTinkerSetting(std::string_view key) {
         auto tinker = getTinker();
 
         if (!tinker) {
             return std::nullopt;
         }
 
-        return tinker->getSettingValue<T>(pKey);
+        return tinker->getSettingValue<T>(key);
     }
     template<typename T>
-    bool setTinkerSetting(std::string_view pKey, T pVal) {
+    bool setTinkerSetting(std::string_view key, T val) {
         auto tinker = getTinker();
 
         if (!tinker) {
             return false;
         }
 
-        tinker->setSettingValue<T>(pKey, pVal);
+        tinker->setSettingValue<T>(key, val);
 
         return true;
     }
 
-    void enableHook(geode::Mod* pMod, std::string_view pKey);
-    void disableHook(geode::Mod* pMod, std::string_view pKey);
-    void conditionallyEnableHook(bool pEnable, geode::Mod* pMod, std::string_view pKey);
+    void enableHook(geode::Mod* mod, std::string_view key);
+    void disableHook(geode::Mod* mod, std::string_view key);
+    void conditionallyEnableHook(bool enable, geode::Mod* mod, std::string_view key);
 }

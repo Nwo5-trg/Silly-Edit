@@ -6,21 +6,21 @@
 using sillyedit::features::FeatureEnum;
 using sillyedit::features::FeatureManager;
 
-#define $feature(pFeature) \
+#define $feature(feature) \
     featureDummy##__COUNTER__ ; \
-    inline struct Feature final : public sillyedit::features::FeatureTemplate<FeatureEnum:: pFeature >
+    inline struct Feature final : public sillyedit::features::FeatureTemplate<FeatureEnum:: feature >
 
-#define $feature_modify(pClass) \
-    pClass##Hook##__COUNTER__; \
+#define $feature_modify(class) \
+    class##Hook##__COUNTER__; \
     namespace GD { \
-        using pClass = :: pClass ;\
+        using class = :: class ;\
     } \
-    struct pClass : geode::Modify< pClass , :: pClass>
+    struct class : geode::Modify< class , :: class>
 
-#define SETTING_CATEGORY_IMPL_1(pLogo) \
-    SILLY_API_INLINE_CATEGORY(feature, std::nullopt, pLogo , sillyedit::features::getEnum(feature).value())
-#define SETTING_CATEGORY_IMPL_2(pLogo, pDescription) \
-    SILLY_API_INLINE_CATEGORY(feature, pDescription , pLogo , sillyedit::features::getEnum(feature).value())
+#define SETTING_CATEGORY_IMPL_1(logo) \
+    $execute{ settings::SettingsManager::get()->registerCategory(FeatureEnum::fromString(feature), std::nullopt, logo ); }
+#define SETTING_CATEGORY_IMPL_2(logo, description) \
+    $execute{ settings::SettingsManager::get()->registerCategory(FeatureEnum::fromString(feature), description , logo ); }
 #define $setting_category(...) \
     categoryDummy##__COUNTER__ ; /* cool syntax to have class infront of setting category lol its completely unneccesary*/\
     inline bool enabled() { \

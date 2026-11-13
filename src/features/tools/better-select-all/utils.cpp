@@ -4,22 +4,22 @@
 using namespace geode::prelude;
 
 namespace BetterSelectAll {
-    CCArray* getObjectsWithDirection(SelectDirection pDirection, bool pSelectedObjectsCenter) {
+    CCArray* getObjectsWithDirection(SelectDirection direction, bool selectedObjectsCenter) {
         auto objs = CCArray::create();
 
-        const auto center = pSelectedObjectsCenter ? selection::center() : editor::center();
+        const auto center = selectedObjectsCenter ? selection::center() : editor::center();
 
-        const auto shouldInclude = [&] (CCPoint pPos) {
-            switch (pDirection) {
-                case SelectDirection::NorthWest: return pPos.x <= center.x && pPos.y >= center.y;
-                case SelectDirection::North: return  pPos.y >= center.y;
-                case SelectDirection::NorthEast: return pPos.x >= center.x && pPos.y >= center.y;
-                case SelectDirection::West: return pPos.x <= center.x;
+        const auto shouldInclude = [&] (CCPoint pos) {
+            switch (direction) {
+                case SelectDirection::NorthWest: return pos.x <= center.x && pos.y >= center.y;
+                case SelectDirection::North: return  pos.y >= center.y;
+                case SelectDirection::NorthEast: return pos.x >= center.x && pos.y >= center.y;
+                case SelectDirection::West: return pos.x <= center.x;
                 case SelectDirection::All: return true;
-                case SelectDirection::East: return pPos.x >= center.x;
-                case SelectDirection::SouthWest: return pPos.x <= center.x && pPos.y <= center.y;
-                case SelectDirection::South: return pPos.y <= center.y;
-                case SelectDirection::SouthEast: return pPos.x >= center.x && pPos.y <= center.y;
+                case SelectDirection::East: return pos.x >= center.x;
+                case SelectDirection::SouthWest: return pos.x <= center.x && pos.y <= center.y;
+                case SelectDirection::South: return pos.y <= center.y;
+                case SelectDirection::SouthEast: return pos.x >= center.x && pos.y <= center.y;
             }
         };
         

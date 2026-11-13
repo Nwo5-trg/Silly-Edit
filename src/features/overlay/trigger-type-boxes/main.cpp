@@ -5,18 +5,18 @@ using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
 
 namespace TriggerTypeBoxes {
-    void LevelEditorLayer::drawTriggerTypeBoxes(GameObject* pObj) {
-        if (pObj->m_classType != GameObjectClassType::Effect || !pObj->isVisible() || pObj->m_isDisabled || pObj->m_greenDebugDraw || pObj->m_objectID == 749) {
+    void LevelEditorLayer::drawTriggerTypeBoxes(GameObject* obj) {
+        if (obj->m_classType != GameObjectClassType::Effect || !obj->isVisible() || obj->m_isDisabled || obj->m_greenDebugDraw || obj->m_objectID == 749) {
             return;
         }
 
-        const auto opacity = pObj->getOpacity();
+        const auto opacity = obj->getOpacity();
 
         if (!opacity) {
             return;
         }
 
-        auto trigger = static_cast<EffectGameObject*>(pObj);
+        auto trigger = static_cast<EffectGameObject*>(obj);
 
         auto drawnode = TriggerTypeBoxes::drawInfront ? sillyedit::utils::getOverlayDraw() : sillyedit::utils::getGridDraw();
 
@@ -106,8 +106,8 @@ namespace TriggerTypeBoxes {
 
         m_drawTriggerBoxes = ret;
 
-        object::forEachInSection([this] (GameObject* pObj) {
-            this->drawTriggerTypeBoxes(pObj);
+        object::forEachInSection([this] (GameObject* obj) {
+            this->drawTriggerTypeBoxes(obj);
         });
     }
 }

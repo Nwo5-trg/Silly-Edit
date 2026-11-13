@@ -13,8 +13,8 @@ class $modify(LevelEditorLayer) {
             return false;
         }
 
-        nwo5::utils::setupKeybind(this, "General-open-settings", [this] (const Keybind&, bool pDown, bool pRepeat, double) {
-            if (pDown && !pRepeat) {
+        nwo5::utils::setupKeybind(this, "General-open-settings", [this] (const Keybind&, bool down, bool repeat, double) {
+            if (down && !repeat) {
                 if (auto popup = static_cast<sillyedit::settings::SettingsPopup*>(CCDirector::get()->getRunningScene()->getChildByID("settings-popup"_spr))) {
                     popup->onClose(nullptr);
                 }

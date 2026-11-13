@@ -102,9 +102,9 @@ namespace BetterEditMenu {
         auto self = editor::ui<BetterEditMenu::EditorUI>();
         auto fields = self->m_fields.self();
 
-        alpha::editor_tabs::addTabSwitchCallback([self] (ZStringView pTab) {
+        alpha::editor_tabs::addTabSwitchCallback([self] (ZStringView tab) {
             if (auto editMenu = self->m_fields->editMenu) {
-                editMenu->setVisible(pTab == "edit");
+                editMenu->setVisible(tab == "edit");
             }
         });
     }
@@ -115,11 +115,11 @@ namespace BetterEditMenu {
         }
     }
 
-    void Feature::onToggled(bool pEnabled) {
+    void Feature::onToggled(bool enabled) {
         auto self = editor::ui<BetterEditMenu::EditorUI>();
         auto fields = self->m_fields.self();
 
-        if (pEnabled) {
+        if (enabled) {
             fields->editMenu = Setup(EditMenu::create())
                 .id("edit-menu"_spr)
                 .visible(alpha::editor_tabs::getCurrentTab().unwrapOrDefault() == "edit")
@@ -147,17 +147,17 @@ namespace BetterEditMenu {
         }
     }
 
-    void Feature::onSettingChanged(std::string pName, GenericSetting*) {
+    void Feature::onSettingChanged(std::string name, GenericSetting*) {
         auto self = editor::ui<BetterEditMenu::EditorUI>();
         auto fields = self->m_fields.self();
 
         editor::updateEditorTabButtons();
 
         if (auto editMenu = self->m_fields->editMenu) {            
-            if (pName.contains("Move")) {
+            if (name.contains("Move")) {
                 editMenu->createMoveShortcuts();
             }
-            else if (pName.contains("Rotate")) {
+            else if (name.contains("Rotate")) {
                 editMenu->createRotationShortcuts();
             }
         }

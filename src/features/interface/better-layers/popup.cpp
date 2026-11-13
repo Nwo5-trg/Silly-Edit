@@ -5,14 +5,14 @@ using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
 
 namespace BetterLayers {
-    bool EditLayerPopup::init(LayerSettings* pSettings) {
+    bool EditLayerPopup::init(LayerSettings* settings) {
         if (!Popup::init(WIDTH, HEIGHT)) {
             return false;
         }
 
         this->setTitle(fmt::format("Edit Layer ({}) Settings", editor::currentLayer()));
 
-        m_settings = pSettings;
+        m_settings = settings;
 
         m_layer = editor::currentLayer();
 
@@ -20,12 +20,12 @@ namespace BetterLayers {
             .id("opacity-input"_spr)
             .filter(CommonFilter::Uint)
             .maxCharCount(3)
-            .callback([this] (const std::string& pStr) {
-                    if (pStr.empty()) {
+            .callback([this] (const std::string& str) {
+                    if (str.empty()) {
                         this->m_settings->unsetLayerOpacity(m_layer);
                     }
                     else {
-                        const auto num = std::clamp(utils::numFromString<int>(pStr).unwrapOrDefault(), 0, 255);
+                        const auto num = std::clamp(utils::numFromString<int>(str).unwrapOrDefault(), 0, 255);
 
                         this->m_settings->setLayerOpacity(m_layer, num);
 
@@ -100,10 +100,10 @@ namespace BetterLayers {
         }
     }
 
-    EditLayerPopup* EditLayerPopup::create(LayerSettings* pSettings) {
+    EditLayerPopup* EditLayerPopup::create(LayerSettings* settings) {
         auto ret = new EditLayerPopup;
 
-        if (!ret->init(pSettings)) {
+        if (!ret->init(settings)) {
             delete ret;
 
             return nullptr;
@@ -118,14 +118,14 @@ namespace BetterLayers {
 
     
 
-    bool EditAllLayersPopup::init(LayerSettings* pSettings) {
+    bool EditAllLayersPopup::init(LayerSettings* settings) {
         if (!Popup::init(WIDTH, HEIGHT)) {
             return false;
         }
 
         this->setTitle("Edit Level Layer Settings");
 
-        m_settings = pSettings;
+        m_settings = settings;
 
         m_defaultOpacityInput = ui::input(
             INPUT_SIZE, misc::numToString(BetterLayers::layerOpacity.getDefault())
@@ -133,12 +133,12 @@ namespace BetterLayers {
             .filter(CommonFilter::Uint)
             .maxCharCount(3)
             .id("default-opacity-input"_spr)
-            .callback([this] (const std::string& pStr) {
-                if (pStr.empty()) {
+            .callback([this] (const std::string& str) {
+                if (str.empty()) {
                     this->m_settings->unsetDefaultOpacity();
                 }
                 else {
-                    const auto num = std::clamp(utils::numFromString<int>(pStr).unwrapOrDefault(), 0, 255);
+                    const auto num = std::clamp(utils::numFromString<int>(str).unwrapOrDefault(), 0, 255);
 
                     this->m_settings->setDefaultOpacity(num);
 
@@ -156,12 +156,12 @@ namespace BetterLayers {
             .id("focused-layer-input"_spr)
             .filter(CommonFilter::Uint)
             .maxCharCount(4)
-            .callback([this] (const std::string& pStr) {
-                    if (pStr.empty()) {
+            .callback([this] (const std::string& str) {
+                    if (str.empty()) {
                         this->m_settings->unsetFocusedLayer();
                     }
                     else {
-                        const auto num = std::clamp(utils::numFromString<int>(pStr).unwrapOrDefault(), 0, editor::constants::MAX_LAYERS);
+                        const auto num = std::clamp(utils::numFromString<int>(str).unwrapOrDefault(), 0, editor::constants::MAX_LAYERS);
 
                         this->m_settings->setFocusedLayer(num);
 
@@ -221,10 +221,10 @@ namespace BetterLayers {
         m_focusedLayerInput->setString("", true);
     }
 
-    EditAllLayersPopup* EditAllLayersPopup::create(LayerSettings* pSettings) {
+    EditAllLayersPopup* EditAllLayersPopup::create(LayerSettings* settings) {
         auto ret = new EditAllLayersPopup;
 
-        if (!ret->init(pSettings)) {
+        if (!ret->init(settings)) {
             delete ret;
 
             return nullptr;

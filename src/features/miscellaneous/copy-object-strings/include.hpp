@@ -12,7 +12,7 @@ namespace CopyObjectStrings {
             m_data.incompatMessage = "disables tinkers hooks >w<";
         }
 
-        void onToggled(bool pEnabled) override;
+        void onToggled(bool enabled) override;
     } feature;
 
     class $feature_modify(EditorUI) {
@@ -24,22 +24,22 @@ namespace CopyObjectStrings {
 
     class $setting_category("copy-object-strings-logo.png"_spr, "Copy obj strings and paste from your clipboard");
 
-    inline SillySetting<bool> copy{
+    inline Setting<bool> copy{
         "Copy", feature, true
     };
-    inline SillySetting<bool> paste{
+    inline Setting<bool> paste{
         "Paste", feature, true
     };
-    inline SillySetting<bool> fallbackEditor{
+    inline Setting<bool> fallbackEditor{
         "Fallback Editor", feature, true, "fallback to editor clipboard if your clipboard doesnt contain a valid object id, if disabled then just nothing gets pasted"
     };
-    inline SillySetting<bool> dontOverrideEditor{
+    inline Setting<bool> dontOverrideEditor{
         "Dont Override Editor", feature, false, "by default when pasting a valid object string, it overrides the default editor clipboard, enabling this setting still pastes the string, but doesnt set the editor clipboard to the string"
     };
-    inline SillySetting<bool> copyNotification{
+    inline Setting<bool> copyNotification{
         "Copy Notification", feature, false
     };
-    inline SillySetting<bool> pasteNotification{
+    inline Setting<bool> pasteNotification{
         "Paste Notification", feature, true
     };
 }

@@ -14,9 +14,9 @@ namespace sillyedit::utils {
         SelectionUtilsInvert = 240,
     };
 
-    nwo5::utils::SillyDrawNode* getGridDraw(DrawNode pDrawNode = DrawNode::Default);
+    nwo5::utils::SillyDrawNode* getGridDraw(DrawNode drawNode = DrawNode::Default);
     cocos2d::CCLayer* getGridLayer();
-    nwo5::utils::SillyDrawNode* getOverlayDraw(DrawNode pDrawNode = DrawNode::Default);
+    nwo5::utils::SillyDrawNode* getOverlayDraw(DrawNode drawNode = DrawNode::Default);
     cocos2d::CCLayer* getOverlayLayer();
     cocos2d::CCLayer* getHiddenLayer();
     

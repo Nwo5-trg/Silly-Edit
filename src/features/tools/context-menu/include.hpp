@@ -25,76 +25,76 @@ namespace ContextMenu {
 
     class $setting_category("context-menu-logo.png"_spr, "(WIP) Right click on object(s) for a configurable context menu :3");
 
-    inline SillySetting<bool> selectOnClick{
+    inline Setting<bool> selectOnClick{
         "Select On Click", feature, true, "when right clicking on an unselected object, select it instead of the static menu showing"
     };
-    inline SillySetting<float> scaleMultiplier{
+    inline Setting<float> scaleMultiplier{
         "Scale Multiplier", feature, 1.0f
     };
-    inline SillySetting<bool> scrollAway{
+    inline Setting<bool> scrollAway{
         "Scroll Away", feature, false, "instead of blocking scrolling when context menu is showing, close context menu when scroll is attempted"
     };
-    inline SillySetting<sillyedit::settings::Modifier> specialModifier{
+    inline Setting<sillyedit::settings::Modifier> specialModifier{
         "Special Modifier", feature, "Shift", sillyedit::settings::modifierSettingOptions(), "e.g. changes copy to copy special, scale to scale xy"
     };
-    inline SillySetting<bool> editGroup{
+    inline Setting<bool> editGroup{
         "Edit Group", feature, true
     };
-    inline SillySetting<bool> editObject{
+    inline Setting<bool> editObject{
         "Edit Object", feature, true
     };
-    inline SillySetting<bool> editExtras{
+    inline Setting<bool> editExtras{
         "Edit Extras", feature, true
     };
-    inline SillySetting<bool> editSpecial{
+    inline Setting<bool> editSpecial{
         "Edit Special", feature, true
     };
-    inline SillySetting<bool> createMode{
+    inline Setting<bool> createMode{
         "Create Mode", feature, true
     };
-    inline SillySetting<bool> editMode{
+    inline Setting<bool> editMode{
         "Edit Mode", feature, true
     };
-    inline SillySetting<bool> deleteMode{
+    inline Setting<bool> deleteMode{
         "Delete Mode", feature, true
     };
-    inline SillySetting<bool> flipX{
+    inline Setting<bool> flipX{
         "Flip X", feature, true
     };
-    inline SillySetting<bool> flipY{
+    inline Setting<bool> flipY{
         "Flip Y", feature, true
     };
-    inline SillySetting<bool> scale{
+    inline Setting<bool> scale{
         "Scale", feature, true
     };
-    inline SillySetting<bool> transform{
+    inline Setting<bool> transform{
         "Transform", feature, true
     };
-    inline SillySetting<bool> selectAll{
+    inline Setting<bool> selectAll{
         "Select All", feature, true
     };
-    inline SillySetting<bool> deselectAll{
+    inline Setting<bool> deselectAll{
         "Deselect All", feature, true
     };
-    inline SillySetting<bool> deleteSetting{
+    inline Setting<bool> deleteSetting{
         "Delete", feature, true
     };
-    inline SillySetting<bool> copy{
+    inline Setting<bool> copy{
         "Copy", feature, true
     };
-    inline SillySetting<bool> paste{
+    inline Setting<bool> paste{
         "Paste", feature, true
     };
-    inline SillySetting<bool> pasteState{
+    inline Setting<bool> pasteState{
         "Paste State", feature, true
     };
-    inline SillySetting<bool> duplicate{
+    inline Setting<bool> duplicate{
         "Duplicate", feature, true
     };
-    inline SillySetting<bool> toggleInvisible{
+    inline Setting<bool> toggleInvisible{
         "Toggle Invisible", feature, true
     };
-    inline SillySetting<bool> goToLayer{
+    inline Setting<bool> goToLayer{
         "Go To Layer", feature, true
     };
 }

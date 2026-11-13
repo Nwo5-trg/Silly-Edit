@@ -56,7 +56,7 @@ all sillyedit settings are geode savedvalues, if u rly wanna access them they ar
 so getting this setting
 
 ```cpp
-inline SillySetting<bool> snapIndicator{"Snap Indicator", feature, true};
+inline Setting<bool> snapIndicator{"Snap Indicator", feature, true};
 ```
 
 would be

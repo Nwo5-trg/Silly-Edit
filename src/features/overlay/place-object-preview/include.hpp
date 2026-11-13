@@ -33,8 +33,8 @@ namespace PlaceObjectPreview {
     };
 
     class $feature_modify(LevelEditorLayer) {
-        static void onModify(auto& pSelf) {
-            (void)pSelf.setHookPriorityBeforePre("LevelEditorLayer::addSpecial", TINKER_EDIT_ID);
+        static void onModify(auto& self) {
+            (void)self.setHookPriorityBeforePre("LevelEditorLayer::addSpecial", TINKER_EDIT_ID);
         }
 
         void addSpecial(GameObject* object);
@@ -47,7 +47,7 @@ namespace PlaceObjectPreview {
 
     class $setting_category("place-object-preview-logo.png"_spr, "Show a ghost of the object ur about to place !");
 
-    inline SillySetting<int> opacity{
+    inline Setting<int> opacity{
         "Preview Opacity", feature, 75, {0, 255}
     };
 }

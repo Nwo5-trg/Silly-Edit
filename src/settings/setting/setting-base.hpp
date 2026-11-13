@@ -77,7 +77,7 @@ namespace sillyedit::settings {
     };
 
     template<typename T>
-    class SettingBase : public GenericSetting, public nwo5::cache::ValueCache<T> {
+    class SettingBase : public nwo5::cache::ValueCache<T>, public GenericSetting {
     protected:
         std::string m_name;
         std::string m_description;

@@ -8,11 +8,11 @@ namespace SelectionUtils {
         return m_snapObjectExists ? m_snapObject : nullptr;
     }
 
-    CCPoint EditorUI::getSnappedPos(GameObject* pObj) {
-        const auto id = object::id(pObj);
+    CCPoint EditorUI::getSnappedPos(GameObject* obj) {
+        const auto id = object::id(obj);
         const auto offset = this->offsetForKey(id);
-        const auto pos = pObj->getRealPosition() - offset;
-        const auto gridSize = SelectionUtils::gridSize * (object::size(pObj) / 30.0f);
+        const auto pos = obj->getRealPosition() - offset;
+        const auto gridSize = SelectionUtils::gridSize * (object::size(obj) / 30.0f);
 
         return CCPoint{
             std::round(pos.x / gridSize) * gridSize,
@@ -20,13 +20,13 @@ namespace SelectionUtils {
         } + offset;
     }
 
-    void EditorUI::snapSelection(GameObject* pSnapObj) {
-        if (!pSnapObj) {
+    void EditorUI::snapSelection(GameObject* snapObj) {
+        if (!snapObj) {
             return;
         }
         
         object::move(
-            selection::get(), this->getSnappedPos(pSnapObj), false, pSnapObj->getRealPosition()
+            selection::get(), this->getSnappedPos(snapObj), false, snapObj->getRealPosition()
         );
         
         editor::update();
@@ -168,8 +168,8 @@ namespace SelectionUtils {
     void Feature::onEditor() {
         auto self = editor::ui<SelectionUtils::EditorUI>();
 
-        feature.registerKeybind<"snap-selection">([self] (bool pDown, bool pRepeat) {
-            if (pDown && !pRepeat && !selection::empty()) {
+        feature.registerKeybind<"snap-selection">([self] (bool down, bool repeat) {
+            if (down && !repeat && !selection::empty()) {
                 self->snapSelection(selection::getFirst());
             }
         });

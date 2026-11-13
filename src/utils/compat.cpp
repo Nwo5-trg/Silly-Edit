@@ -22,38 +22,38 @@ namespace sillyedit::utils {
         return tinker;
     }
 
-    void enableHook(geode::Mod* pMod, std::string_view pKey) {
-        if (!pMod) {
+    void enableHook(geode::Mod* mod, std::string_view key) {
+        if (!mod) {
             return;
         }
 
-        for (auto hook : pMod->getHooks()) {
-            if (hook->getDisplayName() == pKey) {
+        for (auto hook : mod->getHooks()) {
+            if (hook->getDisplayName() == key) {
                 (void)hook->enable();
                 
                 break;
             }
         }
     }
-    void disableHook(geode::Mod* pMod, std::string_view pKey) {
-        if (!pMod) {
+    void disableHook(geode::Mod* mod, std::string_view key) {
+        if (!mod) {
             return;
         }
 
-        for (auto hook : pMod->getHooks()) {
-            if (hook->getDisplayName() == pKey) {
+        for (auto hook : mod->getHooks()) {
+            if (hook->getDisplayName() == key) {
                 (void)hook->disable();
                 
                 break;
             }
         }
     }
-    void conditionallyEnableHook(bool pEnable, geode::Mod* pMod, std::string_view pKey) {
-        if (pEnable) {
-            enableHook(pMod, pKey);
+    void conditionallyEnableHook(bool enable, geode::Mod* mod, std::string_view key) {
+        if (enable) {
+            enableHook(mod, key);
         }
         else {
-            disableHook(pMod, pKey);
+            disableHook(mod, key);
         }
     }
 }

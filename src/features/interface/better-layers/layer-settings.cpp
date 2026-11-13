@@ -104,12 +104,12 @@ namespace BetterLayers {
         (void)file::writeToJson(getLayerSettingsPath(), json);
     }
     
-    bool LayerSettings::layerHasState(short pLayer) const {
-        return m_layerMap[pLayer].hidden || m_layerMap[pLayer].opacity.has_value();
+    bool LayerSettings::layerHasState(short layer) const {
+        return m_layerMap[layer].hidden || m_layerMap[layer].opacity.has_value();
     }
 
-    void LayerSettings::setFocusedLayer(short pLayer) {
-        m_focusedLayer = pLayer;
+    void LayerSettings::setFocusedLayer(short layer) {
+        m_focusedLayer = layer;
     }
     void LayerSettings::unsetFocusedLayer() {
         m_focusedLayer = std::nullopt;
@@ -118,8 +118,8 @@ namespace BetterLayers {
         return m_focusedLayer;
     }
 
-    void LayerSettings::setDefaultOpacity(unsigned char pOpacity) {
-        m_defaultOpacity = pOpacity;
+    void LayerSettings::setDefaultOpacity(unsigned char opacity) {
+        m_defaultOpacity = opacity;
     }
     void LayerSettings::unsetDefaultOpacity() {
         m_defaultOpacity = std::nullopt;
@@ -128,37 +128,37 @@ namespace BetterLayers {
         return m_defaultOpacity;
     }
 
-    void LayerSettings::setLayerHidden(int pLayer, bool pHidden) {
-        m_layerMap[pLayer].hidden = pHidden;
+    void LayerSettings::setLayerHidden(int layer, bool hidden) {
+        m_layerMap[layer].hidden = hidden;
     }
-    bool LayerSettings::isLayerHidden(int pLayer) const {
-        return m_layerMap[pLayer].hidden;
+    bool LayerSettings::isLayerHidden(int layer) const {
+        return m_layerMap[layer].hidden;
     }
-    void LayerSettings::setLayerOpacity(int pLayer, unsigned char pOpacity) {
-        m_layerMap[pLayer].opacity = pOpacity;
+    void LayerSettings::setLayerOpacity(int layer, unsigned char opacity) {
+        m_layerMap[layer].opacity = opacity;
     }
-    void LayerSettings::unsetLayerOpacity(int pLayer) {
-        m_layerMap[pLayer].opacity = std::nullopt;
+    void LayerSettings::unsetLayerOpacity(int layer) {
+        m_layerMap[layer].opacity = std::nullopt;
     }
-    std::optional<unsigned char> LayerSettings::getLayerOpacity(int pLayer) const {
-        return m_layerMap[pLayer].opacity;
+    std::optional<unsigned char> LayerSettings::getLayerOpacity(int layer) const {
+        return m_layerMap[layer].opacity;
     }
 
-    unsigned char LayerSettings::opacityForObject(unsigned char pUnmodifiedOpacity, GameObject* pObj) {
-        if (!pUnmodifiedOpacity) {
-            return pUnmodifiedOpacity;
+    unsigned char LayerSettings::opacityForObject(unsigned char unmodifiedOpacity, GameObject* obj) {
+        if (!unmodifiedOpacity) {
+            return unmodifiedOpacity;
         }
 
-        const auto layer = pObj->m_editorLayer;
-        const auto layer2 = pObj->m_editorLayer2;
+        const auto layer = obj->m_editorLayer;
+        const auto layer2 = obj->m_editorLayer2;
 
         if (this->isLayerHidden(layer) || this->isLayerHidden(layer2)) {
             return 0;
         }
         
-        float opacity = static_cast<float>(pUnmodifiedOpacity);
+        float opacity = static_cast<float>(unmodifiedOpacity);
         
-        const auto canSelectLayer = sillyedit::utils::canSelectLayerFast(pObj, editor::layer()->m_currentLayer);
+        const auto canSelectLayer = sillyedit::utils::canSelectLayerFast(obj, editor::layer()->m_currentLayer);
 
         // undo robtops thing
         if (!canSelectLayer) {

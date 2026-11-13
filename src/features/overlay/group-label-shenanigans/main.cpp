@@ -8,9 +8,9 @@ static auto& getObjectArray() {
     return val;
 }
 
-static bool canHaveLabel(GameObject* pObj) {
+static bool canHaveLabel(GameObject* obj) {
     // second one for robtops player collision objects
-    return trigger::type(pObj) != trigger::ObjectType::Normal && !pObj->m_bDontDraw;
+    return trigger::type(obj) != trigger::ObjectType::Normal && !obj->m_bDontDraw;
 }
 
 namespace GroupLabelShenanigans {
@@ -20,7 +20,7 @@ namespace GroupLabelShenanigans {
 
 
 
-    void LevelEditorLayer::updateLabelsInSection(bool pPositionsOnly) {
+    void LevelEditorLayer::updateLabelsInSection(bool positionsOnly) {
         if (!GroupLabelShenanigans::enabled()) {
             return;
         }
@@ -31,12 +31,12 @@ namespace GroupLabelShenanigans {
             return;
         }
 
-        object::forEachInSection([&] (GameObject* pObj) {
-            if (!canHaveLabel(pObj)) {
+        object::forEachInSection([&] (GameObject* obj) {
+            if (!canHaveLabel(obj)) {
                 return;
             }
 
-            auto obj = reinterpret_cast<GroupLabelShenanigans::EffectGameObject*>(pObj);
+            auto obj = reinterpret_cast<GroupLabelShenanigans::EffectGameObject*>(obj);
 
             if (!obj->isVisible()) {
                 return;
@@ -46,7 +46,7 @@ namespace GroupLabelShenanigans {
                 obj->addShenanigans(options);
             }
 
-            if (pPositionsOnly) {
+            if (positionsOnly) {
                 auto fields = obj->m_fields.self();
 
                 obj->updateShenaniganPositions(fields->label, fields->sprite);
@@ -106,22 +106,22 @@ namespace GroupLabelShenanigans {
         }
     }
 
-    void EffectGameObject::updateShenaniganPositions(geode::Label* pLabel, CCSprite* pSprite) {
-        if (pLabel) {
-            Setup(pLabel)
+    void EffectGameObject::updateShenaniganPositions(geode::Label* label, CCSprite* sprite) {
+        if (label) {
+            Setup(label)
                 .pos(CCPoint{0.0f, sillyedit::utils::triggerHasBodyOffset(m_objectID) ? sillyedit::utils::TRIGGER_BODY_OFFSET.y : 0.0f} + ui::size(this) / 2)
                 .opacity(this)
                 .rotation(GroupLabelShenanigans::dontRotateLabel ? -this->getRotation() : 0.0f);
         }
 
-        if (pSprite) {
-            Setup(pSprite)
+        if (sprite) {
+            Setup(sprite)
                 .pos(ccAdd(ui::size(this) / 2, 8.5f))
-                .opacity(sillyedit::utils::modifyOpacity(pSprite->getTag(), this->getOpacity()));
+                .opacity(sillyedit::utils::modifyOpacity(sprite->getTag(), this->getOpacity()));
         }
     }
 
-    void EffectGameObject::updateShenanigans(LabelOptions* pOptions) {
+    void EffectGameObject::updateShenanigans(LabelOptions* options) {
         auto fields = m_fields.self();
 
         if (!fields->label || !fields->sprite) {
@@ -131,7 +131,7 @@ namespace GroupLabelShenanigans {
         this->updateShenaniganPositions(fields->label, fields->sprite);
         
         char buf[LabelOptions::BUF_SIZE];
-        pOptions->stringForObject(buf, this);
+        options->stringForObject(buf, this);
 
         Setup(fields->label)
             .opacity(this)
@@ -142,7 +142,7 @@ namespace GroupLabelShenanigans {
             fields->label->validate();
         }
 
-        const auto col = pOptions->extraForObject(this);
+        const auto col = options->extraForObject(this);
         if (col.has_value() && GroupLabelShenanigans::extras) {
             Setup(fields->sprite)
                 .color(color_cast<ccColor3B>(col.value()))
@@ -154,7 +154,7 @@ namespace GroupLabelShenanigans {
         }
     }
 
-    void EffectGameObject::addShenanigans(LabelOptions* pOptions) {
+    void EffectGameObject::addShenanigans(LabelOptions* options) {
         auto fields = m_fields.self();
 
         getObjectArray().insert(this);
@@ -182,7 +182,7 @@ namespace GroupLabelShenanigans {
             m_objectLabel->setVisible(false);
         }
 
-        this->updateShenanigans(pOptions);
+        this->updateShenanigans(options);
     }
     
 
@@ -218,7 +218,7 @@ namespace GroupLabelShenanigans {
         }
     }
 
-    void Feature::onSettingChanged(std::string pName, GenericSetting*) {
+    void Feature::onSettingChanged(std::string name, GenericSetting*) {
         auto self = editor::layer<GroupLabelShenanigans::LevelEditorLayer>();
 
         auto ptr = self->m_fields->options.get();
@@ -226,15 +226,15 @@ namespace GroupLabelShenanigans {
         if (ptr) {
             getObjectArray().clear();
 
-            object::forEachInSection([&, self] (GameObject* pObj) {
-                if (!canHaveLabel(pObj)) {
+            object::forEachInSection([&, self] (GameObject* obj) {
+                if (!canHaveLabel(obj)) {
                     return;
                 }
 
-                auto obj = reinterpret_cast<GroupLabelShenanigans::EffectGameObject*>(pObj);
+                auto obj = reinterpret_cast<GroupLabelShenanigans::EffectGameObject*>(obj);
 
                 obj->removeShenanigans();
-                self->updateObjectLabel(pObj);
+                self->updateObjectLabel(obj);
             });
 
             parseLabels(*ptr);

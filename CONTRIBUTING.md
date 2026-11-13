@@ -56,10 +56,10 @@ namespace SillyFeature {
         static constexpr float SOME_OTHER_CONSTANT = 5.0f; // if u need constexpr variables for ui stuff *in a class* define here
 
         void someCustomMethod();
-        void onSomeCallback(CCObject* /*optional*/pSender); // always use function callbacks when it comes to buttons if u can help it
+        void onSomeCallback(CCObject* /*optional*/sender); // always use function callbacks when it comes to buttons if u can help it
     
-        static void onModify(auto& pSelf) {
-            (void)pSelf.setHookPriorityPost("GJRawr::someHookedMethod", geode::Priority::Late);
+        static void onModify(auto& self) {
+            (void)self.setHookPriorityPost("GJRawr::someHookedMethod", geode::Priority::Late);
         } // if necessary
 
         void someHookedMethod();
@@ -107,7 +107,7 @@ namespace SillyFeature {
         auto rawr = SillyFeature::coolSetting && true; // setting access should still be qualified
     }; // one space gap
 
-    GJRawr::onSomeCallback(CCObject* pSender) {
+    GJRawr::onSomeCallback(CCObject* sender) {
         this->someCustomMethod(); // use this to call the hooked version of any function
     }; // three space gap
 

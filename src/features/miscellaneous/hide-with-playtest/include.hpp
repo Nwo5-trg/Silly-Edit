@@ -7,16 +7,16 @@ namespace HideWithPlaytest {
     
     class $setting_category("hide-with-playtest-logo.png"_spr, "Configure what is visible during playtesting");
 
-    inline SillySetting<bool> hideTriggers{
+    inline Setting<bool> hideTriggers{
         "Hide Triggers", feature, true
     };
-    inline SillySetting<int> triggerOpacity{
+    inline Setting<int> triggerOpacity{
         "Trigger Opacity", feature, 0, {0, 255}
     };
-    inline SillySetting<bool> hideSpecialBlocks{
+    inline Setting<bool> hideSpecialBlocks{
         "Hide Special Blocks", feature, true
     };
-    inline SillySetting<int> specialBlockOpacity{
+    inline Setting<int> specialBlockOpacity{
         "Special Block Opacity", feature, 0, {0, 255}
     };
 };

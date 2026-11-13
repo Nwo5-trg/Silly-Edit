@@ -7,7 +7,7 @@
 namespace DefaultObjectOptions {
     class $feature(DefaultObjectOptions) {
         void onEditor() override;
-        void onSettingChanged(std::string pName, GenericSetting*) override;
+        void onSettingChanged(std::string name, GenericSetting*) override;
     } feature;
 
     class $feature_modify(LevelEditorLayer) {
@@ -15,8 +15,8 @@ namespace DefaultObjectOptions {
             ObjectOptions options;
         };
 
-        static void onModify(auto& pSelf) {
-            (void)pSelf.setHookPriorityPost("LevelEditorLayer::createObject", geode::Priority::Replace);
+        static void onModify(auto& self) {
+            (void)self.setHookPriorityPost("LevelEditorLayer::createObject", geode::Priority::Replace);
         }
 
         GameObject* createObject(int key, cocos2d::CCPoint position, bool noUndo);
@@ -24,19 +24,19 @@ namespace DefaultObjectOptions {
 
     class $setting_category("default-object-options-logo.png"_spr, "Configure objects on place");
     
-    inline SillySetting<bool> dontFade{
+    inline Setting<bool> dontFade{
         "Dont Fade", feature, false
     };
-    inline SillySetting<bool> dontEnter{
+    inline Setting<bool> dontEnter{
         "Dont Enter", feature, false, "dont recommend turning this one on - dont fade is prolly wat u want but u do u"
     };
-    inline SillySetting<bool> noGlow{
+    inline Setting<bool> noGlow{
         "No Glow", feature, false
     };
-    inline SillySetting<bool> useJSON{
+    inline Setting<bool> useJSON{
         "Use JSON", feature, false, "for more complex configurations u can use a json file, for an example check examples/default-object-options.jsonc in the github repo"
     };
-    inline SillySetting<std::string> path{
+    inline Setting<std::string> path{
         "JSON Path", feature, "object-options.json", "relative to config folder (mainly just a convenient way to show the file name u need)"
     };
 }

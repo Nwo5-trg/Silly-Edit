@@ -7,7 +7,7 @@
 namespace Ruler {
     class $feature(Ruler) {
         void onEditor() override;
-        void onToggled(bool pEnabled) override;
+        void onToggled(bool enabled) override;
         void onUpdate() override;
     } feature;
 
@@ -17,54 +17,54 @@ namespace Ruler {
         };
 
         MeasurementColor getMeasurementColor();
-        std::string getMeasurementString(float pMeasure);
-        geode::Label* createMeasurementLabel(float pMeasure);
+        std::string getMeasurementString(float measure);
+        geode::Label* createMeasurementLabel(float measure);
         void createMeasurement();
-        void deleteMeasurement(bool pDeleteAll);
+        void deleteMeasurement(bool deleteAll);
     };
 
     class $setting_category("ruler-logo.png"_spr, "Measure an area with an overcomplicated overlay (now with rainbow)");
 
-    inline SillySetting<bool> useGDUnits{
+    inline Setting<bool> useGDUnits{
         "Use GD Units", feature, true, "one block = 10 gd units = 30 units, if enabled will show 45 units as '1, 5'"
     };
-    inline SillySetting<bool> editorTabButton{
+    inline Setting<bool> editorTabButton{
         "Editor Tab Button", feature, true, SettingReload::Editor
     };
-    inline SillySetting<float> thickness{
+    inline Setting<float> thickness{
         "Thickness", feature, 2.5f, {0.0f, std::nullopt}
     };
-    inline SillySetting<bool> showCenter{
+    inline Setting<bool> showCenter{
         "Show Center", feature, true
     };
-    inline SillySetting<float> centerSize{
+    inline Setting<float> centerSize{
         "Center Size", feature, 5.0f, {0.0f, std::nullopt}
     };
-    inline SillySetting<bool> scaleWithZoom{
+    inline Setting<bool> scaleWithZoom{
         "Scale With Zoom", feature, false
     };
-    inline SillySetting<float> padding{
+    inline Setting<float> padding{
         "Padding", feature, 0.0f
     };
-    inline SillySetting<int> fillOpacity{
+    inline Setting<int> fillOpacity{
         "Fill Opacity", feature, 0, {0, 255}
     };
-    inline SillySetting<float> labelSize{
+    inline Setting<float> labelSize{
         "Label Scale", feature, 1.25f, {0.0f, std::nullopt}
     };
-    inline SillySetting<float> labelDistance{
+    inline Setting<float> labelDistance{
         "Label Distance", feature, 2.5f
     };
-    inline SillySetting<bool> dontRotateLabel{
+    inline Setting<bool> dontRotateLabel{
         "Dont Rotate Label", feature, false
     };
-    inline SillySetting<bool> labelOnRight{
+    inline Setting<bool> labelOnRight{
         "Label On Right", feature, false
     };
-    inline SillySetting<bool> labelOnBottom{
+    inline Setting<bool> labelOnBottom{
         "Label On Bottom", feature, false
     };
-    inline SillySetting<bool> chroma{
+    inline Setting<bool> chroma{
         "Chroma", feature, false
     };
 }

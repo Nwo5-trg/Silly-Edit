@@ -2,6 +2,6 @@
 
 #include "core/general.hpp"
 
-using sillyedit::settings::SillySetting;
+using sillyedit::settings::Setting;
 using sillyedit::settings::SettingReload;
 using sillyedit::settings::SettingCondition;

@@ -52,16 +52,16 @@ namespace BetterScale {
         static constexpr float DEFAULT_LOCK_HEIGHT = 60.0f;
         static constexpr float DEFAULT_LOCK_XY_HEIGHT = 120.0f;
 
-        static void onModify(auto& pSelf) {
-            (void)pSelf.setHookPriorityAfterPost("GJScaleControl::init", TINKER_EDIT_ID);
+        static void onModify(auto& self) {
+            (void)self.setHookPriorityAfterPost("GJScaleControl::init", TINKER_EDIT_ID);
         }
 
-        void customScale(float pScale, ObjectScaleType pType);
+        void customScale(float scale, ObjectScaleType type);
         void updateShortcuts();
         void updateInputValues();
         void updateCustomNodes();
-        void onScaleShortcut(cocos2d::CCObject* pSender);
-        void onSwitchMode(cocos2d::CCObject* pSender);
+        void onScaleShortcut(cocos2d::CCObject* sender);
+        void onSwitchMode(cocos2d::CCObject* sender);
 
         bool init();
         void ccTouchMoved(cocos2d::CCTouch* touch, cocos2d::CCEvent* event);
@@ -74,28 +74,28 @@ namespace BetterScale {
 
     class $setting_category("better-scale-logo.png"_spr, "Very opinionated scale input with *colors*");
 
-    inline SillySetting<bool> scaleShortcuts{
+    inline Setting<bool> scaleShortcuts{
         "Scale Shortcuts", feature, true, SettingReload::Editor
     };
-    inline SillySetting<std::string> shortcutsString{
+    inline Setting<std::string> shortcutsString{
         "Shortucts String", feature, std::string{"0.25,0.5,1,2,4"}, SettingReload::Editor, "seperate scales with commas"
     };
-    inline SillySetting<bool> allowNegative{
+    inline Setting<bool> allowNegative{
         "Allow Negative", feature, false, "dont use abs for negative scales"
     };
-    inline SillySetting<bool> newLockTexture{
+    inline Setting<bool> newLockTexture{
         "New Lock Texture", feature, true, SettingReload::Editor
     };
-    inline SillySetting<bool> switchModeButton{
+    inline Setting<bool> switchModeButton{
         "Switch Mode Button", feature, true, SettingReload::Editor
     };
-    inline SillySetting<float> controlSize{
+    inline Setting<float> controlSize{
         "Control Size", feature, 0.75f, {0.1f, std::nullopt}, "multiplies scale control size"
     };
-    inline SillySetting<bool> lockControlSize{
+    inline Setting<bool> lockControlSize{
         "Lock Control Size", feature, false, "treats control size as a static scale that doesnt change with zoom"
     };
-    inline SillySetting<float> controlOffset{
+    inline Setting<float> controlOffset{
         "Control Offset", feature, 40.0f, "y offset from default control position"
     };
 }

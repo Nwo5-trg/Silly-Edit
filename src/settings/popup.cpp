@@ -309,9 +309,9 @@ namespace sillyedit::settings {
 
         m_searchInput = ui::input(SEARCH_INPUT_SIZE, "Query...")
             .id("search-input"_spr)
-            .callback([this] (const std::string& pStr) {
+            .callback([this] (const std::string& str) {
                 m_searchIndex = 0;
-                m_currentSearch = pStr;
+                m_currentSearch = str;
                 
                 this->updateCurrentSearch();
             })
@@ -375,11 +375,11 @@ namespace sillyedit::settings {
 
         this->scheduleUpdate();
 
-        this->addEventListener(SettingWithReloadChanged(), [this] (std::string pID, SettingReload pReload) {
-            m_reloadSettingsActivated[pID] = pReload;
+        this->addEventListener(SettingWithReloadChanged(), [this] (std::string iD, SettingReload reload) {
+            m_reloadSettingsActivated[iD] = reload;
         });
 
-        nwo5::settings::listenForAllSavedSettingChanges(this, [this] (std::string_view, GenericSetting* pSetting) {
+        nwo5::settings::listenForAllSavedSettingChanges(this, [this] (std::string_view, GenericSetting* setting) {
             this->updateTheme();
         }, "Popup");
 
@@ -551,8 +551,8 @@ namespace sillyedit::settings {
         }
     }
 
-    void SettingsPopup::onFeatureButton(CCObject* pSender) {
-        auto obj = static_cast<ObjWrapper<std::string>*>(static_cast<CCNode*>(pSender)->getUserObject("category"_spr));
+    void SettingsPopup::onFeatureButton(CCObject* sender) {
+        auto obj = static_cast<ObjWrapper<std::string>*>(static_cast<CCNode*>(sender)->getUserObject("category"_spr));
         const auto feature = obj ? obj->getValue() : "General";
 
         if (!m_settingsMap[m_selectedFeature].validOnPlatform()) {
@@ -598,8 +598,8 @@ namespace sillyedit::settings {
             }
         }
     }
-    void SettingsPopup::onCycleSearch(CCObject* pSender) {
-        if (pSender->getTag() == SearchCycleArrow::Up) {
+    void SettingsPopup::onCycleSearch(CCObject* sender) {
+        if (sender->getTag() == SearchCycleArrow::Up) {
             if (++m_searchIndex >= m_currentSearchMatches) {
                 m_searchIndex = 0;
             }
@@ -626,8 +626,8 @@ namespace sillyedit::settings {
             "Reset All",
             "are u sureeeee u wanna reset all settings, no taksies backsies",
             "Nvm", "Yes !",
-            [this] (FLAlertLayer*, bool pBtn2) {
-                if (!pBtn2) {
+            [this] (FLAlertLayer*, bool btn2) {
+                if (!btn2) {
                     return;
                 }
 
@@ -765,13 +765,13 @@ namespace sillyedit::settings {
         }
     }
 
-    void SettingsPopup::toggleSettingsDrag(bool pEnable) {
-        m_settingsScroll->setDraggingEnabled(pEnable);
+    void SettingsPopup::toggleSettingsDrag(bool enable) {
+        m_settingsScroll->setDraggingEnabled(enable);
     }
 
-    void SettingsPopup::onClose(CCObject* pSender) {
+    void SettingsPopup::onClose(CCObject* sender) {
         if (!sillyedit::settings::showReloadWarnings || m_reloadSettingsActivated.empty()) {
-            return Popup::onClose(pSender);
+            return Popup::onClose(sender);
         }
         
         std::vector<SettingReload> reloads;
@@ -780,7 +780,7 @@ namespace sillyedit::settings {
             reloads.push_back(reload);
         }
 
-        Popup::onClose(pSender);
+        Popup::onClose(sender);
 
         std::string str;
 

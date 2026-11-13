@@ -6,17 +6,17 @@ using namespace alpha::prelude;
 using namespace geode::prelude;
 
 namespace EditorPositionBar {
-    CCSprite* EditorPositionButton::createEditorSnapshot(CCPoint pPos, CCSize pViewSize) {
+    CCSprite* EditorPositionButton::createEditorSnapshot(CCPoint pos, CCSize viewSize) {
         const auto originalZoom = editor::zoom();
         const auto originalPos = ui::pos(editor::layer()->m_objectLayer);
         auto ui = editor::ui<EditorPositionBar::EditorUI>();
         
         editor::setZoom(1);
-        ui->moveEditorToSavedPos(pPos);
+        ui->moveEditorToSavedPos(pos);
         ui->setVisible(false);
 
         auto mirror = MirrorNode::create(editor::layer());
-        mirror->setViewportSize(pViewSize);
+        mirror->setViewportSize(viewSize);
 
         auto spr = mirror->captureSprite();
 
@@ -27,7 +27,7 @@ namespace EditorPositionBar {
         return spr;
     }
 
-    bool EditorPositionButton::init(int pIndex, CCPoint pPos) {
+    bool EditorPositionButton::init(int index, CCPoint pos) {
         const CCSize view{EditorPositionBar::snapshotSize, EditorPositionBar::snapshotSize * (SIZE.height / SIZE.width)} ;
         
         auto nineSlice = *ui::nineSlice(ui::sprite::EMPTY_BACKGROUND);
@@ -38,10 +38,10 @@ namespace EditorPositionBar {
                 .layout(ui::anchor())
                 .size(SIZE)
                 .children(
-                    Setup(this->createEditorSnapshot(pPos, CCSize{EditorPositionBar::snapshotSize, EditorPositionBar::snapshotSize * (SIZE.height / SIZE.width)}))
+                    Setup(this->createEditorSnapshot(pos, CCSize{EditorPositionBar::snapshotSize, EditorPositionBar::snapshotSize * (SIZE.height / SIZE.width)}))
                         .stretchToFit(SIZE - 2.5f)
                         .layoutAnchor(Anchor::Center),
-                    ui::label(fmt::to_string(pIndex), Font::Default)
+                    ui::label(fmt::to_string(index), Font::Default)
                         .scaleHeightToFit(LABEL_HEIGHT)
                         .layoutAnchor(Anchor::Bottom).layoutAnchorOffsetY(2.5f),
                     Setup(nineSlice)
@@ -54,17 +54,17 @@ namespace EditorPositionBar {
         }
 
         Setup(this)
-            .callback([pIndex] (Button* pSelf) {
-                auto& pos = editor::layer()->m_savedPositions[pIndex];
+            .callback([index] (Button* self) {
+                auto& pos = editor::layer()->m_savedPositions[index];
 
                 const CCPoint objLayerPos = (ui::winSize() / 2 - ui::pos(editor::layer()->m_objectLayer) + CCPoint{0.0f, editor::ui()->m_toolbarHeight / 2}) / editor::zoom();
 
                 if (pos.fuzzyEquals(objLayerPos, 5.0f)) {
                     pos = CCPointZero;
 
-                    auto parent = pSelf->getParent();
+                    auto parent = self->getParent();
 
-                    pSelf->removeMeAndCleanup();
+                    self->removeMeAndCleanup();
 
                     parent->updateLayout();
 
@@ -72,7 +72,7 @@ namespace EditorPositionBar {
                 }
                 
                 auto ui = editor::ui<EditorPositionBar::EditorUI>();
-                ui->showPositonText(pIndex);
+                ui->showPositonText(index);
                 ui->moveEditorToSavedPos(pos);
             })
             .stretchToFit(SIZE);
@@ -80,10 +80,10 @@ namespace EditorPositionBar {
         return true;
     }
 
-    EditorPositionButton* EditorPositionButton::create(int pIndex, CCPoint pPos) {
+    EditorPositionButton* EditorPositionButton::create(int index, CCPoint pos) {
         auto ret = new EditorPositionButton;
 
-        if (!ret->init(pIndex, pPos)) {
+        if (!ret->init(index, pos)) {
             delete ret;
 
             return nullptr;

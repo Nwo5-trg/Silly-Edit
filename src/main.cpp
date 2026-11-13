@@ -7,7 +7,7 @@
 
 using namespace geode::prelude;
 
-static void tryShowWarningPopup(LevelEditorLayer* pLayer) {
+static void tryShowWarningPopup(LevelEditorLayer* layer) {
     static bool shown = false;
 
     if (shown || sillyedit::settings::disableModWarningPopup) {
@@ -19,7 +19,7 @@ static void tryShowWarningPopup(LevelEditorLayer* pLayer) {
         : "sillyedit is in <cr>BETA</c> ! there prolly will be <cd>bugs</c> and or <cs>crashes</c> (you can disable this popup in <cl>settings</c>)";
     
     auto popup = FLAlertLayer::create("SillyEdit", text, "Ok !");
-    popup->m_scene = pLayer;
+    popup->m_scene = layer;
     popup->show();
 
     shown = true;
@@ -44,5 +44,4 @@ class $modify(LevelEditorLayer) {
 
 $on_mod(Loaded) {  
     FeatureManager::get()->load();
-    SettingsManager::get()->load();
 }

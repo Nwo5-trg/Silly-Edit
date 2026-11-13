@@ -4,10 +4,10 @@ using namespace geode::prelude;
 using namespace nwo5::ui::prelude;
 
 namespace BetterScale {
-    void GJScaleControl::customScale(float pScale, ObjectScaleType pType) {
-        const auto num = BetterScale::allowNegative ? pScale : std::abs(pScale);
+    void GJScaleControl::customScale(float scale, ObjectScaleType type) {
+        const auto num = BetterScale::allowNegative ? scale : std::abs(scale);
 
-        switch (pType) {
+        switch (type) {
             case ObjectScaleType::XY: {
                 object::scale(selection::get(), num, true, editor::AUTO_CENTER, !m_scaleLocked);
 
@@ -146,16 +146,16 @@ namespace BetterScale {
         }
     }
 
-    void GJScaleControl::onScaleShortcut(CCObject* pSender) {
+    void GJScaleControl::onScaleShortcut(CCObject* sender) {
         this->customScale(
-            m_fields->shortcuts[pSender->getTag()], 
-            static_cast<ObjectScaleType>(static_cast<CCNode*>(pSender)->getParent()->getTag())
+            m_fields->shortcuts[sender->getTag()], 
+            static_cast<ObjectScaleType>(static_cast<CCNode*>(sender)->getParent()->getTag())
         );
 
         this->updateInputValues();
     }
 
-    void GJScaleControl::onSwitchMode(CCObject* pSender) {
+    void GJScaleControl::onSwitchMode(CCObject* sender) {
         editor::activateScaleControl(!m_scaleLabel->isVisible());
     }
 
@@ -187,9 +187,9 @@ namespace BetterScale {
             fields->scaleInput = ui::input(INPUT_SIZE.width, INPUT_SIZE.height, "1")
                 .id("scale-input"_spr)
                 .pos(fields->newScaleLabel->getScaledContentWidth() / 2, ui::y(m_scaleLabel))
-                .callback([this] (const std::string& pStr) {
-                    if (!pStr.empty() && !pStr.ends_with('.') && pStr != "0") {
-                        const auto num = utils::numFromString<float>(pStr).unwrapOrDefault();
+                .callback([this] (const std::string& str) {
+                    if (!str.empty() && !str.ends_with('.') && str != "0") {
+                        const auto num = utils::numFromString<float>(str).unwrapOrDefault();
 
                         this->customScale(num, ObjectScaleType::XY);
 
@@ -211,9 +211,9 @@ namespace BetterScale {
             fields->scaleXInput = ui::input(INPUT_SIZE.width, INPUT_SIZE.height, "1")
                 .id("scale-x-input"_spr)
                 .pos(fields->newScaleXLabel->getScaledContentWidth() / 2, ui::y(m_scaleXLabel))
-                .callback([this] (const std::string& pStr) {
-                    if (!pStr.empty() && !pStr.ends_with('.') && pStr != "0") {
-                        const auto num = utils::numFromString<float>(pStr).unwrapOrDefault();
+                .callback([this] (const std::string& str) {
+                    if (!str.empty() && !str.ends_with('.') && str != "0") {
+                        const auto num = utils::numFromString<float>(str).unwrapOrDefault();
                         
                         this->customScale(num, ObjectScaleType::X);
 
@@ -235,9 +235,9 @@ namespace BetterScale {
             fields->scaleYInput = ui::input(INPUT_SIZE.width, INPUT_SIZE.height, "1")
                 .id("scale-y-input"_spr)
                 .pos(fields->newScaleYLabel->getScaledContentWidth() / 2, ui::y(m_scaleYLabel))
-                .callback([this] (const std::string& pStr) {
-                    if (!pStr.empty() && !pStr.ends_with('.') && pStr != "0") {
-                        const auto num = utils::numFromString<float>(pStr).unwrapOrDefault();
+                .callback([this] (const std::string& str) {
+                    if (!str.empty() && !str.ends_with('.') && str != "0") {
+                        const auto num = utils::numFromString<float>(str).unwrapOrDefault();
                         
                         this->customScale(num, ObjectScaleType::Y);
 

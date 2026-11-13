@@ -14,37 +14,37 @@ namespace DefaultObjectOptions {
         static constexpr size_t DEFAULT_OPTION_ID = 0;
 
         template<typename T>
-        void addOption(int pID, int pKey, T pVal) {
-            m_options[pID].append(fmt::format(",{},{}", pKey, pVal));
+        void addOption(int iD, int key, T val) {
+            m_options[iD].append(fmt::format(",{},{}", key, val));
 
-            if (!pID) {
+            if (!iD) {
                 m_defaultOption = true;
             }
         }
         template<>
-        void addOption<bool>(int pID, int pKey, bool pVal) {
-            m_options[pID].append(fmt::format(",{},{}", pKey, static_cast<int>(pVal)));
+        void addOption<bool>(int iD, int key, bool val) {
+            m_options[iD].append(fmt::format(",{},{}", key, static_cast<int>(val)));
 
-            if (!pID) {
+            if (!iD) {
                 m_defaultOption = true;
             }
         }
-        void addOption(int pID, std::string_view pCustomString);
+        void addOption(int iD, std::string_view customString);
 
-        bool idHasOptions(int pID) const;
+        bool idHasOptions(int iD) const;
         // starts with ,
-        std::string getOptionsStringForID(int pID) const;
+        std::string getOptionsStringForID(int iD) const;
 
         bool defaultExists() const;
         // starts with ,
         std::string getDefaultOptionsString() const;
 
-        void updateSimpleOptionsString(bool pDontFade, bool pDontEnter, bool pNoGlow);
+        void updateSimpleOptionsString(bool dontFade, bool dontEnter, bool noGlow);
         // starts with ,
         std::string getSimpleOptionsString() const;
 
         void reset();
     };
 
-    void parseOptions(ObjectOptions& pObjectOptions);
+    void parseOptions(ObjectOptions& objectOptions);
 }

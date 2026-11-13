@@ -3,8 +3,8 @@
 
 using namespace geode::prelude;
 
-static int portalToGamemode(GameObject* pObj) {
-    switch (pObj->m_objectID) {
+static int portalToGamemode(GameObject* obj) {
+    switch (obj->m_objectID) {
         case 13: return 1;
         case 47: return 2;
         case 111: return 3;
@@ -16,8 +16,8 @@ static int portalToGamemode(GameObject* pObj) {
     }
 }
 
-static Speed portalToSpeed(GameObject* pObj) {
-    switch (pObj->m_objectID) {
+static Speed portalToSpeed(GameObject* obj) {
+    switch (obj->m_objectID) {
         case 200: return Speed::Slow;
         case 202: return Speed::Fast;
         case 203: return Speed::Faster;
@@ -27,8 +27,8 @@ static Speed portalToSpeed(GameObject* pObj) {
 }
 
 namespace SetupStartpos {
-    void LevelEditorLayer::setupStartpos(StartPosObject* pStartpos) {
-        const auto startposX = pStartpos->getRealPosition().x;
+    void LevelEditorLayer::setupStartpos(StartPosObject* startpos) {
+        const auto startposX = startpos->getRealPosition().x;
         
         GameObject* gamemodeObj = nullptr;
         GameObject* speedObj = nullptr;
@@ -112,27 +112,27 @@ namespace SetupStartpos {
         }
 
         if (SetupStartpos::gamemode) {
-            pStartpos->m_startSettings->m_startMode = gamemodeObj ? portalToGamemode(gamemodeObj) : m_levelSettings->m_startMode;
+            startpos->m_startSettings->m_startMode = gamemodeObj ? portalToGamemode(gamemodeObj) : m_levelSettings->m_startMode;
         }
         if (SetupStartpos::freeMode && gamemodeObj) {
             // clean startpos ues this for freemode
-            pStartpos->m_isIceBlock = static_cast<EffectGameObject*>(gamemodeObj)->m_cameraIsFreeMode;
+            startpos->m_isIceBlock = static_cast<EffectGameObject*>(gamemodeObj)->m_cameraIsFreeMode;
         }
         if (SetupStartpos::speed) {
-            pStartpos->m_startSettings->m_startSpeed = speedObj ? portalToSpeed(speedObj) : m_levelSettings->m_startSpeed;
+            startpos->m_startSettings->m_startSpeed = speedObj ? portalToSpeed(speedObj) : m_levelSettings->m_startSpeed;
         }
         if (SetupStartpos::mini) {
-            pStartpos->m_startSettings->m_startMini = miniObj ? miniObj->m_objectID == 101 : m_levelSettings->m_startMini;
+            startpos->m_startSettings->m_startMini = miniObj ? miniObj->m_objectID == 101 : m_levelSettings->m_startMini;
         }
         if (SetupStartpos::mirror) {
-            pStartpos->m_startSettings->m_mirrorMode = mirrorObj ? mirrorObj->m_objectID == 45 : m_levelSettings->m_mirrorMode;
+            startpos->m_startSettings->m_mirrorMode = mirrorObj ? mirrorObj->m_objectID == 45 : m_levelSettings->m_mirrorMode;
         }
         if (SetupStartpos::dual) {
-            pStartpos->m_startSettings->m_startDual = dualObj ? dualObj->m_objectID == 286 : m_levelSettings->m_startDual;
+            startpos->m_startSettings->m_startDual = dualObj ? dualObj->m_objectID == 286 : m_levelSettings->m_startDual;
         }
         if (SetupStartpos::gravity) {
-            std::ranges::sort(gravityObjs, [] (auto pA, auto pB) {
-                return pA->getRealPosition().x < pB->getRealPosition().x;
+            std::ranges::sort(gravityObjs, [] (auto a, auto b) {
+                return a->getRealPosition().x < b->getRealPosition().x;
             });
 
             bool flip = m_levelSettings->m_isFlipped;
@@ -169,7 +169,7 @@ namespace SetupStartpos {
                 }
             }
 
-            pStartpos->m_startSettings->m_isFlipped = flip;
+            startpos->m_startSettings->m_isFlipped = flip;
         }
     }
 

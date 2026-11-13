@@ -104,10 +104,10 @@ namespace sillyedit::settings {
         void updateCurrentFeature();
         void updateCurrentSearch();
 
-        void onFeatureButton(cocos2d::CCObject* pSender);
+        void onFeatureButton(cocos2d::CCObject* sender);
         void onIncompatWarning(cocos2d::CCObject*);
         void onOpenSearch(cocos2d::CCObject*);
-        void onCycleSearch(cocos2d::CCObject* pSender);
+        void onCycleSearch(cocos2d::CCObject* sender);
         void onCredits(cocos2d::CCObject*);
         void onOpenSaveDir(cocos2d::CCObject*);
         void onOpenConfigDir(cocos2d::CCObject*);
@@ -118,9 +118,9 @@ namespace sillyedit::settings {
         void updateSettingLabels();
 
     public:
-        void toggleSettingsDrag(bool pEnable);
+        void toggleSettingsDrag(bool enable);
 
-        void onClose(cocos2d::CCObject* pSender);
+        void onClose(cocos2d::CCObject* sender);
 
         static SettingsPopup* create();
 

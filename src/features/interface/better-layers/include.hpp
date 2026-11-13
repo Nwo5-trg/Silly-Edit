@@ -9,9 +9,9 @@ namespace BetterLayers {
     class $feature(BetterLayers) {
         void onEditor() override;
         void onUpdate() override;
-        void onToggled(bool pEnabled) override;
-        void onUIUpdated(float pScale) override;
-        void onSettingChanged(std::string pName, GenericSetting*) override;
+        void onToggled(bool enabled) override;
+        void onUIUpdated(float scale) override;
+        void onSettingChanged(std::string name, GenericSetting*) override;
     } feature;
 
     static constexpr float GAP = 5.0f;
@@ -51,25 +51,25 @@ namespace BetterLayers {
 
     class $setting_category("better-layers-logo.png"_spr, "Layer input and opacity settings and stuff");
 
-    inline SillySetting<bool> nextFreeButton{
+    inline Setting<bool> nextFreeButton{
         "Next Free Button", feature, true
     };
-    inline SillySetting<bool> lockButton{
+    inline Setting<bool> lockButton{
         "Lock Button", feature, true,
     };
-    inline SillySetting<bool> layerSettingsButton{
+    inline Setting<bool> layerSettingsButton{
         "Layer Settings Button", feature, true, "disable if u dont plan on using hidden layers and stuff"
     };
-    inline SillySetting<bool> unselectableHiddenLayers{
+    inline Setting<bool> unselectableHiddenLayers{
         "Unselectable Hidden Layers", feature, true
     };
-    inline SillySetting<int> layerOpacity{
+    inline Setting<int> layerOpacity{
         "Layer Opacity", feature, 50, {0, 255}, "from 0-255"
     };
-    inline SillySetting<int> unfocusedLayerOpacity{
+    inline Setting<int> unfocusedLayerOpacity{
         "Unfocused Layer Opacity", feature, 25, {0, 255}, "from 0-255"
     };
-    inline SillySetting<bool> unselectableUnfocusedLayers{
+    inline Setting<bool> unselectableUnfocusedLayers{
         "Unselectable Unfocused Layers", feature, false
     };
 }

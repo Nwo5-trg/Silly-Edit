@@ -5,7 +5,7 @@
 
 namespace EditorTime {
     class $feature(EditorTime) {
-        void onToggled(bool pEnabled) override;
+        void onToggled(bool enabled) override;
         void onUpdate() override;
     } feature;
 
@@ -18,13 +18,13 @@ namespace EditorTime {
 
     class $setting_category("editor-time-logo.png"_spr, "It should be noted this time isnt entirely accurate, as it doesnt remove for idle time");
 
-    inline SillySetting<float> scale{
+    inline Setting<float> scale{
         "Scale", feature, 1.0f, {0.1f, std::nullopt}
     };
-    inline SillySetting<bool> showTotal{
+    inline Setting<bool> showTotal{
         "Show Total", feature, false, "show total editor time next to time this session"
     };
-    inline SillySetting<bool> alignWithFPSLabel{
+    inline Setting<bool> alignWithFPSLabel{
         "Align With FPS Label", feature, false
     };
 }

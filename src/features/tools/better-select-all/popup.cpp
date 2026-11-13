@@ -69,9 +69,9 @@ namespace BetterSelectAll {
         return true;
     }
 
-    void BetterSelectAllPopup::onSelectButton(cocos2d::CCObject* pSender) {
+    void BetterSelectAllPopup::onSelectButton(cocos2d::CCObject* sender) {
         selection::add(
-            getObjectsWithDirection(static_cast<SelectDirection>(pSender->getTag()), m_selectedObjectMode), 
+            getObjectsWithDirection(static_cast<SelectDirection>(sender->getTag()), m_selectedObjectMode), 
             true, !m_bypassAll
         );
 
@@ -79,13 +79,13 @@ namespace BetterSelectAll {
 
         onClose(nullptr);
     }
-    void BetterSelectAllPopup::onToggleBypassAll(cocos2d::CCObject* pSender) {
-        m_bypassAll = misc::isToggled(pSender);
+    void BetterSelectAllPopup::onToggleBypassAll(cocos2d::CCObject* sender) {
+        m_bypassAll = misc::isToggled(sender);
 
         Mod::get()->setSavedValue<bool>("better-select-all-bypass-all", m_bypassAll);
     }
-    void BetterSelectAllPopup::onToggleSelectedObjectMode(cocos2d::CCObject* pSender) {
-        m_selectedObjectMode = misc::isToggled(pSender);
+    void BetterSelectAllPopup::onToggleSelectedObjectMode(cocos2d::CCObject* sender) {
+        m_selectedObjectMode = misc::isToggled(sender);
 
         Mod::get()->setSavedValue<bool>("better-select-all-selected-object-mode", m_selectedObjectMode);
     }

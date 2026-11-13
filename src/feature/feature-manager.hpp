@@ -14,10 +14,10 @@ namespace sillyedit::features {
             return &inst;
         }
 
-        FeatureBase* getFeature(geode::ZStringView pID);
+        FeatureBase* getFeature(geode::ZStringView iD);
         const geode::utils::StringMap<FeatureBase*>& getFeatures() const;
 
-        void registerFeature(FeatureBase* pFeature);
+        void registerFeature(FeatureBase* feature);
  
         void onEditorInit();
         void onEditorUpdate();

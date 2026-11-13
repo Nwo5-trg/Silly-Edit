@@ -12,7 +12,7 @@ namespace ZoomInput {
             m_data.incompatMessage = "might overlap with tinker grid controls at low zoom levels";
         }
 
-        void onToggled(bool pEnabled) override;
+        void onToggled(bool enabled) override;
         void onUpdate() override;
     } feature;
 
@@ -24,7 +24,7 @@ namespace ZoomInput {
             geode::TextInput* zoomInput = nullptr;
         };
 
-        void updateZoomInput(float pZoom);
+        void updateZoomInput(float zoom);
         void updateZoomContainer();
         void onZoomInputButton(cocos2d::CCObject*);
 
@@ -38,16 +38,16 @@ namespace ZoomInput {
 
     class $setting_category("zoom-input-logo.png"_spr, "Little input under editor slider that shows you current zoom and lets you type it in");
 
-    inline SillySetting<int> rounding{
+    inline Setting<int> rounding{
         "Rounding", feature, 3, {0, 7}
     };
-    inline SillySetting<float> scale{
+    inline Setting<float> scale{
         "Scale", feature, 1.0f, {0.0f, std::nullopt}
     };
-    inline SillySetting<float> offset{
+    inline Setting<float> offset{
         "Offset", feature, -7.5f
     };
-    inline SillySetting<bool> noConstrainPosition{
+    inline Setting<bool> noConstrainPosition{
         "No Constrain Position", feature, false, "use at ur own risk idk if this is a good hacky workaround uwu, works regardless of zook input being enabled"
     };
 }

@@ -4,7 +4,7 @@
 using namespace geode::prelude;
 
 namespace ContextMenu {
-    void Option::registerOptions(std::deque<Option>& pOptions) {pOptions = {
+    void Option::registerOptions(std::deque<Option>& options) {options = {
         Option{"Edit Group", Col::Salmon, {Condition::Default, [] {
             return editor::ui()->m_editGroupBtn->m_animationEnabled;
         }}, [] (bool) {
@@ -45,12 +45,12 @@ namespace ContextMenu {
         Option{"Flip Y", Col::Yellow, [] (bool) {
             editor::ui()->transformObjectCall(EditCommand::FlipY);
         }},
-        Option{{"Scale", "Scale XY"}, Col::Green, [] (bool pSpecialDown) {
+        Option{{"Scale", "Scale XY"}, Col::Green, [] (bool specialDown) {
             if (editor::ui()->m_scaleControl->isVisible()) {
                 editor::ui()->deactivateScaleControl();
             }
             else {
-                editor::activateScaleControl(pSpecialDown);
+                editor::activateScaleControl(specialDown);
             }
         }},
         Option{"Transform", Col::Red, [] (bool) {
@@ -76,8 +76,8 @@ namespace ContextMenu {
         }},
         Option{{"Copy", "Copy Values"}, Col::LightBlue, {Condition::Default, [] {
             return editor::ui()->m_copyBtn->m_animationEnabled;
-        }}, [] (bool pSpecialDown) {
-            if (pSpecialDown) {
+        }}, [] (bool specialDown) {
+            if (specialDown) {
                 editor::ui()->m_copyValuesBtn->activate();
             }
             else {
@@ -91,8 +91,8 @@ namespace ContextMenu {
         }},
         Option{{"Paste State", "Paste Colors"}, Col::Pink, {Condition::Default, [] {
             return editor::ui()->m_pasteStateBtn->m_animationEnabled;
-        }}, [] (bool pSpecialDown) {
-            if (pSpecialDown) {
+        }}, [] (bool specialDown) {
+            if (specialDown) {
                 editor::ui()->m_pasteColorBtn->activate();
             }
             else {
@@ -167,8 +167,8 @@ namespace ContextMenu {
         return m_setting ? m_setting->get() : false;
     }
 
-    SillySetting<bool>* Option::setupSetting() {
-        return static_cast<SillySetting<bool>*>(SettingsManager::get()->getSetting(
+    Setting<bool>* Option::setupSetting() {
+        return static_cast<Setting<bool>*>(SettingsManager::get()->getSetting(
             nwo5::settings::generateKey(name.label, feature)
         ));
     }
