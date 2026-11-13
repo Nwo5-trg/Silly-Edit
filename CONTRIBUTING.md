@@ -7,7 +7,7 @@ dont use ai for anything whatsoever oki thx \<3
 ## Conventions
 - *variables/constants* `camelCase`
 - *constexpr constants* `UPPER_SNAKE_CASE`
-- *parameters* `pPascalCase`
+- *parameters* `camelCase`
 - *types* `PascalCase`
 - *class member* `m_camelCase`
 - *macros* `UPPER_SNAKE_CASE`
@@ -27,7 +27,7 @@ there are pretty much only 3 parts to a feature, their registry, their `include.
 (feature templates are in `examples/feature`)
 
 ## Registering
-just go into `features/registry.hpp` and add ur feature to the `SILLYEDIT_FEATURE_LIST` macro in `PascalCase`, features are organized in settings popup as they appear in the macro
+just go into `features/registry.hpp` and add ur feature to the `SILLYEDIT_FEATURE_LIST` macro in `PascalCase`, features are organized in settings popup as they appear in the macro (2 consecutive uppercase letters dont play nice so b warned)
 
 after that just make your feature directory, the path should be something like `features/title/silly-feature` (title being tools, utility, etc..)
 
@@ -79,10 +79,10 @@ namespace SillyFeature {
 
     class $setting_category("silly-feature-logo.png"_spr, "Description without capitalization or grammar, only capitalize first letter, make it silly \!\!");
 
-    inline SillySetting<bool> coolSetting{
+    inline Setting<bool> coolSetting{
         "Cool Setting\nName", feature, true // yes newlines are hardcoded into the names sue me
     };
-    inline SillySetting<int> sillySetting{
+    inline Setting<int> sillySetting{
         "Silly Setting", feature, 5, "Same as cateogry description"
     };
 }

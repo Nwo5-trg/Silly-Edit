@@ -1,7 +1,7 @@
 #pragma once
 
-#include <nwo5.silly-api/include/utils/include.hpp>
-#include <nwo5.silly-api/include/ui/include.hpp>
+#include <nwo5.silly-api/utils/include.hpp>
+#include <nwo5.silly-api/ui/include.hpp>
 #include "include.hpp"
 
 namespace sillyedit::settings {
@@ -44,9 +44,7 @@ namespace sillyedit::settings {
 
             if (shouldShowHelp) {
                 const auto str = m_setting->description();
-                m_helpButton->setUserObject("nwo5.silly-api/tooltip", nwo5::ui::TooltipInfo::create(
-                    geode::utils::string::toUpper(str.substr(0, 1)) + str.substr(1)
-                ));
+                nwo5::ui::TooltipInfo::create(m_helpButton, geode::utils::string::toUpper(str.substr(0, 1)) + str.substr(1));
             }
 
             const auto shouldShowReload = cast->reloadRequired();

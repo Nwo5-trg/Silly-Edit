@@ -1,4 +1,4 @@
-#include <nwo5.ui-scaling/include/compat.hpp>
+#include <nwo5.ui-scaling/compat.hpp>
 #include <utils/include.hpp>
 #include "feature-manager.hpp"
 

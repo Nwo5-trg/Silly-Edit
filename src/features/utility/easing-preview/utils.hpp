@@ -1,6 +1,6 @@
 #pragma once
 
-#include <nwo5.silly-api/include/utils/include.hpp>
+#include <nwo5.silly-api/utils/include.hpp>
 
 namespace EasingPreview {
     enum class PreviewType {

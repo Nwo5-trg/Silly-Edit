@@ -1,6 +1,6 @@
 #pragma once
 
-#include <nwo5.silly-api/include/include.hpp>
+#include <nwo5.silly-api/include.hpp>
 
 namespace sillyedit::settings {
     template<typename>

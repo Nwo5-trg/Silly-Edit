@@ -19,7 +19,7 @@ sillyedit has an api for enabling/disabling features
 to use just include
 
 ```cpp
-#include <nwo5.sillyedit/include/include.hpp>
+#include <nwo5.sillyedit/include.hpp>
 ```
 
 all function are in

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <alphalaneous.alphas-ui-pack/include/API.hpp>
+#include <alphalaneous.alphas-ui-pack/API.hpp>
 
 namespace BetterEditMenu {
     class EditMenu : public cocos2d::CCNode {

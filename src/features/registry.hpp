@@ -1,6 +1,6 @@
 #pragma once
 
-#include <settings/silly-setting.hpp>
+#include <settings/setting/include.hpp>
 
 // in my defense, i need an enum for TITLE order, but also this is a very silly method of defining a feature as a title :sob:
 

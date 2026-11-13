@@ -12,6 +12,7 @@
 - make group label shenanigans atleast support p1/p2/c for advanced follow
 - add the custom filters system in whatever way i eventually decide
 - create gradient with selection button (or if nothings selected create a square of objects)
+- multiline text thingy with like justify and stuff
 
 # things i can do whenever
 - popup to show all z layers (or editor layers) in selection and let you change them individually (refer to shadys dms)
@@ -28,9 +29,16 @@
 - move zoom in out keybinds to silly keybinds
 - mayb a better system for "if key down" other than a listener + fields
 - update more stuff to properly use layout anchors
+- font builder with custom objects (prolly not)
 
 # porting to 2.209
 - in my hacks to make keybinds popup work, i should change cclabelbmfont to geode label cuz it will be changed in geode ui byy then
-- port flood fill and ruler to new editor tab thingy ill make
+- port flood fill and ruler to alphas new edittabapi
 - add view tab buttons for trigger indicators
 - for editor position bar, make sure to change my code to match whatever shit robtop does with custom keybinds
+- remove custom editor position keybinds
+- make sure better edit menu works with the dpad shit (prolly force the legacy one or smth, well actually depends on wat utils edittabapi gives me)
+- remove hide ui feature
+- remove like all the keybinds from silly keybinds other than toggle invisible and that other one, also dont remove ignore damage toggle cuz robtops doesnt let u toggle it in the middle of playtesting
+- add some recommended dependencies (my editorwindowpopup mod, idk wat else but i wanna add a couple more)
+- rename object tab icons to icon tweaks and change the ugly view tab icons and the ui eye with the be ui eye and mayb some other stuff

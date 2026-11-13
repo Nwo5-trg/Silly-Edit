@@ -1,3 +1,24 @@
+## v0.2.0-beta.1 (fuck semver fr)
+2.2091 support
+
+**Added**
+
+- mobile (android) support again
+- trigger indicators buttons to view tab
+- some dependencies
+
+**Changed**
+- renamed object tab icons to icon tweaks and added some new features >:3
+- reworked some ui
+
+**Removed**
+- hide ui feature
+- some dependencies
+
+**Internal**
+- rewrote settings
+- use geode::Button in all ui
+
 ## v0.1.0-beta.13
 **Added**
 

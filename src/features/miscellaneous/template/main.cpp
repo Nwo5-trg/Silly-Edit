@@ -1,4 +1,4 @@
-#include <hjfod.gmd-api/include/GMD.hpp>
+#include <hjfod.gmd-api/GMD.hpp>
 #include <utils/include.hpp>
 #include "include.hpp"
 

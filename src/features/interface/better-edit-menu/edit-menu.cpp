@@ -1,4 +1,4 @@
-#include <alphalaneous.editortab_api/include/EditorTabAPI.hpp>
+#include <alphalaneous.editortab_api/EditorTabAPI.hpp>
 #include "include.hpp"
 
 using namespace geode::prelude;

@@ -1,4 +1,4 @@
-#include <nwo5.ui-scaling/include/include.hpp>
+#include <nwo5.ui-scaling/include.hpp>
 #include "include.hpp"
 
 using namespace geode::prelude;
